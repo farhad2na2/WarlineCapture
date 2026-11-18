@@ -8,6 +8,8 @@ namespace Game.UI.Runtime
     public sealed partial class UiSkirmishPublicObjectiveModel
     {
         public bool Applicable, Available, Paused, CommandFeedbackReady;
+        // Why Available is false (evidence only): 1 goal snapshot, 2 logical binding/areas, 3 objective clock, 4 own groups.
+        public int UnavailableReason;
         public string AttemptId, UnavailableText,PolicyUnavailableText;
         public SkirmishPublicGoalSnapshot Goal;
         public SkirmishCompiledObjectiveAreas PublicAreas;
@@ -27,6 +29,10 @@ namespace Game.UI.Runtime
     {
         public SkirmishPublicPlayerGroup Policy;
         public string Label;
+        // The own roster card's role/domain and whether it carries objective originals (BT riflemen, CE trucks).
+        public SkirmishRoleKind Role;
+        public SkirmishPopulationCategory Domain;
+        public bool Originals;
         public bool Selected;
         public float Health01;
         public int AliveCount;

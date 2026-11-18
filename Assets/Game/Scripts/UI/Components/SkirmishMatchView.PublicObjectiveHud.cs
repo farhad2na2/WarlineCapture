@@ -46,12 +46,12 @@ namespace Game.UI.Runtime
                 RestoreClockCaption();
                 UiLocalizedText.Set(player,model.UnavailableText);UiLocalizedText.Set(playerHealth,"");
                 UiLocalizedText.Set(enemy,"");UiLocalizedText.Set(enemyHealth,"");
-                PresentPublicObjectiveForAria(null);HideObjectiveMarkers();return;
+                WithdrawPublicObjectiveForAria(20+model.UnavailableReason);HideObjectiveMarkers();return;
             }
             var goal=model.Goal;
             var main=new List<SkirmishPublicGoalNode>();
             for(int i=0;i<goal.NodeCount;i++)if(goal.Node(i).Kind!=SkirmishPublicGoalNodeKind.OwnDesignatedSubject)main.Add(goal.Node(i));
-            if(main.Count==0||main.Count>3){RestoreClockCaption();PresentPublicObjectiveForAria(null);return;}
+            if(main.Count==0||main.Count>3){RestoreClockCaption();WithdrawPublicObjectiveForAria(3);return;}
             firstPublicGoal=main[0].PublicId;secondPublicGoal=main.Count>1?main[1].PublicId:null;thirdPublicGoal=main.Count>2?main[2].PublicId:null;
             if(thirdObjective==null)
             {
@@ -176,8 +176,10 @@ namespace Game.UI.Runtime
         private void PublishRenderedObjectiveFrame(UiSkirmishPublicObjectiveModel model)
         {
             bool mapOpen=fullMap!=null&&fullMap.IsOpen;
-            if((!hud.activeInHierarchy&&!mapOpen)||!model.Available||!model.CommandFeedbackReady||model.GroundCellSize<=0){PresentPublicObjectiveForAria(null);return;}
-            var camera=Camera.main;if(camera==null){PresentPublicObjectiveForAria(null);return;}
+            if(!hud.activeInHierarchy&&!mapOpen){WithdrawPublicObjectiveForAria(4);return;}
+            if(!model.Available){WithdrawPublicObjectiveForAria(20+model.UnavailableReason);return;}
+            if(!model.CommandFeedbackReady||model.GroundCellSize<=0){WithdrawPublicObjectiveForAria(5);return;}
+            var camera=Camera.main;if(camera==null){WithdrawPublicObjectiveForAria(6);return;}
             if(camera.worldToCameraMatrix==previousObjectiveCamera)objectiveCameraSettledFrames++;else objectiveCameraSettledFrames=0;
             previousObjectiveCamera=camera.worldToCameraMatrix;
             var targets=new List<AriaPresentedObjectiveTarget>();var approaches=new List<SkirmishPublicPlayerApproach>();var groups=new List<SkirmishPublicPlayerGroup>();

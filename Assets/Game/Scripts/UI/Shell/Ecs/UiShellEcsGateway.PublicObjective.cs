@@ -26,12 +26,12 @@ namespace Game.UI.Shell.Ecs
             bool fa=GameLocalization.IsRightToLeft;
             model=new UiSkirmishPublicObjectiveModel { Applicable=true, AttemptId=attempt.SessionId.ToString(),
                 UnavailableText=fa?"اطلاعات هدف هنوز آماده نیست.":"Objective information is not ready yet." };
-            if(!SkirmishNativePublicGoalPresentation.TryReadPlayer(em,session,out var goal,out _)||
-                !SkirmishMissionLogicalBindingProvider.TryRead(em,session,out var logical)||logical.Areas==null)return true;
+            if(!SkirmishNativePublicGoalPresentation.TryReadPlayer(em,session,out var goal,out _)){model.UnavailableReason=1;return true;}
+            if(!SkirmishMissionLogicalBindingProvider.TryRead(em,session,out var logical)||logical.Areas==null){model.UnavailableReason=2;return true;}
             model.Goal=goal;model.PublicAreas=logical.Areas;
             using(var gameplay=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent)))
                 model.Paused=gameplay.CalculateEntityCount()==1&&gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive==0;
-            if(!em.HasComponent<SkirmishObjectiveClockComponent>(session))return true;
+            if(!em.HasComponent<SkirmishObjectiveClockComponent>(session)){model.UnavailableReason=3;return true;}
             model.SimulationSeconds=em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
             var positions=new List<UiSkirmishPublicGoalPosition>();
             using(var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent)))
@@ -67,7 +67,7 @@ namespace Game.UI.Shell.Ecs
                 model.Perimeters=perimeters.ToArray();
             }
             model.Positions=positions.ToArray();
-            if(!TryOwnObjectiveGroups(em,session,goal,out var groups))return true;
+            if(!TryOwnObjectiveGroups(em,session,goal,out var groups)){model.UnavailableReason=4;return true;}
             model.OwnGroups=groups;model.Available=true;
             ReadPublicConvoyService(em,session,model,positions);model.Positions=positions.ToArray();
             // Exact public accepted group/goal/contact feedback is installed by the
@@ -161,7 +161,8 @@ namespace Game.UI.Shell.Ecs
                     UnloadCarrier=policy.CanUnload?new UiEntityHandle(carrier.Index,carrier.Version):UiEntityHandle.Null,UnloadCarrierId=policy.CanUnload?transport.CarrierPublicId:null,Selected=group.Selected!=0,AliveCount=points.Count,
                     MoveActive=moveActive&&destinations.Count==points.Count,HoldActive=holdActive,CurrentMoveGoals=destinations.ToArray(),
                     Health01=maximum>0?Mathf.Clamp01(health/maximum):0,OwnMemberPositions=points.ToArray(),
-                    Label=SkirmishSetupBriefing.RoleLabel(group.Role,GameLocalization.IsRightToLeft)+" ("+points.Count+")"});
+                    Label=SkirmishSetupBriefing.RoleLabel(group.Role,GameLocalization.IsRightToLeft)+" ("+points.Count+")",
+                    Role=group.Role,Domain=group.Domain,Originals=originals.Count>0});
             }
             result=rows.ToArray();return true;
         }

@@ -93,7 +93,7 @@ Order: W6 and W7 first (Unity serial: W6 runs, then W7 measurements); Codex can 
 quickcheck needs the .NET 8 SDK, which Windows lacks; the Mac lead runs quickcheck on your branches. Do not install software.
 
 ## W11 — SkirmishExpandedArmyTests paging failure (2026-11-18)
-status: DONE (472ab340c; Mac merge pending lane 33, branch missions/merge-w11-w12)
+status: DONE (472ab340c; merged 1772a51b4)
 codex effort: high
 Mac lane 31 on integration 2529f7ee7: 15/16 pass; `FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders` fails
 "pageCount Expected: 2 But was: 3" (SkirmishExpandedArmyTests.cs:410), both in RunFocusedValidation and EditMode. The fixture
@@ -103,7 +103,7 @@ roster or the tray paging is wrong; fix the right side minimally, never weaken t
 Branch `missions/win-w11-army-paging`.
 
 ## W12 — S002 ARIA stall on the second base alert, reason 114 (2026-11-18)
-status: DONE (e81b2acd8; Mac merge pending lane 33; counted S002 runs on the Mac follow)
+status: DONE (e81b2acd8; merged 1772a51b4; counted S002 runs on the Mac follow)
 codex effort: xhigh
 Evidence: `Design/AgentReports/SkirmishExpansion/S002/_Evidence/lane31-second-defense-stall-130365-en.txt`. The first defense now
 selects before Attack (Codex 034 fix works; base held at 520). On the second alert (t=238.5, attacker shown, defenderSlot=-1)
@@ -135,7 +135,7 @@ the Python tests. Report which other catalog rows' starting structures move (any
 Branch `missions/win-w13-runway-placement`.
 
 ## W14 — Convoy Escort established starts abort: player convoy truck BlockedSpawn, S020/S022/S024 (2026-11-18)
-status: READY
+status: DONE (0a6347e55; merged 94ec16fee; S019 keeps old bay overlap, fine for field roster)
 codex effort: xhigh
 Evidence (Windows W6 menu launches, `windows_dev_results/2026-11-18.md`): ce\unity.log:1491/7739/13898
 `[SkirmishStartingForce] failed prefab=Unit_Veh_Truck_Tray faction=1 member=0`, then `expandedStartupFailure=BlockedSpawn`. Only the three

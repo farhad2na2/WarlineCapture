@@ -1,7 +1,7 @@
 {
   "catalog_id": "S013",
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
-  "notes": "candidate=1, unmeasured. Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value; nothing is measured. Needs area_measurement (SkirmishS002AriaRunHarness.RunCatalogAreaMeasurementAndExit output) before check_draft passes. S013 Breakthrough: corridors = the two flank strips of S007; exit = rectangle staging.enemy..base.enemy x, service.enemy..base.enemy z. defense.approach.a/b sit on the defender-side second-last waypoints of the north/south flank routes (ruins.far, sweep.east); tower pad size [10,10] follows the ground-survey refinement rule 2*(max(tower footprint 3x4)+1) cells at a 1 m cell (the area-measurement probe compares it with the native footprint). structure_footprints copied from the S006 example (map-independent native footprints).",
+  "notes": "candidate=1, measured 2026-11-18 (both corridors and the exit inside playable and infantry-reachable; tower pads fit 3x4 m; geometry still a candidate). Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value; nothing is measured. S013 Breakthrough: corridors = the two flank strips of S007; exit = rectangle staging.enemy..base.enemy x, service.enemy..base.enemy z. defense.approach.a/b sit on the defender-side second-last waypoints of the north/south flank routes (ruins.far, sweep.east); tower pad size [10,10] follows the ground-survey refinement rule 2*(max(tower footprint 3x4)+1) cells at a 1 m cell (the area-measurement probe compares it with the native footprint). structure_footprints copied from the S006 example (map-independent native footprints).",
   "anchors": {
     "base.player": [
       935.0,
@@ -277,5 +277,8 @@
       3.0,
       4.0
     ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S013/area-measurement.json"
   }
 }

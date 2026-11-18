@@ -34,9 +34,13 @@ candidate commit, marks the lane as held for you, and starts no agent Unity run 
   probably too weak; some unit types (drone, heavy APC, transport helicopter, siege) are not yet used by ARIA.
 - **Please judge:** same questions as S002; also whether City Crossroads feels too easy.
 
-## 2. Frontline Control — not ready (areas need a Unity measurement run; S007 candidate draft exists)
-## 3. Breakthrough — not ready (S013 candidate draft; same measurement step)
+## 2. Frontline Control — not ready to play (2026-11-18: areas measured, authoring blocked)
+S007 area measurement Completed (lane18/s007/measure.log; all three areas inside the playable window, infantry reachable from both bases); draft passes check_draft/pad_preflight. `AuthorFromDraft` FAILED: `compile.Standard.Recruit MissingReference:missionLogicalBinding` (lane18/s007/author.log:679). The authoring entry forces a null logical binding but the setup compiler demands one for every non-Base-Assault objective, so FC/BT/CE cannot be authored without a tooling change. Nothing was made visible or launched.
+## 3. Breakthrough — not ready to play (2026-11-18: areas measured, authoring blocked)
+S013 area measurement Completed (lane18/s013/measure.log; both corridors and the exit inside the playable window and infantry-reachable; both tower pads fit the 3x4 m tower). Authoring not attempted: same objective-kind blocker as S007 (deterministic). Nothing visible or launched.
 ## 4. Convoy Escort — not ready (S019 candidate draft; same measurement step)
 
 Your notes: write them in this file or tell the program lead; they are recorded as owner sampling in `missions.csv`
 (`owner_manual_win` and notes), never as a gate.
+
+The [independent designer playtest and prioritized development plan](2026-11-17-s002-s026-designer-playtest.md) records the agent-operated Mac Editor sessions separately. The owner's personal playtest is still open.

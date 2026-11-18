@@ -62,10 +62,14 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             model.PlayerBaseRecentlyHit = true;
+            model.BaseHitEventId = observations[latest].EventId;
+            Vector3 hitPoint = observations[latest].TargetWorldPosition;
+            model.BaseHitWorld = hitPoint == Vector3.zero ? homePosition : hitPoint;
 
             Entity source = observations[latest].SourceEntity;
-            if (!model.BaseAttackerVisible && source != Entity.Null && em.Exists(source) && em.HasComponent<LocalTransform>(source) &&
-                !em.HasComponent<Parent>(source) && SkirmishFogService.IsVisibleToFaction(em, source, 1))
+            bool sourceVisible = source != Entity.Null && em.Exists(source) && em.HasComponent<LocalTransform>(source) &&
+                !em.HasComponent<Parent>(source) && SkirmishFogService.IsVisibleToFaction(em, source, 1);
+            if (!model.BaseAttackerVisible && sourceVisible)
             {
                 model.BaseAttackerVisible = true;
                 model.BaseAttackerWorld = em.GetComponentData<LocalTransform>(source).Position;

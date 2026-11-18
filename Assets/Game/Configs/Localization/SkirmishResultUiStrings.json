@@ -52,6 +52,12 @@
     { "key": "skirmish.s013.result.draw_bases", "source": "Both main bases were destroyed.", "translations": [{ "locale": "fa-IR", "value": "هر دو پایگاه اصلی نابود شدند." }] },
     { "key": "skirmish.s013.result.draw_deadline", "source": "Time expired with neither side ahead.", "translations": [{ "locale": "fa-IR", "value": "زمان تمام شد و هیچ طرفی پیش نبود." }] },
     { "key": "skirmish.s019.result.draw_bases", "source": "Both main bases were destroyed.", "translations": [{ "locale": "fa-IR", "value": "هر دو پایگاه اصلی نابود شدند." }] },
-    { "key": "skirmish.s019.result.draw_deadline", "source": "Time expired with neither side ahead.", "translations": [{ "locale": "fa-IR", "value": "زمان تمام شد و هیچ طرفی پیش نبود." }] }
+    { "key": "skirmish.s019.result.draw_deadline", "source": "Time expired with neither side ahead.", "translations": [{ "locale": "fa-IR", "value": "زمان تمام شد و هیچ طرفی پیش نبود." }] },
+    { "key": "ui.skirmish.base_alert.under_fire", "source": "BASE UNDER FIRE", "translations": [{ "locale": "fa-IR", "value": "پایگاه زیر آتش" }] },
+    { "key": "ui.skirmish.base_alert.enemy_at_base", "source": "ENEMY AT BASE", "translations": [{ "locale": "fa-IR", "value": "دشمن در پایگاه" }] },
+    { "key": "ui.skirmish.base_alert.attacker_in_sight", "source": "ATTACKER IN SIGHT", "translations": [{ "locale": "fa-IR", "value": "مهاجم در دید" }] },
+    { "key": "ui.skirmish.base_alert.source_unknown", "source": "SOURCE UNKNOWN", "translations": [{ "locale": "fa-IR", "value": "منبع نامعلوم" }] },
+    { "key": "ui.skirmish.base_alert.show_home_guard", "source": "SHOW HOME GUARD", "translations": [{ "locale": "fa-IR", "value": "نمایش نگهبان پایگاه" }] },
+    { "key": "ui.skirmish.base_alert.show_nearest", "source": "SHOW NEAREST SQUAD", "translations": [{ "locale": "fa-IR", "value": "نمایش نزدیک‌ترین جوخه" }] }
   ]
 }

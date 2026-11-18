@@ -315,6 +315,9 @@ namespace Game.UI.Runtime
                 if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out var bottom))
                     top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
             }
+            // While a base alert is up the strip (and the alert row under it) keeps its place when the
+            // top banner expires; it returns once the alert clears.
+            top = SkirmishBaseAlertRowLayout.HoldDown(top, ref baseFireStripHeld, BaseUnderFirePresented);
             var rect = (RectTransform)hud.transform;
             rect.offsetMin = new Vector2(rect.offsetMin.x, -top - (previousPublicApplicable ? 147 : 115));
             rect.offsetMax = new Vector2(rect.offsetMax.x, -top);

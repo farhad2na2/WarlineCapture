@@ -62,6 +62,10 @@ namespace Game.UI.Contracts
         public byte BaseThreatReason;
         public float BasePerimeterRadius;
         public bool BaseIntruderInside;
+        // The latest hit on the player's main base (public: own base, own damage readout). The event
+        // id changes on every new hit; the world point is where the hit landed.
+        public int BaseHitEventId;
+        public UnityEngine.Vector3 BaseHitWorld;
         // Per-mission guidance (SkirmishMissionHudGuidanceCatalog): first-order prompt during the
         // opening seconds and a rendezvous marker on an existing layout anchor.
         public string FirstOrderText;

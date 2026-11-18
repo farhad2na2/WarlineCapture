@@ -52,6 +52,14 @@ namespace Game.Configs
         public const float AircraftLeadMetres = 24f;
         public const float AircraftSafeFraction = .82f;
         public const float AircraftDescendingRayMarginDegrees = 12f;
+        // Follow (owner 2026-11-18: whole aircraft, rotor, heading and the intended
+        // landing patch readable together). The view looks at the airframe itself, so
+        // the airframe sits at screen centre, clear of the HUD strips and its shadow.
+        // The intended landing patch stays inside a vertical band that keeps it off the
+        // squad cards and the top strip; it widens the view up to this distance, beyond
+        // which only the bearing to the patch is kept on the frame edge.
+        public const float AircraftPatchSafeFractionVertical = .70f;
+        public const float AircraftFollowPatchMaximumDistance = 90f;
 
         public static SkirmishGroundFraming Resolve(SkirmishMissionViewProfile profile, float? missionYaw = null)
         {
@@ -203,8 +211,24 @@ namespace Game.Configs
         public static bool TryAircraftPose(Bounds aircraft, float groundY, Vector2 headingXZ, bool airborne,
             float pitch, float yaw, float fieldOfView, float maximumViewportFraction, float aspect, float nearClip,
             float minimumDistance, float maximumDistance, out Vector3 position, out Quaternion rotation, out Vector3 lookAt)
+            => TryAircraftFollowPose(aircraft, groundY, headingXZ, airborne, null, pitch, yaw, fieldOfView, maximumViewportFraction,
+                aspect, nearClip, minimumDistance, maximumDistance, out position, out rotation, out lookAt, out _);
+
+        /// <summary>
+        /// Aircraft follow view. Looks at the airframe centre (never a ground point under it),
+        /// so the whole aircraft and rotor sit mid-screen at no more than
+        /// <paramref name="maximumViewportFraction"/> of the view; the ground below it, a lead
+        /// point along its heading and, when given, the intended landing patch stay in frame.
+        /// A patch that would need more than <see cref="AircraftFollowPatchMaximumDistance"/>
+        /// keeps only its bearing on the frame edge (<paramref name="patchFramed"/> false).
+        /// Returns false when the aircraft fit alone exceeds <paramref name="maximumDistance"/>.
+        /// The pose is translation-invariant: moving the aircraft moves the camera by the same amount.
+        /// </summary>
+        public static bool TryAircraftFollowPose(Bounds aircraft, float groundY, Vector2 headingXZ, bool airborne, Vector3? landingPatch,
+            float pitch, float yaw, float fieldOfView, float maximumViewportFraction, float aspect, float nearClip,
+            float minimumDistance, float maximumDistance, out Vector3 position, out Quaternion rotation, out Vector3 lookAt, out bool patchFramed)
         {
-            position = default; rotation = default; lookAt = default;
+            position = default; rotation = default; lookAt = default; patchFramed = false;
             if (!Finite(aircraft.center) || !Finite(aircraft.extents) || aircraft.extents.x <= 0f || aircraft.extents.y <= 0f ||
                 aircraft.extents.z <= 0f || !float.IsFinite(groundY) || !float.IsFinite(pitch) || !float.IsFinite(yaw) ||
                 !(fieldOfView > 1f && fieldOfView < 179f) || !(aspect > 0f) || !float.IsFinite(aspect) ||
@@ -220,20 +244,17 @@ namespace Game.Configs
             var below = new Vector3(aircraft.center.x, Mathf.Min(floorY, aircraft.min.y), aircraft.center.z);
             bool lead = airborne && headingXZ.sqrMagnitude > .0001f && float.IsFinite(headingXZ.x) && float.IsFinite(headingXZ.y);
             var ahead = lead ? below + new Vector3(headingXZ.x, 0f, headingXZ.y).normalized * AircraftLeadMetres : below;
-            var frameMin = Vector3.Min(Vector3.Min(aircraft.min, below), ahead);
-            var frameMax = Vector3.Max(Vector3.Max(aircraft.max, below), ahead);
-            var center = (frameMin + frameMax) * .5f;
+            var center = aircraft.center;
 
             float distance = Mathf.Max(minimumDistance, AircraftMinimumDistance);
             for (int i = 0; i < 8; i++)
             {
-                var corner = aircraft.center + Vector3.Scale(aircraft.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
-                // Aircraft size share, measured about the aircraft's own centre.
-                var local = corner - aircraft.center;
-                float localDepth = Vector3.Dot(local, forward), offset = Vector3.Dot(aircraft.center - center, forward);
-                distance = Mathf.Max(distance, Mathf.Abs(Vector3.Dot(local, right)) / (tanH * maximumViewportFraction) - localDepth - offset);
-                distance = Mathf.Max(distance, Mathf.Abs(Vector3.Dot(local, up)) / (tanV * maximumViewportFraction) - localDepth - offset);
-                distance = Require(distance, corner - center, right, up, forward, tanH, tanV, nearClip);
+                // Aircraft size share about its own centre, which is also the look-at.
+                var local = Vector3.Scale(aircraft.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                float localDepth = Vector3.Dot(local, forward);
+                distance = Mathf.Max(distance, Mathf.Abs(Vector3.Dot(local, right)) / (tanH * maximumViewportFraction) - localDepth);
+                distance = Mathf.Max(distance, Mathf.Abs(Vector3.Dot(local, up)) / (tanV * maximumViewportFraction) - localDepth);
+                distance = Require(distance, local, right, up, forward, tanH, tanV, nearClip);
             }
             distance = Require(distance, below - center, right, up, forward, tanH, tanV, nearClip);
             distance = Require(distance, ahead - center, right, up, forward, tanH, tanV, nearClip);
@@ -241,8 +262,48 @@ namespace Game.Configs
             float sinPitch = Mathf.Sin(pitch * Mathf.Deg2Rad);
             distance = Mathf.Max(distance, (aircraft.max.y + AircraftClearanceAboveTop - center.y) / sinPitch);
             if (!float.IsFinite(distance) || distance > maximumDistance) return false;
+
+            if (landingPatch.HasValue && Finite(landingPatch.Value))
+            {
+                var relative = landingPatch.Value - center;
+                float needed = PatchDistance(relative, right, up, forward, tanH, tanV);
+                float ceiling = Mathf.Min(maximumDistance, Mathf.Max(distance, AircraftFollowPatchMaximumDistance));
+                if (needed <= ceiling)
+                {
+                    distance = Mathf.Max(distance, Mathf.Max(needed, nearClip * 2f - Vector3.Dot(relative, forward)));
+                    patchFramed = true;
+                }
+                else distance = Mathf.Max(distance, ceiling); // bearing to a far patch rides the frame edge
+            }
             position = center - forward * distance; lookAt = center;
             return Finite(position);
+        }
+
+        /// <summary>
+        /// Distance from the look-at that brings <paramref name="relative"/> inside the patch band.
+        /// Linear in the offset: scaling the offset by k scales the result by k.
+        /// </summary>
+        static float PatchDistance(Vector3 relative, Vector3 right, Vector3 up, Vector3 forward, float tanH, float tanV)
+        {
+            float depth = Vector3.Dot(relative, forward);
+            return Mathf.Max(Mathf.Abs(Vector3.Dot(relative, right)) / (tanH * AircraftSafeFraction) - depth,
+                Mathf.Abs(Vector3.Dot(relative, up)) / (tanV * AircraftPatchSafeFractionVertical) - depth);
+        }
+
+        /// <summary>Largest fraction of the view (max of width and height share) a world box covers; false if it crosses the camera.</summary>
+        public static bool TryViewportShare(Vector3 camera, float pitch, float yaw, float fieldOfView, float aspect, Bounds box, out float share, out bool inside)
+        {
+            share = 0f; inside = false;
+            var min = new Vector2(float.MaxValue, float.MaxValue); var max = new Vector2(float.MinValue, float.MinValue);
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = box.center + Vector3.Scale(box.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                if (!TryViewport(camera, pitch, yaw, fieldOfView, aspect, corner, out var viewport)) return false;
+                min = Vector2.Min(min, viewport); max = Vector2.Max(max, viewport);
+            }
+            share = Mathf.Max(max.x - min.x, max.y - min.y);
+            inside = min.x >= 0f && max.x <= 1f && min.y >= 0f && max.y <= 1f;
+            return true;
         }
 
         static float Require(float distance, Vector3 relative, Vector3 right, Vector3 up, Vector3 forward, float tanH, float tanV, float nearClip)

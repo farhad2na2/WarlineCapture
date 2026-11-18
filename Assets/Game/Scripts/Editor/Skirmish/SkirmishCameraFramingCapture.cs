@@ -36,7 +36,11 @@ namespace Game.Editor
     ///   {catalog}-{w}x{h}[-{locale}]-air-{nn}-{event}.png, ...-air.jsonl
     /// {locale} comes from WARLINE_CAPTURE_LOCALE (en or fa-IR, the locales the ARIA queue accepts;
     /// default en) and appears in the names only when it is not English, so English names are unchanged.
-    /// Air events: lens-applied, return-from-recruitment, takeoff, turn, cruise, landing, switch-back-ground.
+    /// S005 air events: lens-applied, return-from-recruitment, takeoff, turn, cruise, landing, switch-back-ground.
+    /// S026 player-directed flight: one row per frame in {catalog}-{w}x{h}[-{locale}]-air-flight.jsonl (camera
+    /// pose, aircraft pose/heading, airframe share, rotor/landing-patch on screen, selected card role) with shots
+    /// selected, takeoff, mid-turn, cruise, approach, touchdown, switch-back-ground, switch-back-settled, and a
+    /// fail-closed ...-air-flight-summary.jsonl.
     /// {seed} is the seed of the launched session; {w}x{h} is the Game view's fixed target
     /// size (WARLINE_REVIEW_WIDTH/HEIGHT), which is what ScreenCapture writes. Screen.width/height
     /// are not used: inside EditorApplication.update they report the current Editor GUI view
@@ -86,10 +90,12 @@ namespace Game.Editor
             SkirmishS002AriaRunHarness.RunS005AircraftCycleProbeAndExit();
         }
         /// <summary>
-        /// Owner playtest 2026-11-17 ("returning from recruitment sometimes framed the underside of a large
-        /// aircraft"): S026 seed 104729, ARIA off. Buys one helicopter through the recruitment drawer's own
-        /// card and primary action (touch), returns from recruitment, then flies it with the HUD Move command
-        /// and brings it home with the command-wheel Return action. No money grant, no entity spawning.
+        /// Designer retest 2026-11-18 (owner: whole aircraft, rotor, heading and landing patch readable together;
+        /// the player reacquires the ground squad). S026 seed 104729, ARIA off, touch only. Buys one helicopter
+        /// through the recruitment drawer, selects its squad card, taps Move on open ground to the side, then taps
+        /// Move on the home helipad (the landing patch) during the outbound leg, so it turns about 180 degrees,
+        /// cruises, approaches and touches down on the patch; then taps an infantry squad card and the helicopter
+        /// card so only the ground squad is selected. No money grant, no entity spawning, no Return command.
         /// </summary>
         public static void RunS026HelicopterFramingCapture()
         {
@@ -328,12 +334,18 @@ namespace Game.Editor
         static void OnAircraftFocus(Game.Runtime.AircraftProductionFocusFact fact)
         {
             if (mode != "aircraft" || fact == null) return;
+            if (flightActive) { lastFocusFact = fact.stage + (string.IsNullOrEmpty(fact.reason) ? "" : ":" + fact.reason); return; }
             if (fact.stage == "Applied") CaptureAir("lens-applied", Camera.main, null);
-            if (fact.stage == "Cleared") pendingClearedFrame = Time.frameCount + 30; // the restored ground view
+            // S005 cycle only. This fired on any lens clear, including the lens's own geometry
+            // timeout, so it never proved a switch to the ground squad (the S026 flight checks the selection).
+            if (fact.stage == "Cleared") pendingClearedFrame = Time.frameCount + 30;
         }
 
         static void TickAircraft(EntityManager em, SkirmishExpandedSessionComponent native, Camera camera)
         {
+            // The S026 player-directed flight records every frame itself; the event-driven shots
+            // below remain for the S005 aircraft cycle.
+            if (flightActive) { RecordFlightFrame(em, native, camera); return; }
             if (pendingClearedFrame >= 0 && Time.frameCount >= pendingClearedFrame) { pendingClearedFrame = -1; CaptureAir("switch-back-ground", camera, null); }
             // First tick after the recruitment drawer closes: the view the player returns to.
             var drawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
@@ -380,6 +392,247 @@ namespace Game.Editor
             airCaptures++;
             ScreenCapture.CaptureScreenshot(png);
             AppendJson(prefix + ".jsonl", kind, camera, world.EntityManager, native, png, subject);
+        }
+
+        // ------------------------------------------------- S026 player-directed flight
+        // One jsonl row per rendered frame from helicopter selection to after the switch-back:
+        //   {catalog}-{w}x{h}[-{locale}]-air-flight.jsonl, shots ...-air-flight-{nn}-{shot}.png
+        // Rows carry runId, so repeated runs under one label stay separable.
+        [Serializable] sealed class FlightRow
+        {
+            public string label, runId, catalog, locale, stage, shot, png, cameraName, focusFact, lensOrigin, lensBoundsSource, lensClearReason,
+                aircraftRole, airframeSource, selectedCardRole, selectedRoles;
+            public int frame, cameraInstanceId, aircraftIndex, selectedOwn, selectedInfantry, selectedInfantryOnScreen, selectedOffPage, unitOrdersIssued;
+            public float realtime, fieldOfView, aspect, aircraftHeading, airframeFraction, airframeFractionCap, lensDistance, cameraToLensPoseError, distanceToPatch;
+            public Vector3 cameraPosition, cameraEuler, aircraftPosition, landingPatch, lensLookAt, lensPatch;
+            public Quaternion cameraRotation;
+            public Vector2 airframeViewportMin, airframeViewportMax, landingPatchViewport;
+            public bool aircraftAirborne, aircraftReturningHome, aircraftHasMoveTarget, aircraftSelected, rotorFullyOnScreen,
+                hasLandingPatch, landingPatchOnScreen, landingPatchInSafeBand, lensApplied, lensFollowing, lensPatchFramed;
+        }
+        [Serializable] sealed class FlightSummary
+        {
+            public string label, runId, result, failures; public int rows, flightRows, followingRows, measuredRows, distinctCameraPositions, shots;
+            public float cameraTravel, aircraftTravel, maxAirframeFraction, maxTurn, touchdownToPatch, maxLensPoseError;
+            public string switchBackSelectedCardRole, switchBackSelectedRoles; public int switchBackInfantryOnScreen;
+        }
+
+        static bool flightActive;
+        static Entity flightAircraft;
+        static string flightStage = "", flightRunId = "", pendingFlightShot, lastFocusFact = "";
+        static Vector3? flightPatch;
+        static int lastFlightFrame = -1, flightShots;
+        static readonly List<FlightRow> flightRows = new();
+        static readonly HashSet<string> FlightStages = new(StringComparer.Ordinal) { "takeoff", "landing-move", "turn", "cruise", "approach" };
+
+        internal static void BeginFlight(Entity aircraft, Vector3? patch)
+        {
+            if (mode != "aircraft") return;
+            flightActive = true; flightAircraft = aircraft; flightPatch = patch; flightStage = "selected"; pendingFlightShot = null;
+            flightRunId = DateTime.UtcNow.ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
+            lastFlightFrame = -1; flightShots = 0; flightRows.Clear(); lastFocusFact = "";
+            Debug.Log("[SkirmishCameraFramingCapture] flight=Begin runId=" + flightRunId + " aircraft=" + aircraft);
+        }
+        internal static void EndFlight() { flightActive = false; pendingFlightShot = null; }
+        internal static void SetFlightStage(string stage, Vector3? patch) { flightStage = stage ?? ""; if (patch.HasValue) flightPatch = patch; }
+        internal static void RequestFlightShot(string shot) { if (flightActive) pendingFlightShot = shot; }
+
+        static void RecordFlightFrame(EntityManager em, SkirmishExpandedSessionComponent native, Camera camera)
+        {
+            if (Time.frameCount == lastFlightFrame || !ReviewSizeReady()) return;
+            lastFlightFrame = Time.frameCount;
+            ReviewSize(out int width, out int height, out _);
+            string prefix = AirFilePrefix(native.CatalogId.ToString(), width, height, captureLocale) + "-flight";
+            var row = new FlightRow { label = label, runId = flightRunId, catalog = native.CatalogId.ToString(), locale = captureLocale, stage = flightStage,
+                frame = Time.frameCount, realtime = Time.realtimeSinceStartup, cameraName = camera.name, cameraInstanceId = camera.GetEntityId().GetHashCode(),
+                cameraPosition = camera.transform.position, cameraRotation = camera.transform.rotation, cameraEuler = camera.transform.eulerAngles,
+                fieldOfView = camera.fieldOfView, aspect = camera.aspect, focusFact = lastFocusFact, airframeFraction = float.NaN,
+                airframeFractionCap = SkirmishCameraFraming.AircraftMaximumViewportFraction, distanceToPatch = float.NaN, cameraToLensPoseError = float.NaN,
+                airframeSource = "Unavailable", unitOrdersIssued = 0 };
+            if (em.Exists(flightAircraft) && em.HasComponent<LocalTransform>(flightAircraft))
+            {
+                var transform = em.GetComponentData<LocalTransform>(flightAircraft);
+                var forward = math.mul(transform.Rotation, new float3(0, 0, 1));
+                row.aircraftIndex = flightAircraft.Index; row.aircraftPosition = transform.Position;
+                row.aircraftHeading = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+                row.aircraftRole = em.HasComponent<SkirmishUnitRoleComponent>(flightAircraft) ? em.GetComponentData<SkirmishUnitRoleComponent>(flightAircraft).Role.ToString() : "";
+                row.aircraftSelected = em.HasComponent<SelectedUnitTag>(flightAircraft);
+                row.aircraftHasMoveTarget = em.HasComponent<UnitTarget>(flightAircraft);
+                if (em.HasComponent<UnitAirComponent>(flightAircraft))
+                {
+                    var air = em.GetComponentData<UnitAirComponent>(flightAircraft);
+                    row.aircraftAirborne = air.Airborne != 0; row.aircraftReturningHome = air.ReturningHome != 0;
+                }
+                // Airframe share and rotor visibility from the measured visible geometry (rotor disc included);
+                // the role-sized stand-in box is used and labelled only when measured geometry is not readable.
+                Bounds box = default; bool haveBox = false;
+                if (SkirmishMissionViewProfileApplication.TryReadAircraftFollowBounds(em, flightAircraft, out _, out box)) { row.airframeSource = "Measured"; haveBox = true; }
+                else if (SkirmishMissionViewProfileApplication.TryNominalAircraftBounds(em, flightAircraft, out _, out box)) { row.airframeSource = "Nominal"; haveBox = true; }
+                if (haveBox && TryViewportBox(camera, box, out var min, out var max))
+                {
+                    row.airframeViewportMin = min; row.airframeViewportMax = max;
+                    row.airframeFraction = Mathf.Max(max.x - min.x, max.y - min.y);
+                    row.rotorFullyOnScreen = min.x >= 0f && min.y >= 0f && max.x <= 1f && max.y <= 1f;
+                }
+                if (flightPatch.HasValue)
+                {
+                    row.hasLandingPatch = true; row.landingPatch = flightPatch.Value;
+                    row.distanceToPatch = math.distance(transform.Position.xz, new float2(flightPatch.Value.x, flightPatch.Value.z));
+                    var viewport = camera.WorldToViewportPoint(flightPatch.Value);
+                    row.landingPatchViewport = new Vector2(viewport.x, viewport.y);
+                    row.landingPatchOnScreen = viewport.z > camera.nearClipPlane && viewport.x >= 0f && viewport.x <= 1f && viewport.y >= 0f && viewport.y <= 1f;
+                    row.landingPatchInSafeBand = row.landingPatchOnScreen && viewport.x >= .08f && viewport.x <= .92f && viewport.y >= .15f && viewport.y <= .85f;
+                }
+            }
+            var cameraOwner = World.DefaultGameObjectInjectionWorld?.GetExistingSystemManaged<RtsCameraSystem>();
+            if (cameraOwner != null)
+            {
+                row.lensClearReason = cameraOwner.LastAircraftFocusClearReason ?? "";
+                if (cameraOwner.TryReadAircraftFollowState(out var follow))
+                {
+                    row.lensApplied = follow.Applied; row.lensFollowing = follow.Following; row.lensOrigin = follow.Origin; row.lensBoundsSource = follow.BoundsSource;
+                    row.lensLookAt = follow.LookAt; row.lensDistance = follow.Distance; row.lensPatch = follow.LandingPatch; row.lensPatchFramed = follow.LandingPatchFramed;
+                    // Same camera the lens drives? Its pose must be the look-at minus forward * distance.
+                    if (follow.Applied) row.cameraToLensPoseError = Vector3.Distance(camera.transform.position, follow.LookAt - camera.transform.forward * follow.Distance);
+                }
+            }
+            ReadSelection(em, camera, row);
+            if (pendingFlightShot != null)
+            {
+                string png = Path.Combine(OutputDirectory(), prefix + "-" + flightShots.ToString("00", CultureInfo.InvariantCulture) + "-" + pendingFlightShot + ".png");
+                ScreenCapture.CaptureScreenshot(png);
+                row.shot = pendingFlightShot; row.png = png; flightShots++; pendingFlightShot = null;
+                Debug.Log("[SkirmishCameraFramingCapture] flightShot=" + row.shot + " stage=" + row.stage + " camera=" + row.cameraPosition +
+                    " airframeFraction=" + row.airframeFraction.ToString("0.000", CultureInfo.InvariantCulture) + " rotorOnScreen=" + (row.rotorFullyOnScreen ? 1 : 0) +
+                    " patchOnScreen=" + (row.landingPatchOnScreen ? 1 : 0) + " selectedCardRole=" + row.selectedCardRole + " png=" + png);
+            }
+            flightRows.Add(row);
+            File.AppendAllText(Path.Combine(OutputDirectory(), prefix + ".jsonl"), JsonUtility.ToJson(row) + "\n");
+        }
+
+        static bool TryViewportBox(Camera camera, Bounds box, out Vector2 min, out Vector2 max)
+        {
+            min = new Vector2(float.MaxValue, float.MaxValue); max = new Vector2(float.MinValue, float.MinValue);
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = box.center + Vector3.Scale(box.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                var viewport = camera.WorldToViewportPoint(corner);
+                if (!(viewport.z > camera.nearClipPlane) || !float.IsFinite(viewport.x) || !float.IsFinite(viewport.y)) return false;
+                min = Vector2.Min(min, viewport); max = Vector2.Max(max, viewport);
+            }
+            return true;
+        }
+
+        /// <summary>Selected own units (ECS) and the roles of the squad cards the HUD shows as selected.</summary>
+        static void ReadSelection(EntityManager em, Camera camera, FlightRow row)
+        {
+            var roles = new SortedSet<string>(StringComparer.Ordinal);
+            var groupRoles = new Dictionary<uint, string>();
+            using (var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent), typeof(UnitHealth), typeof(LocalTransform)))
+            using (var actors = query.ToEntityArray(Allocator.Temp))
+                foreach (var actor in actors)
+                {
+                    var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                    if (own.FactionId != 1 || own.IsStructure != 0 || em.GetComponentData<UnitHealth>(actor).Current <= 0) continue;
+                    var role = em.GetComponentData<SkirmishUnitRoleComponent>(actor);
+                    if (em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))
+                    {
+                        uint group = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId;
+                        if (group != 0 && !groupRoles.ContainsKey(group)) groupRoles[group] = role.Role + "/" + role.Category;
+                    }
+                    if (!em.HasComponent<SelectedUnitTag>(actor)) continue;
+                    row.selectedOwn++; roles.Add(role.Role + "/" + role.Category);
+                    if (role.Category != SkirmishPopulationCategory.Infantry) continue;
+                    row.selectedInfantry++;
+                    var viewport = camera.WorldToViewportPoint(em.GetComponentData<LocalTransform>(actor).Position);
+                    if (viewport.z > camera.nearClipPlane && viewport.x >= 0f && viewport.x <= 1f && viewport.y >= 0f && viewport.y <= 1f) row.selectedInfantryOnScreen++;
+                }
+            row.selectedRoles = string.Join(",", roles);
+            var cards = new List<string>();
+            if (UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page))
+            {
+                for (int slot = 0; slot < 5; slot++)
+                    if ((page.SelectedMask & (1 << slot)) != 0)
+                        cards.Add(groupRoles.TryGetValue(page.Group(slot), out var cardRole) ? cardRole : "group" + page.Group(slot));
+                row.selectedOffPage = page.SelectedOffPage;
+            }
+            row.selectedCardRole = string.Join(",", cards);
+        }
+
+        /// <summary>
+        /// Fail-closed checks over the recorded flight (designer retest 2026-11-18): the camera moved with
+        /// the flight and is the camera the follow view drives, the airframe stayed within the share cap with
+        /// its rotor on screen in the flight frames, the aircraft turned at least 60 degrees and touched down
+        /// on the landing patch, and after the switch-back only the infantry squad is selected and on screen.
+        /// </summary>
+        internal static bool TryEvaluateFlight(float maxTurn, float touchdownToPatch, out string summary)
+        {
+            var failures = new List<string>();
+            var result = new FlightSummary { label = label, runId = flightRunId, rows = flightRows.Count, maxTurn = maxTurn, touchdownToPatch = touchdownToPatch };
+            var flight = flightRows.FindAll(r => FlightStages.Contains(r.stage));
+            result.flightRows = flight.Count;
+            var distinct = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < flight.Count; i++)
+            {
+                var r = flight[i];
+                distinct.Add(r.cameraPosition.x.ToString("0.00", CultureInfo.InvariantCulture) + "," + r.cameraPosition.y.ToString("0.00", CultureInfo.InvariantCulture) + "," +
+                    r.cameraPosition.z.ToString("0.00", CultureInfo.InvariantCulture));
+                if (i > 0) { result.cameraTravel += Vector3.Distance(flight[i - 1].cameraPosition, r.cameraPosition); result.aircraftTravel += Vector3.Distance(flight[i - 1].aircraftPosition, r.aircraftPosition); }
+                if (r.lensFollowing) result.followingRows++;
+                if (r.lensFollowing && float.IsFinite(r.cameraToLensPoseError)) result.maxLensPoseError = Mathf.Max(result.maxLensPoseError, r.cameraToLensPoseError);
+                if (r.airframeSource == "Measured" && r.lensFollowing && r.aircraftAirborne && float.IsFinite(r.airframeFraction))
+                { result.measuredRows++; result.maxAirframeFraction = Mathf.Max(result.maxAirframeFraction, r.airframeFraction); }
+                if (r.shot != null) result.shots++;
+            }
+            result.distinctCameraPositions = distinct.Count;
+            if (flight.Count < 20) failures.Add("flightRows=" + flight.Count + "<20");
+            if (distinct.Count < 10 || result.cameraTravel < 5f)
+                failures.Add("cameraPositionUnchanged distinct=" + distinct.Count + " cameraTravel=" + result.cameraTravel.ToString("0.0", CultureInfo.InvariantCulture) +
+                    " aircraftTravel=" + result.aircraftTravel.ToString("0.0", CultureInfo.InvariantCulture));
+            else if (result.cameraTravel < .5f * result.aircraftTravel)
+                failures.Add("cameraDidNotFollow cameraTravel=" + result.cameraTravel.ToString("0.0", CultureInfo.InvariantCulture) + " aircraftTravel=" + result.aircraftTravel.ToString("0.0", CultureInfo.InvariantCulture));
+            if (result.followingRows < .8f * Mathf.Max(1, flight.Count)) failures.Add("followNotActive followingRows=" + result.followingRows + "/" + flight.Count + " lastClear=" + (flightRows.Count > 0 ? flightRows[flightRows.Count - 1].lensClearReason : ""));
+            if (result.maxLensPoseError > .5f) failures.Add("loggedCameraIsNotTheFollowCamera maxPoseError=" + result.maxLensPoseError.ToString("0.00", CultureInfo.InvariantCulture));
+            if (result.measuredRows < 10) failures.Add("airframeFractionNotMeasured measuredRows=" + result.measuredRows);
+            if (result.maxAirframeFraction > SkirmishCameraFraming.AircraftMaximumViewportFraction + .02f)
+                failures.Add("airframeFractionAboveCap max=" + result.maxAirframeFraction.ToString("0.000", CultureInfo.InvariantCulture));
+            foreach (var r in flightRows)
+                if (r.shot != null && (FlightStages.Contains(r.stage) || r.stage == "touchdown") && !r.rotorFullyOnScreen)
+                    failures.Add("rotorNotOnScreen shot=" + r.shot + " source=" + r.airframeSource);
+            if (!flightRows.Exists(r => r.shot == "approach" && r.landingPatchOnScreen)) failures.Add("landingPatchNotOnScreenAtApproach");
+            foreach (string shot in new[] { "takeoff", "mid-turn", "cruise", "approach", "touchdown", "switch-back-ground", "switch-back-settled" })
+                if (!flightRows.Exists(r => r.shot == shot)) failures.Add("missingShot=" + shot);
+            if (!(maxTurn >= 60f)) failures.Add("turnBelow60 maxTurn=" + maxTurn.ToString("0.0", CultureInfo.InvariantCulture));
+            if (!(touchdownToPatch <= 8f)) failures.Add("touchdownNotOnPatch toPatch=" + touchdownToPatch.ToString("0.0", CultureInfo.InvariantCulture));
+            var settled = flightRows.FindLast(r => r.shot == "switch-back-settled");
+            if (settled == null) failures.Add("switchBackNotRecorded");
+            else
+            {
+                result.switchBackSelectedCardRole = settled.selectedCardRole; result.switchBackSelectedRoles = settled.selectedRoles; result.switchBackInfantryOnScreen = settled.selectedInfantryOnScreen;
+                bool cardsInfantry = !string.IsNullOrEmpty(settled.selectedCardRole);
+                foreach (var card in settled.selectedCardRole.Split(',')) if (!card.EndsWith("/" + SkirmishPopulationCategory.Infantry, StringComparison.Ordinal)) cardsInfantry = false;
+                if (settled.aircraftSelected || settled.selectedInfantry == 0 || settled.selectedInfantry != settled.selectedOwn || !cardsInfantry)
+                    failures.Add("switchBackRoleNotInfantry aircraftSelected=" + (settled.aircraftSelected ? 1 : 0) + " selectedRoles=[" + settled.selectedRoles + "] selectedCardRole=[" + settled.selectedCardRole + "]");
+                if (settled.selectedInfantryOnScreen == 0) failures.Add("groundSquadNotOnScreenAfterSwitchBack camera=" + settled.cameraPosition);
+            }
+            result.result = failures.Count == 0 ? "Passed" : "Failed"; result.failures = string.Join(";", failures);
+            summary = "rows=" + result.rows + " flightRows=" + result.flightRows + " distinctCamera=" + result.distinctCameraPositions +
+                " cameraTravel=" + result.cameraTravel.ToString("0.0", CultureInfo.InvariantCulture) + " aircraftTravel=" + result.aircraftTravel.ToString("0.0", CultureInfo.InvariantCulture) +
+                " maxAirframeFraction=" + result.maxAirframeFraction.ToString("0.000", CultureInfo.InvariantCulture) + " maxTurn=" + maxTurn.ToString("0.0", CultureInfo.InvariantCulture) +
+                " touchdownToPatch=" + touchdownToPatch.ToString("0.0", CultureInfo.InvariantCulture) + " switchBackCards=[" + result.switchBackSelectedCardRole + "]" +
+                (failures.Count == 0 ? "" : " failures=" + result.failures);
+            try
+            {
+                if (flightRows.Count > 0)
+                {
+                    ReviewSize(out int width, out int height, out _);
+                    string prefix = AirFilePrefix(flightRows[0].catalog, width, height, captureLocale) + "-flight";
+                    File.AppendAllText(Path.Combine(OutputDirectory(), prefix + "-summary.jsonl"), JsonUtility.ToJson(result) + "\n");
+                }
+            }
+            catch (Exception error) { failures.Add("summaryWriteFailed:" + error.GetType().Name); summary += " summaryWriteFailed"; }
+            Debug.Log("[SkirmishCameraFramingCapture] flight=" + result.result + " runId=" + flightRunId + " " + summary + " visualReview=Pending phoneAcceptance=Pending");
+            return failures.Count == 0;
         }
 
         // ------------------------------------------------------------------- facts
@@ -433,11 +686,14 @@ namespace Game.Editor
         // The delivered helicopter's squad card can appear a few frames after the entity (group record,
         // drawer projection and tray roster rebuild); wait this long in real time before failing.
         internal const double S026HeliCardWaitSeconds = 20d;
-        // A VTOL that reaches its Move goal turns home and lands by itself (UnitAirMovementSystem sets
-        // UnitAirComponent.ReturningHome on arrival; the goal here is only ~40-60 m out). The player's
-        // Return is therefore tapped shortly after liftoff, while the helicopter is still outbound.
-        const double S026HeliOutboundDwellSeconds = 1.5d, S026HeliReturnObserveSeconds = 10d;
-        const int S026HeliMaxOutboundFlights = 3;
+        // Player-directed flight (designer retest 2026-11-18). In Skirmish a helicopter lands only on
+        // its home pad: one that reaches a Move goal flies home and lands by itself
+        // (UnitAirMovementSystem). The landing patch is therefore the home helipad, and the landing
+        // is the player's Move tapped on that pad during a sideways outbound leg (a turn of about
+        // 180 degrees), not the command-wheel Return.
+        const double S026HeliFollowWaitSeconds = 10d;
+        const float S026HeliOutboundMinimumMetres = 30f, S026HeliLandingTapMinimumMetres = 15f;
+        const float S026HeliApproachMetres = 25f, S026HeliTouchdownToleranceMetres = 8f;
         static readonly (SkirmishRoleKind kind, string roleId, string prefab)[] S026HeliChoices =
         {
             (SkirmishRoleKind.TransportHeli, SkirmishRoleIds.TransportHeli, "Unit_Veh_Helicopter_Transport"),
@@ -446,14 +702,16 @@ namespace Game.Editor
         };
         static Entity s026HeliSession, s026HeliActor;
         static int s026HeliChoice = -1, s026HeliMoveAttempts, s026HeliPageTurns;
-        static bool s026HeliReturnPhase, s026HeliPageForward = true;
+        static bool s026HeliPageForward = true;
         static double s026HeliCardDeadline;
         static float s026HeliWaitStartMatch = -1f;
-        static double s026HeliMoveAt, s026HeliAirborneAt, s026HeliLandedAt, s026HeliLastStatusAt, s026HeliReturnTappedAt;
-        static int s026HeliOutboundFlights;
-        static string s026HeliStateAtReturnTap = "";
-        static Vector3 s026HeliMoveGoal;
-        static string s026HeliLastReason = "";
+        static double s026HeliMoveAt, s026HeliAirborneAt, s026HeliLandedAt, s026HeliLastStatusAt, s026HeliStageAt, s026HeliLandingTapAt, s026HeliLastHeadingAt;
+        static Vector3 s026HeliMoveGoal, s026HeliPatch, s026HeliPatchTap;
+        static float s026HeliHeadingAtTap, s026HeliMaxTurn, s026HeliLastHeading, s026HeliTouchdownDistance = float.NaN;
+        static bool s026HeliTurnShot, s026HeliCruiseShot, s026HeliApproachShot, s026HeliLandingOrderSeen;
+        static int s026HeliSettledShot;
+        static uint s026InfantryGroup;
+        static string s026HeliLastReason = "", s026HeliPatchDiagnostic = "";
 
         public static void RunS026HelicopterFramingProbeAndExit(int seed, string locale = GameLocalization.EnglishLocaleCode)
         {
@@ -475,11 +733,14 @@ namespace Game.Editor
             helipadProbeTouch = null;
             helipadProbeAircraftCycle = false;
             s026HeliSession = session; s026HeliActor = Entity.Null;
-            s026HeliChoice = -1; s026HeliMoveAttempts = 0; s026HeliPageTurns = 0; s026HeliReturnPhase = false;
+            s026HeliChoice = -1; s026HeliMoveAttempts = 0; s026HeliPageTurns = 0;
             s026HeliPageForward = true; s026HeliCardDeadline = 0d;
             s026HeliWaitStartMatch = -1f; s026HeliMoveAt = s026HeliAirborneAt = s026HeliLandedAt = s026HeliLastStatusAt = 0d;
-            s026HeliLastReason = "";
-            s026HeliReturnTappedAt = 0d; s026HeliOutboundFlights = 0; s026HeliStateAtReturnTap = "";
+            s026HeliStageAt = s026HeliLandingTapAt = s026HeliLastHeadingAt = 0d;
+            s026HeliMoveGoal = s026HeliPatch = s026HeliPatchTap = default;
+            s026HeliHeadingAtTap = s026HeliMaxTurn = s026HeliLastHeading = 0f; s026HeliTouchdownDistance = float.NaN;
+            s026HeliTurnShot = s026HeliCruiseShot = s026HeliApproachShot = s026HeliLandingOrderSeen = false; s026HeliSettledShot = 0; s026InfantryGroup = 0;
+            s026HeliLastReason = ""; s026HeliPatchDiagnostic = "";
             helipadProbeStage = S026HeliStageBase;
             new GameObject("NativeS026HelicopterFramingProbe").AddComponent<SkirmishHelipadInputProbeFrame>().Session = session;
             helipadProbeDeadline = UnityEditor.EditorApplication.timeSinceStartup + 1500d;
@@ -492,6 +753,7 @@ namespace Game.Editor
             Debug.Log("[S026HelicopterFraming] result=" + (passed ? "Passed" : "Failed") + " reason=" + reason +
                 " input=Touch aria=Off samples=" + (helipadProbeTouch?.AcceptedSamples ?? 0) + " visualReview=Pending");
             Environment.SetEnvironmentVariable(S026HelicopterFramingEnv, null);
+            SkirmishCameraFramingCapture.EndFlight();
             helipadProbeStage = 0;
             Finish(!passed, reason);
         }
@@ -623,7 +885,7 @@ namespace Game.Editor
                 if (em.HasComponent<SelectedUnitTag>(s026HeliActor))
                 {
                     s026HeliCardDeadline = 0d; s026HeliPageTurns = 0; s026HeliPageForward = true;
-                    helipadProbeStage = S026HeliStageBase + (s026HeliReturnPhase ? 7 : 5);
+                    S026NextStage(S026HeliStageBase + 5, now);
                     return;
                 }
                 if (s026HeliCardDeadline <= 0d) s026HeliCardDeadline = now + S026HeliCardWaitSeconds;
@@ -642,117 +904,283 @@ namespace Game.Editor
                     " tray=" + (tray != null ? "present trayPage=" + tray.LogicalPageIndex : "absent") + " pageTurns=" + s026HeliPageTurns);
                 return;
             }
-            // 105: HUD Move command, then a touch on visible open ground away from the helicopter.
+            var transformNow = em.GetComponentData<LocalTransform>(s026HeliActor);
+            Vector3 heliPosition = transformNow.Position;
+            float heading = S026Heading(transformNow);
+            float toHome = math.distance(transformNow.Position.xz, air.HomePosition.xz);
+            // 105: the selected helicopter's follow view must be live before the flight starts.
             if (helipadProbeStage == S026HeliStageBase + 5)
+            {
+                if (s026HeliStageAt <= 0d) s026HeliStageAt = now;
+                var cameraOwner = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<RtsCameraSystem>();
+                if (cameraOwner != null && cameraOwner.TryReadAircraftFollowState(out var follow) && follow.Following && follow.Actor == s026HeliActor)
+                {
+                    Debug.Log("[S026HelicopterFraming] followApplied bounds=" + follow.BoundsSource + " distance=" + follow.Distance.ToString("0.0", CultureInfo.InvariantCulture));
+                    SkirmishCameraFramingCapture.BeginFlight(s026HeliActor, null);
+                    SkirmishCameraFramingCapture.RequestFlightShot("selected");
+                    S026NextStage(S026HeliStageBase + 6, now);
+                    return;
+                }
+                if (now - s026HeliStageAt > S026HeliFollowWaitSeconds)
+                    EndS026HelicopterFraming(false, "aircraftFollowNotApplied waitedSeconds=" + S026HeliFollowWaitSeconds.ToString("0", CultureInfo.InvariantCulture) +
+                        " lensContext=" + (cameraOwner != null && cameraOwner.HasAircraftFocusContext ? 1 : 0) +
+                        " lastClear=" + (cameraOwner?.LastAircraftFocusClearReason ?? "none") + " " + S026HeliAirState(em, air, controls));
+                return;
+            }
+            // 106: HUD Move, then a touch on visible open ground to the side of the helicopter
+            // (a sideways leg keeps the home pad on screen behind it for the landing Move).
+            if (helipadProbeStage == S026HeliStageBase + 6)
             {
                 if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command) || command.ActiveCommandMode != TacticalCommandMode.Move)
                 { TapHelipadButton(controls?.MoveButton, now); return; }
                 if (!TryS026MoveGround(em, out var point, out var world3))
-                { EndS026HelicopterFraming(false, "noVisibleOpenGroundForMove"); return; }
+                { EndS026HelicopterFraming(false, "noVisibleOpenGroundForMove " + S026HeliAirState(em, air, controls)); return; }
                 if (!helipadProbeTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime))
                 { EndS026HelicopterFraming(false, "moveTouchRejected"); return; }
-                Debug.Log("[S026HelicopterFraming] input=Touch command=Move world=" + world3 + " point=" + point);
+                Debug.Log("[S026HelicopterFraming] input=Touch command=Move leg=Outbound world=" + world3 + " point=" + point);
                 s026HeliMoveAttempts++; s026HeliMoveAt = now; s026HeliMoveGoal = world3;
-                helipadProbeStage = S026HeliStageBase + 6;
+                SkirmishCameraFramingCapture.SetFlightStage("outbound-move", null);
+                S026NextStage(S026HeliStageBase + 7, now);
                 helipadProbeNext = now + 1d;
                 return;
             }
-            // 106: takeoff must follow the order. Hand over to Return shortly after liftoff, while the
-            // helicopter is still outbound; capture fires takeoff/turn/cruise/landing on its own.
-            if (helipadProbeStage == S026HeliStageBase + 6)
+            // 107: takeoff must follow the order.
+            if (helipadProbeStage == S026HeliStageBase + 7)
             {
-                if (air.Airborne == 0 && s026HeliAirborneAt <= 0d)
+                if (air.Airborne == 0)
                 {
                     if (now - s026HeliMoveAt < 15d) return;
                     if (s026HeliMoveAttempts >= 2) { EndS026HelicopterFraming(false, "moveOrderDidNotLaunchHelicopter " + S026HeliAirState(em, air, controls)); return; }
-                    helipadProbeStage = S026HeliStageBase + 4;
+                    S026NextStage(S026HeliStageBase + 6, now);
                     return;
                 }
-                if (s026HeliAirborneAt <= 0d) { s026HeliAirborneAt = now; Debug.Log("[S026HelicopterFraming] airborne=1 " + S026HeliAirState(em, air, controls)); }
-                if (now - s026HeliAirborneAt < S026HeliOutboundDwellSeconds) return;
-                s026HeliReturnPhase = true;
-                helipadProbeStage = S026HeliStageBase + 7;
+                s026HeliAirborneAt = now;
+                Debug.Log("[S026HelicopterFraming] airborne=1 " + S026HeliAirState(em, air, controls));
+                SkirmishCameraFramingCapture.SetFlightStage("takeoff", null);
+                SkirmishCameraFramingCapture.RequestFlightShot("takeoff");
+                S026NextStage(S026HeliStageBase + 8, now);
                 return;
             }
-            // 107: bring it home with the command wheel's visible Return action. Exactly one Return-sector
-            // tap; afterwards only observe. An accepted Return on an airborne helicopter sets
-            // UnitAirComponent.ReturningHome and clears its Move target (UnitReturnToBaseCommandService);
-            // the flight home then keeps ReturningHome set until touchdown. Arriving at the Move goal does
-            // the same by itself, so the tap is made, and the state accepted, only well short of that goal.
-            if (helipadProbeStage == S026HeliStageBase + 7)
-            {
-                bool hasTarget = em.HasComponent<UnitTarget>(s026HeliActor);
-                var position = em.GetComponentData<LocalTransform>(s026HeliActor).Position;
-                float toGoal = math.distance(position.xz, new float2(s026HeliMoveGoal.x, s026HeliMoveGoal.z));
-                float toHome = math.distance(position.xz, air.HomePosition.xz);
-                if (s026HeliReturnTappedAt > 0d)
-                {
-                    helipadProbeNext = now + .05d;
-                    if (air.ReturningHome != 0 && !hasTarget)
-                    {
-                        if (toGoal <= 8f)
-                        { EndS026HelicopterFraming(false, "returnAmbiguousArrivedAtMoveGoal atTap=[" + s026HeliStateAtReturnTap + "] now=[" + S026HeliAirState(em, air, controls) + "]"); return; }
-                        Debug.Log("[S026HelicopterFraming] input=Touch command=Return observed=ReturningHome afterSeconds=" +
-                            (now - s026HeliReturnTappedAt).ToString("0.00", CultureInfo.InvariantCulture) + " toGoal=" +
-                            toGoal.ToString("0.0", CultureInfo.InvariantCulture) + " atTap=[" + s026HeliStateAtReturnTap + "]");
-                        helipadProbeStage = S026HeliStageBase + 8;
-                        return;
-                    }
-                    if (now - s026HeliReturnTappedAt > S026HeliReturnObserveSeconds)
-                        EndS026HelicopterFraming(false, "returnCommandNotObserved returnTaps=1 waitedSeconds=" +
-                            S026HeliReturnObserveSeconds.ToString("0", CultureInfo.InvariantCulture) + " atTap=[" + s026HeliStateAtReturnTap + "] now=[" + S026HeliAirState(em, air, controls) + "]");
-                    return;
-                }
-                // Not outbound any more (it reached its goal and turned home, or landed): a Return now
-                // would have nothing to do. Fly it out again with a normal Move, then Return.
-                if (air.Airborne == 0 || air.ReturningHome != 0 || !hasTarget)
-                {
-                    if (++s026HeliOutboundFlights > S026HeliMaxOutboundFlights)
-                    { EndS026HelicopterFraming(false, "helicopterNotOutboundForReturn flights=" + S026HeliMaxOutboundFlights + " " + S026HeliAirState(em, air, controls)); return; }
-                    Debug.Log("[S026HelicopterFraming] returnDeferred=notOutbound flight=" + s026HeliOutboundFlights + " " + S026HeliAirState(em, air, controls));
-                    s026HeliReturnPhase = false; s026HeliMoveAttempts = 0; s026HeliAirborneAt = 0d;
-                    helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; s026HeliCardDeadline = 0d;
-                    return;
-                }
-                if (!em.HasComponent<SelectedUnitTag>(s026HeliActor))
-                {
-                    if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var mode) && mode.ActiveCommandMode != TacticalCommandMode.None &&
-                        mode.ActiveCommandMode != TacticalCommandMode.Select) { TapHelipadButton(controls?.SelectButton, now); return; }
-                    helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; s026HeliCardDeadline = 0d; // reselect, then come back here
-                    return;
-                }
-                if (now - s026HeliAirborneAt > 60d)
-                { EndS026HelicopterFraming(false, "returnTapWindowNotReached toGoal=" + toGoal.ToString("0.0", CultureInfo.InvariantCulture) + " " + S026HeliAirState(em, air, controls)); return; }
-                var wheel = controls?.CommandWheelPanel;
-                if (wheel == null) { EndS026HelicopterFraming(false, "commandWheelUnavailable " + S026HeliAirState(em, air, controls)); return; }
-                // Opening the wheel issues no order; do it while the helicopter climbs out.
-                if (!wheel.IsOpen) { TapHelipadButton(wheel.OpenButton, now); return; }
-                // Tap Return only clear of the pad and well short of the Move goal (no touch otherwise).
-                if (toHome < 8f || toGoal < 20f) return;
-                var returnButton = wheel.NextReturnButton;
-                if (returnButton == null || returnButton == wheel.OpenButton)
-                { EndS026HelicopterFraming(false, "returnSectorUnavailable " + S026HeliAirState(em, air, controls)); return; }
-                string before = S026HeliAirState(em, air, controls) + " toGoal=" + toGoal.ToString("0.0", CultureInfo.InvariantCulture) +
-                    " returnInteractable=" + (returnButton != null && returnButton.interactable ? 1 : 0);
-                if (TapHelipadButton(returnButton, now))
-                {
-                    s026HeliReturnTappedAt = now;
-                    s026HeliStateAtReturnTap = before;
-                    helipadProbeNext = now + .1d; // observe from the next tick; no further Return taps
-                    Debug.Log("[S026HelicopterFraming] input=Touch command=Return tap=ReturnSector " + before);
-                }
-                return;
-            }
-            // 108: touchdown at home; leave time for the landing and ground switch-back frames.
+            // 108: outbound leg. Tap Move on the landing patch (the home helipad, where a Skirmish
+            // helicopter lands) once it is clear of the pad, on screen and inside the safe band.
             if (helipadProbeStage == S026HeliStageBase + 8)
             {
-                bool home = air.HomeInitialized != 0 && air.Airborne == 0 && air.ReturningHome == 0 &&
-                    math.distance(em.GetComponentData<LocalTransform>(s026HeliActor).Position, air.HomePosition) <= 1.5f;
-                if (!home) { if (now - s026HeliReturnTappedAt > 300d) EndS026HelicopterFraming(false, "touchdownNotObserved " + S026HeliAirState(em, air, controls)); return; }
-                if (s026HeliLandedAt <= 0d) { s026HeliLandedAt = now; Debug.Log("[S026HelicopterFraming] touchdown=1"); }
-                if (now - s026HeliLandedAt < 4d) return;
-                EndS026HelicopterFraming(true, "paidHelicopterRecruitReturnMoveCruiseReturnTouchdown");
+                helipadProbeNext = now + .1d;
+                bool outbound = em.HasComponent<UnitTarget>(s026HeliActor) && air.ReturningHome == 0;
+                float toGoal = math.distance(transformNow.Position.xz, new float2(s026HeliMoveGoal.x, s026HeliMoveGoal.z));
+                if (!outbound || toGoal < 10f)
+                { EndS026HelicopterFraming(false, "landingPatchNotTappedBeforeOutboundArrival toGoal=" + toGoal.ToString("0.0", CultureInfo.InvariantCulture) + " lastPatch=[" + s026HeliPatchDiagnostic + "] " + S026HeliAirState(em, air, controls)); return; }
+                if (now - s026HeliStageAt > 45d)
+                { EndS026HelicopterFraming(false, "outboundLegTimeout " + S026HeliAirState(em, air, controls)); return; }
+                // Arm Move during the climb-out so the patch tap itself is not delayed.
+                if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command) || command.ActiveCommandMode != TacticalCommandMode.Move)
+                { TapHelipadButton(controls?.MoveButton, now); return; }
+                if (toHome < S026HeliLandingTapMinimumMetres) return;
+                if (!TryS026PatchPoint(air.HomePosition, out var patchPoint, out var patchWorld)) return; // wait until it is visible
+                if (!helipadProbeTouch.TryGesture(patchPoint, patchPoint, .15f, 0f, Time.unscaledTime))
+                { EndS026HelicopterFraming(false, "landingMoveTouchRejected"); return; }
+                s026HeliPatch = air.HomePosition; s026HeliPatchTap = patchWorld; s026HeliHeadingAtTap = heading; s026HeliMaxTurn = 0f;
+                s026HeliLandingTapAt = now; s026HeliTurnShot = s026HeliCruiseShot = s026HeliApproachShot = s026HeliLandingOrderSeen = false; s026HeliLastHeading = heading; s026HeliLastHeadingAt = now;
+                Debug.Log("[S026HelicopterFraming] input=Touch command=Move leg=LandingPatch patch=" + s026HeliPatch + " tapWorld=" + patchWorld +
+                    " point=" + patchPoint + " headingAtTap=" + heading.ToString("0.0", CultureInfo.InvariantCulture) + " toHome=" + toHome.ToString("0.0", CultureInfo.InvariantCulture));
+                SkirmishCameraFramingCapture.SetFlightStage("landing-move", s026HeliPatch);
+                S026NextStage(S026HeliStageBase + 9, now);
+                return;
             }
+            // 109: the turn to the patch, cruise, approach and touchdown on the patch.
+            if (helipadProbeStage == S026HeliStageBase + 9)
+            {
+                helipadProbeNext = now + .05d;
+                float toPatch = math.distance(transformNow.Position.xz, new float2(s026HeliPatch.x, s026HeliPatch.z));
+                // The landing must come from the player's Move on the patch, not the automatic return
+                // after reaching the outbound goal: the live Move goal has to move onto the patch.
+                if (!s026HeliLandingOrderSeen)
+                {
+                    if (em.HasComponent<UnitTarget>(s026HeliActor) && TryS026CellWorld(em, em.GetComponentData<UnitTarget>(s026HeliActor).Cell, out var goalWorld))
+                    {
+                        float goalToPatch = math.distance(new float2(goalWorld.x, goalWorld.z), new float2(s026HeliPatch.x, s026HeliPatch.z));
+                        if (goalToPatch <= S026HeliTouchdownToleranceMetres + 4f)
+                        { s026HeliLandingOrderSeen = true; Debug.Log("[S026HelicopterFraming] landingMoveAccepted goal=" + goalWorld + " goalToPatch=" + goalToPatch.ToString("0.0", CultureInfo.InvariantCulture)); }
+                        else if (now - s026HeliLandingTapAt > 3d)
+                        { EndS026HelicopterFraming(false, "landingMoveNotAccepted goal=" + goalWorld + " patch=" + s026HeliPatch + " " + S026HeliAirState(em, air, controls)); return; }
+                    }
+                    else if (air.ReturningHome != 0)
+                    { EndS026HelicopterFraming(false, "landingByAutomaticReturnNotPlayerMove " + S026HeliAirState(em, air, controls)); return; }
+                    else if (air.Airborne != 0 && toPatch <= S026HeliTouchdownToleranceMetres + 4f)
+                    { s026HeliLandingOrderSeen = true; Debug.Log("[S026HelicopterFraming] landingMoveAccepted arrivedAtPatch=1"); }
+                    else if (now - s026HeliLandingTapAt > 3d)
+                    { EndS026HelicopterFraming(false, "landingMoveNotObserved " + S026HeliAirState(em, air, controls)); return; }
+                }
+                float turned = Mathf.Abs(Mathf.DeltaAngle(s026HeliHeadingAtTap, heading));
+                if (air.Airborne != 0) s026HeliMaxTurn = Mathf.Max(s026HeliMaxTurn, turned);
+                bool steady = Mathf.Abs(Mathf.DeltaAngle(s026HeliLastHeading, heading)) < 2f;
+                if (now - s026HeliLastHeadingAt >= .5d) { s026HeliLastHeading = heading; s026HeliLastHeadingAt = now; }
+                if (air.Airborne != 0 && !s026HeliTurnShot && turned >= 30f)
+                { s026HeliTurnShot = true; SkirmishCameraFramingCapture.SetFlightStage("turn", s026HeliPatch); SkirmishCameraFramingCapture.RequestFlightShot("mid-turn"); return; }
+                if (air.Airborne != 0 && s026HeliTurnShot && !s026HeliCruiseShot && s026HeliMaxTurn >= 60f && steady && toPatch > 20f)
+                { s026HeliCruiseShot = true; SkirmishCameraFramingCapture.SetFlightStage("cruise", s026HeliPatch); SkirmishCameraFramingCapture.RequestFlightShot("cruise"); return; }
+                if (air.Airborne != 0 && s026HeliTurnShot && !s026HeliApproachShot && toPatch <= S026HeliApproachMetres)
+                { s026HeliApproachShot = true; SkirmishCameraFramingCapture.SetFlightStage("approach", s026HeliPatch); SkirmishCameraFramingCapture.RequestFlightShot("approach"); return; }
+                if (air.Airborne == 0 && now - s026HeliLandingTapAt > 1d)
+                {
+                    if (!s026HeliLandingOrderSeen)
+                    { EndS026HelicopterFraming(false, "touchdownWithoutAcceptedLandingMove " + S026HeliAirState(em, air, controls)); return; }
+                    if (s026HeliLandedAt <= 0d)
+                    {
+                        s026HeliLandedAt = now; s026HeliTouchdownDistance = toPatch;
+                        Debug.Log("[S026HelicopterFraming] touchdown=1 toPatch=" + toPatch.ToString("0.00", CultureInfo.InvariantCulture) +
+                            " maxTurn=" + s026HeliMaxTurn.ToString("0.0", CultureInfo.InvariantCulture) + " " + S026HeliAirState(em, air, controls));
+                        SkirmishCameraFramingCapture.SetFlightStage("touchdown", s026HeliPatch);
+                        if (toPatch > S026HeliTouchdownToleranceMetres)
+                        { EndS026HelicopterFraming(false, "touchdownAwayFromLandingPatch toPatch=" + toPatch.ToString("0.0", CultureInfo.InvariantCulture) + " " + S026HeliAirState(em, air, controls)); return; }
+                    }
+                    if (now - s026HeliLandedAt < 1.5d) return;
+                    SkirmishCameraFramingCapture.RequestFlightShot("touchdown");
+                    S026NextStage(S026HeliStageBase + 10, now);
+                    return;
+                }
+                if (now - s026HeliLandingTapAt > 120d)
+                    EndS026HelicopterFraming(false, "touchdownNotObserved toPatch=" + toPatch.ToString("0.0", CultureInfo.InvariantCulture) + " maxTurn=" +
+                        s026HeliMaxTurn.ToString("0.0", CultureInfo.InvariantCulture) + " " + S026HeliAirState(em, air, controls));
+                return;
+            }
+            // 110: switch back: tap an infantry squad card (a card tap adds to the selection), then the
+            // helicopter's card to drop it, so only the ground squad is selected.
+            if (helipadProbeStage == S026HeliStageBase + 10)
+            {
+                if (s026HeliStageAt <= 0d) s026HeliStageAt = now;
+                if (s026InfantryGroup == 0 && !TryS026InfantryGroup(em, out s026InfantryGroup))
+                { EndS026HelicopterFraming(false, "noLivingInfantrySquadForSwitchBack"); return; }
+                bool heliSelected = em.HasComponent<SelectedUnitTag>(s026HeliActor);
+                bool infantrySelected = S026GroupSelected(em, s026InfantryGroup);
+                if (infantrySelected && !heliSelected)
+                {
+                    Debug.Log("[S026HelicopterFraming] switchBack=1 infantryGroup=" + s026InfantryGroup + " heliSelected=0");
+                    SkirmishCameraFramingCapture.SetFlightStage("switch-back", null);
+                    S026NextStage(S026HeliStageBase + 11, now);
+                    helipadProbeNext = now + 1.5d;
+                    return;
+                }
+                if (now - s026HeliStageAt > S026HeliCardWaitSeconds)
+                { EndS026HelicopterFraming(false, "switchBackSelectionNotObserved infantrySelected=" + (infantrySelected ? 1 : 0) + " heliSelected=" + (heliSelected ? 1 : 0) + " infantryGroup=" + s026InfantryGroup); return; }
+                bool pageRead = UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page);
+                var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                if (!pageRead || tray == null) return;
+                uint heliGroup = em.HasComponent<SkirmishArmyGroupMembershipComponent>(s026HeliActor) ? em.GetComponentData<SkirmishArmyGroupMembershipComponent>(s026HeliActor).GroupId : 0u;
+                if (!infantrySelected) S026TapGroupCardStep(page, s026InfantryGroup, tray, now, "infantry");
+                else if (heliGroup != 0) S026TapGroupCardStep(page, heliGroup, tray, now, "helicopterOff");
+                else EndS026HelicopterFraming(false, "helicopterGroupUnknownForDeselect");
+                return;
+            }
+            // 111/112: frames after the switch-back, then the capture's fail-closed checks.
+            if (helipadProbeStage == S026HeliStageBase + 11)
+            {
+                SkirmishCameraFramingCapture.RequestFlightShot("switch-back-ground");
+                S026NextStage(S026HeliStageBase + 12, now);
+                helipadProbeNext = now + 2d;
+                return;
+            }
+            if (helipadProbeStage == S026HeliStageBase + 12)
+            {
+                if (s026HeliSettledShot == 0) { s026HeliSettledShot = 1; SkirmishCameraFramingCapture.RequestFlightShot("switch-back-settled"); helipadProbeNext = now + 1d; return; }
+                bool passed = SkirmishCameraFramingCapture.TryEvaluateFlight(s026HeliMaxTurn, s026HeliTouchdownDistance, out string summary);
+                EndS026HelicopterFraming(passed, (passed ? "playerDirectedFlightTurnTouchdownSwitchBack " : "flightAssertionsFailed ") + summary);
+            }
+        }
+
+        static void S026NextStage(int stage, double now) { helipadProbeStage = stage; s026HeliStageAt = now; }
+
+        static bool TryS026CellWorld(EntityManager em, int2 cell, out Vector3 world)
+        {
+            world = default;
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.CalculateEntityCount() != 1) return false;
+            world = GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell);
+            return true;
+        }
+
+        static float S026Heading(LocalTransform transform)
+        {
+            var forward = math.mul(transform.Rotation, new float3(0, 0, 1));
+            return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+        }
+
+        /// <summary>Screen point of the landing patch when it is on screen, inside the HUD-safe band and not under UI.</summary>
+        static bool TryS026PatchPoint(Vector3 patch, out Vector2 point, out Vector3 world)
+        {
+            point = default; world = default;
+            var camera = Camera.main;
+            if (camera == null) return false;
+            var screen = camera.WorldToScreenPoint(patch);
+            s026HeliPatchDiagnostic = "screen=" + screen + " size=" + Screen.width + "x" + Screen.height;
+            if (!(screen.z > camera.nearClipPlane)) return false;
+            point = new Vector2(screen.x, screen.y);
+            if (point.x < Screen.width * .08f || point.x > Screen.width * .92f || point.y < Screen.height * .2f || point.y > Screen.height * .85f) return false;
+            if (!Screen.safeArea.Contains(point)) return false;
+            var hits = new List<RaycastResult>();
+            if (EventSystem.current != null)
+                EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
+            if (hits.Count > 0) { s026HeliPatchDiagnostic += " uiHit=" + hits[0].gameObject.name; return false; }
+            var ray = camera.ScreenPointToRay(point);
+            if (!new Plane(Vector3.up, patch).Raycast(ray, out float distance)) return false;
+            world = ray.GetPoint(distance);
+            return true;
+        }
+
+        static bool TryS026InfantryGroup(EntityManager em, out uint group)
+        {
+            group = 0;
+            var attempt = em.GetComponentData<SkirmishExpandedSessionComponent>(s026HeliSession).SessionId;
+            var counts = new Dictionary<uint, int>();
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent),
+                typeof(SkirmishArmyGroupMembershipComponent), typeof(UnitHealth));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+            {
+                var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                if (own.FactionId != 1 || own.IsStructure != 0 || !own.SessionId.Equals(attempt) ||
+                    em.GetComponentData<SkirmishUnitRoleComponent>(actor).Category != SkirmishPopulationCategory.Infantry ||
+                    em.GetComponentData<UnitHealth>(actor).Current <= 0) continue;
+                uint id = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId;
+                if (id == 0) continue;
+                counts.TryGetValue(id, out int count); counts[id] = count + 1;
+            }
+            int best = 0;
+            foreach (var pair in counts) if (pair.Value > best || pair.Value == best && pair.Key < group) { best = pair.Value; group = pair.Key; }
+            return group != 0;
+        }
+
+        static bool S026GroupSelected(EntityManager em, uint group)
+        {
+            using var query = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(SkirmishArmyGroupMembershipComponent), typeof(UnitHealth));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+                if (em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId == group && em.GetComponentData<UnitHealth>(actor).Current > 0) return true;
+            return false;
+        }
+
+        /// <summary>One normal touch toward tapping a group's squad card: on this page, anywhere in the tray roster, or a page turn.</summary>
+        static void S026TapGroupCardStep(UiExpandedSquadPage page, uint group, MatchHudSquadTrayView tray, double now, string purpose)
+        {
+            int slot = SkirmishCameraFramingCapture.HelicopterCardSlot(page, group);
+            if (slot >= 0)
+            {
+                if (TapHelipadSquadSlot(tray, slot, now))
+                    Debug.Log("[S026HelicopterFraming] input=Touch squadCard purpose=" + purpose + " slot=" + slot + " group=" + group + " page=" + page.PageIndex);
+                return;
+            }
+            var target = MatchHudSquadTouchNavigation.GroupTarget(tray, group);
+            if (target.Available)
+            {
+                if (HelipadSquadInput(target, now, false))
+                    Debug.Log("[S026HelicopterFraming] input=Touch squadCard purpose=" + purpose + " group=" + group + " kind=" + (target.Drag ? "TrayScroll" : "CardTap"));
+                return;
+            }
+            if (page.PageCount <= 1) return;
+            if (s026HeliPageForward && !page.NextPage) s026HeliPageForward = false;
+            else if (!s026HeliPageForward && !page.PreviousPage) s026HeliPageForward = true;
+            if (SwipeHelipadSquadPage(tray, s026HeliPageForward, now))
+                Debug.Log("[S026HelicopterFraming] input=Touch squadPage purpose=" + purpose + " forward=" + (s026HeliPageForward ? 1 : 0) + " page=" + page.PageIndex + "/" + page.PageCount);
         }
 
         /// <summary>
@@ -790,6 +1218,10 @@ namespace Game.Editor
             Debug.Log("[S026HelicopterFraming] input=Touch squadPage forward=" + (s026HeliPageForward ? 1 : 0) + " page=" + page.PageIndex + "/" + page.PageCount);
         }
 
+        /// <summary>
+        /// Visible open ground for the outbound leg: at least 30 m out and preferably to the side
+        /// of the view, so the home pad stays on screen behind the helicopter for the landing Move.
+        /// </summary>
         static bool TryS026MoveGround(EntityManager em, out Vector2 point, out Vector3 world)
         {
             point = default; world = default;
@@ -797,8 +1229,12 @@ namespace Game.Editor
             if (camera == null) return false;
             Vector3 from = em.GetComponentData<LocalTransform>(s026HeliActor).Position;
             var ground = new Plane(Vector3.up, new Vector3(0f, from.y, 0f));
+            var right = camera.transform.right; right.y = 0f;
+            if (right.sqrMagnitude < 1e-6f) return false;
+            right.Normalize();
             float best = 0f;
-            foreach (var v in new[] { new Vector2(.78f, .55f), new Vector2(.22f, .55f), new Vector2(.5f, .72f), new Vector2(.5f, .38f), new Vector2(.7f, .7f), new Vector2(.3f, .7f) })
+            foreach (var v in new[] { new Vector2(.88f, .40f), new Vector2(.22f, .40f), new Vector2(.80f, .45f), new Vector2(.20f, .45f),
+                new Vector2(.86f, .30f), new Vector2(.75f, .60f), new Vector2(.25f, .60f), new Vector2(.5f, .72f), new Vector2(.5f, .38f) })
             {
                 var candidate = new Vector2(Screen.width * v.x, Screen.height * v.y);
                 if (!Screen.safeArea.Contains(candidate)) continue;
@@ -809,10 +1245,12 @@ namespace Game.Editor
                 var ray = camera.ScreenPointToRay(candidate);
                 if (!ground.Raycast(ray, out float distance)) continue;
                 var hit = ray.GetPoint(distance);
-                float reach = Vector3.Distance(new Vector3(hit.x, 0, hit.z), new Vector3(from.x, 0, from.z));
-                if (reach < 40f || reach <= best) continue;
-                // The farthest visible open ground gives the longest outbound leg before Return.
-                best = reach; point = candidate; world = hit;
+                var flat = new Vector3(hit.x - from.x, 0f, hit.z - from.z);
+                float reach = flat.magnitude;
+                if (reach < S026HeliOutboundMinimumMetres) continue;
+                float score = reach * (.25f + Mathf.Abs(Vector3.Dot(flat / reach, right)));
+                if (score <= best) continue;
+                best = score; point = candidate; world = hit;
             }
             return best > 0f;
         }

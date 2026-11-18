@@ -287,6 +287,9 @@ namespace Game.Runtime
                 {if(!tacticalFollowPoseValid)cameraSystem.ZoomAircraftFocus(entityManager,worldCamera,(int)request.Value);continue;}
                 if(cameraSystem.HasAircraftFocusContext&&request.Kind==RtsCameraRequestKind.PerspectiveZoom)
                 {if(!tacticalFollowPoseValid)cameraSystem.ZoomAircraftFocus(entityManager,worldCamera,cameraSystem.AircraftFocusZoomLevel+(request.Value>0?-1:1));continue;}
+                // A normal ground selection leaves the aircraft view onto that selection.
+                if(request.Kind==RtsCameraRequestKind.ClearAircraftFocus)
+                    cameraSystem.ClearAircraftFocusToGroundSelection(entityManager,worldCamera,"NormalGroundCameraOwnership",!tacticalFollowPoseValid);
                 if(request.Kind==RtsCameraRequestKind.ClearAircraftFocus||request.Kind==RtsCameraRequestKind.Pan||request.Kind==RtsCameraRequestKind.MoveGroundCenterTo||request.Kind==RtsCameraRequestKind.SetSmoothFocusTarget||
                     request.Kind==RtsCameraRequestKind.ResetSession||request.Kind==RtsCameraRequestKind.ResetCameraModeSession||
                     request.Kind==RtsCameraRequestKind.ApplyFullscreenIsoModeInstant||request.Kind==RtsCameraRequestKind.ApplyPerspectiveModeInstant||

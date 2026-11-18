@@ -51,6 +51,159 @@ namespace Game.Configs
         }
     }
 
+    /// <summary>
+    /// Player copy for Frontline Control, Breakthrough and Convoy Escort end reasons and mission text.
+    /// This is the in-code fallback for the same keys carried in SkirmishResultUiStrings.json and the
+    /// baked catalog, so a result never shows a raw reason identifier. Farsi is a draft pending review.
+    /// </summary>
+    public static class SkirmishObjectiveCopyTable
+    {
+        public readonly struct CopyRow
+        {
+            public readonly string Key, English, Farsi;
+            public CopyRow(string key, string english, string farsi) { Key = key; English = english; Farsi = farsi; }
+        }
+
+        public static readonly CopyRow[] Rows =
+        {
+            new CopyRow("ui.skirmish.reason.ticketsdepleted.victory",
+                "You held the zones and drained the enemy's tickets to zero.",
+                "مناطق را نگه داشتی و امتیاز دشمن به صفر رسید."),
+            new CopyRow("ui.skirmish.reason.ticketsdepleted.defeat",
+                "The enemy held the zones and drained your tickets to zero.",
+                "دشمن مناطق را نگه داشت و امتیاز تو به صفر رسید."),
+            new CopyRow("ui.skirmish.reason.ticketsdepleted.draw",
+                "Both sides ran out of tickets together.",
+                "امتیاز هر دو طرف هم‌زمان به صفر رسید."),
+            new CopyRow("ui.skirmish.reason.ticketsatdeadline.victory",
+                "Time expired. You held the zones and kept more tickets.",
+                "زمان تمام شد. مناطق را نگه داشتی و امتیاز بیشتری داشتی."),
+            new CopyRow("ui.skirmish.reason.ticketsatdeadline.defeat",
+                "Time expired. The enemy kept more tickets.",
+                "زمان تمام شد. دشمن امتیاز بیشتری داشت."),
+            new CopyRow("ui.skirmish.reason.ticketsatdeadline.draw",
+                "Time expired with the tickets level.",
+                "زمان تمام شد و امتیازها برابر بود."),
+            new CopyRow("ui.skirmish.reason.breakthroughevacuated",
+                "Breakthrough complete. Enough riflemen reached the exit.",
+                "شکستن خط کامل شد. تفنگدارهای کافی به خروجی رسیدند."),
+            new CopyRow("ui.skirmish.reason.breakthroughimpossible",
+                "Too many riflemen were lost. The breakthrough can no longer succeed.",
+                "تفنگدارهای بیش از حد از دست رفتند. شکستن خط دیگر ممکن نیست."),
+            new CopyRow("ui.skirmish.reason.convoydelivered",
+                "Enough convoy trucks reached the destination.",
+                "کامیون‌های کافی کاروان به مقصد رسیدند."),
+            new CopyRow("ui.skirmish.reason.convoyimpossible",
+                "Too many convoy trucks were lost. The convoy can no longer arrive.",
+                "کامیون‌های کاروان بیش از حد از دست رفتند. کاروان دیگر نمی‌تواند برسد."),
+            new CopyRow("ui.skirmish.reason.objectivedeadline",
+                "Time ran out before the objective was completed.",
+                "زمان پیش از تکمیل هدف تمام شد."),
+            new CopyRow("ui.skirmish.reason.startupfailure",
+                "The mission could not start.",
+                "ماموریت شروع نشد."),
+            new CopyRow("ui.skirmish.reason.contentfailure",
+                "The mission could not continue.",
+                "ماموریت ادامه پیدا نکرد."),
+            new CopyRow("ui.skirmish.reason.checkpointfailure",
+                "The mission could not resume from the saved point.",
+                "ماموریت از نقطه ذخیره ادامه پیدا نکرد."),
+            new CopyRow("skirmish.s007.brief",
+                "Hold the frontline zones. Keep your infantry in two or more of the three zones to drain the enemy's tickets before yours run out. Send your infantry to the nearest zone first.",
+                "مناطق خط مقدم را نگه دار. پیاده‌نظامت را در دست‌کم دو منطقه از سه منطقه نگه دار تا پیش از تمام‌شدن امتیاز خودت، امتیاز دشمن را تمام کنی. اول پیاده‌نظام را به نزدیک‌ترین منطقه بفرست."),
+            new CopyRow("skirmish.s007.objective",
+                "Hold at least two of the three zones until the enemy's tickets reach zero.",
+                "دست‌کم دو منطقه از سه منطقه را نگه دار تا امتیاز دشمن به صفر برسد."),
+            new CopyRow("skirmish.s007.first_order",
+                "Send your infantry to the nearest zone and hold it.",
+                "پیاده‌نظام را به نزدیک‌ترین منطقه بفرست و آن را نگه دار."),
+            new CopyRow("skirmish.s007.result.victory",
+                "Enemy main base destroyed.",
+                "پایگاه اصلی دشمن نابود شد."),
+            new CopyRow("skirmish.s007.result.defeat",
+                "Your main base was destroyed.",
+                "پایگاه اصلی تو نابود شد."),
+            new CopyRow("skirmish.s007.result.surrender",
+                "Surrender accepted.",
+                "تسلیم پذیرفته شد."),
+            new CopyRow("skirmish.s007.result.draw_bases",
+                "Both main bases were destroyed.",
+                "هر دو پایگاه اصلی نابود شدند."),
+            new CopyRow("skirmish.s007.result.draw_deadline",
+                "Time expired with neither side ahead.",
+                "زمان تمام شد و هیچ طرفی پیش نبود."),
+            new CopyRow("skirmish.s013.brief",
+                "Break through the enemy line. Hold a corridor with your infantry for twenty seconds to open the exit, then walk at least eight of your twelve riflemen out through it. Move your infantry to the nearest corridor first.",
+                "خط دشمن را بشکن. یکی از گذرگاه‌ها را بیست ثانیه با پیاده‌نظام نگه دار تا خروجی باز شود، سپس دست‌کم هشت نفر از دوازده تفنگدارت را پیاده از آن خارج کن. اول پیاده‌نظام را به نزدیک‌ترین گذرگاه ببر."),
+            new CopyRow("skirmish.s013.objective",
+                "Open the exit, then evacuate at least eight of your twelve riflemen on foot.",
+                "خروجی را باز کن، سپس دست‌کم هشت نفر از دوازده تفنگدار را پیاده تخلیه کن."),
+            new CopyRow("skirmish.s013.first_order",
+                "Move your infantry to the nearest corridor and hold it.",
+                "پیاده‌نظام را به نزدیک‌ترین گذرگاه ببر و آن را نگه دار."),
+            new CopyRow("skirmish.s013.result.victory",
+                "The breakthrough succeeded.",
+                "شکستن خط موفق شد."),
+            new CopyRow("skirmish.s013.result.defeat",
+                "The breakthrough failed.",
+                "شکستن خط ناموفق بود."),
+            new CopyRow("skirmish.s013.result.surrender",
+                "Surrender accepted.",
+                "تسلیم پذیرفته شد."),
+            new CopyRow("skirmish.s019.brief",
+                "Escort the convoy. Get at least two of your three supply trucks into the destination and keep them there for five seconds while your army clears the way. Send your infantry ahead along the route first.",
+                "کاروان را اسکورت کن. دست‌کم دو کامیون از سه کامیون تدارکاتی را به مقصد برسان و پنج ثانیه آنجا نگه دار، در حالی که ارتشت راه را باز می‌کند. اول پیاده‌نظام را جلوتر در مسیر بفرست."),
+            new CopyRow("skirmish.s019.objective",
+                "Deliver at least two of your three convoy trucks to the destination.",
+                "دست‌کم دو کامیون از سه کامیون کاروان را به مقصد برسان."),
+            new CopyRow("skirmish.s019.first_order",
+                "Send your infantry ahead along the route, then bring the trucks to the destination.",
+                "پیاده‌نظام را جلوتر در مسیر بفرست، سپس کامیون‌ها را به مقصد برسان."),
+            new CopyRow("skirmish.s019.result.victory",
+                "The convoy arrived.",
+                "کاروان به مقصد رسید."),
+            new CopyRow("skirmish.s019.result.defeat",
+                "The convoy was lost.",
+                "کاروان از دست رفت."),
+            new CopyRow("skirmish.s019.result.surrender",
+                "Surrender accepted.",
+                "تسلیم پذیرفته شد."),
+            new CopyRow("skirmish.s013.result.draw_bases",
+                "Both main bases were destroyed.",
+                "هر دو پایگاه اصلی نابود شدند."),
+            new CopyRow("skirmish.s013.result.draw_deadline",
+                "Time expired with neither side ahead.",
+                "زمان تمام شد و هیچ طرفی پیش نبود."),
+            new CopyRow("skirmish.s019.result.draw_bases",
+                "Both main bases were destroyed.",
+                "هر دو پایگاه اصلی نابود شدند."),
+            new CopyRow("skirmish.s019.result.draw_deadline",
+                "Time expired with neither side ahead.",
+                "زمان تمام شد و هیچ طرفی پیش نبود."),
+        };
+
+        public static bool TryGet(string key, out CopyRow row)
+        {
+            if (!string.IsNullOrEmpty(key))
+                for (int i = 0; i < Rows.Length; i++)
+                    if (string.Equals(Rows[i].Key, key, StringComparison.Ordinal)) { row = Rows[i]; return true; }
+            row = default;
+            return false;
+        }
+
+        // Result key for a non-base objective end. Tickets endings differ by outcome (zones held or lost);
+        // a plain time limit reads as the objective deadline because there is no base-survival wording here.
+        public static string ReasonKey(SkirmishEndReasonKind reason, SkirmishOutcomeKind outcome)
+        {
+            if (reason == SkirmishEndReasonKind.None) return "ui.skirmish.result.match_complete";
+            string kind = reason == SkirmishEndReasonKind.TimeLimit ? "objectivedeadline" : reason.ToString().ToLowerInvariant();
+            string key = "ui.skirmish.reason." + kind;
+            if (reason == SkirmishEndReasonKind.TicketsDepleted || reason == SkirmishEndReasonKind.TicketsAtDeadline)
+                key += outcome == SkirmishOutcomeKind.Victory ? ".victory" : outcome == SkirmishOutcomeKind.Defeat ? ".defeat" : ".draw";
+            return key;
+        }
+    }
+
     public static class SkirmishExpandedCopyProjection
     {
         public const string S002CatalogId = "S002";
@@ -201,13 +354,6 @@ namespace Game.Configs
 
             if (!TryResultKey(setup, outcome, reason, out string resultKey, out string english))
                 return false;
-            // Non-base results must never fall back to base-destruction copy.
-            if (setup.ObjectiveKind != SkirmishObjectiveKind.None &&
-                setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
-                reason != SkirmishEndReasonKind.MainBaseDestroyed &&
-                reason != SkirmishEndReasonKind.BothBasesDestroyed &&
-                reason != SkirmishEndReasonKind.Surrender)
-                english = Resolve("ui.skirmish.result.match_complete", locale, "MATCH COMPLETE");
             copy = new SkirmishHudCopy(objectiveKey, resultKey, objective, Resolve(resultKey, locale, english));
             return true;
         }
@@ -225,12 +371,10 @@ namespace Game.Configs
                 reason != SkirmishEndReasonKind.BothBasesDestroyed &&
                 reason != SkirmishEndReasonKind.Surrender)
             {
-                // The legacy HUD currently supplies None for new reasons. Use neutral
-                // copy in that case, and reason keys when it can forward the reason.
-                key = reason == SkirmishEndReasonKind.None
-                    ? "ui.skirmish.result.match_complete"
-                    : "ui.skirmish.reason." + reason.ToString().ToLowerInvariant();
-                english = "MATCH COMPLETE";
+                // None means the legacy HUD forwarded no reason: neutral copy. Otherwise the reason key
+                // (and outcome for ticket endings) resolves to player text from the catalog or code table.
+                key = SkirmishObjectiveCopyTable.ReasonKey(reason, outcome);
+                english = SkirmishObjectiveCopyTable.TryGet(key, out var row) ? row.English : "MATCH COMPLETE";
                 return outcome != SkirmishOutcomeKind.None;
             }
 
@@ -360,9 +504,11 @@ namespace Game.Configs
                     }
                 }
             }
-            if (string.Equals(locale, GameLocalization.PersianLocaleCode, StringComparison.OrdinalIgnoreCase) &&
-                TryKnownFa(key, out string fa))
+            bool persian = string.Equals(locale, GameLocalization.PersianLocaleCode, StringComparison.OrdinalIgnoreCase);
+            if (persian && TryKnownFa(key, out string fa))
                 return fa;
+            if (SkirmishObjectiveCopyTable.TryGet(key, out var row))
+                return persian ? row.Farsi : row.English;
             return englishFallback ?? string.Empty;
         }
 

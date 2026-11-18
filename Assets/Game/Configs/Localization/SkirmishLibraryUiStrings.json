@@ -632,21 +632,21 @@
     },
     {
       "key": "ui.skirmish.s007.description",
-      "source": "Briefing for Desert Base · Frontline Control · Ground Maneuver · Field Base.",
+      "source": "Hold the frontline zones. Keep your infantry in two or more of the three zones to drain the enemy's tickets before yours run out. Send your infantry to the nearest zone first.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "توجیه پایگاه کویری کنترل خط مقدم زمینی پایگاه میدانی"
+          "value": "مناطق خط مقدم را نگه دار. پیاده‌نظامت را در دست‌کم دو منطقه از سه منطقه نگه دار تا پیش از تمام‌شدن امتیاز خودت، امتیاز دشمن را تمام کنی. اول پیاده‌نظام را به نزدیک‌ترین منطقه بفرست."
         }
       ]
     },
     {
       "key": "ui.skirmish.s007.purpose",
-      "source": "Objective for Desert Base · Frontline Control · Ground Maneuver · Field Base.",
+      "source": "Hold at least two of the three zones until the enemy's tickets reach zero.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "هدف کنترل خط مقدم"
+          "value": "دست‌کم دو منطقه از سه منطقه را نگه دار تا امتیاز دشمن به صفر برسد."
         }
       ]
     },
@@ -872,21 +872,21 @@
     },
     {
       "key": "ui.skirmish.s013.description",
-      "source": "Briefing for Desert Base · Breakthrough · Ground Maneuver · Field Base.",
+      "source": "Break through the enemy line. Hold a corridor with your infantry for twenty seconds to open the exit, then walk at least eight of your twelve riflemen out through it. Move your infantry to the nearest corridor first.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "توجیه پایگاه کویری شکستن خط زمینی پایگاه میدانی"
+          "value": "خط دشمن را بشکن. یکی از گذرگاه‌ها را بیست ثانیه با پیاده‌نظام نگه دار تا خروجی باز شود، سپس دست‌کم هشت نفر از دوازده تفنگدارت را پیاده از آن خارج کن. اول پیاده‌نظام را به نزدیک‌ترین گذرگاه ببر."
         }
       ]
     },
     {
       "key": "ui.skirmish.s013.purpose",
-      "source": "Objective for Desert Base · Breakthrough · Ground Maneuver · Field Base.",
+      "source": "Open the exit, then evacuate at least eight of your twelve riflemen on foot.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "هدف شکستن خط"
+          "value": "خروجی را باز کن، سپس دست‌کم هشت نفر از دوازده تفنگدار را پیاده تخلیه کن."
         }
       ]
     },
@@ -1112,21 +1112,21 @@
     },
     {
       "key": "ui.skirmish.s019.description",
-      "source": "Briefing for Desert Base · Convoy Escort · Ground Maneuver · Field Base.",
+      "source": "Escort the convoy. Get at least two of your three supply trucks into the destination and keep them there for five seconds while your army clears the way. Send your infantry ahead along the route first.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "توجیه پایگاه کویری اسکورت کاروان زمینی پایگاه میدانی"
+          "value": "کاروان را اسکورت کن. دست‌کم دو کامیون از سه کامیون تدارکاتی را به مقصد برسان و پنج ثانیه آنجا نگه دار، در حالی که ارتشت راه را باز می‌کند. اول پیاده‌نظام را جلوتر در مسیر بفرست."
         }
       ]
     },
     {
       "key": "ui.skirmish.s019.purpose",
-      "source": "Objective for Desert Base · Convoy Escort · Ground Maneuver · Field Base.",
+      "source": "Deliver at least two of your three convoy trucks to the destination.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "هدف اسکورت کاروان"
+          "value": "دست‌کم دو کامیون از سه کامیون کاروان را به مقصد برسان."
         }
       ]
     },

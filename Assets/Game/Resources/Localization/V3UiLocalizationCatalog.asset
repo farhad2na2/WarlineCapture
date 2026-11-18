@@ -7403,9 +7403,9 @@ MonoBehaviour:
     - key: ui.skirmish.s006.title
       value: Combined Arms
     - key: ui.skirmish.s007.description
-      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Hold the frontline zones. Keep your infantry in two or more of the three zones to drain the enemy's tickets before yours run out. Send your infantry to the nearest zone first."
     - key: ui.skirmish.s007.purpose
-      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Hold at least two of the three zones until the enemy's tickets reach zero."
     - key: ui.skirmish.s007.subtitle
       value: "Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
     - key: ui.skirmish.s007.title
@@ -7451,9 +7451,9 @@ MonoBehaviour:
     - key: ui.skirmish.s012.title
       value: "Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
     - key: ui.skirmish.s013.description
-      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Break through the enemy line. Hold a corridor with your infantry for twenty seconds to open the exit, then walk at least eight of your twelve riflemen out through it. Move your infantry to the nearest corridor first."
     - key: ui.skirmish.s013.purpose
-      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Open the exit, then evacuate at least eight of your twelve riflemen on foot."
     - key: ui.skirmish.s013.subtitle
       value: "Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
     - key: ui.skirmish.s013.title
@@ -7499,9 +7499,9 @@ MonoBehaviour:
     - key: ui.skirmish.s018.title
       value: "Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
     - key: ui.skirmish.s019.description
-      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Escort the convoy. Get at least two of your three supply trucks into the destination and keep them there for five seconds while your army clears the way. Send your infantry ahead along the route first."
     - key: ui.skirmish.s019.purpose
-      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+      value: "Deliver at least two of your three convoy trucks to the destination."
     - key: ui.skirmish.s019.subtitle
       value: "Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
     - key: ui.skirmish.s019.title
@@ -10713,6 +10713,82 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
+    - key: ui.skirmish.reason.ticketsdepleted.victory
+      value: "You held the zones and drained the enemy's tickets to zero."
+    - key: ui.skirmish.reason.ticketsdepleted.defeat
+      value: "The enemy held the zones and drained your tickets to zero."
+    - key: ui.skirmish.reason.ticketsdepleted.draw
+      value: "Both sides ran out of tickets together."
+    - key: ui.skirmish.reason.ticketsatdeadline.victory
+      value: "Time expired. You held the zones and kept more tickets."
+    - key: ui.skirmish.reason.ticketsatdeadline.defeat
+      value: "Time expired. The enemy kept more tickets."
+    - key: ui.skirmish.reason.ticketsatdeadline.draw
+      value: "Time expired with the tickets level."
+    - key: ui.skirmish.reason.breakthroughevacuated
+      value: "Breakthrough complete. Enough riflemen reached the exit."
+    - key: ui.skirmish.reason.breakthroughimpossible
+      value: "Too many riflemen were lost. The breakthrough can no longer succeed."
+    - key: ui.skirmish.reason.convoydelivered
+      value: "Enough convoy trucks reached the destination."
+    - key: ui.skirmish.reason.convoyimpossible
+      value: "Too many convoy trucks were lost. The convoy can no longer arrive."
+    - key: ui.skirmish.reason.objectivedeadline
+      value: "Time ran out before the objective was completed."
+    - key: ui.skirmish.reason.startupfailure
+      value: "The mission could not start."
+    - key: ui.skirmish.reason.contentfailure
+      value: "The mission could not continue."
+    - key: ui.skirmish.reason.checkpointfailure
+      value: "The mission could not resume from the saved point."
+    - key: skirmish.s007.brief
+      value: "Hold the frontline zones. Keep your infantry in two or more of the three zones to drain the enemy's tickets before yours run out. Send your infantry to the nearest zone first."
+    - key: skirmish.s007.objective
+      value: "Hold at least two of the three zones until the enemy's tickets reach zero."
+    - key: skirmish.s007.first_order
+      value: "Send your infantry to the nearest zone and hold it."
+    - key: skirmish.s007.result.victory
+      value: "Enemy main base destroyed."
+    - key: skirmish.s007.result.defeat
+      value: "Your main base was destroyed."
+    - key: skirmish.s007.result.surrender
+      value: "Surrender accepted."
+    - key: skirmish.s007.result.draw_bases
+      value: "Both main bases were destroyed."
+    - key: skirmish.s007.result.draw_deadline
+      value: "Time expired with neither side ahead."
+    - key: skirmish.s013.brief
+      value: "Break through the enemy line. Hold a corridor with your infantry for twenty seconds to open the exit, then walk at least eight of your twelve riflemen out through it. Move your infantry to the nearest corridor first."
+    - key: skirmish.s013.objective
+      value: "Open the exit, then evacuate at least eight of your twelve riflemen on foot."
+    - key: skirmish.s013.first_order
+      value: "Move your infantry to the nearest corridor and hold it."
+    - key: skirmish.s013.result.victory
+      value: "The breakthrough succeeded."
+    - key: skirmish.s013.result.defeat
+      value: "The breakthrough failed."
+    - key: skirmish.s013.result.surrender
+      value: "Surrender accepted."
+    - key: skirmish.s019.brief
+      value: "Escort the convoy. Get at least two of your three supply trucks into the destination and keep them there for five seconds while your army clears the way. Send your infantry ahead along the route first."
+    - key: skirmish.s019.objective
+      value: "Deliver at least two of your three convoy trucks to the destination."
+    - key: skirmish.s019.first_order
+      value: "Send your infantry ahead along the route, then bring the trucks to the destination."
+    - key: skirmish.s019.result.victory
+      value: "The convoy arrived."
+    - key: skirmish.s019.result.defeat
+      value: "The convoy was lost."
+    - key: skirmish.s019.result.surrender
+      value: "Surrender accepted."
+    - key: skirmish.s013.result.draw_bases
+      value: "Both main bases were destroyed."
+    - key: skirmish.s013.result.draw_deadline
+      value: "Time expired with neither side ahead."
+    - key: skirmish.s019.result.draw_bases
+      value: "Both main bases were destroyed."
+    - key: skirmish.s019.result.draw_deadline
+      value: "Time expired with neither side ahead."
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -23699,9 +23775,9 @@ MonoBehaviour:
     - key: ui.skirmish.s006.title
       value: "\u062A\u0631\u06A9\u06CC\u0628\u06CC"
     - key: ui.skirmish.s007.description
-      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+      value: "\u0645\u0646\u0627\u0637\u0642 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631. \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645\u062A \u0631\u0627 \u062F\u0631 \u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u0645\u0646\u0637\u0642\u0647 \u0627\u0632 \u0633\u0647 \u0645\u0646\u0637\u0642\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u067E\u06CC\u0634 \u0627\u0632 \u062A\u0645\u0627\u0645\u200C\u0634\u062F\u0646 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062E\u0648\u062F\u062A\u060C \u0627\u0645\u062A\u06CC\u0627\u0632 \u062F\u0634\u0645\u0646 \u0631\u0627 \u062A\u0645\u0627\u0645 \u06A9\u0646\u06CC. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u0645\u0646\u0637\u0642\u0647 \u0628\u0641\u0631\u0633\u062A."
     - key: ui.skirmish.s007.purpose
-      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+      value: "\u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u0645\u0646\u0637\u0642\u0647 \u0627\u0632 \u0633\u0647 \u0645\u0646\u0637\u0642\u0647 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062F\u0634\u0645\u0646 \u0628\u0647 \u0635\u0641\u0631 \u0628\u0631\u0633\u062F."
     - key: ui.skirmish.s007.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s007.title
@@ -23747,9 +23823,9 @@ MonoBehaviour:
     - key: ui.skirmish.s012.title
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
     - key: ui.skirmish.s013.description
-      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+      value: "\u062E\u0637 \u062F\u0634\u0645\u0646 \u0631\u0627 \u0628\u0634\u06A9\u0646. \u06CC\u06A9\u06CC \u0627\u0632 \u06AF\u0630\u0631\u06AF\u0627\u0647\u200C\u0647\u0627 \u0631\u0627 \u0628\u06CC\u0633\u062A \u062B\u0627\u0646\u06CC\u0647 \u0628\u0627 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u062E\u0631\u0648\u062C\u06CC \u0628\u0627\u0632 \u0634\u0648\u062F\u060C \u0633\u067E\u0633 \u062F\u0633\u062A\u200C\u06A9\u0645 \u0647\u0634\u062A \u0646\u0641\u0631 \u0627\u0632 \u062F\u0648\u0627\u0632\u062F\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u062A \u0631\u0627 \u067E\u06CC\u0627\u062F\u0647 \u0627\u0632 \u0622\u0646 \u062E\u0627\u0631\u062C \u06A9\u0646. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u06AF\u0630\u0631\u06AF\u0627\u0647 \u0628\u0628\u0631."
     - key: ui.skirmish.s013.purpose
-      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+      value: "\u062E\u0631\u0648\u062C\u06CC \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u060C \u0633\u067E\u0633 \u062F\u0633\u062A\u200C\u06A9\u0645 \u0647\u0634\u062A \u0646\u0641\u0631 \u0627\u0632 \u062F\u0648\u0627\u0632\u062F\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0627 \u067E\u06CC\u0627\u062F\u0647 \u062A\u062E\u0644\u06CC\u0647 \u06A9\u0646."
     - key: ui.skirmish.s013.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s013.title
@@ -23795,9 +23871,9 @@ MonoBehaviour:
     - key: ui.skirmish.s018.title
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
     - key: ui.skirmish.s019.description
-      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0646. \u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0632 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A\u06CC \u0631\u0627 \u0628\u0647 \u0645\u0642\u0635\u062F \u0628\u0631\u0633\u0627\u0646 \u0648 \u067E\u0646\u062C \u062B\u0627\u0646\u06CC\u0647 \u0622\u0646\u062C\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631\u060C \u062F\u0631 \u062D\u0627\u0644\u06CC \u06A9\u0647 \u0627\u0631\u062A\u0634\u062A \u0631\u0627\u0647 \u0631\u0627 \u0628\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u062C\u0644\u0648\u062A\u0631 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0628\u0641\u0631\u0633\u062A."
     - key: ui.skirmish.s019.purpose
-      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+      value: "\u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0632 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627 \u0628\u0647 \u0645\u0642\u0635\u062F \u0628\u0631\u0633\u0627\u0646."
     - key: ui.skirmish.s019.subtitle
       value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
     - key: ui.skirmish.s019.title
@@ -27411,3 +27487,79 @@ MonoBehaviour:
     - key: warning_ground_attack_type
       value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \u062F\u0627\u0631\u0646 \u062D\u0645\u0644\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646"
+    - key: ui.skirmish.reason.ticketsdepleted.victory
+      value: "\u0645\u0646\u0627\u0637\u0642 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u06CC \u0648 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062F\u0634\u0645\u0646 \u0628\u0647 \u0635\u0641\u0631 \u0631\u0633\u06CC\u062F."
+    - key: ui.skirmish.reason.ticketsdepleted.defeat
+      value: "\u062F\u0634\u0645\u0646 \u0645\u0646\u0627\u0637\u0642 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A \u0648 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062A\u0648 \u0628\u0647 \u0635\u0641\u0631 \u0631\u0633\u06CC\u062F."
+    - key: ui.skirmish.reason.ticketsdepleted.draw
+      value: "\u0627\u0645\u062A\u06CC\u0627\u0632 \u0647\u0631 \u062F\u0648 \u0637\u0631\u0641 \u0647\u0645\u200C\u0632\u0645\u0627\u0646 \u0628\u0647 \u0635\u0641\u0631 \u0631\u0633\u06CC\u062F."
+    - key: ui.skirmish.reason.ticketsatdeadline.victory
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F. \u0645\u0646\u0627\u0637\u0642 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u06CC \u0648 \u0627\u0645\u062A\u06CC\u0627\u0632 \u0628\u06CC\u0634\u062A\u0631\u06CC \u062F\u0627\u0634\u062A\u06CC."
+    - key: ui.skirmish.reason.ticketsatdeadline.defeat
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F. \u062F\u0634\u0645\u0646 \u0627\u0645\u062A\u06CC\u0627\u0632 \u0628\u06CC\u0634\u062A\u0631\u06CC \u062F\u0627\u0634\u062A."
+    - key: ui.skirmish.reason.ticketsatdeadline.draw
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F \u0648 \u0627\u0645\u062A\u06CC\u0627\u0632\u0647\u0627 \u0628\u0631\u0627\u0628\u0631 \u0628\u0648\u062F."
+    - key: ui.skirmish.reason.breakthroughevacuated
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u06A9\u0627\u0645\u0644 \u0634\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627\u06CC \u06A9\u0627\u0641\u06CC \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC \u0631\u0633\u06CC\u062F\u0646\u062F."
+    - key: ui.skirmish.reason.breakthroughimpossible
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627\u06CC \u0628\u06CC\u0634 \u0627\u0632 \u062D\u062F \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646\u062F. \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062F\u06CC\u06AF\u0631 \u0645\u0645\u06A9\u0646 \u0646\u06CC\u0633\u062A."
+    - key: ui.skirmish.reason.convoydelivered
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u06A9\u0627\u0641\u06CC \u06A9\u0627\u0631\u0648\u0627\u0646 \u0628\u0647 \u0645\u0642\u0635\u062F \u0631\u0633\u06CC\u062F\u0646\u062F."
+    - key: ui.skirmish.reason.convoyimpossible
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u06A9\u0627\u0631\u0648\u0627\u0646 \u0628\u06CC\u0634 \u0627\u0632 \u062D\u062F \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646\u062F. \u06A9\u0627\u0631\u0648\u0627\u0646 \u062F\u06CC\u06AF\u0631 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F \u0628\u0631\u0633\u062F."
+    - key: ui.skirmish.reason.objectivedeadline
+      value: "\u0632\u0645\u0627\u0646 \u067E\u06CC\u0634 \u0627\u0632 \u062A\u06A9\u0645\u06CC\u0644 \u0647\u062F\u0641 \u062A\u0645\u0627\u0645 \u0634\u062F."
+    - key: ui.skirmish.reason.startupfailure
+      value: "\u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0634\u0631\u0648\u0639 \u0646\u0634\u062F."
+    - key: ui.skirmish.reason.contentfailure
+      value: "\u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0646\u06A9\u0631\u062F."
+    - key: ui.skirmish.reason.checkpointfailure
+      value: "\u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0627\u0632 \u0646\u0642\u0637\u0647 \u0630\u062E\u06CC\u0631\u0647 \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0646\u06A9\u0631\u062F."
+    - key: skirmish.s007.brief
+      value: "\u0645\u0646\u0627\u0637\u0642 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631. \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645\u062A \u0631\u0627 \u062F\u0631 \u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u0645\u0646\u0637\u0642\u0647 \u0627\u0632 \u0633\u0647 \u0645\u0646\u0637\u0642\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u067E\u06CC\u0634 \u0627\u0632 \u062A\u0645\u0627\u0645\u200C\u0634\u062F\u0646 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062E\u0648\u062F\u062A\u060C \u0627\u0645\u062A\u06CC\u0627\u0632 \u062F\u0634\u0645\u0646 \u0631\u0627 \u062A\u0645\u0627\u0645 \u06A9\u0646\u06CC. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u0645\u0646\u0637\u0642\u0647 \u0628\u0641\u0631\u0633\u062A."
+    - key: skirmish.s007.objective
+      value: "\u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u0645\u0646\u0637\u0642\u0647 \u0627\u0632 \u0633\u0647 \u0645\u0646\u0637\u0642\u0647 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u0627\u0645\u062A\u06CC\u0627\u0632 \u062F\u0634\u0645\u0646 \u0628\u0647 \u0635\u0641\u0631 \u0628\u0631\u0633\u062F."
+    - key: skirmish.s007.first_order
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u0645\u0646\u0637\u0642\u0647 \u0628\u0641\u0631\u0633\u062A \u0648 \u0622\u0646 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: skirmish.s007.result.victory
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646 \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: skirmish.s007.result.defeat
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062A\u0648 \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: skirmish.s007.result.surrender
+      value: "\u062A\u0633\u0644\u06CC\u0645 \u067E\u0630\u06CC\u0631\u0641\u062A\u0647 \u0634\u062F."
+    - key: skirmish.s007.result.draw_bases
+      value: "\u0647\u0631 \u062F\u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0646\u0627\u0628\u0648\u062F \u0634\u062F\u0646\u062F."
+    - key: skirmish.s007.result.draw_deadline
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F \u0648 \u0647\u06CC\u0686 \u0637\u0631\u0641\u06CC \u067E\u06CC\u0634 \u0646\u0628\u0648\u062F."
+    - key: skirmish.s013.brief
+      value: "\u062E\u0637 \u062F\u0634\u0645\u0646 \u0631\u0627 \u0628\u0634\u06A9\u0646. \u06CC\u06A9\u06CC \u0627\u0632 \u06AF\u0630\u0631\u06AF\u0627\u0647\u200C\u0647\u0627 \u0631\u0627 \u0628\u06CC\u0633\u062A \u062B\u0627\u0646\u06CC\u0647 \u0628\u0627 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u062E\u0631\u0648\u062C\u06CC \u0628\u0627\u0632 \u0634\u0648\u062F\u060C \u0633\u067E\u0633 \u062F\u0633\u062A\u200C\u06A9\u0645 \u0647\u0634\u062A \u0646\u0641\u0631 \u0627\u0632 \u062F\u0648\u0627\u0632\u062F\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u062A \u0631\u0627 \u067E\u06CC\u0627\u062F\u0647 \u0627\u0632 \u0622\u0646 \u062E\u0627\u0631\u062C \u06A9\u0646. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u06AF\u0630\u0631\u06AF\u0627\u0647 \u0628\u0628\u0631."
+    - key: skirmish.s013.objective
+      value: "\u062E\u0631\u0648\u062C\u06CC \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u060C \u0633\u067E\u0633 \u062F\u0633\u062A\u200C\u06A9\u0645 \u0647\u0634\u062A \u0646\u0641\u0631 \u0627\u0632 \u062F\u0648\u0627\u0632\u062F\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0627 \u067E\u06CC\u0627\u062F\u0647 \u062A\u062E\u0644\u06CC\u0647 \u06A9\u0646."
+    - key: skirmish.s013.first_order
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u0628\u0647 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u06AF\u0630\u0631\u06AF\u0627\u0647 \u0628\u0628\u0631 \u0648 \u0622\u0646 \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: skirmish.s013.result.victory
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0645\u0648\u0641\u0642 \u0634\u062F."
+    - key: skirmish.s013.result.defeat
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0646\u0627\u0645\u0648\u0641\u0642 \u0628\u0648\u062F."
+    - key: skirmish.s013.result.surrender
+      value: "\u062A\u0633\u0644\u06CC\u0645 \u067E\u0630\u06CC\u0631\u0641\u062A\u0647 \u0634\u062F."
+    - key: skirmish.s019.brief
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0646. \u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0632 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A\u06CC \u0631\u0627 \u0628\u0647 \u0645\u0642\u0635\u062F \u0628\u0631\u0633\u0627\u0646 \u0648 \u067E\u0646\u062C \u062B\u0627\u0646\u06CC\u0647 \u0622\u0646\u062C\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631\u060C \u062F\u0631 \u062D\u0627\u0644\u06CC \u06A9\u0647 \u0627\u0631\u062A\u0634\u062A \u0631\u0627\u0647 \u0631\u0627 \u0628\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0627\u0648\u0644 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u062C\u0644\u0648\u062A\u0631 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0628\u0641\u0631\u0633\u062A."
+    - key: skirmish.s019.objective
+      value: "\u062F\u0633\u062A\u200C\u06A9\u0645 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0632 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627 \u0628\u0647 \u0645\u0642\u0635\u062F \u0628\u0631\u0633\u0627\u0646."
+    - key: skirmish.s019.first_order
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627 \u062C\u0644\u0648\u062A\u0631 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0628\u0641\u0631\u0633\u062A\u060C \u0633\u067E\u0633 \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627 \u0631\u0627 \u0628\u0647 \u0645\u0642\u0635\u062F \u0628\u0631\u0633\u0627\u0646."
+    - key: skirmish.s019.result.victory
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0628\u0647 \u0645\u0642\u0635\u062F \u0631\u0633\u06CC\u062F."
+    - key: skirmish.s019.result.defeat
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: skirmish.s019.result.surrender
+      value: "\u062A\u0633\u0644\u06CC\u0645 \u067E\u0630\u06CC\u0631\u0641\u062A\u0647 \u0634\u062F."
+    - key: skirmish.s013.result.draw_bases
+      value: "\u0647\u0631 \u062F\u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0646\u0627\u0628\u0648\u062F \u0634\u062F\u0646\u062F."
+    - key: skirmish.s013.result.draw_deadline
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F \u0648 \u0647\u06CC\u0686 \u0637\u0631\u0641\u06CC \u067E\u06CC\u0634 \u0646\u0628\u0648\u062F."
+    - key: skirmish.s019.result.draw_bases
+      value: "\u0647\u0631 \u062F\u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0646\u0627\u0628\u0648\u062F \u0634\u062F\u0646\u062F."
+    - key: skirmish.s019.result.draw_deadline
+      value: "\u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0645 \u0634\u062F \u0648 \u0647\u06CC\u0686 \u0637\u0631\u0641\u06CC \u067E\u06CC\u0634 \u0646\u0628\u0648\u062F."

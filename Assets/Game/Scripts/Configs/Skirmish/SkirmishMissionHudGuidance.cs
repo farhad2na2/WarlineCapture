@@ -42,6 +42,11 @@ namespace Game.Configs
             new("S026", "skirmish.s026.first_order", "Advance your infantry along the main avenue to the crossroads.",
                 "anchor.skirmish.s026.candidate_route_shared_waypoint_02",
                 "skirmish.s026.rendezvous", "RENDEZVOUS"),
+            // Frontline Control, Breakthrough and Convoy Escort prototypes: first-order prompt only, no
+            // marker (no verified anchor yet). Text keys live in SkirmishResultUiStrings.json.
+            new("S007", "skirmish.s007.first_order", "Send your infantry to the nearest zone and hold it.", string.Empty, string.Empty, string.Empty),
+            new("S013", "skirmish.s013.first_order", "Move your infantry to the nearest corridor and hold it.", string.Empty, string.Empty, string.Empty),
+            new("S019", "skirmish.s019.first_order", "Send your infantry ahead along the route, then bring the trucks to the destination.", string.Empty, string.Empty, string.Empty),
         };
 
         public static bool TryGet(string catalogId, out SkirmishMissionHudGuidance guidance)

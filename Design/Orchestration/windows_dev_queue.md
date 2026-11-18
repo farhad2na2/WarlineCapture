@@ -147,13 +147,36 @@ established start. Re-author the affected rows (W6 steps b–c), then a menu lau
 `expandedStartupFailure`. Add an EditMode or authoring test that fails on today's S020 layout. Branch `missions/win-w14-ce-established-spawn`.
 
 ## W15 — SkirmishExpandedAriaTests: EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective (2026-11-18)
-status: READY
+status: DONE (e7a115bb2; merged deed06125)
 codex effort: high
 Windows W12 evidence: fails identically on base ca5b7ccbb and on W12 ("Expected Entity(47:9) But was Entity(34:9)"), so it predates W12 and
 keeps `[SkirmishExpandedAriaTests] result=Passed` red. Decide with evidence whether the test's expected entity is stale (fixture/roster change)
 or enemy structure-defender targeting is wrong; fix the right side minimally, never weaken the test, no stat changes. Prove with
 `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation` → `[SkirmishExpandedAriaTests] result=Passed` on Windows, cut from
 missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
+
+## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 33 (full fps, seed 130365 en, `program-logs/2026-11-18/lane33/q/unity.log`): S009/S011 (field) Victory at 49% of deadline;
+S008 Defeat on tickets 614.8 s zones 1/2 (:11332), S010 Defeat 863.2 s zones 0/3 (:36088), S012 Defeat 617.8 s (:54188). Windows W6 saw
+the same, so it is not fps. ARIA chose Hold 0 times on S008/S012 (only Move ControlZone / ObserveObjective) but 9 and 16 times on the wins.
+First diagnose with evidence (AGENTS.md: check input, spawning and placement against the current budget before tuning): does the
+established roster spawn and get orders, why does the FC objective planner never hold captured zones on these rows. Fix ARIA objective
+tactics if that is the defect; otherwise tune only starting forces/resources/deadline per the map reuse policy budget guidance (owner
+direction 2026-11-06). No unit-stat or rule changes, no map changes. Windows proves with check_draft/quickcheck + the FC/ARIA EditMode
+tests it touches; Mac runs the counted queue. Branch `missions/win-w16-fc-established`. Per-task results file.
+
+## W17 — Burst BC1016: managed byte[] in AriaCoverageRecruitPolicy.TryStart (2026-11-18)
+status: READY
+codex effort: high
+Windows W15 log: Burst error BC1016 at `Assets/Game/Scripts/Simulation/AriaExpandedPreparationPolicy.cs:174`. `TryStart(..., byte[] order, ...)`
+(:177) receives the `static readonly byte[] Order`/`AirPriority` arrays (:136, :139) as managed parameters inside Burst-compiled
+AriaSkirmishPlanSystem/AriaPlayDecisionSystem (from a7c6eeabe). The Editor silently falls back to managed code; device/AOT Burst may fail.
+Make it Burst-compatible with identical behaviour and priority order (e.g. pass a FixedList/unsafe pointer, or index the static readonly
+arrays directly without passing them). No behaviour change. Grep the other Aria*Policy files for the same pattern and fix those too.
+Prove: Editor log with no BC10xx for Aria* after a domain reload, compile marker, and `Game.Tests.Editor.SkirmishExpandedAriaTests`
+EditMode all passing. Branch `missions/win-w17-aria-burst`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

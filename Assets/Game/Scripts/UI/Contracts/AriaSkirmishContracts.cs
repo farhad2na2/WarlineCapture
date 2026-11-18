@@ -107,6 +107,9 @@ namespace Game.UI.Contracts
         // Support orders: clear public ground behind the presented column toward home (-20016, radar and
         // transport heli Move) and ahead of it toward the enemy objective (-20017, drone Scan).
         public AriaTouchTarget RearGround, FrontGround;
+        // Air-capable base assault: clear ground 30 units from home toward the column (-20018), the Move target for the
+        // AA (and the transport heli when the column's rear ground is not on screen).
+        public AriaTouchTarget SupportHomeGround;
         // The open full map's "center on HQ" control (an ordinary popup button).
         public AriaTouchTarget MapCenterHome;
         // Ordinary Move and Scan command buttons and their armed modes.

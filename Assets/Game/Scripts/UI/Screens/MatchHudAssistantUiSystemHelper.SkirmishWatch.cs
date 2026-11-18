@@ -840,8 +840,12 @@ namespace Game.UI.Runtime
                 // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:
                 // clear public ground 40 units behind the presented front toward home (radar and
                 // transport heli Move), and 60 units ahead of it toward the enemy objective (drone Scan).
-                if ((view.CoverageFieldedMask & (4 | 16 | 32)) != 0 && !view.MapOpen && !view.DrawerOpen)
+                if ((view.CoverageFieldedMask & (4 | 16 | 32 | 512)) != 0 && !view.MapOpen && !view.DrawerOpen)
                 {
+                    // Air-capable base assault (lane 26 S004): the AA and transport heli start at home and the column's
+                    // rear was off screen after their card was tapped; offer clear home-side ground as well.
+                    if (view.AirProfile && (view.CoverageFieldedMask & (32 | 512)) != 0)
+                        view.SupportHomeGround = ObserveClearAttackGround(home, homeApproach, -20018, 30f);
                     view.RearGround = ObserveClearAttackGround(armyCenter, home - armyCenter, -20016, 40f);
                     if ((view.CoverageFieldedMask & 16) != 0 && (objective - armyCenter).sqrMagnitude > 1)
                         view.FrontGround = ObserveClearAttackGround(armyCenter, objective - armyCenter, -20017, 60f);

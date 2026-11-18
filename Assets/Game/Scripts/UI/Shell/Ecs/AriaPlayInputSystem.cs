@@ -23,6 +23,31 @@ namespace Game.UI.Shell.Ecs
             var query = ariaStateQuery;
             return query.CalculateEntityCount() == 1 ? query.GetSingleton<AriaSkirmishPlanComponent>().Intent.ToString() : "none";
         }
+        // Evidence only (lane 26 S004 155925: Blocked 115 on control -240380 with intent DefendBase could not be
+        // named): which presented control the blocked target is, and the planner's owner stages and modes.
+        private void TraceBlockedControl(in AriaPlaySessionComponent session)
+        {
+            var query = ariaStateQuery;
+            if (query.CalculateEntityCount() != 1) return;
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (!v.ExpandedSession) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            int id = session.TargetId;
+            string control = id == 0 ? "none" : id == v.FocusPlayer.Id ? "FocusPlayer" : id == v.FocusEnemy.Id ? "FocusEnemy" :
+                id == v.Attack.Id ? "Attack" : id == v.Move.Id ? "Move" : id == v.Scan.Id ? "Scan" : id == v.Hold.Id ? "Hold" :
+                id == v.Select.Id ? "Select" : id == v.SelectedSquadToToggle.Id ? "SelectedSquadToToggle" :
+                id == v.NextSquadPage.Id ? "NextSquadPage" : id == v.PreviousSquadPage.Id ? "PreviousSquadPage" :
+                id == v.BaseAlertDefenderPage.Id ? "BaseAlertDefenderPage" : id == v.CloseDrawer.Id ? "CloseDrawer" :
+                id == v.CloseMap.Id ? "CloseMap" : id == v.PlacementCancel.Id ? "PlacementCancel" :
+                id == v.Squad0.Id ? "Squad0" : id == v.Squad1.Id ? "Squad1" : id == v.Squad2.Id ? "Squad2" :
+                id == v.Squad3.Id ? "Squad3" : id == v.Squad4.Id ? "Squad4" : id == v.HomeGround.Id ? "HomeGround" :
+                id == v.ThreatGround.Id ? "ThreatGround" : id == v.SupportHomeGround.Id ? "SupportHomeGround" :
+                id == v.RearGround.Id ? "RearGround" : "unknown";
+            Debug.Log($"[AriaBlockedControl] target={id} control={control} intent={p.Intent} homeDefenseStage={p.HomeDefenseStage} supportStage={p.SupportStage} " +
+                $"coverageCurrent={p.CoverageCurrent} breacherStage={p.BreacherStage} attackMode={v.AttackMode} moveMode={v.MoveMode} scanMode={v.ScanMode} " +
+                $"homeThreat={v.PresentedHomeThreat} selectedGroups={v.ExpandedSelectedGroups} selectedMask={v.ExpandedSelectedMask} " +
+                $"selectedOffPage={v.ExpandedSelectedOffPage} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} t={v.Time:F1}");
+        }
         private void TraceS002(string eventName, in AriaPlaySessionComponent session, in AriaPlayObservationComponent observation)
         {
             if (!AriaCommandEvidence.Active) return;
@@ -303,7 +328,7 @@ namespace Game.UI.Shell.Ecs
                   {
                       // Every scenario: the stop code, intent and target (TraceS002 adds detail for S002 only).
                       Debug.LogWarning($"[AriaBlocked] reason={current.StopReason} target={current.TargetId} attempts={current.Attempts} actions={current.Actions} kind={observation.ValueRO.Kind} offered={observation.ValueRO.TargetId} goal={observation.ValueRO.GoalId} intent={ReadPlanIntent()} frame={UnityEngine.Time.frameCount}");
-                      TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true;
+                      TraceS002("blocked", current, observation.ValueRO); TraceBlockedControl(current); reportedBlocked = true;
                   }
                   if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
                 reportedBlocked = false;

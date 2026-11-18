@@ -50,6 +50,14 @@ namespace Game.UI.Contracts
         public AriaPublicBoardingObservation PublicBoarding;
         public AriaOffensiveAirObservation OffensiveAir;
         public AriaAirRecruitObservation AirRecruit;
+        // FC/BT/CE objective skill (AriaSkirmishPlanSystem.ObjectiveSkill). ObjectiveType: 0 none, 1 Frontline
+        // Control, 2 Breakthrough, 3 Convoy Escort (last presented goal perspective). ObjectiveFrameReason: why
+        // the rendered objective frame is missing this frame (SkirmishMatchView.PublicObjectiveAriaUnavailableReason),
+        // 0 when presented. ObjectiveEscort: one own vehicle group's ordinary Move to the current objective.
+        public byte ObjectiveType;
+        public int ObjectiveFrameReason;
+        public AriaObjectiveScoreObservation ObjectiveScore;
+        public AriaObjectiveTouchObservation ObjectiveEscort;
         public bool Active, Finished, DrawerOpen, SelectionVisible, AttackMode, MapOpen, MapContactInView, SelectionMode, FocusThreatDrag, FocusGroupDrag, FocusAdvanceDrag, PlacementOpen, AdvancePreferred, ThreatNearForce, AssaultAtBase;
         public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public bool CanAffordAntiAir, PadReady, AirQueueOffered, PadPresent, ReadinessEligible, CanUpgradeReadiness;

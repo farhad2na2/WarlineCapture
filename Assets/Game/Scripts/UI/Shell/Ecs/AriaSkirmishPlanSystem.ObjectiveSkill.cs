@@ -1,0 +1,217 @@
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+
+namespace Game.UI.Shell.Ecs
+{
+    // FC (Frontline Control), BT (Breakthrough) and CE (Convoy Escort) skill for expanded Skirmish sessions.
+    // It plays only through the controls the player is shown: the goal HUD's rendered objective frame
+    // (zones/corridors/exit/destination, accepted order receipts), the Build drawer, squad cards and the
+    // ordinary Move/Hold buttons. Decisions come from SkirmishPlayerObjectivePolicyUtilitySystemHelper (which
+    // group to which public goal) and Game.Simulation.AriaObjectiveSkillPolicy (frame grace, retries).
+    //
+    // Lane 22 (S007/S013/S019): the previous path stopped on the first frame without a rendered objective
+    // frame ([AriaBlocked] reason=101 intent=Recruit at 8.5 s). The goal HUD withdraws its frame whenever it is
+    // hidden (Build drawer open, shell settling) and for one frame when the HUD updates after ARIA's observer.
+    // Missing frames are now waited for (bounded), ARIA's own purchase drawer is finished without the frame,
+    // a failed order sequence is retried after a pause, and public objective progress renews the watchdogs.
+    public partial struct AriaSkirmishPlanSystem
+    {
+        static bool ObjectivePresented(in AriaObjectiveTouchObservation o) =>
+            o.Applicable && o.Supported && o.Presented && o.PresentationEpoch != 0;
+
+        public static void StepObjectiveSkill(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            var objective = view.PublicObjective;
+            output = new AriaPlayObservationComponent { Kind = AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame,
+                GoalId = unchecked((int)(objective.PublicKey ^ objective.GroupId)) };
+            if (view.Finished || objective.Finished)
+            {
+                plan.Intent = AriaSkirmishIntent.Handback; touch.GestureRequested = 0;
+                output.Kind = AriaPlayObservationKind.Finished; return;
+            }
+            if (touch.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked or AriaPlayPhase.Starting) return;
+            bool presented = ObjectivePresented(objective);
+            var progress = new Game.Simulation.AriaObjectiveProgressState { Known = plan.ObjectiveProgressKnown,
+                Revision = plan.ObjectiveProgressRevision, LastAt = plan.ObjectiveProgressAt };
+            if (presented && Game.Simulation.AriaObjectiveSkillPolicy.Progress(objective.ProgressKnown, objective.PublicProgressRevision, view.Time, ref progress))
+            { touch.LastProgressAt = view.Time; touch.LastObjectiveProgressAt = view.Time; }
+            plan.ObjectiveProgressKnown = progress.Known; plan.ObjectiveProgressRevision = progress.Revision; plan.ObjectiveProgressAt = progress.LastAt;
+            if (presented && view.ObjectiveSupport.Presented && !float.IsNaN(view.ObjectiveSupport.SimulationSeconds) && !float.IsInfinity(view.ObjectiveSupport.SimulationSeconds))
+                plan.ObjectiveClockOffset = view.ObjectiveSupport.SimulationSeconds - view.Time;
+            if (touch.Phase == AriaPlayPhase.Touching) return;
+            bool ownPopup = view.DrawerOpen || view.PlacementOpen;
+            var frame = new Game.Simulation.AriaObjectiveFrameState { Missing = plan.ObjectiveMissing, MissingSince = plan.ObjectiveMissingSince,
+                PopupOpen = plan.ObjectivePopupOpen, PopupSince = plan.ObjectivePopupSince };
+            var frameAction = Game.Simulation.AriaObjectiveSkillPolicy.Frame(presented, ownPopup, view.Time, ref frame);
+            plan.ObjectiveMissing = frame.Missing; plan.ObjectiveMissingSince = frame.MissingSince;
+            plan.ObjectivePopupOpen = frame.PopupOpen; plan.ObjectivePopupSince = frame.PopupSince;
+            plan.ObjectiveFrameAction = (byte)frameAction;
+            switch (frameAction)
+            {
+                case Game.Simulation.AriaObjectiveFrameAction.Block:
+                    touch.Phase = AriaPlayPhase.Blocked; touch.GestureRequested = 0; return;
+                case Game.Simulation.AriaObjectiveFrameAction.Wait:
+                    // Never act on a remembered objective. Keep any open map closable.
+                    plan.Intent = AriaSkirmishIntent.ObserveObjective;
+                    if (view.MapOpen && view.CloseMap.Available) Target(view.CloseMap, false, ref output);
+                    return;
+                case Game.Simulation.AriaObjectiveFrameAction.Popup:
+                    if (StepObjectivePopup(view, ref plan, ref touch, ref output, false)) return;
+                    return;
+                case Game.Simulation.AriaObjectiveFrameAction.ClosePopup:
+                    StepObjectivePopup(view, ref plan, ref touch, ref output, true); return;
+            }
+            if (objective.Paused) { plan.Intent = AriaSkirmishIntent.ObserveObjective; return; }
+            // An escort order already in flight finishes (or fails) before anything else re-selects squads.
+            if (plan.ObjectiveOwner == 2 && StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
+            if (StepPublicBoarding(view, ref plan, ref touch, ref output)) return;
+            if (StepOffensiveAir(view, ref plan, ref touch, ref output)) return;
+            if (StepPublicScan(view, ref plan, ref touch, ref output)) return;
+            var current = plan.ObjectiveTouch;
+            bool pending = current.CommandPending || current.Stage == 3;
+            bool sameGoal = current.GroupId == objective.GroupId && current.PublicKey == objective.PublicKey &&
+                current.Action == objective.Action && current.PresentationEpoch == objective.PresentationEpoch;
+            bool wants = objective.GroupId != 0 && objective.PublicKey != 0 && objective.Action != AriaObjectiveAction.None &&
+                !(sameGoal && current.Stage == 4);
+            bool ready = view.Time >= plan.ObjectiveRetryAt;
+            if (!pending && StepPublicObjectiveSupport(view, ref plan, ref touch, ref output)) return;
+            if (pending || wants && ready)
+            {
+                StepObjectiveOrder(view, objective, ref plan, ref touch, ref output);
+                return;
+            }
+            // Coverage of every offered unit type, readiness research and producer buildings after the first
+            // accepted objective order (the same pure policies as the base-assault planners).
+            if (plan.ObjectiveAccepted > 0) plan.CoverageAssaultSeen = 1;
+            if (StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
+            if (StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
+            plan.Intent = AriaSkirmishIntent.ObserveObjective;
+            if (view.MapOpen && view.CloseMap.Available) Target(view.CloseMap, false, ref output);
+        }
+
+        // One public objective order through StepPublicObjective. Its own fail-closed limits (30 s sequence,
+        // three rejected contacts, 8 s receipt) end this attempt; the skill pauses and retries instead of
+        // stopping, up to MaxOrderFailures without an accepted order in between.
+        static void StepObjectiveOrder(in AriaSkirmishObservation view, in AriaObjectiveTouchObservation objective,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            var prior = touch.Phase;
+            int stage = plan.ObjectiveTouch.Stage;
+            plan.Intent = objective.Intent;
+            StepPublicObjective(view, objective, ref plan.ObjectiveTouch, ref touch, ref output);
+            if (plan.ObjectiveTouch.Stage == 4)
+            {
+                if (stage != 4)
+                {
+                    var order = new Game.Simulation.AriaObjectiveOrderState { Failures = plan.ObjectiveFailures, Accepted = plan.ObjectiveAccepted, RetryAt = plan.ObjectiveRetryAt };
+                    Game.Simulation.AriaObjectiveSkillPolicy.Accepted(ref order);
+                    plan.ObjectiveFailures = order.Failures; plan.ObjectiveAccepted = order.Accepted;
+                    touch.LastProgressAt = view.Time;
+                }
+                plan.Intent = AriaSkirmishIntent.ObserveObjective;
+            }
+            if (prior == AriaPlayPhase.Blocked || touch.Phase != AriaPlayPhase.Blocked) return;
+            var state = new Game.Simulation.AriaObjectiveOrderState { Failures = plan.ObjectiveFailures, Accepted = plan.ObjectiveAccepted, RetryAt = plan.ObjectiveRetryAt };
+            bool retry = Game.Simulation.AriaObjectiveSkillPolicy.AbsorbFailure(ref state, view.Time, Game.Simulation.AriaObjectiveSkillPolicy.MaxOrderFailures);
+            plan.ObjectiveFailures = state.Failures; plan.ObjectiveRetryAt = state.RetryAt;
+            if (!retry) return;
+            touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+            plan.ObjectiveTouch = default;
+            output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
+        }
+
+        // One own vehicle group's ordinary Move to the current objective (view.ObjectiveEscort), through the
+        // same select/focus/Move/ground-tap sequence and accepted-order receipt as objective orders.
+        static bool StepObjectiveEscort(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            var escort = view.ObjectiveEscort;
+            bool inFlight = plan.ObjectiveOwner == 2;
+            if (!ObjectivePresented(escort) || escort.GroupId == 0 || escort.PublicKey == 0 || escort.Action != AriaObjectiveAction.Move ||
+                plan.EscortFailures >= Game.Simulation.AriaObjectiveSkillPolicy.MaxEscortFailures)
+            { plan.ObjectiveOwner = 0; return false; }
+            bool same = plan.EscortTouch.GroupId == escort.GroupId && plan.EscortTouch.PublicKey == escort.PublicKey &&
+                plan.EscortTouch.PresentationEpoch == escort.PresentationEpoch;
+            if (same && plan.EscortTouch.Stage == 4) { plan.ObjectiveOwner = 0; return false; }
+            if (!inFlight && view.Time < plan.EscortRetryAt) return false;
+            var prior = touch.Phase;
+            plan.Intent = AriaSkirmishIntent.Advance;
+            plan.ObjectiveOwner = 2;
+            StepPublicObjective(view, escort, ref plan.EscortTouch, ref touch, ref output);
+            if (plan.EscortTouch.Stage == 4)
+            {
+                plan.ObjectiveOwner = 0; plan.EscortAccepted++;
+                if (plan.EscortFailures > 0) plan.EscortFailures--;
+                touch.LastProgressAt = view.Time;
+                return true;
+            }
+            if (prior != AriaPlayPhase.Blocked && touch.Phase == AriaPlayPhase.Blocked)
+            {
+                // An escort is optional: its failure never stops ARIA. The observer offers the next group.
+                plan.EscortFailures++; plan.EscortRetryAt = view.Time + Game.Simulation.AriaObjectiveSkillPolicy.OrderRetrySeconds;
+                plan.ObjectiveOwner = 0; plan.EscortTouch = default;
+                touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+                output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
+            }
+            return true;
+        }
+
+        static bool StepObjectiveCoverage(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            if (plan.PadStage != 0 && plan.BuildCurrent == 0 && plan.ObjectiveSupport.Action != AriaObjectiveSupportAction.Helipad)
+                plan.PadStage = 0;
+            if (StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return true;
+            if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return true;
+            if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return true;
+            if (StepGenericResearch(view, ref plan, ref touch, ref output)) return true;
+            if (StepGenericBuilding(view, ref plan, ref touch, ref output)) return true;
+            return false;
+        }
+
+        // The Build drawer or a placement preview hides the goal HUD. Finish the purchase/placement this skill
+        // started (all of these read only the drawer, catalog cards, placement bar and own roster counts),
+        // otherwise close the popup through its own visible control.
+        static bool StepObjectivePopup(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output, bool forceClose)
+        {
+            ref var support = ref plan.ObjectiveSupport;
+            if (!forceClose)
+            {
+                if ((plan.BuildCurrent != 0 || plan.CoverageCurrent != 0 || plan.BreacherStage == 1 || plan.ResearchCurrent != 0) &&
+                    StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return true;
+                if (support.Action == AriaObjectiveSupportAction.Helipad && plan.PadStage != 0)
+                {
+                    if (view.PadPresent) { support.Action = AriaObjectiveSupportAction.None; plan.PadStage = 0; }
+                    else
+                    {
+                        // The helipad deadline is on the objective clock (ExecuteSupport).
+                        var simulationView = view; simulationView.Time = view.Time + plan.ObjectiveClockOffset;
+                        StepHomePadPlacement(simulationView, ref plan, ref touch, ref output); return true;
+                    }
+                }
+                if (support.Action != AriaObjectiveSupportAction.None && support.Action != AriaObjectiveSupportAction.Helipad &&
+                    support.Action != AriaObjectiveSupportAction.ReturnAircraft && view.DrawerOpen)
+                {
+                    if (SupportAccepted(view, support))
+                    {
+                        support.ObservedAcceptance = true; support.Action = AriaObjectiveSupportAction.None; support.Closing = true;
+                        touch.LastObjectiveProgressAt = view.Time; touch.LastProgressAt = view.Time;
+                        plan.Intent = AriaSkirmishIntent.Inspect; Target(view.CloseDrawer, false, ref output); return true;
+                    }
+                    if (support.RepeatedContacts < 3) return ExecuteSupport(view, ref plan, ref touch, ref output);
+                }
+            }
+            // Nothing of ours is pending in this popup (or it overstayed): close it, cancelling an unconfirmed preview.
+            if (support.Action != AriaObjectiveSupportAction.ReturnAircraft) support.Action = AriaObjectiveSupportAction.None;
+            support.Closing = false;
+            if (forceClose) { plan.CoverageCurrent = 0; plan.ResearchCurrent = 0; plan.BuildCurrent = 0; plan.PadStage = 0; if (plan.BreacherStage == 1) plan.BreacherStage = 2; }
+            plan.Intent = AriaSkirmishIntent.Inspect;
+            if (view.PlacementOpen && view.PlacementCancel.Available) { Target(view.PlacementCancel, false, ref output); return true; }
+            if (view.DrawerOpen && view.CloseDrawer.Available) { Target(view.CloseDrawer, false, ref output); return true; }
+            output.Kind = AriaPlayObservationKind.Waiting;
+            return true;
+        }
+    }
+}

@@ -56,6 +56,12 @@ namespace Game.Skirmish.Contracts
             var best = default(SkirmishPlayerObjectiveChoice);
             var retained = default(SkirmishPlayerObjectiveChoice);
             var captureAssignments = new HashSet<string>(StringComparer.Ordinal);
+            // BT: ordinary combat infantry opens the corridor; the designated originals are kept for the exit.
+            bool supportInfantry = false;
+            if (goal.Perspective == SkirmishPublicGoalPerspective.Evacuate)
+                foreach (var unit in groups)
+                    if (ValidGroup(unit) && unit.CombatInfantry && unit.Dismounted &&
+                        !HasLivingOriginal(goal, unit, SkirmishPublicSubjectKind.DesignatedRifle)) supportInfantry = true;
             if (goal.Perspective == SkirmishPublicGoalPerspective.Capture)
                 for (int i=0;i<goal.NodeCount;i++)
                 {
@@ -81,7 +87,7 @@ namespace Game.Skirmish.Contracts
                         if(anotherCommitted&&node.OwnerFaction!=goal.ObserverFaction)continue;
                         if(captureAssignments.Count>=2&&!captureAssignments.Contains(node.PublicId))continue;
                     }
-                    var choice = Candidate(goal, group, node, approaches);
+                    var choice = Candidate(goal, group, node, approaches, supportInfantry);
                     if (!choice.Available) continue;
                     if (Same(choice, current)) retained = choice;
                     if (!best.Available || choice.Score > best.Score ||
@@ -95,7 +101,7 @@ namespace Game.Skirmish.Contracts
 
         static SkirmishPlayerObjectiveChoice Candidate(SkirmishPublicGoalSnapshot goal,
             SkirmishPublicPlayerGroup group, SkirmishPublicGoalNode node,
-            IReadOnlyList<SkirmishPublicPlayerApproach> approaches)
+            IReadOnlyList<SkirmishPublicPlayerApproach> approaches, bool supportInfantry = false)
         {
             if (!node.PositionKnown) return default;
             bool obsoleteCorridor = false;
@@ -145,6 +151,8 @@ namespace Game.Skirmish.Contracts
                 else
                 {
                     if (node.Kind != SkirmishPublicGoalNodeKind.ExitCorridor || !group.CombatInfantry || !group.Dismounted) return default;
+                    // Originals open a corridor only when no ordinary combat infantry is alive to do it.
+                    if (originals && supportInfantry) return default;
                     reason = SkirmishPlayerObjectiveReason.OpenCorridor;
                     // Support infantry opens the corridor while originals are preserved.
 

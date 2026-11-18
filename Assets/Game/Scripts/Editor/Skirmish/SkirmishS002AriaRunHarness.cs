@@ -1015,6 +1015,7 @@ namespace Game.Editor
                 if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") != "1" && !LongSessionRequested &&
                     (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked))
                 {
+                    EmitObjectiveAbortEvidence(em, session, in match); // FC/BT/CE only
                     Finish(abort: true, abortReason: "ariaStopped:" + aria.Phase);
                     return;
                 }

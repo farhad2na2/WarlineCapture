@@ -446,6 +446,38 @@ class QueueTests(unittest.TestCase):
         self.assertEqual([(j.match_seconds, j.line, j.job_seconds) for j in jobs],
                          [(147.868, 4, 218.3), (13.25, 7, 210.0)])
 
+    def test_objective_missions_clock_return_and_gate_units(self):
+        """FC/BT/CE use the shared terminal markers; the objective line and an ARIA-stop used list parse cleanly."""
+        log = """[SkirmishAriaQueue] dispatch job=1/3 catalog=S007 seed=130365 locale=en
+[SkirmishGateUnits] event=available catalog=S007 session=expanded-s007-130365-a types=role.apc_armored;role.rifle;role.tank
+[SkirmishGateUnits] event=used catalog=S007 session=expanded-s007-130365-a types=role.rifle;role.tank automatic= unused=role.apc_armored
+[SkirmishTerminalObjective] catalog=S007 type=FC attempt=expanded-s007-130365-a outcome=Victory reason=TicketsDepleted elapsed=612.500 deadline=1200.0 deadlinePct=51.04 ownZones=2 opposingZones=1 tickets=88/0
+[SkirmishTerminalFrozen] result=Passed violations=none clockFrozen=1 initial={found=1 session=1:1 phase=Finished outcome=Victory attempt=expanded-s007-130365-a elapsed=612.500 playerBaseHp=800 enemyBaseHp=800 simActive=0 clockPlaying=0 clockPaused=1} delayed={found=1 session=1:1 phase=Finished outcome=Victory attempt=expanded-s007-130365-a elapsed=612.500 playerBaseHp=800 enemyBaseHp=800 simActive=0 clockPlaying=0 clockPaused=1}
+[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU point=(1,1)
+[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU completed=1 interventions=0
+[SkirmishAriaQueue] dispatch job=2/3 catalog=S013 seed=130365 locale=en
+[SkirmishGateUnits] event=available catalog=S013 session=expanded-s013-130365-b types=role.rifle;role.tanker
+[SkirmishGateUnits] event=used catalog=S013 session=expanded-s013-130365-b types=role.rifle automatic=role.tanker unused=
+[SkirmishTerminalObjective] catalog=S013 type=BT attempt=expanded-s013-130365-b outcome=Defeat reason=BreakthroughImpossible elapsed=400.250 deadline=1080.0 deadlinePct=37.06 completed=3/8 lost=6 exitOpen=1
+[SkirmishTerminalFrozen] result=Passed violations=none clockFrozen=1 initial={found=1 session=2:1 phase=Finished outcome=Defeat attempt=expanded-s013-130365-b elapsed=400.250 playerBaseHp=-1 enemyBaseHp=-1 simActive=0 clockPlaying=0 clockPaused=1} delayed={found=1 session=2:1 phase=Finished outcome=Defeat attempt=expanded-s013-130365-b elapsed=400.250 playerBaseHp=-1 enemyBaseHp=-1 simActive=0 clockPlaying=0 clockPaused=1}
+[SkirmishTerminalProbe] result=Failed reason=resultNotLocalized completed=0 interventions=0
+[SkirmishAriaQueue] dispatch job=3/3 catalog=S019 seed=130365 locale=en
+[SkirmishGateUnits] event=available catalog=S019 session=expanded-s019-130365-c types=role.convoy_logic;role.rifle
+[SkirmishGateUnits] event=used catalog=S019 session=expanded-s019-130365-c types=role.rifle automatic= unused=role.convoy_logic
+[SkirmishTerminalObjective] catalog=S019 type=CE attempt=expanded-s019-130365-c outcome=None reason=None elapsed=95.000 deadline=1080.0 deadlinePct=8.80 completed=0/2 lost=0
+[SkirmishAriaQueue] job=1/3 catalog=S007 seed=130365 locale=en result=Victory seconds=700.1 recorded=1 countedWin=1
+[SkirmishAriaQueue] job=2/3 catalog=S013 seed=130365 locale=en result=Defeat seconds=480 recorded=1 countedWin=0
+[SkirmishAriaQueue] job=3/3 catalog=S019 seed=130365 locale=en result=Abort seconds=120 recorded=0 countedWin=0
+"""
+        jobs, _ = runner.parse_log(log)
+        self.assertEqual([(j.mission, j.match_seconds, j.clock_source) for j in jobs],
+                         [('S007', 612.5, 'TerminalFrozen'), ('S013', 400.25, 'TerminalFrozen'), ('S019', None, 'unproven')])
+        lookup = {e['mission']: e for e in runner.scan_evidence(log.splitlines()).values()}
+        self.assertEqual(lookup['S007']['result_return_ok'], 'yes')
+        self.assertEqual(lookup['S013']['result_return_ok'], 'no')
+        self.assertEqual(lookup['S019']['result_return_ok'], 'unproven')
+        self.assertEqual([lookup[m]['unused'] for m in ('S007', 'S013', 'S019')], ['role.apc_armored', '', 'role.convoy_logic'])
+
     def test_dispatchless_repeated_seed_needs_one_attempt_per_locale(self):
         frozen = '[SkirmishTerminalFrozen] attempt=expanded-s002-1-'
         summaries = ('[SkirmishAriaQueue] job=1/2 catalog=S002 seed=1 locale=en result=Victory seconds=20\n'

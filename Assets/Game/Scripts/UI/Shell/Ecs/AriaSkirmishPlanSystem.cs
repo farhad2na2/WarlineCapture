@@ -66,6 +66,12 @@ namespace Game.UI.Shell.Ecs
         {
             if(AriaS002NativeAdapter.CanHandle(view)&&AriaS002NativeAdapter.TryStep(view,ref plan,ref touch,ref output))return;
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
+            // Expanded FC/BT/CE sessions: the objective skill (frame grace, own drawer, bounded retries, coverage, escorts).
+            if (view.PublicObjective.Applicable && view.ExpandedSession)
+            {
+                StepObjectiveSkill(view, ref plan, ref touch, ref output);
+                return;
+            }
             if (view.PublicObjective.Applicable)
             {
                 if (StepPublicBoarding(view,ref plan,ref touch,ref output)) return;

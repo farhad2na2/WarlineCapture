@@ -91,5 +91,16 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;
         public float InterceptDeadline, InterceptLastSeenAt, InterceptReadyAt;
+        // FC/BT/CE objective skill (AriaSkirmishPlanSystem.ObjectiveSkill, Game.Simulation.AriaObjectiveSkillPolicy):
+        // missing-frame grace, own-popup bound, bounded objective/escort order retries, public progress revision.
+        // ObjectiveOwner: 0 free, 2 an escort order is in flight. ObjectiveFrameAction: last AriaObjectiveFrameAction.
+        public AriaObjectiveTouchPlan EscortTouch;
+        public float ObjectiveMissingSince, ObjectivePopupSince, ObjectiveRetryAt, EscortRetryAt, ObjectiveProgressAt;
+        public byte ObjectiveMissing, ObjectivePopupOpen, ObjectiveProgressKnown, ObjectiveOwner, ObjectiveFrameAction;
+        public int ObjectiveFailures, ObjectiveAccepted, EscortFailures, EscortAccepted;
+        public uint ObjectiveProgressRevision;
+        // Presented simulation seconds minus observation time, so a helipad preview started on the objective
+        // clock keeps its deadline while the Build drawer hides the goal HUD.
+        public float ObjectiveClockOffset;
     }
 }

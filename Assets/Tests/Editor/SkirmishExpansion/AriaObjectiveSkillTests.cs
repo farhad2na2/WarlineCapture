@@ -1,0 +1,339 @@
+using System.Collections.Generic;
+using Game.Simulation;
+using Game.Skirmish.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.UI.Shell.Ecs;
+using NUnit.Framework;
+
+namespace Game.Tests.Editor
+{
+    // FC/BT/CE objective skill (AriaSkirmishPlanSystem.ObjectiveSkill, AriaObjectiveSkillPolicy,
+    // AriaObjectiveEscortPolicy, SkirmishPlayerObjectivePolicyUtilitySystemHelper BT corridor rule).
+    // Lane 22: S007/S013/S019 stopped at 8.5 s with [AriaBlocked] reason=101 intent=Recruit because the first
+    // observation had no rendered objective frame and the old path blocked immediately.
+    public sealed class AriaObjectiveSkillTests
+    {
+        public static void RunFocusedValidation()
+        {
+            var t = new AriaObjectiveSkillTests();
+            t.MissingFrameIsWaitedForThenBlocks();
+            t.OwnPopupIsFinishedThenClosedThenBlocks();
+            t.FailedOrdersAreRetriedBoundedAndEarnedBack();
+            t.PublicProgressRevisionRenewsOnlyOnChange();
+            t.TypesTargetsAndOriginalHoldBack();
+            t.EscortPicksOwnGroundVehiclesOnly();
+            t.EscortGoalFollowsCommittedZoneExitAndDestination();
+            t.BreakthroughCorridorPrefersSupportInfantry();
+            t.Lane22FirstObservationWithoutFrameDoesNotBlock();
+            t.OwnDrawerPurchaseContinuesWithoutFrame();
+            t.UnownedDrawerIsClosed();
+            t.ObjectiveOrderTimeoutIsRetriedNotBlocked();
+            t.ProgressRenewsInputWatchdogs();
+            t.EscortRunsWhenNoObjectiveOrderIsWanted();
+            t.FinishedObjectiveHandsBack();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=15");
+        }
+
+        // ---------- pure policy ----------
+
+        [Test]
+        public void MissingFrameIsWaitedForThenBlocks()
+        {
+            var s = default(AriaObjectiveFrameState);
+            Assert.AreEqual(AriaObjectiveFrameAction.Proceed, AriaObjectiveSkillPolicy.Frame(true, false, 10, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Wait, AriaObjectiveSkillPolicy.Frame(false, false, 11, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Wait, AriaObjectiveSkillPolicy.Frame(false, false, 11 + AriaObjectiveSkillPolicy.FrameGraceSeconds, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Proceed, AriaObjectiveSkillPolicy.Frame(true, false, 30, ref s), "a returning frame resets the grace");
+            Assert.AreEqual(AriaObjectiveFrameAction.Wait, AriaObjectiveSkillPolicy.Frame(false, false, 31, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Block, AriaObjectiveSkillPolicy.Frame(false, false, 31.1f + AriaObjectiveSkillPolicy.FrameGraceSeconds, ref s));
+        }
+
+        [Test]
+        public void OwnPopupIsFinishedThenClosedThenBlocks()
+        {
+            var s = default(AriaObjectiveFrameState);
+            Assert.AreEqual(AriaObjectiveFrameAction.Popup, AriaObjectiveSkillPolicy.Frame(false, true, 100, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Popup, AriaObjectiveSkillPolicy.Frame(false, true, 100 + AriaObjectiveSkillPolicy.PopupLimitSeconds, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.ClosePopup, AriaObjectiveSkillPolicy.Frame(false, true, 100.5f + AriaObjectiveSkillPolicy.PopupLimitSeconds, ref s));
+            Assert.AreEqual(AriaObjectiveFrameAction.Block, AriaObjectiveSkillPolicy.Frame(false, true,
+                100.5f + AriaObjectiveSkillPolicy.PopupLimitSeconds + AriaObjectiveSkillPolicy.PopupCloseSeconds, ref s));
+            s = default;
+            AriaObjectiveSkillPolicy.Frame(false, true, 0, ref s);
+            Assert.AreEqual(AriaObjectiveFrameAction.Wait, AriaObjectiveSkillPolicy.Frame(false, false, 50, ref s), "a closed popup starts the ordinary grace");
+        }
+
+        [Test]
+        public void FailedOrdersAreRetriedBoundedAndEarnedBack()
+        {
+            var s = default(AriaObjectiveOrderState);
+            for (int i = 1; i < AriaObjectiveSkillPolicy.MaxOrderFailures; i++)
+            {
+                Assert.IsTrue(AriaObjectiveSkillPolicy.AbsorbFailure(ref s, 10 * i, AriaObjectiveSkillPolicy.MaxOrderFailures));
+                Assert.IsFalse(AriaObjectiveSkillPolicy.Ready(s, 10 * i + 1));
+                Assert.IsTrue(AriaObjectiveSkillPolicy.Ready(s, 10 * i + AriaObjectiveSkillPolicy.OrderRetrySeconds));
+            }
+            AriaObjectiveSkillPolicy.Accepted(ref s);
+            Assert.AreEqual(AriaObjectiveSkillPolicy.MaxOrderFailures - 2, s.Failures);
+            Assert.IsTrue(AriaObjectiveSkillPolicy.AbsorbFailure(ref s, 100, AriaObjectiveSkillPolicy.MaxOrderFailures));
+            Assert.IsFalse(AriaObjectiveSkillPolicy.AbsorbFailure(ref s, 110, AriaObjectiveSkillPolicy.MaxOrderFailures));
+        }
+
+        [Test]
+        public void PublicProgressRevisionRenewsOnlyOnChange()
+        {
+            var s = default(AriaObjectiveProgressState);
+            Assert.IsFalse(AriaObjectiveSkillPolicy.Progress(false, 5, 1, ref s));
+            Assert.IsTrue(AriaObjectiveSkillPolicy.Progress(true, 5, 2, ref s));
+            Assert.IsFalse(AriaObjectiveSkillPolicy.Progress(true, 5, 3, ref s));
+            Assert.IsTrue(AriaObjectiveSkillPolicy.Progress(true, 6, 4, ref s));
+            Assert.AreEqual(4, s.LastAt);
+        }
+
+        [Test]
+        public void TypesTargetsAndOriginalHoldBack()
+        {
+            Assert.AreEqual(AriaObjectiveType.FrontlineControl, AriaObjectiveSkillPolicy.TypeOf(SkirmishPublicGoalPerspective.Capture));
+            Assert.AreEqual(AriaObjectiveType.Breakthrough, AriaObjectiveSkillPolicy.TypeOf(SkirmishPublicGoalPerspective.Evacuate));
+            Assert.AreEqual(AriaObjectiveType.ConvoyEscort, AriaObjectiveSkillPolicy.TypeOf(SkirmishPublicGoalPerspective.Escort));
+            Assert.AreEqual(AriaObjectiveType.None, AriaObjectiveSkillPolicy.TypeOf(SkirmishPublicGoalPerspective.BaseAssault));
+            Assert.Greater(AriaObjectiveSkillPolicy.InfantryTarget(AriaObjectiveType.FrontlineControl), 12);
+            Assert.Greater(AriaObjectiveSkillPolicy.InfantryTarget(AriaObjectiveType.Breakthrough), 12, "BT buys support beyond the 12 originals");
+            Assert.AreEqual(0, AriaObjectiveSkillPolicy.InfantryTarget(AriaObjectiveType.None));
+            var bt = AriaObjectiveType.Breakthrough;
+            Assert.IsTrue(AriaObjectiveSkillPolicy.HoldBackOriginals(bt, false, 10, true, false));
+            Assert.IsFalse(AriaObjectiveSkillPolicy.HoldBackOriginals(bt, true, 10, true, false), "an open exit needs the originals");
+            Assert.IsFalse(AriaObjectiveSkillPolicy.HoldBackOriginals(bt, false, 10, true, true), "support infantry exists");
+            Assert.IsFalse(AriaObjectiveSkillPolicy.HoldBackOriginals(bt, false, AriaObjectiveSkillPolicy.OriginalHoldSeconds, true, false), "bounded");
+            Assert.IsFalse(AriaObjectiveSkillPolicy.HoldBackOriginals(bt, false, 10, false, false));
+            Assert.IsFalse(AriaObjectiveSkillPolicy.HoldBackOriginals(AriaObjectiveType.FrontlineControl, false, 10, true, false));
+        }
+
+        [Test]
+        public void EscortPicksOwnGroundVehiclesOnly()
+        {
+            AriaEscortCandidate C(uint id, SkirmishRoleKind role, SkirmishPopulationCategory domain) => new AriaEscortCandidate
+            { GroupId = id, Role = role, Domain = domain, CanMove = true, Target = true };
+            var list = new List<AriaEscortCandidate>
+            {
+                C(2, SkirmishRoleKind.Rifle, SkirmishPopulationCategory.Infantry),
+                C(3, SkirmishRoleKind.Radar, SkirmishPopulationCategory.Ground),
+                C(4, SkirmishRoleKind.LogisticsTruck, SkirmishPopulationCategory.LogisticsSupport),
+                C(9, SkirmishRoleKind.Tank, SkirmishPopulationCategory.Ground),
+                C(7, SkirmishRoleKind.ApcArmored, SkirmishPopulationCategory.Ground),
+            };
+            var originals = C(5, SkirmishRoleKind.ConvoyLogic, SkirmishPopulationCategory.Ground); originals.Originals = true; list.Add(originals);
+            Assert.AreEqual(7u, list[AriaObjectiveEscortPolicy.Pick(list)].GroupId, "lowest eligible vehicle group");
+            var done = list[4]; done.Done = true; list[4] = done;
+            Assert.AreEqual(9u, list[AriaObjectiveEscortPolicy.Pick(list)].GroupId);
+            var hidden = list[3]; hidden.Target = false; list[3] = hidden;
+            Assert.AreEqual(-1, AriaObjectiveEscortPolicy.Pick(list), "no shown target, radar keeps its support order, originals are never re-tasked");
+        }
+
+        [Test]
+        public void EscortGoalFollowsCommittedZoneExitAndDestination()
+        {
+            var fc = Frontline(0, 0, 0, contestedC: false);
+            var groups = new List<SkirmishPublicPlayerGroup>
+            { new SkirmishPublicPlayerGroup { GroupId = 1, Own = true, Living = true, CombatInfantry = true, Dismounted = true, AcceptedOrderActive = true, AcceptedGoalId = "zone.b" } };
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(fc, groups, "zone.a"));
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(fc, new List<SkirmishPublicPlayerGroup>(), "zone.a"));
+            Assert.AreEqual("zone.c", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 0, contestedC: true), groups, null), "contested zone first");
+            Assert.AreEqual("exit", AriaObjectiveEscortPolicy.Goal(Breakthrough(true, false), null, null));
+            Assert.AreEqual("corridor.a", AriaObjectiveEscortPolicy.Goal(Breakthrough(false, false), null, null));
+            Assert.AreEqual("destination", AriaObjectiveEscortPolicy.Goal(Convoy(), null, null));
+        }
+
+        [Test]
+        public void BreakthroughCorridorPrefersSupportInfantry()
+        {
+            var goal = Breakthrough(false, true);
+            var approaches = new List<SkirmishPublicPlayerApproach>();
+            foreach (uint g in new uint[] { 1, 2 })
+                foreach (var id in new[] { "corridor.a", "corridor.b" })
+                    approaches.Add(new SkirmishPublicPlayerApproach { GroupId = g, GoalId = id, Inspected = true, GroundCompatible = true });
+            var originals = new SkirmishPublicPlayerGroup { GroupId = 1, Own = true, Living = true, CombatInfantry = true, Dismounted = true,
+                CanMove = true, CanHold = true, PositionKnown = true, DesignatedSubjects = new[] { "rifle.1" } };
+            var support = new SkirmishPublicPlayerGroup { GroupId = 2, Own = true, Living = true, CombatInfantry = true, Dismounted = true,
+                CanMove = true, CanHold = true, PositionKnown = true };
+            var alone = SkirmishPlayerObjectivePolicyUtilitySystemHelper.Choose(goal, new[] { originals }, approaches, default);
+            Assert.AreEqual(1u, alone.GroupId, "without support infantry the originals may open the corridor");
+            var both = SkirmishPlayerObjectivePolicyUtilitySystemHelper.Choose(goal, new[] { originals, support }, approaches, default);
+            Assert.AreEqual(2u, both.GroupId, "support infantry opens the corridor; originals are kept for the exit");
+            Assert.AreEqual(SkirmishPublicPlayerAction.Move, both.Action);
+        }
+
+        // ---------- planner (AriaSkirmishPlanSystem.Step, pure) ----------
+
+        static AriaTouchTarget T(int id) => new AriaTouchTarget { Available = true, Id = id };
+
+        static AriaSkirmishObservation Missing(float time) => new AriaSkirmishObservation
+        {
+            Active = true, ExpandedSession = true, Frame = 647, Time = time, ObjectiveType = 1, ObjectiveFrameReason = 9,
+            PublicObjective = new AriaObjectiveTouchObservation { Applicable = true }
+        };
+
+        static AriaSkirmishObservation Presented(float time) => new AriaSkirmishObservation
+        {
+            Active = true, ExpandedSession = true, Frame = 700, Time = time, ObjectiveType = 1,
+            PublicObjective = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                Intent = AriaSkirmishIntent.ObserveObjective, CameraSettled = true, ProgressKnown = true, PublicProgressRevision = 1 },
+            ObjectiveSupport = new AriaObjectiveSupportObservation { Presented = true, SimulationSeconds = time - 50, DismountedCombatGroups = 3, CaptureMajority = true }
+        };
+
+        static void Step(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p, ref AriaPlaySessionComponent t, out AriaPlayObservationComponent o)
+        { o = default; AriaSkirmishPlanSystem.Step(v, ref p, ref t, ref o); }
+
+        [Test]
+        public void Lane22FirstObservationWithoutFrameDoesNotBlock()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(Missing(8.5f), ref p, ref t, out var o);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase, "lane 22: reason=101 intent=Recruit at 8.5 s");
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, o.Kind); Assert.AreEqual(0, o.TargetId);
+            Assert.AreEqual(AriaSkirmishIntent.ObserveObjective, p.Intent);
+            Step(Missing(8.5f + AriaObjectiveSkillPolicy.FrameGraceSeconds), ref p, ref t, out _);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase);
+            Step(Missing(9f + AriaObjectiveSkillPolicy.FrameGraceSeconds), ref p, ref t, out _);
+            Assert.AreEqual(AriaPlayPhase.Blocked, t.Phase, "a frame that never returns still fails closed");
+        }
+
+        [Test]
+        public void OwnDrawerPurchaseContinuesWithoutFrame()
+        {
+            var p = new AriaSkirmishPlanComponent { ObjectiveSupport = new AriaObjectiveSupportPlan { Epoch = 1, Action = AriaObjectiveSupportAction.Rifle, Deadline = 999, BaselineInfantry = 12 } };
+            var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Missing(40); v.DrawerOpen = true; v.Recruit = T(91); v.CloseDrawer = T(71); v.Infantry = 12;
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(91, o.TargetId, "the rifle card in the open drawer");
+            Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase);
+            v.RifleRecruitPending = true; v.Frame++;
+            Step(v, ref p, ref t, out o);
+            Assert.AreEqual(71, o.TargetId, "accepted purchase closes the drawer");
+            Assert.AreEqual(AriaObjectiveSupportAction.None, p.ObjectiveSupport.Action);
+            Assert.AreEqual(40, t.LastObjectiveProgressAt);
+        }
+
+        [Test]
+        public void UnownedDrawerIsClosed()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Missing(40); v.DrawerOpen = true; v.CloseDrawer = T(71);
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(71, o.TargetId);
+            var placement = Missing(41); placement.PlacementOpen = true; placement.PlacementCancel = T(72);
+            Step(placement, ref p, ref t, out o);
+            Assert.AreEqual(72, o.TargetId, "an unconfirmed preview is cancelled through its own control");
+        }
+
+        [Test]
+        public void ObjectiveOrderTimeoutIsRetriedNotBlocked()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+            v.PublicObjective.Intent = AriaSkirmishIntent.ControlZone; v.PublicObjective.SelectGroup = T(5);
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(5, o.TargetId, "select the chosen group's card first");
+            Assert.AreEqual(AriaSkirmishIntent.ControlZone, p.Intent);
+            for (int i = 1; i < AriaObjectiveSkillPolicy.MaxOrderFailures; i++)
+            {
+                v.Frame++; v.Time += 31 + AriaObjectiveSkillPolicy.OrderRetrySeconds; v.PublicObjective.SelectGroup = default;
+                Step(v, ref p, ref t, out o);
+                if (p.ObjectiveTouch.GroupId != 0) { v.Frame++; v.Time += 31; Step(v, ref p, ref t, out o); }
+                Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase, "failure " + i + " is retried after a pause");
+                Assert.AreEqual(i, p.ObjectiveFailures);
+            }
+            for (int i = 0; i < 4 && t.Phase != AriaPlayPhase.Blocked; i++)
+            { v.Frame++; v.Time += 31 + AriaObjectiveSkillPolicy.OrderRetrySeconds; Step(v, ref p, ref t, out o); }
+            Assert.AreEqual(AriaPlayPhase.Blocked, t.Phase, "repeated failure without an accepted order stops");
+        }
+
+        [Test]
+        public void ProgressRenewsInputWatchdogs()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            Step(v, ref p, ref t, out _);
+            Assert.AreEqual(100, t.LastProgressAt);
+            v.Time = 150; v.Frame++; Step(v, ref p, ref t, out _);
+            Assert.AreEqual(100, t.LastProgressAt, "an unchanged scoreboard is not progress");
+            v.Time = 160; v.Frame++; v.PublicObjective.PublicProgressRevision = 2; Step(v, ref p, ref t, out _);
+            Assert.AreEqual(160, t.LastProgressAt); Assert.AreEqual(160, t.LastObjectiveProgressAt);
+        }
+
+        [Test]
+        public void EscortRunsWhenNoObjectiveOrderIsWanted()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                GroupId = 7, NavigationGroupId = 7, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(8, o.TargetId, "the vehicle group's card");
+            Assert.AreEqual(2, p.ObjectiveOwner);
+            Assert.AreEqual(AriaSkirmishIntent.Advance, p.Intent);
+            // A new objective choice waits until the in-flight escort finishes.
+            v.Frame++; v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+            v.PublicObjective.SelectGroup = T(5);
+            Step(v, ref p, ref t, out o);
+            Assert.AreEqual(8, o.TargetId);
+        }
+
+        [Test]
+        public void FinishedObjectiveHandsBack()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(500); v.PublicObjective.Finished = true;
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(AriaPlayObservationKind.Finished, o.Kind);
+            Assert.AreEqual(AriaSkirmishIntent.Handback, p.Intent);
+        }
+
+        // ---------- public goal snapshots ----------
+
+        static SkirmishPublicGoalNode Zone(string id, float x, int owner, bool contested) => new SkirmishPublicGoalNode
+        {
+            PublicId = id, Kind = SkirmishPublicGoalNodeKind.CaptureZone, Provenance = SkirmishPublicGoalProvenance.PublicObjective,
+            PositionKnown = true, WorldX = x, WorldZ = 10, OwnerKnown = true, OwnerFaction = owner, Contested = contested,
+            CapturePhase = owner != 0 ? SkirmishPublicCapturePhase.Held : SkirmishPublicCapturePhase.None
+        };
+
+        static SkirmishPublicGoalNode Marker(string id, SkirmishPublicGoalNodeKind kind, float x) => new SkirmishPublicGoalNode
+        { PublicId = id, Kind = kind, Provenance = SkirmishPublicGoalProvenance.PublicObjective, PositionKnown = true, WorldX = x, WorldZ = 20 };
+
+        static SkirmishPublicGoalSnapshot Frontline(int a, int b, int c, bool contestedC)
+        {
+            Assert.IsTrue(SkirmishPublicGoalSnapshot.TryCreate("fc-skill", 1, 1, SkirmishObjectiveKind.FrontlineControl, SkirmishPublicGoalPerspective.Capture,
+                0, 100, SkirmishOutcomeKind.None, new SkirmishPublicGoalScore { TicketsKnown = true, OwnTickets = 500, OpposingTickets = 500 },
+                new[] { Zone("zone.a", 10, a, false), Zone("zone.b", 20, b, false), Zone("zone.c", 30, c, contestedC) }, out var goal, out var error), error);
+            return goal;
+        }
+
+        static SkirmishPublicGoalSnapshot Breakthrough(bool exitOpen, bool originals)
+        {
+            var nodes = new List<SkirmishPublicGoalNode>
+            {
+                Marker("corridor.a", SkirmishPublicGoalNodeKind.ExitCorridor, 10), Marker("corridor.b", SkirmishPublicGoalNodeKind.ExitCorridor, 20),
+                Marker("exit", SkirmishPublicGoalNodeKind.EvacuationExit, 30)
+            };
+            if (originals)
+                nodes.Add(new SkirmishPublicGoalNode { PublicId = "rifle.1", Kind = SkirmishPublicGoalNodeKind.OwnDesignatedSubject,
+                    Provenance = SkirmishPublicGoalProvenance.OwnRoster, PositionKnown = true, WorldX = 1, WorldZ = 1, OwnerKnown = true, OwnerFaction = 1,
+                    RevealedSubjectKind = SkirmishPublicSubjectKind.DesignatedRifle, SubjectDisposition = SkirmishPublicSubjectDisposition.Live,
+                    HealthKnown = true, Health = 100, MaximumHealth = 100, HealthProvenance = SkirmishPublicHealthProvenance.OwnRoster });
+            Assert.IsTrue(SkirmishPublicGoalSnapshot.TryCreate("bt-skill", 1, 1, SkirmishObjectiveKind.Breakthrough, SkirmishPublicGoalPerspective.Evacuate,
+                0, 100, SkirmishOutcomeKind.None, new SkirmishPublicGoalScore { ExitStateKnown = true, ExitOpen = exitOpen },
+                nodes.ToArray(), out var goal, out var error), error);
+            return goal;
+        }
+
+        static SkirmishPublicGoalSnapshot Convoy()
+        {
+            Assert.IsTrue(SkirmishPublicGoalSnapshot.TryCreate("ce-skill", 1, 1, SkirmishObjectiveKind.ConvoyEscort, SkirmishPublicGoalPerspective.Escort,
+                0, 100, SkirmishOutcomeKind.None, default, new[] { Marker("destination", SkirmishPublicGoalNodeKind.DeliveryDestination, 40) },
+                out var goal, out var error), error);
+            return goal;
+        }
+    }
+}

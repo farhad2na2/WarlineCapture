@@ -33,7 +33,17 @@ namespace Game.UI.Shell.Ecs
         }
 
         static bool CoverageEligible(in AriaSkirmishObservation v) =>
-            v.ExpandedSession && v.ExpandedBaseAssault && !v.AirProfile && !v.CombinedArmsField && !v.PublicObjective.Applicable;
+            v.ExpandedSession && v.ExpandedBaseAssault && !v.AirProfile && !v.CombinedArmsField && !v.PublicObjective.Applicable ||
+            ObjectiveCoverageEligible(v);
+
+        // FC/BT/CE objective skill: the same one-at-a-time coverage, research, building and support orders
+        // (AriaSkirmishPlanSystem.ObjectiveSkill latches CoverageAssaultSeen after the first accepted order).
+        static bool ObjectiveCoverageEligible(in AriaSkirmishObservation v) =>
+            v.ExpandedSession && v.PublicObjective.Applicable && !v.Finished && !v.PublicObjective.Finished;
+
+        // Base assault: the designated enemy base still stands. Objective missions: the objective is unresolved.
+        static bool CoverageEnemyAlive(in AriaSkirmishObservation v) =>
+            v.PublicObjective.Applicable ? !v.Finished && !v.PublicObjective.Finished : v.EnemyDesignatedAlive;
 
         static bool CoverageOtherOwner(in AriaSkirmishObservation v, in AriaSkirmishPlanComponent p, in AriaPlaySessionComponent t) =>
             t.Phase == AriaPlayPhase.Manual || v.AttackMode || v.MoveMode || v.ScanMode || v.MapOpen || v.PlacementOpen ||
@@ -76,7 +86,7 @@ namespace Game.UI.Shell.Ecs
                 AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0,
                 // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
                 Busy = CoverageOtherOwner(v, p, t) || p.CoverageCurrent != 0 || (p.BreacherStage == 0 && v.DrawerOpen),
-                EnemyAlive = v.EnemyDesignatedAlive,
+                EnemyAlive = CoverageEnemyAlive(v),
                 CanAffordBreacher = v.CanAffordBreacher, BreacherPending = v.BreacherRecruitPending,
                 BreacherFielded = v.BreacherFielded, RecruitAvailable = v.RecruitBreacher.Available,
                 RifleRecruitPending = v.RifleRecruitPending, RocketeerRecruitPending = v.RocketeerRecruitPending,
@@ -107,7 +117,7 @@ namespace Game.UI.Shell.Ecs
                 AssaultIssued = p.CoverageAssaultSeen != 0,
                 BreacherSettled = p.BreacherStage == 2,
                 Busy = CoverageOtherOwner(v, p, t) || p.BreacherStage == 1 || (p.CoverageCurrent == 0 && v.DrawerOpen),
-                EnemyAlive = v.EnemyDesignatedAlive,
+                EnemyAlive = CoverageEnemyAlive(v),
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
                 AffordMask = v.CoverageAffordMask, PendingMask = v.CoveragePendingMask,
                 FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions,
@@ -149,7 +159,7 @@ namespace Game.UI.Shell.Ecs
                 Busy = t.Phase == AriaPlayPhase.Manual || v.DrawerOpen || v.PlacementOpen || v.MapOpen || v.PresentedHomeThreat ||
                     p.HomeDefenseStage != 0 || p.PrecisionStage != 0 || p.AdvanceNavigation != 0 || p.AssaultInspectStage != 0 ||
                     p.PadStage != 0 || p.InterceptStage != 0 || p.AssaultFocusStage == 1 || p.BreacherStage == 1 || p.CoverageCurrent != 0,
-                ArmyMoving = p.AssaultIssued != 0, EnemyAlive = v.EnemyDesignatedAlive,
+                ArmyMoving = p.AssaultIssued != 0 || p.ObjectiveAccepted > 0, EnemyAlive = CoverageEnemyAlive(v),
                 Mode = v.AttackMode ? Game.Simulation.AriaSupportMode.Attack : v.MoveMode ? Game.Simulation.AriaSupportMode.Move :
                     v.ScanMode ? Game.Simulation.AriaSupportMode.Scan : Game.Simulation.AriaSupportMode.None,
                 ToggleAvailable = v.SelectedSquadToToggle.Available, MoveAvailable = v.Move.Available, AttackAvailable = v.Attack.Available,
@@ -188,7 +198,7 @@ namespace Game.UI.Shell.Ecs
                 AssaultSeen = p.CoverageAssaultSeen != 0,
                 Busy = OtherThanResearch(v, p, t) || p.CoverageCurrent != 0 || p.BreacherStage == 1 ||
                     (p.ResearchCurrent == 0 && v.DrawerOpen),
-                EnemyAlive = v.EnemyDesignatedAlive,
+                EnemyAlive = CoverageEnemyAlive(v),
                 CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, v.CoverageAffordMask, v.CoveragePendingMask),
                 InProgress = v.ResearchInProgress, CanUpgrade = v.CanUpgradeReadiness, UpgradeAvailable = v.UpgradeReadiness.Available,
                 Stage = v.ReadinessStage, Cost = v.ResearchCost, Materials = v.OwnMaterials,
@@ -228,7 +238,7 @@ namespace Game.UI.Shell.Ecs
                 (!placing && (v.AttackMode || v.MoveMode || v.ScanMode || v.MapOpen || v.DrawerOpen || p.PadStage != 0));
             int cards = (v.AirPad.Available ? 1 : 0) | (v.BuildDish.Available ? 2 : 0);
             var facts = new Game.Simulation.AriaBuildingView {
-                AssaultSeen = p.CoverageAssaultSeen != 0, Busy = busy, EnemyAlive = v.EnemyDesignatedAlive,
+                AssaultSeen = p.CoverageAssaultSeen != 0, Busy = busy, EnemyAlive = CoverageEnemyAlive(v),
                 CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, v.CoverageAffordMask, v.CoveragePendingMask),
                 ResearchIdle = p.ResearchCurrent == 0 && !v.ResearchInProgress, PlacementOpen = v.PlacementOpen,
                 PlacementGaveUp = placing && p.PadStage == 8,

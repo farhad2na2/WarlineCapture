@@ -9,6 +9,9 @@ namespace Game.UI.Contracts
         public bool Presented, CriticalPublicRisk, ResearchVisible, ResearchInProgress, CaptureMajority;
         public byte Perspective, Readiness;
         public int DismountedCombatGroups, ResearchMaterials;
+        // Objective skill: ordinary rifles are bought while the displayed infantry count is below this
+        // (AriaObjectiveSkillPolicy.InfantryTarget); 0 keeps the group-count rule only.
+        public int InfantryTarget;
         public uint ResearchId;
         public float SimulationSeconds;
     }

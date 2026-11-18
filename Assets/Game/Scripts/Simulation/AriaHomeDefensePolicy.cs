@@ -30,7 +30,7 @@ namespace Game.Simulation {
   public AriaStrategyTarget PreviousSquadPage=>new AriaStrategyTarget(PreviousAvailable,AriaHomeDefenseAction.PreviousPage);
   public AriaStrategyTarget NextSquadPage=>new AriaStrategyTarget(NextAvailable,AriaHomeDefenseAction.NextPage);
   public AriaStrategyTarget SelectedSquadToToggle=>new AriaStrategyTarget(ToggleAvailable,AriaHomeDefenseAction.ToggleSelected);
-  public AriaStrategyTarget Attack=>new AriaStrategyTarget(AttackAvailable,AriaHomeDefenseAction.ArmAttack);
+  public AriaStrategyTarget Attack=>new AriaStrategyTarget(AttackAvailable&&ExpandedSelectedMask!=0,AriaHomeDefenseAction.ArmAttack);
   public AriaStrategyTarget ThreatGround=>new AriaStrategyTarget(ThreatGroundAvailable,AriaHomeDefenseAction.AttackThreatTerrain);
   public AriaStrategyTarget Threat=>new AriaStrategyTarget(ThreatVisibleAvailable,AriaHomeDefenseAction.AttackThreatVisible);
   public AriaStrategyTarget HomeGround=>new AriaStrategyTarget(HomeGroundAvailable,AriaHomeDefenseAction.AttackHomeTerrain);
@@ -167,11 +167,26 @@ namespace Game.Simulation {
                 if (view.ExpandedAssaultMask == 0) plan.HomeDefenseScope = 0;
                 else
                 {
-                    if (plan.HomeDefenseMask == 0) plan.HomeDefenseMask = DefenderMask(view);
+                    int highlighted = HighlightedDefenderBit(view);
+                    if ((plan.HomeDefenseMask & ~view.ExpandedAssaultMask) != 0) plan.HomeDefenseMask = 0;
+                    if (plan.HomeDefenseMask == 0)
+                    {
+                        // SHOW can publish the new page before its cards are reachable by touch.
+                        int selectable = view.AvailableSquadMask | view.ExpandedSelectedMask;
+                        if ((view.ExpandedAssaultMask & selectable) == 0 || (highlighted & ~selectable) != 0)
+                        { output.Action = AriaHomeDefenseAction.Waiting; return true; }
+                        plan.HomeDefenseMask = DefenderMask(view);
+                    }
                     plan.HomeDefenseSlot = LowestSetBit(plan.HomeDefenseMask) + 1;
-                    int pending = plan.HomeDefenseMask & ~view.ExpandedSelectedMask & view.AvailableSquadMask;
+                    int pending = plan.HomeDefenseMask & ~view.ExpandedSelectedMask;
                     if (pending != 0)
-                    { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
+                    {
+                        int next = pending & highlighted;
+                        if (next == 0) next = LowestBit(pending & view.AvailableSquadMask);
+                        if ((next & view.AvailableSquadMask) == 0) output.Action = AriaHomeDefenseAction.Waiting;
+                        else Target(view.Squad(LowestSetBit(next)), false, ref output);
+                        return true;
+                    }
                     plan.HomeDefenseStage = 4;
                 }
             }
@@ -204,6 +219,15 @@ namespace Game.Simulation {
                 { output.Action = AriaHomeDefenseAction.Waiting; return true; }
                 plan.HomeDefenseStage = 4;
             }
+            // Selection can disappear while Attack is being aimed or after a camera re-centre.
+            if (view.ExpandedSelectedMask == 0 &&
+                (plan.HomeDefenseStage == 4 || plan.HomeDefenseStage == 5 &&
+                    (view.CompletedContacts <= plan.HomeDefenseAction || view.AttackMode)))
+            {
+                plan.HomeDefenseStage = 2;
+                output.Action = AriaHomeDefenseAction.Waiting;
+                return true;
+            }
             if (plan.HomeDefenseStage == 4)
             {
                 var threat = DefenseTarget(view, plan.HomeDefenseRounds);
@@ -218,13 +242,13 @@ namespace Game.Simulation {
                         if (view.AttackMode)
                         {
                             // One Attack toggle to disarm before the focus; if it did not disarm, give up.
-                            if ((plan.HomeDefenseRecovery & RecoveryDisarmed) == 0 && view.AttackAvailable)
+                            if ((plan.HomeDefenseRecovery & RecoveryDisarmed) == 0 && view.Attack.Available)
                             {
                                 plan.HomeDefenseRecovery |= RecoveryDisarmed;
                                 plan.HomeDefenseRecoveryAction = view.CompletedContacts;
                                 Target(view.Attack, false, ref output); return true;
                             }
-                            if (view.CompletedContacts <= plan.HomeDefenseRecoveryAction && view.AttackAvailable)
+                            if (view.CompletedContacts <= plan.HomeDefenseRecoveryAction && view.Attack.Available)
                             { Target(view.Attack, false, ref output); return true; }
                             return GiveUpRound(view, ref plan, ref output);
                         }
@@ -266,7 +290,7 @@ namespace Game.Simulation {
             if (plan.HomeDefenseStage == StageDisarm)
             {
                 // Never leave Attack armed for the next owner: one toggle, then observe.
-                if (view.AttackMode && view.AttackAvailable && view.CompletedContacts <= plan.HomeDefenseRecoveryAction &&
+                if (view.AttackMode && view.Attack.Available && view.CompletedContacts <= plan.HomeDefenseRecoveryAction &&
                     view.Time < plan.HomeDefenseObserveUntil)
                 { Target(view.Attack, false, ref output); return true; }
                 plan.HomeDefenseObserveUntil = view.Time + RetrySeconds;
@@ -341,10 +365,12 @@ namespace Game.Simulation {
  // nearest defender, plus one anti-armour card when the nearest one does not fight armour (a tank shelling
  // the HQ); without a highlight, one anti-armour card, else the first offered assault card.
  public static int DefenderMask(in AriaHomeDefenseView view){
-  int assault=view.ExpandedAssaultMask,offered=assault&view.AvailableSquadMask,armour=offered&view.AntiArmorMask;
-  int slot=view.HighlightedDefender-1,nearest=slot>=0&&slot<5&&(offered&(1<<slot))!=0?1<<slot:0;
+  int assault=view.ExpandedAssaultMask,offered=assault&(view.AvailableSquadMask|view.ExpandedSelectedMask),armour=offered&view.AntiArmorMask;
+  int nearest=offered&HighlightedDefenderBit(view);
   if(nearest!=0)return (nearest&armour)!=0||armour==0?nearest:nearest|LowestBit(armour);
   return LowestBit(armour!=0?armour:offered!=0?offered:assault);}
+ static int HighlightedDefenderBit(in AriaHomeDefenseView view){
+  int slot=view.HighlightedDefender-1;return slot>=0&&slot<5?view.ExpandedAssaultMask&(1<<slot):0;}
  static int LowestBit(int mask)=>mask&-mask;
  static int Bits(int mask){int n=0;while(mask!=0){mask&=mask-1;n++;}return n;}
  // No defence target after the one re-centre (or a ground tap that left Attack armed twice):
@@ -354,7 +380,7 @@ namespace Game.Simulation {
   plan.HomeDefenseRecoveryAction=view.CompletedContacts;
   plan.HomeDefenseObserveUntil=view.Time+DisarmSeconds;
   plan.HomeDefenseStage=StageDisarm;
-  if(view.AttackMode&&view.AttackAvailable&&(plan.HomeDefenseRecovery&RecoveryDisarmed)==0)
+  if(view.AttackMode&&view.Attack.Available&&(plan.HomeDefenseRecovery&RecoveryDisarmed)==0)
   {plan.HomeDefenseRecovery|=RecoveryDisarmed;Target(view.Attack,false,ref output);return true;}
   plan.HomeDefenseObserveUntil=view.Time+RetrySeconds;plan.HomeDefenseStage=8;output.Action=AriaHomeDefenseAction.Waiting;return true;
  }

@@ -134,6 +134,7 @@ namespace Game.Editor
             ImportFirstLaunchNarrative(english, persian, keysByEnglish);
             ImportM02Narrative(english, persian, keysByEnglish);
             ImportRuntimeUiStrings(english, persian, keysByEnglish);
+            ImportSkirmishAtlasStrings(english, persian, keysByEnglish);
             ImportRuntimeStaticUiCatalogs(english, keysByEnglish);
             ImportCommonPersian(persian, keysByEnglish);
 
@@ -263,11 +264,50 @@ namespace Game.Editor
             AddRuntimeText("ui.home.archive.chapter_open", "CHAPTER {0} • OPENING", "آغاز فصل {0}");
         }
 
+        internal static int BindSkirmishSetup(GameObject root)
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
+            if (catalog == null) throw new InvalidOperationException("Missing localization catalog.");
+            var english = ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode));
+            var persian = ToDictionary(catalog.FindLocale(GameLocalization.PersianLocaleCode));
+            ImportSkirmishAtlasStrings(english, persian);
+            int count = BindExistingCatalog(root, english);
+            catalog = BuildCatalog(english, persian);
+            RebuildAndPersistPersianFontCoverage(
+                catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset, persian.Values);
+            EditorUtility.SetDirty(catalog);
+            return count;
+        }
+
+        private static void ImportSkirmishAtlasStrings(Dictionary<string, string> english,
+            Dictionary<string, string> persian, Dictionary<string, string> keysByEnglish = null)
+        {
+            Add("heading", "SKIRMISH / SELECT MAP", "درگیری / انتخاب نقشه");
+            Add("mission_count", "24 MISSIONS", "۲۴ مأموریت");
+            Add("mountain_pass", "MOUNTAIN PASS", "گذرگاه کوهستان");
+            Add("airfield_plains", "AIRFIELD PLAINS", "دشت فرودگاه");
+            Add("choose_map", "Choose a map, then select a mission.", "اول نقشه را انتخاب کنید، بعد مأموریت را.");
+            Add("quick_battle", "QUICK BATTLE", "نبرد سریع");
+            Add("choose_missions", "CHOOSE MISSIONS", "انتخاب مأموریت‌ها");
+
+            void Add(string id, string source, string translation)
+            {
+                string key = "ui.skirmish.atlas." + id;
+                english[key] = source;
+                persian[key] = translation;
+                keysByEnglish?.TryAdd(source, key);
+            }
+        }
+
         public static int BindExistingCatalog(GameObject root)
         {
             var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
             if (catalog == null) return 0;
-            var english = ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode));
+            return BindExistingCatalog(root, ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode)));
+        }
+
+        private static int BindExistingCatalog(GameObject root, Dictionary<string, string> english)
+        {
             var keysBySource = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var entry in english.OrderBy(pair => pair.Key, StringComparer.Ordinal))
             {

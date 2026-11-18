@@ -71,8 +71,14 @@ namespace Game.UI.Runtime
         public TacticalCommandResult LastCommandResult
         {
             get => _lastCommandResult;
-            set => _lastCommandResult = value;
+            set
+            {
+                _lastCommandResult = value;
+                LastCommandResultFrame = Time.frameCount;
+            }
         }
+
+        public int LastCommandResultFrame { get; private set; }
 
         public bool HasLastCommandResult
         {

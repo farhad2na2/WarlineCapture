@@ -156,7 +156,7 @@ namespace Game.UI.Shell.Ecs
         private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
         private byte tracedSupportStage, tracedSupportDone;
         private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank", "siege", "aa", "attack_heli" };
-        private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli", "aa" };
+        private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli", "aa", "apc_armored" };
         // Evidence only, every expanded base assault (S002 native and generic planners):
         // coverage purchases (event=coverage kind=... state=buying|done|gave_up|pending|fielded) and each
         // support unit's one order (event=support_order kind=radar|drone|transport_heli
@@ -186,13 +186,16 @@ namespace Game.UI.Shell.Ecs
             if (p.SupportStage != tracedSupportStage || p.SupportDone != tracedSupportDone)
             {
                 bool newlyDone = (p.SupportDone & ~tracedSupportDone) != 0;
-                string state = newlyDone ? (tracedSupportStage == 3 ? "ordered" : "gave_up")
+                bool ordered = AirAssaultSupportTrace(v) ? p.SupportTrace == 2 : tracedSupportStage == 3;
+                string state = newlyDone ? (ordered ? "ordered" : "gave_up")
                     : p.SupportStage switch { 1 => "selecting", 2 => "arming", 3 => "tapping", 5 => "disarming", _ => "released" };
                 int kind = p.SupportKind < SupportKindNames.Length ? p.SupportKind : 0;
                 Debug.Log($"[AriaS002Trace] event=support_order kind={SupportKindNames[kind]} state={state} scenario={v.SourceScenarioIndex} done={p.SupportDone} tried={p.SupportTried} slot={p.SupportSlot} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} selectedMask={v.ExpandedSelectedMask} move={v.MoveMode} attack={v.AttackMode} scan={v.ScanMode} rear={v.RearGround.Available} front={v.FrontGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
                 tracedSupportStage = p.SupportStage; tracedSupportDone = p.SupportDone;
             }
         }
+        private static bool AirAssaultSupportTrace(in AriaSkirmishObservation v) =>
+            v.AirProfile && v.ExpandedBaseAssault && !v.PublicObjective.Applicable && !v.CombinedArmsField;
         private byte tracedResearchCurrent, tracedResearchTried, tracedResearchDone, tracedBuildCurrent, tracedBuildTried, tracedBuildDone;
         private static readonly string[] BuildingNames = { "none", "helipad", "satellite_dish" };
         // Evidence only: readiness research (event=research state=started|queued|released|gave_up) and producer

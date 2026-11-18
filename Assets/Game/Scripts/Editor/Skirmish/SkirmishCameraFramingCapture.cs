@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -12,6 +13,7 @@ using Game.Skirmish.Contracts;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -59,7 +61,8 @@ namespace Game.Editor
         static int step, stableFrames, airCaptures, lastAirCaptureFrame = -100000, pendingClearedFrame = -1;
         static Vector3 lastPosition; static Quaternion lastRotation; static float lastFov;
         static double groundDeadline;
-        static bool reviewSizeReapplied, drawerWasOpen;
+        static string openingPoseEvidence;
+        static bool reviewSizeReapplied, drawerWasOpen, openingScheduled;
         static readonly Dictionary<int, AirTrack> tracks = new();
         sealed class AirTrack { public float groundedY = float.NaN, lastY, lastHeading; public double headingAt; public bool tookOff, cruised, landed; public double airborneSince; }
 
@@ -119,6 +122,7 @@ namespace Game.Editor
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(LabelEnv))) Environment.SetEnvironmentVariable(LabelEnv, "unlabelled");
             mode = requested; label = Environment.GetEnvironmentVariable(LabelEnv);
             step = 0; stableFrames = 0; airCaptures = 0; tracks.Clear(); reviewSizeReapplied = false; drawerWasOpen = false;
+            openingScheduled = false; groundDeadline = 0d; openingPoseEvidence = null;
             EditorApplication.update -= Tick; EditorApplication.update += Tick;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded -= OnAircraftFocus;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded += OnAircraftFocus;
@@ -262,11 +266,7 @@ namespace Game.Editor
                 if (mode == "ground") TickGround(em, session, native, camera);
                 else if (mode == "aircraft") TickAircraft(em, native, camera);
             }
-            catch (Exception error)
-            {
-                Debug.LogError("[SkirmishCameraFramingCapture] result=Failed step=" + step + " error=" + error.Message);
-                mode = null;
-            }
+            catch (Exception error) { FailCapture(error.Message); }
         }
 
         static bool TryReadSession(EntityManager em, out Entity session, out SkirmishExpandedSessionComponent native)
@@ -298,6 +298,19 @@ namespace Game.Editor
         static void TickGround(EntityManager em, Entity session, SkirmishExpandedSessionComponent native, Camera camera)
         {
             if (step >= GroundShots.Length) return;
+            string catalog = native.CatalogId.ToString();
+            if (step == 0 && catalog == "S002")
+            {
+                double now = EditorApplication.timeSinceStartup;
+                if (groundDeadline <= 0d) groundDeadline = now + 60d;
+                if (now >= groundDeadline) { FailCapture("openingPoseTimeout " + (openingPoseEvidence ?? "noRenderedFrame")); return; }
+                if (openingScheduled || !ReviewSizeReady()) return;
+                var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+                if (scene == null) return;
+                openingScheduled = true;
+                scene.StartCoroutine(CaptureS002Opening(em, session, native));
+                return;
+            }
             if (step == 0)
             {
                 bool owned = SkirmishS005OpeningViewPolicy.OwnsIntroduction(em, session) ||
@@ -306,12 +319,88 @@ namespace Game.Editor
                 if (!owned && EditorApplication.timeSinceStartup < groundDeadline) { stableFrames = 0; return; }
             }
             if (!ReviewSizeReady() || !Settled(camera)) return;
-            string catalog = native.CatalogId.ToString();
             ReviewSize(out int width, out int height, out _);
             string prefix = GroundFilePrefix(catalog, native.Seed, width, height, captureLocale);
             string png = Path.Combine(OutputDirectory(), prefix + "-" + GroundShots[step] + ".png");
             ScreenCapture.CaptureScreenshot(png);
             AppendJson(prefix + ".jsonl", GroundShots[step], camera, em, native, png, null);
+            AdvanceGroundShot(catalog, png);
+        }
+
+        static IEnumerator CaptureS002Opening(EntityManager em, Entity session, SkirmishExpandedSessionComponent native)
+        {
+            var endOfFrame = new WaitForEndOfFrame();
+            using var intro = em.CreateEntityQuery(typeof(MatchIntroTransitionComponent));
+            using var requests = em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
+            using var cameraStates = em.CreateEntityQuery(typeof(RtsCameraStateComponent));
+            int firstPlayableFrame = -1;
+            RuntimeCameraFocusRequestComponent opening = default;
+            while (mode == "ground" && step == 0)
+            {
+                yield return endOfFrame;
+                if (mode != "ground") break;
+                try
+                {
+                    if (!em.Exists(session) || em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase != SkirmishSessionPhase.Playing)
+                        throw new InvalidOperationException("matchEndedBeforeOpeningCapture");
+                    var camera = Camera.main;
+                    var request = requests.CalculateEntityCount() == 1 ? requests.GetSingleton<RuntimeCameraFocusRequestComponent>() : default;
+                    bool owned = SkirmishS005OpeningViewPolicy.OwnsIntroduction(em, session) && request.UseExplicitPerspective == 1 &&
+                        math.distancesq(request.World, em.GetComponentData<SkirmishS005OpeningFocusOwner>(session).GroundRequest) < .000001f;
+                    if (owned) opening = request;
+                    var transition = intro.CalculateEntityCount() == 1 ? intro.GetSingleton<MatchIntroTransitionComponent>() : default;
+                    bool playable = transition.State == MatchIntroTransitionStateKind.Complete && transition.InputLocked == 0 &&
+                        SkirmishLaunchProjection.IsSimulationActive(em);
+                    if (playable && firstPlayableFrame < 0) firstPlayableFrame = Time.frameCount;
+                    var perspective = opening.Perspective;
+                    var capturedGround = camera != null ? GroundCenter(camera) : default;
+                    var state = cameraStates.CalculateEntityCount() == 1 ? cameraStates.GetSingleton<RtsCameraStateComponent>() : default;
+                    openingPoseEvidence = $"firstPlayableFrame={firstPlayableFrame} frame={Time.frameCount} ownedRequest={owned} " +
+                        $"composedYaw={perspective.z:F2} capturedYaw={camera?.transform.eulerAngles.y:F2} " +
+                        $"composedGround={opening.World} capturedGround={capturedGround:F2} " +
+                        $"smoothFocus={state.HasSmoothFocusTarget} smoothPerspective={state.HasSmoothPerspectiveTarget}";
+                    // Compare with the consumed mission request while both camera transitions are free to finish.
+                    if (!playable || !owned || request.Requested != 0 || camera == null || camera.orthographic ||
+                        Vector3.Distance(capturedGround, (Vector3)request.World) > .5f ||
+                        Quaternion.Angle(camera.transform.rotation, Quaternion.Euler(perspective.y, perspective.z, 0f)) > .2f ||
+                        Mathf.Abs(camera.transform.position.y - perspective.x) > .1f || Mathf.Abs(camera.fieldOfView - perspective.w) > .1f)
+                        continue;
+
+                    ReviewSize(out int width, out int height, out _);
+                    string prefix = GroundFilePrefix("S002", native.Seed, width, height, captureLocale);
+                    string png = Path.Combine(OutputDirectory(), prefix + "-opening.png");
+                    SaveRenderedFrame(png, width, height);
+                    AppendJson(prefix + ".jsonl", "opening", camera, em, native, png, null);
+                    Debug.Log("[SkirmishCameraFramingCapture] openingFrame=Captured attempt=" + native.SessionId + " " + openingPoseEvidence);
+                    AdvanceGroundShot("S002", png);
+                }
+                catch (Exception error) { FailCapture(error.Message); }
+            }
+        }
+
+        internal static void SaveRenderedFrame(string png, int width, int height)
+        {
+            var texture = ScreenCapture.CaptureScreenshotAsTexture();
+            if (texture == null) throw new InvalidOperationException("Game view screenshot unavailable");
+            try
+            {
+                if (texture.width != width || texture.height != height)
+                    throw new InvalidOperationException($"Game view PNG size {texture.width}x{texture.height}, expected {width}x{height}");
+                File.WriteAllBytes(png, texture.EncodeToPNG());
+            }
+            finally { UnityEngine.Object.Destroy(texture); }
+        }
+
+        static void FailCapture(string reason)
+        {
+            Debug.LogError("[SkirmishCameraFramingCapture] result=Failed step=" + step + " reason=" + reason);
+            bool ground = mode == "ground";
+            mode = null;
+            if (ground && Environment.GetEnvironmentVariable(ExitEnv) == "1") SkirmishS002AriaRunHarness.AbortFailedValidationAndExit();
+        }
+
+        static void AdvanceGroundShot(string catalog, string png)
+        {
             var hud = HudCamera();
             bool requested = hud != null && step switch
             {
@@ -638,7 +727,7 @@ namespace Game.Editor
         // ------------------------------------------------------------------- facts
         [Serializable] sealed class Shot
         {
-            public string label, shot, catalog, locale, png, subject, sizeSource; public int frame, seed, width, height, editorScreenWidth, editorScreenHeight;
+            public string label, shot, catalog, locale, png, subject, sizeSource, attempt; public int frame, seed, width, height, editorScreenWidth, editorScreenHeight;
             public float elapsed, fieldOfView, aspect, cameraAboveSubjectMin; public Vector3 cameraPosition, cameraEuler, groundCenterZeroPlane;
             public bool profileResolved; public float profileNormalHeight, profileMaxHeight, profileMinHeight, profileGroundY;
             public int ownAirVisible, ownAirAboveCamera, unitOrdersIssued;
@@ -647,11 +736,10 @@ namespace Game.Editor
         static void AppendJson(string file, string shot, Camera camera, EntityManager em, SkirmishExpandedSessionComponent native, string png, string subject)
         {
             ReviewSize(out int width, out int height, out string sizeSource);
-            var row = new Shot { label = label, shot = shot, catalog = native.CatalogId.ToString(), locale = captureLocale, png = png, subject = subject, frame = Time.frameCount,
+            var row = new Shot { label = label, shot = shot, catalog = native.CatalogId.ToString(), locale = captureLocale, png = png, subject = subject, frame = Time.frameCount, attempt = native.SessionId.ToString(),
                 seed = native.Seed, width = width, height = height, sizeSource = sizeSource, editorScreenWidth = Screen.width, editorScreenHeight = Screen.height, elapsed = Time.timeSinceLevelLoad, fieldOfView = camera.fieldOfView, aspect = camera.aspect,
                 cameraPosition = camera.transform.position, cameraEuler = camera.transform.eulerAngles, cameraAboveSubjectMin = float.NaN, unitOrdersIssued = 0 };
-            var ray = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0));
-            if (new Plane(Vector3.up, Vector3.zero).Raycast(ray, out float distance)) row.groundCenterZeroPlane = ray.GetPoint(distance);
+            row.groundCenterZeroPlane = GroundCenter(camera);
             if (SkirmishMissionViewProfileApplication.TryResolve(em, out var profile))
             {
                 row.profileResolved = true; row.profileNormalHeight = profile.NormalHeight; row.profileMaxHeight = profile.MaxHeight;
@@ -672,6 +760,12 @@ namespace Game.Editor
                 row.cameraAboveSubjectMin = float.IsNaN(row.cameraAboveSubjectMin) ? above : Mathf.Min(row.cameraAboveSubjectMin, above);
             }
             File.AppendAllText(Path.Combine(OutputDirectory(), file), JsonUtility.ToJson(row) + "\n");
+        }
+
+        static Vector3 GroundCenter(Camera camera)
+        {
+            var ray = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0));
+            return new Plane(Vector3.up, Vector3.zero).Raycast(ray, out float distance) ? ray.GetPoint(distance) : default;
         }
     }
     /// <summary>

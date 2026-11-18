@@ -111,6 +111,7 @@ namespace Game.Simulation {
   // Air-capable base assault (lane 26 S004): a kind whose purchase another owner interrupted (home defence
   // for a base alert) is released for one more visit instead of being given up for the match.
   public bool RetryInterrupted;
+  public bool PrioritizeAirCoverage;
   // Per kind bit: affordable now (above the materials reserve), queued, alive, catalog target offered.
   public int AffordMask,PendingMask,FieldedMask,CardMask;
   // Completed touches: a purchase that keeps landing taps (Build, category, scroll, card,
@@ -129,11 +130,13 @@ namespace Game.Simulation {
   public const int Kinds=11,All=(1<<Kinds)-1,PerVisit=3;
   // Coverage kinds that take a tactical air slot (drone, transport heli, attack heli).
   public const int AirKinds=16|32|1024;
+  const int GroundOpeningKinds=1|2|4, ExtraAircraftKinds=16|1024;
   public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=12f;
   // Purchase order: combat kinds first, then support kinds.
   static readonly byte[] Order={(byte)AriaCoverageKind.Marksman,(byte)AriaCoverageKind.ApcFast,(byte)AriaCoverageKind.Gunner,
    (byte)AriaCoverageKind.Tank,(byte)AriaCoverageKind.Radar,(byte)AriaCoverageKind.ApcHeavy,(byte)AriaCoverageKind.Drone,
    (byte)AriaCoverageKind.TransportHeli,(byte)AriaCoverageKind.Siege,(byte)AriaCoverageKind.AntiAir,(byte)AriaCoverageKind.AttackHeli};
+  static readonly byte[] AirPriority={(byte)AriaCoverageKind.AttackHeli,(byte)AriaCoverageKind.Drone,(byte)AriaCoverageKind.Radar};
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -168,9 +171,13 @@ namespace Game.Simulation {
    return TryStart(view,ref plan,out kind)?AriaCoverageAction.Recruit:AriaCoverageAction.None;
   }
   static bool TryStart(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
+   if(view.PrioritizeAirCoverage&&TryStart(view,ref plan,AirPriority,out kind))return true;
+   return TryStart(view,ref plan,Order,out kind);
+  }
+  static bool TryStart(in AriaCoverageView view,ref AriaCoverageState plan,byte[] order,out AriaCoverageKind kind){
    kind=AriaCoverageKind.None;
-   for(int i=0;i<Order.Length;i++){
-    int k=Order[i],bit=1<<(k-1);
+   for(int i=0;i<order.Length;i++){
+    int k=order[i],bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
     if((plan.Done&bit)!=0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
     plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;plan.Started=view.Time;plan.Actions=view.CompletedContacts;kind=(AriaCoverageKind)k;
@@ -185,6 +192,10 @@ namespace Game.Simulation {
   // slot is free). Afterwards a slot freed by a loss goes to the next unused air kind. Identity otherwise.
   public static int AirOpeningAfford(int affordMask,bool airProfile,bool airOpeningSettled,bool airOpeningOffered)=>
    airProfile&&!airOpeningSettled&&airOpeningOffered?affordMask&~AirKinds:affordMask;
+  public static bool CanBuyOpeningTanker(bool airCoverage,int done)=>
+   !airCoverage||(done&GroundOpeningKinds)==GroundOpeningKinds;
+  public static bool CanBuyLightAttackHeli(bool airCoverage,bool lightQueuedOnce,int done)=>
+   !airCoverage||!lightQueuedOnce||(done&ExtraAircraftKinds)==ExtraAircraftKinds;
  }
 
  // Which expanded skirmishes run the generic gate-3 coverage (breacher, coverage purchases, research, producer
@@ -294,7 +305,7 @@ namespace Game.Simulation {
  // Support kinds (SupportSlots: 3 bits per roster slot): 1 radar, 2 drone, 3 transport heli, 4 AA.
  // AA (lane 24 S004): not an assault role, so the column sweep never orders the starting AA; it Moves
  // behind the column like the radar and covers it from the enemy air.
- public enum AriaSupportKind:byte {None,Radar,Drone,TransportHeli,AntiAir}
+ public enum AriaSupportKind:byte {None,Radar,Drone,TransportHeli,AntiAir,ApcArmored}
  public enum AriaSupportMode:byte {None,Move,Attack,Scan}
  public enum AriaSupportAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmMove,ArmAttack,ArmScan,TargetRear,TargetFront,TargetHome,Focus}
  public struct AriaSupportView {
@@ -308,6 +319,7 @@ namespace Game.Simulation {
   // prefers it) after at most one Home focus (FocusAvailable) pressed before arming; an armed mode is toggled
   // until it is really off (two presses at most); and the policy deselects its own unit when it is done.
   public bool Tidy,HomeAvailable,FocusAvailable;
+  public bool RequireOrderResult,OrderResultAvailable,OrderAccepted;
   public AriaSupportMode Mode;
   public int SupportSlots,SelectedMask,SelectedGroups,SelectedOffPage,AvailableSquadMask,CompletedContacts;
   public float Time;
@@ -321,7 +333,7 @@ namespace Game.Simulation {
  public struct AriaSupportDecision {public AriaSupportAction Action;public int Slot;public byte Trace;public AriaSupportKind Kind;}
  public static class AriaSupportOrderPolicy {
   public const float OrderSeconds=12f,CooldownSeconds=6f;
-  public const int SlotBits=3,AllKinds=15;
+  public const int SlotBits=3,AllKinds=31;
   public static AriaSupportKind SlotKind(int supportSlots,int slot)=>(AriaSupportKind)((supportSlots>>(slot*SlotBits))&7);
   public static int KindBit(AriaSupportKind kind)=>kind==AriaSupportKind.None?0:1<<((int)kind-1);
   public static int Slots(AriaSupportKind slot0,AriaSupportKind slot1,AriaSupportKind slot2,AriaSupportKind slot3,AriaSupportKind slot4)=>
@@ -332,14 +344,12 @@ namespace Game.Simulation {
    if(plan.Stage==0){
     if((view.FieldedMask&~plan.Done&AllKinds)==0||view.Busy||!view.ArmyMoving||!view.EnemyAlive||view.Mode!=AriaSupportMode.None||
        view.SelectedGroups>0||view.Time<plan.ReadyAt)return false;
-    int slot=-1;
+    int pending=view.FieldedMask&~plan.Done&AllKinds;
+    int slot=view.Tidy?FindSlot(view,pending&~plan.Tried&KindBit(AriaSupportKind.TransportHeli)):-1;
     // Tidy: a kind never tried goes before one already released once (lane 26: the AA was retried while the
     // transport heli on the next card never got its turn).
-    for(int pass=view.Tidy?0:1;pass<2&&slot<0;pass++)
-     for(int i=0;i<5&&slot<0;i++){
-      var k=SlotKind(view.SupportSlots,i);int bit=KindBit(k);
-      if(k!=AriaSupportKind.None&&(plan.Done&bit)==0&&(pass==1||(plan.Tried&bit)==0)&&(view.AvailableSquadMask&(1<<i))!=0)slot=i;
-     }
+    if(slot<0&&view.Tidy)slot=FindSlot(view,pending&~plan.Tried);
+    if(slot<0)slot=FindSlot(view,pending);
     if(slot<0)return false;
     plan.Kind=(byte)SlotKind(view.SupportSlots,slot);
     plan.Stage=1;plan.Slot=slot;plan.Deadline=view.Time+OrderSeconds;plan.Actions=view.CompletedContacts;plan.Focused=0;plan.Presses=0;
@@ -388,11 +398,12 @@ namespace Game.Simulation {
    if(plan.Stage==2){
     bool armed=drone?view.Mode==AriaSupportMode.Scan:view.Mode is AriaSupportMode.Move or AriaSupportMode.Attack;
     if(!armed){
-     // Tidy: no ground for the Move on screen: one Home focus (camera only) before arming, never with a mode armed.
-     if(view.Tidy&&!drone&&view.Mode==AriaSupportMode.None&&!GroundFor(view,plan.Kind)){
-      if(plan.Focused==0&&view.FocusAvailable)
+     // Keep presenting Focus through the input driver's aim delay, until its touch completes.
+     if(view.Tidy&&view.Mode==AriaSupportMode.None){
+      if(plan.Focused==1&&view.CompletedContacts<=plan.Actions)
+      {output.Action=view.FocusAvailable?AriaSupportAction.Focus:AriaSupportAction.Waiting;return true;}
+      if(plan.Focused==0&&view.FocusAvailable&&GroundAction(view,plan.Kind)==AriaSupportAction.Waiting)
       {plan.Focused=1;plan.Actions=view.CompletedContacts;output.Action=AriaSupportAction.Focus;return true;}
-      if(plan.Focused==1&&view.CompletedContacts<=plan.Actions){output.Action=AriaSupportAction.Waiting;return true;}
      }
      output.Action=drone?(view.ScanAvailable?AriaSupportAction.ArmScan:AriaSupportAction.Waiting)
       :view.MoveAvailable?AriaSupportAction.ArmMove:view.AttackAvailable?AriaSupportAction.ArmAttack:AriaSupportAction.Waiting;
@@ -400,19 +411,30 @@ namespace Game.Simulation {
     }
     plan.Stage=3;plan.Actions=view.CompletedContacts;
    }
+   if(view.Tidy&&(!OwnSelection(view,plan.Slot)||SlotKind(view.SupportSlots,plan.Slot)!=(AriaSupportKind)plan.Kind))
+    return ReleaseArmed(view,ref plan,ref output);
    if(view.CompletedContacts<=plan.Actions){
-    output.Action=drone?(view.FrontAvailable?AriaSupportAction.TargetFront:AriaSupportAction.Waiting):GroundAction(view,plan.Kind);
+    output.Action=GroundAction(view,plan.Kind);
     return true;
+   }
+   if(view.RequireOrderResult){
+    if(!view.OrderResultAvailable){output.Action=AriaSupportAction.Waiting;return true;}
+    if(!view.OrderAccepted)return ReleaseArmed(view,ref plan,ref output);
    }
    plan.Done|=(byte)KindBit((AriaSupportKind)plan.Kind);plan.Stage=0;plan.ReadyAt=view.Time+CooldownSeconds;
    output.Trace=2;output.Action=AriaSupportAction.None;
    BeginDeselect(view,ref plan);
    return false;
   }
-  // Move ground for a support kind: column rear, or (Tidy) home-side ground; the AA prefers home.
-  static bool GroundFor(in AriaSupportView view,byte kind)=>view.RearAvailable||view.Tidy&&view.HomeAvailable;
+  static int FindSlot(in AriaSupportView view,int kinds){
+   for(int slot=0;slot<5;slot++)
+    if((view.AvailableSquadMask&(1<<slot))!=0&&(kinds&KindBit(SlotKind(view.SupportSlots,slot)))!=0)return slot;
+   return -1;
+  }
   static AriaSupportAction GroundAction(in AriaSupportView view,byte kind){
-   if(view.Tidy&&view.HomeAvailable&&(kind==(byte)AriaSupportKind.AntiAir||!view.RearAvailable))return AriaSupportAction.TargetHome;
+   if(kind==(byte)AriaSupportKind.Drone)
+    return view.FrontAvailable?AriaSupportAction.TargetFront:view.Tidy&&view.HomeAvailable?AriaSupportAction.TargetHome:AriaSupportAction.Waiting;
+   if(view.Tidy&&view.HomeAvailable&&(kind!=(byte)AriaSupportKind.Radar||!view.RearAvailable))return AriaSupportAction.TargetHome;
    return view.RearAvailable?AriaSupportAction.TargetRear:AriaSupportAction.Waiting;
   }
   static bool OwnSelection(in AriaSupportView view,int slot)=>

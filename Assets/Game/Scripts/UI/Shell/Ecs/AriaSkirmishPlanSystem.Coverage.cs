@@ -3,16 +3,8 @@ using Game.UI.Shell.Contracts.Ecs;
 
 namespace Game.UI.Shell.Ecs
 {
-    // Gate-3 unit coverage for the generic expanded base-assault planner (every expanded
-    // base assault other than the S002 native adapter: ground armies such as S026 and, since lane 24,
-    // air-capable armies such as S004 army A, which also cover the AA (one Move order behind the
-    // column) and the attack heli (bought when the air cap has room). The same pure
-    // policies as the S002 adapter: one breacher squad, then one squad of each other
-    // available kind (marksman, apc_fast, radar, apc_heavy, drone, transport heli), one at
-    // a time after the first assault order, through Build and the catalog card; then one
-    // ordinary order for each fielded support unit (radar / transport heli Move behind the
-    // column, drone Scan ahead of it). Kinds the mission's catalog does not offer are never
-    // affordable and are skipped. Visible controls only; no gameplay state is written.
+    // Gate 3 uses the normal Build drawer, roster and command controls. Air-capable base assaults
+    // cover starting support units during the opening and buy more aircraft as capacity permits.
     public partial struct AriaSkirmishPlanSystem
     {
         static void ClearFindBase(ref AriaSkirmishPlanComponent p)
@@ -142,7 +134,7 @@ namespace Game.UI.Shell.Ecs
             if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
                 AssaultIssued = p.CoverageAssaultSeen != 0 || AirCoverageOpen(v, ref p),
-                BreacherSettled = p.BreacherStage == 2, RetryInterrupted = AirAssault(v),
+                BreacherSettled = p.BreacherStage == 2, RetryInterrupted = AirAssault(v), PrioritizeAirCoverage = AirAssault(v),
                 Busy = CoverageOtherOwner(v, p, t) || p.BreacherStage == 1 || (p.CoverageCurrent == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
@@ -188,13 +180,18 @@ namespace Game.UI.Shell.Ecs
             ref AriaPlaySessionComponent t, ref AriaPlayObservationComponent o)
         {
             if (!CoverageEligible(v)) return false;
+            bool airAssault = AirAssault(v);
+            bool supportContact = t.LastCompletedFrame > 0 && (t.LastCompletedTargetId is -20016 or -20017 or -20018);
+            bool orderResult = supportContact && v.SupportCommandResultFrame >= t.LastCompletedFrame &&
+                v.SupportCommandResultFrame - t.LastCompletedFrame <= 2;
             var facts = new Game.Simulation.AriaSupportView {
                 FieldedMask = SupportFielded(v.CoverageFieldedMask),
                 Busy = t.Phase == AriaPlayPhase.Manual || v.DrawerOpen || v.PlacementOpen || v.MapOpen || v.PresentedHomeThreat ||
                     p.HomeDefenseStage != 0 || p.PrecisionStage != 0 || p.AdvanceNavigation != 0 || p.AssaultInspectStage != 0 ||
                     p.PadStage != 0 || p.InterceptStage != 0 || p.AssaultFocusStage == 1 || p.BreacherStage == 1 || p.CoverageCurrent != 0,
                 ArmyMoving = p.AssaultIssued != 0 || p.ObjectiveAccepted > 0 || AirCoverageOpen(v, ref p), EnemyAlive = CoverageEnemyAlive(v),
-                Tidy = AirAssault(v), HomeAvailable = v.SupportHomeGround.Available, FocusAvailable = v.FocusPlayer.Available,
+                Tidy = airAssault, HomeAvailable = v.SupportHomeGround.Available, FocusAvailable = v.FocusPlayer.Available,
+                RequireOrderResult = airAssault, OrderResultAvailable = orderResult, OrderAccepted = v.SupportCommandAccepted,
                 Mode = v.AttackMode ? Game.Simulation.AriaSupportMode.Attack : v.MoveMode ? Game.Simulation.AriaSupportMode.Move :
                     v.ScanMode ? Game.Simulation.AriaSupportMode.Scan : Game.Simulation.AriaSupportMode.None,
                 ToggleAvailable = v.SelectedSquadToToggle.Available, MoveAvailable = v.Move.Available, AttackAvailable = v.Attack.Available,
@@ -202,7 +199,13 @@ namespace Game.UI.Shell.Ecs
                 SupportSlots = v.ExpandedSupportSlots,
                 SelectedMask = v.ExpandedSelectedMask, SelectedGroups = v.ExpandedSelectedGroups, SelectedOffPage = v.ExpandedSelectedOffPage,
                 CompletedContacts = t.Actions, Time = v.Time };
-            for (int slot = 0; slot < 5; slot++) if (v.Squad(slot).Available) facts.AvailableSquadMask |= 1 << slot;
+            for (int slot = 0; slot < 5; slot++)
+            {
+                if (!v.Squad(slot).Available) continue;
+                facts.AvailableSquadMask |= 1 << slot;
+                if (airAssault && Game.Simulation.AriaSupportOrderPolicy.SlotKind(facts.SupportSlots, slot) == Game.Simulation.AriaSupportKind.ApcArmored)
+                    facts.FieldedMask |= Game.Simulation.AriaSupportOrderPolicy.KindBit(Game.Simulation.AriaSupportKind.ApcArmored);
+            }
             var state = new Game.Simulation.AriaSupportState { Stage = p.SupportStage, Kind = p.SupportKind, Tried = p.SupportTried, Done = p.SupportDone,
                 Focused = p.SupportFocused, Presses = p.SupportPresses,
                 Slot = p.SupportSlot, Actions = p.SupportActions, Deadline = p.SupportDeadline, ReadyAt = p.SupportReadyAt };
@@ -210,7 +213,9 @@ namespace Game.UI.Shell.Ecs
             p.SupportStage = state.Stage; p.SupportKind = state.Kind; p.SupportTried = state.Tried; p.SupportDone = state.Done;
             p.SupportFocused = state.Focused; p.SupportPresses = state.Presses;
             p.SupportSlot = state.Slot; p.SupportActions = state.Actions; p.SupportDeadline = state.Deadline; p.SupportReadyAt = state.ReadyAt;
-            if (!handled) return false;
+            if (decision.Trace != 0) p.SupportTrace = decision.Trace;
+            if (!handled) return airAssault && StepSupportPaging(v, facts, ref p, ref o);
+            if (decision.Action == Game.Simulation.AriaSupportAction.SelectSlot) p.SupportPageDirection = 0;
             switch (decision.Action)
             {
                 case Game.Simulation.AriaSupportAction.ToggleSelected: p.Intent = AriaSkirmishIntent.SelectSquad; Target(v.SelectedSquadToToggle, false, ref o); break;
@@ -224,6 +229,27 @@ namespace Game.UI.Shell.Ecs
                 case Game.Simulation.AriaSupportAction.Focus: p.Intent = AriaSkirmishIntent.Inspect; Target(v.FocusPlayer, false, ref o); break;
                 default: p.Intent = AriaSkirmishIntent.Advance; o.Kind = AriaPlayObservationKind.Waiting; break;
             }
+            return true;
+        }
+
+        static bool StepSupportPaging(in AriaSkirmishObservation v, in Game.Simulation.AriaSupportView facts,
+            ref AriaSkirmishPlanComponent p, ref AriaPlayObservationComponent o)
+        {
+            if (p.SupportStage != 0 || facts.Busy || !facts.ArmyMoving || !facts.EnemyAlive ||
+                facts.Mode != Game.Simulation.AriaSupportMode.None || facts.SelectedGroups != 0 ||
+                (facts.FieldedMask & ~p.SupportDone) == 0 || v.Time < p.SupportReadyAt)
+                return false;
+            // Look at each visible page at most once in each direction, then yield to the assault.
+            var page = p.SupportPageDirection != 2 && v.NextSquadPage.Available ? v.NextSquadPage : v.PreviousSquadPage;
+            if (!page.Available)
+            {
+                p.SupportPageDirection = 0;
+                p.SupportReadyAt = v.Time + Game.Simulation.AriaSupportOrderPolicy.CooldownSeconds;
+                return false;
+            }
+            p.SupportPageDirection = page.Id == v.NextSquadPage.Id ? (byte)1 : (byte)2;
+            p.Intent = AriaSkirmishIntent.Inspect;
+            Target(page, false, ref o);
             return true;
         }
     

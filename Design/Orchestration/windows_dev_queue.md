@@ -114,6 +114,26 @@ AriaSkirmishPlanSystem.cs) and fix ARIA so it re-plans (e.g. aims at the visible
 blocking. Public player controls only; fog of war stays. Add an EditMode test that reproduces the stage-5 state and passes on
 Windows. Counted S002 matches stay on the Mac. Branch `missions/win-w12-s002-second-defense`.
 
+## W13 — Starting structures and enemy construction placed on map runways (2026-11-18)
+status: READY
+codex effort: xhigh
+Owner saw an ENEMY refinery on an airport runway in a Mac Editor match. Traced (Windows + Mac, read-only, computed not measured):
+S004 (CityEdgeAirfield) enemy refinery preferred rect x 894..919, z 562..577 covers ~225 of 375 m2 of the east runway end
+(runway x 490.66..909.34, z 543.35..576.65, `PreparedEntities.unity:84951/:1539684`, Candidate `output-manifest.json:180427`); the enemy
+barracks/HQ (x 888..916, z 533..548) overlaps the runway's south edge ~99 m2, enemy ground staging ~9 m2. Cause: `MapVariantCityAirfield.cs:136-139`
+leaves the runway unreserved; the baked surface clears `MapSurfaceMovementMask.BuildingPlacement` on runway cells (decoded Candidate
+`Surface.asset`, mask 15) but no placement code reads that bit (only `MapSurfaceSlopeClassifier.cs:48`); Plaza(6) is not a road in
+`BuildingPlacementRoadSurfaceMask.cs:69-71`; starting grants use RequirePreferredOrigin=0 and accept the preferred cell
+(`SkirmishStartingBuildingsService.cs:79-91`, `BuildingRuntimeProcessingCompositionSystemHelper.cs:453-487`).
+Fix: make shared building placement (starting grants AND enemy/player construction) reject cells whose surface lacks
+`BuildingPlacement`, so the nearest legal footprint is used; keep every existing check; no map/terrain/runway asset changes, no stat
+changes. Also pass rotateVertical through at `BuildingRuntimeQueryCompositionSystemHelper.cs` ~:135 if the trace there holds.
+Add a successful-placement log line for starting structures (faction, structure, preferred and actual origin), and a
+runway/BuildingPlacement-bit check to `Tools/Missions/pad_preflight.py`. Tests: an EditMode test reproducing the S004 enemy refinery
+case (refused on runway cells, placed clear of them), plus `RunFocusedValidation` for the placement tests you touch, the compile check, and
+the Python tests. Report which other catalog rows' starting structures move (any whose actual origin changes). Counted matches stay on the Mac.
+Branch `missions/win-w13-runway-placement`.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

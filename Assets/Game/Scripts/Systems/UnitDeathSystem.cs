@@ -273,8 +273,8 @@ namespace Game.Runtime
             if(em.HasComponent<ManualMoveOrderTag>(entity)) present|=DeathStripFlags.ManualMove;
             if(em.HasComponent<AutoWanderMoveTag>(entity)) present|=DeathStripFlags.AutoWander;
             if(em.HasComponent<EngageTarget>(entity)) present|=DeathStripFlags.Engage;
-            if(em.HasComponent<RecentAttacker>(entity)) present|=DeathStripFlags.RecentAttacker;
-            if(em.HasComponent<RecentDamageHealthBarVisibility>(entity)) present|=DeathStripFlags.RecentDamageVisibility;
+            if(em.HasComponent<RecentAttacker>(entity)&&em.IsComponentEnabled<RecentAttacker>(entity)) present|=DeathStripFlags.RecentAttacker;
+            if(em.HasComponent<RecentDamageHealthBarVisibility>(entity)&&em.IsComponentEnabled<RecentDamageHealthBarVisibility>(entity)) present|=DeathStripFlags.RecentDamageVisibility;
             if(em.HasComponent<UnitPathFollow>(entity)) present|=DeathStripFlags.PathFollow;
             if(em.HasComponent<UnitPathRange>(entity)) present|=DeathStripFlags.PathRange;
             if(em.HasComponent<UnitPathRequest>(entity)) present|=DeathStripFlags.PathRequest;
@@ -289,10 +289,12 @@ namespace Game.Runtime
                 em.RemoveComponent<AutoWanderMoveTag>(entity);
             if ((strip & DeathStripFlags.Engage) != 0)
                 em.RemoveComponent<EngageTarget>(entity);
+            // Enableable per-hit state is disabled, never removed: pending command buffers may still disable it,
+            // and removal would create one more archetype per dying unit.
             if ((strip & DeathStripFlags.RecentAttacker) != 0)
-                em.RemoveComponent<RecentAttacker>(entity);
+                em.SetComponentEnabled<RecentAttacker>(entity, false);
             if ((strip & DeathStripFlags.RecentDamageVisibility) != 0)
-                em.RemoveComponent<RecentDamageHealthBarVisibility>(entity);
+                em.SetComponentEnabled<RecentDamageHealthBarVisibility>(entity, false);
             if ((strip & DeathStripFlags.PathFollow) != 0)
                 em.RemoveComponent<UnitPathFollow>(entity);
             if ((strip & DeathStripFlags.PathRange) != 0)

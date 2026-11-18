@@ -12,7 +12,8 @@ namespace Game.Components
         public float Value;
     }
 
-    public struct RecentDamageHealthBarVisibility : IComponentData
+    /// <summary>Per-hit health-bar window. Enableable (2026-11-17 allocator fix): disabled at expiry, never removed.</summary>
+    public struct RecentDamageHealthBarVisibility : IComponentData, IEnableableComponent
     {
         public float TimeRemaining;
     }

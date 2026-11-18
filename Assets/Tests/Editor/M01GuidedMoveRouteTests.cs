@@ -114,7 +114,7 @@ public sealed class M01GuidedMoveRouteTests
         Assert.That(em.HasComponent<UnitForceDetailedVisualTag>(actor), Is.True);
         Assert.That(em.HasComponent<UnitMidLodPrefabReference>(actor), Is.False);
         Assert.That(em.HasComponent<UnitLowLodPrefabReference>(actor), Is.False);
-        Assert.That(em.HasComponent<UnitRenderBudgetCulledUnitTag>(actor), Is.False);
+        Assert.That(UnitRenderBudgetCulledUnitTagState.IsCulled(em, actor), Is.False);
         Assert.That(em.HasComponent<UnitRenderVisualExclusivityAppliedState>(actor), Is.False);
         UnitRenderVisualComponent visual = em.GetComponentData<UnitRenderVisualComponent>(actor);
         Assert.That(visual.Current, Is.EqualTo((byte)UnitRenderVisualKind.Detail));

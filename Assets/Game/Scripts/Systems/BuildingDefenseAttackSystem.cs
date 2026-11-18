@@ -361,7 +361,10 @@ namespace Game.Runtime
             };
 
             if (directAccess.RecentAttackers.HasComponent(target))
+            {
                 directAccess.RecentAttackers[target] = recent;
+                directAccess.RecentAttackers.SetComponentEnabled(target, true);
+            }
             else if (pendingRecentAttackerAdds.Add(target))
                 ecb.AddComponent(target, recent);
         }
@@ -378,7 +381,10 @@ namespace Game.Runtime
             };
 
             if (directAccess.DamageHealthBars.HasComponent(target))
+            {
                 directAccess.DamageHealthBars[target] = visibility;
+                directAccess.DamageHealthBars.SetComponentEnabled(target, true);
+            }
             else if (pendingHealthBarVisibilityAdds.Add(target))
                 ecb.AddComponent(target, visibility);
         }

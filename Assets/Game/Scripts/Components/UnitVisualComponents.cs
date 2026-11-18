@@ -137,8 +137,29 @@ namespace Game.Components
     {
     }
 
-    public struct UnitRenderBudgetCulledUnitTag : IComponentData
+    /// <summary>
+    /// Far-impostor state of a unit root. Enableable (2026-11-17 allocator fix): the render budget flips it as the camera
+    /// moves, so it is added once and then only enabled/disabled. "Culled" means present AND enabled; use
+    /// <see cref="UnitRenderBudgetCulledUnitTagState"/> instead of HasComponent.
+    /// </summary>
+    public struct UnitRenderBudgetCulledUnitTag : IComponentData, IEnableableComponent
     {
+    }
+
+    public static class UnitRenderBudgetCulledUnitTagState
+    {
+        public static bool IsCulled(this ComponentLookup<UnitRenderBudgetCulledUnitTag> lookup, Entity unit) =>
+            lookup.HasComponent(unit) && lookup.IsComponentEnabled(unit);
+
+        public static bool IsCulled(EntityManager em, Entity unit) =>
+            em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit) && em.IsComponentEnabled<UnitRenderBudgetCulledUnitTag>(unit);
+
+        /// <summary>Clears the far-impostor state without a structural change.</summary>
+        public static void Clear(EntityManager em, Entity unit)
+        {
+            if (em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit))
+                em.SetComponentEnabled<UnitRenderBudgetCulledUnitTag>(unit, false);
+        }
     }
 
     public struct UnitForceDetailedVisualTag : IComponentData

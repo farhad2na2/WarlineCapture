@@ -211,7 +211,7 @@ namespace Game.Runtime
             }
             if (!em.HasComponent<CampaignMissionStationaryUnitTag>(relay)) em.AddComponent<CampaignMissionStationaryUnitTag>(relay);
             if (em.HasComponent<EngageTarget>(relay)) em.RemoveComponent<EngageTarget>(relay);
-            if (em.HasComponent<RecentAttacker>(relay)) em.RemoveComponent<RecentAttacker>(relay);
+            if (em.HasComponent<RecentAttacker>(relay)) em.SetComponentEnabled<RecentAttacker>(relay, false);
             if (em.HasComponent<UnitIdleWanderComponent>(relay)) em.RemoveComponent<UnitIdleWanderComponent>(relay);
             if (em.HasComponent<UnitPathRequest>(relay)) em.RemoveComponent<UnitPathRequest>(relay);
             if (em.HasComponent<UnitPathFollow>(relay)) em.RemoveComponent<UnitPathFollow>(relay);

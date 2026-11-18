@@ -64,7 +64,7 @@ namespace Game.Runtime
             {
                 recentDamage.TimeRemaining -= DeltaTime;
                 if (recentDamage.TimeRemaining <= 0f)
-                    Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(sortKey, entity);
+                    Ecb.SetComponentEnabled<RecentDamageHealthBarVisibility>(sortKey, entity, false); // enableable: no structural change
             }
         }
 
@@ -84,9 +84,10 @@ namespace Game.Runtime
                 if (HealthLookup.HasComponent(unit) &&
                     HealthLookup[unit].Current > 0 &&
                     RecentDamageLookup.HasComponent(unit) &&
+                    RecentDamageLookup.IsComponentEnabled(unit) &&
                     RecentDamageLookup[unit].TimeRemaining > 0f &&
                     !PassengerLookup.HasComponent(unit) &&
-                    !CulledLookup.HasComponent(unit))
+                    !CulledLookup.IsCulled(unit))
                 {
                     show = true;
                 }

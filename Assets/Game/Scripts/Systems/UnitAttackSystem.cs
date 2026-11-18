@@ -403,6 +403,7 @@ namespace Game.Runtime
                         Cell = lastCell,
                         Position = lastPosition
                     });
+                    em.SetComponentEnabled<RecentAttacker>(target, true);
                 }
                 else
                 {
@@ -438,6 +439,7 @@ namespace Game.Runtime
                     {
                         TimeRemaining = DamageHealthBarVisibleSeconds
                     });
+                    em.SetComponentEnabled<RecentDamageHealthBarVisibility>(target, true);
                 }
                 else
                 {

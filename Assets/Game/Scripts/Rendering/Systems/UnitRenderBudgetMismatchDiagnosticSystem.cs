@@ -156,7 +156,7 @@ namespace Game.Rendering
                     lowVisible = renderableQuerySystem.IsRenderableVisibleRecursive(em, lowRoot, childLookup);
                 }
 
-                bool farVisible = em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit);
+                bool farVisible = UnitRenderBudgetCulledUnitTagState.IsCulled(em, unit);
                 if (detailVisible)
                     detailVisibleCount++;
                 if (midVisible)

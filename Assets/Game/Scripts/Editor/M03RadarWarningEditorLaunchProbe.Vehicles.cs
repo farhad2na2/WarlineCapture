@@ -91,7 +91,7 @@ namespace Game.Editor
             if(!em.HasComponent<UnitRenderVisualComponent>(unit))throw new InvalidOperationException("Vehicle visual state missing.");
             var visual=em.GetComponentData<UnitRenderVisualComponent>(unit);
             if(visual.Current!=(byte)UnitRenderVisualKind.Detail || visual.Desired!=(byte)UnitRenderVisualKind.Detail ||
-                em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit))throw new InvalidOperationException("A vehicle still uses an LOD/impostor.");
+                UnitRenderBudgetCulledUnitTagState.IsCulled(em,unit))throw new InvalidOperationException("A vehicle still uses an LOD/impostor.");
         }
         private static int CountVisibleVehicleMeshes(EntityManager em,Entity entity,HashSet<Entity> seen)
         {

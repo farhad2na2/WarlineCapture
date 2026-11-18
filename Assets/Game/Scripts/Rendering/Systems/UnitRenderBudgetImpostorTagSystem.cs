@@ -14,7 +14,7 @@ namespace Game.Rendering
             NativeList<Entity> unitsToShowFarImpostor,
             ref int changed)
         {
-            bool farImpostor = em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit);
+            bool farImpostor = UnitRenderBudgetCulledUnitTagState.IsCulled(em, unit);
             if (!shouldShowFar && farImpostor)
             {
                 unitsToShowDetailed.Add(unit);
@@ -35,7 +35,7 @@ namespace Game.Rendering
             NativeList<Entity> unitsToShowFarImpostor,
             ref int changed)
         {
-            bool farImpostor = culledUnitLookup.HasComponent(unit);
+            bool farImpostor = culledUnitLookup.IsCulled(unit);
             if (!shouldShowFar && farImpostor)
             {
                 unitsToShowDetailed.Add(unit);

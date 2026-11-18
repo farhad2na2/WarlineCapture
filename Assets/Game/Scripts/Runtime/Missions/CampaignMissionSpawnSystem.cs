@@ -379,8 +379,7 @@ namespace Game.Runtime
                 em.RemoveComponent<UnitLowLodPrefabReference>(instance);
             if (!em.HasComponent<UnitForceDetailedVisualTag>(instance))
                 em.AddComponent<UnitForceDetailedVisualTag>(instance);
-            if (em.HasComponent<UnitRenderBudgetCulledUnitTag>(instance))
-                em.RemoveComponent<UnitRenderBudgetCulledUnitTag>(instance);
+            UnitRenderBudgetCulledUnitTagState.Clear(em, instance);
             if (em.HasComponent<UnitRenderVisualExclusivityAppliedState>(instance))
                 em.RemoveComponent<UnitRenderVisualExclusivityAppliedState>(instance);
             SetOrAdd(em, instance, new UnitRenderVisualComponent

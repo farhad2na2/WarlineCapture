@@ -93,7 +93,7 @@ Order: W6 and W7 first (Unity serial: W6 runs, then W7 measurements); Codex can 
 quickcheck needs the .NET 8 SDK, which Windows lacks; the Mac lead runs quickcheck on your branches. Do not install software.
 
 ## W11 — SkirmishExpandedArmyTests paging failure (2026-11-18)
-status: READY
+status: DONE (472ab340c; Mac merge pending lane 33, branch missions/merge-w11-w12)
 codex effort: high
 Mac lane 31 on integration 2529f7ee7: 15/16 pass; `FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders` fails
 "pageCount Expected: 2 But was: 3" (SkirmishExpandedArmyTests.cs:410), both in RunFocusedValidation and EditMode. The fixture
@@ -103,7 +103,7 @@ roster or the tray paging is wrong; fix the right side minimally, never weaken t
 Branch `missions/win-w11-army-paging`.
 
 ## W12 — S002 ARIA stall on the second base alert, reason 114 (2026-11-18)
-status: READY
+status: DONE (e81b2acd8; Mac merge pending lane 33; counted S002 runs on the Mac follow)
 codex effort: xhigh
 Evidence: `Design/AgentReports/SkirmishExpansion/S002/_Evidence/lane31-second-defense-stall-130365-en.txt`. The first defense now
 selects before Attack (Codex 034 fix works; base held at 520). On the second alert (t=238.5, attacker shown, defenderSlot=-1)
@@ -145,6 +145,15 @@ or the established structures' footprints), and fix it minimally in the draft / 
 positions, no map changes, no starting-force or stat changes. Check whether S019 (Mac-authored CE-G-F template) is affected the same way at
 established start. Re-author the affected rows (W6 steps b–c), then a menu launch for S020/S022/S024 with `result=Passed` menu journey and no
 `expandedStartupFailure`. Add an EditMode or authoring test that fails on today's S020 layout. Branch `missions/win-w14-ce-established-spawn`.
+
+## W15 — SkirmishExpandedAriaTests: EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective (2026-11-18)
+status: READY
+codex effort: high
+Windows W12 evidence: fails identically on base ca5b7ccbb and on W12 ("Expected Entity(47:9) But was Entity(34:9)"), so it predates W12 and
+keeps `[SkirmishExpandedAriaTests] result=Passed` red. Decide with evidence whether the test's expected entity is stale (fixture/roster change)
+or enemy structure-defender targeting is wrong; fix the right side minimally, never weaken the test, no stat changes. Prove with
+`Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation` → `[SkirmishExpandedAriaTests] result=Passed` on Windows, cut from
+missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

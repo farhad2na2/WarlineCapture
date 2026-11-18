@@ -146,3 +146,9 @@ acceptance.
 - **S002:** lost to one tank at 1:35 with zero troop losses. The review says fix threat legibility
   and verify counterplay before balance changes. This conflicts in order with the guard tower in
   the 2026-11-17 directive; waits on the owner (asked).
+
+## Save & Exit for Frontline Control / Breakthrough / Convoy Escort (program lead, 2026-11-18)
+- **Question:** offer Save & Exit on FC/BT/CE Skirmish missions? Today `SkirmishNativePlayerSaveService.CanSave` needs `SupportsGenericSave`, which requires `ObjectiveConfig.Kind == BaseAssault`, so FC/BT/CE never show Save (finding on missions/fcbt-result-copy 2e9b72c88). The snapshot and checkpoint services already cover non-base objectives (incl. `SkirmishNativeConvoyCheckpoint`); resume validations are still Base-Assault-only.
+- **Options:** (a) keep Save off for FC/BT/CE (gate 4 records "checkpoint: not offered"); (b) relax the Kind check and prove capture/resume/recovery per objective in Unity.
+- **Recommendation:** (a) for now; revisit after ARIA can play FC/BT/CE. Missions run 18–20 minutes, so Save is a convenience rather than a necessity.
+- **Meanwhile:** nothing enabled; FC/BT/CE rows record "checkpoint: not offered".

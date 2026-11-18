@@ -155,6 +155,18 @@ or enemy structure-defender targeting is wrong; fix the right side minimally, ne
 `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation` → `[SkirmishExpandedAriaTests] result=Passed` on Windows, cut from
 missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
 
+## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 33 (full fps, seed 130365 en, `program-logs/2026-11-18/lane33/q/unity.log`): S009/S011 (field) Victory at 49% of deadline;
+S008 Defeat on tickets 614.8 s zones 1/2 (:11332), S010 Defeat 863.2 s zones 0/3 (:36088), S012 Defeat 617.8 s (:54188). Windows W6 saw
+the same, so it is not fps. ARIA chose Hold 0 times on S008/S012 (only Move ControlZone / ObserveObjective) but 9 and 16 times on the wins.
+First diagnose with evidence (AGENTS.md: check input, spawning and placement against the current budget before tuning): does the
+established roster spawn and get orders, why does the FC objective planner never hold captured zones on these rows. Fix ARIA objective
+tactics if that is the defect; otherwise tune only starting forces/resources/deadline per the map reuse policy budget guidance (owner
+direction 2026-11-06). No unit-stat or rule changes, no map changes. Windows proves with check_draft/quickcheck + the FC/ARIA EditMode
+tests it touches; Mac runs the counted queue. Branch `missions/win-w16-fc-established`. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

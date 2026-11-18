@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using Game.Components;
@@ -11,6 +12,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Editor
 {
@@ -19,7 +21,7 @@ namespace Game.Editor
     /// watch session as <see cref="SkirmishCameraFramingCapture.RunS002GroundFramingCapture"/>
     /// (seed 130365), waits for the base alert to report the attacker in sight, then presses the
     /// alert row's focus button (its own onClick, the handler a tap runs: camera only) and
-    /// captures the settled frame once.
+    /// captures the first rendered impact cue after that tap.
     ///
     /// Output: Design/AgentReports/SkirmishExpansion/CameraFraming/{label}/
     ///   S002-130365-{w}x{h}[-{locale}]-ground-alert-focus.png and ...-ground-alert-focus.jsonl
@@ -32,14 +34,13 @@ namespace Game.Editor
     {
         const string ModeEnv = "WARLINE_BASE_FOCUS_CAPTURE", LabelEnv = "WARLINE_CAMERA_FRAMING_LABEL", ExitEnv = "WARLINE_CAMERA_FRAMING_EXIT";
         public const string ShotName = "alert-focus";
-        const int SettleFrames = 30, MinimumFramesAfterTap = 20;
         const double AlertDeadlineSeconds = 420d;
+        const double ImpactDeadlineSeconds = 90d;
 
         static bool armed, tapped, done;
         static string label, locale = GameLocalization.EnglishLocaleCode;
-        static int tapFrame, stableFrames;
-        static double deadline;
-        static Vector3 lastPosition; static Quaternion lastRotation;
+        static int tapFrame, firstHitEvent;
+        static double deadline, tappedAt;
 
         static SkirmishBaseFocusCapture()
         {
@@ -60,7 +61,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable(ModeEnv, "alert");
             label = Environment.GetEnvironmentVariable(LabelEnv);
             if (string.IsNullOrEmpty(label)) { label = "unlabelled"; Environment.SetEnvironmentVariable(LabelEnv, label); }
-            armed = true; tapped = false; done = false; stableFrames = 0; deadline = 0d;
+            armed = true; tapped = false; done = false; firstHitEvent = 0; deadline = 0d;
             EditorApplication.update -= Tick; EditorApplication.update += Tick;
             Directory.CreateDirectory(OutputDirectory());
             Debug.Log("[SkirmishBaseFocusCapture] armed label=" + label + " locale=" + locale + " output=" + OutputDirectory());
@@ -73,9 +74,11 @@ namespace Game.Editor
         static void Tick()
         {
             if (!armed || done || !EditorApplication.isPlaying) return;
+            double now = EditorApplication.timeSinceStartup;
+            if (tapped && now - tappedAt >= ImpactDeadlineSeconds)
+            { Fail($"firstImpactCueTimeout tapFrame={tapFrame} hitEvent={firstHitEvent} waitedSeconds={now - tappedAt:F2}"); return; }
             var world = World.DefaultGameObjectInjectionWorld;
-            var camera = Camera.main;
-            if (world == null || !world.IsCreated || camera == null) return;
+            if (world == null || !world.IsCreated) return;
             var em = world.EntityManager;
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishMatchState));
             if (sessions.CalculateEntityCount() != 1) return;
@@ -84,35 +87,71 @@ namespace Game.Editor
             var match = em.GetComponentData<SkirmishMatchState>(session);
             if (native.Phase >= SkirmishSessionPhase.Finished) { Fail("matchEndedBeforeCapture:phase=" + native.Phase); return; }
             if (native.Phase != SkirmishSessionPhase.Playing || native.SpawnComplete != 1) return;
-            if (deadline <= 0d) deadline = EditorApplication.timeSinceStartup + AlertDeadlineSeconds;
-            if (EditorApplication.timeSinceStartup > deadline) { Fail(tapped ? "cameraNotSettled" : "noAttackerInSightBeforeDeadline"); return; }
+            if (tapped) return;
+            if (deadline <= 0d) deadline = now + AlertDeadlineSeconds;
+            if (now > deadline) { Fail("noAttackerInSightBeforeDeadline"); return; }
             var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
             if (view == null) return;
-            if (!tapped)
-            {
-                var button = view.BaseUnderFireFocusButton;
-                if (!view.BaseAlertAttackerShown || button == null || !button.isActiveAndEnabled || !button.interactable) return;
-                button.onClick.Invoke(); // The alert row's own handler: Send(FocusPlayer). Camera only.
-                tapped = true; tapFrame = Time.frameCount; stableFrames = 0;
-                Debug.Log("[SkirmishBaseFocusCapture] tapped=AlertFocus frame=" + tapFrame + " attacker=" + view.BaseAlertAttackerWorld + " unitOrders=0");
-                return;
-            }
-            bool still = (camera.transform.position - lastPosition).sqrMagnitude < .0001f && Quaternion.Angle(camera.transform.rotation, lastRotation) < .02f;
-            lastPosition = camera.transform.position; lastRotation = camera.transform.rotation;
-            stableFrames = still ? stableFrames + 1 : 0;
-            if (Time.frameCount - tapFrame < MinimumFramesAfterTap || stableFrames < SettleFrames) return;
+            var button = view.BaseUnderFireFocusButton;
+            if (!view.BaseAlertAttackerShown || button == null || !button.isActiveAndEnabled || !button.interactable ||
+                !UiShellRuntimeGateway.TryReadSkirmish(out var model)) return;
+            if (model.BaseHitEventId != 0) { Fail("firstHitPrecededAlertTap hitEvent=" + model.BaseHitEventId); return; }
+            button.onClick.Invoke(); // The alert row's own handler: Send(FocusPlayer). Camera only.
+            tapped = true; tapFrame = Time.frameCount; tappedAt = now;
+            Debug.Log($"[SkirmishBaseFocusCapture] tapped=AlertFocus frame={tapFrame} attacker={view.BaseAlertAttackerWorld} " +
+                $"baseHealth={model.PlayerHealth} waitingFor=FirstImpactCue timeoutSeconds={ImpactDeadlineSeconds} unitOrders=0");
+            view.StartCoroutine(CaptureFirstImpact(em, match.PlayerMainBase, native, view));
+        }
 
+        static IEnumerator CaptureFirstImpact(EntityManager em, Entity home, SkirmishExpandedSessionComponent native, SkirmishMatchView view)
+        {
+            var endOfFrame = new WaitForEndOfFrame();
+            while (!done)
+            {
+                yield return endOfFrame;
+                if (done) break;
+                try
+                {
+                    if (!UiShellRuntimeGateway.TryReadSkirmish(out var model) || model.BaseHitEventId <= 0) continue;
+                    if (firstHitEvent == 0)
+                    {
+                        firstHitEvent = model.BaseHitEventId;
+                        Debug.Log($"[SkirmishBaseFocusCapture] firstHitEvent={firstHitEvent} frame={Time.frameCount} baseHealth={model.PlayerHealth}");
+                    }
+                    if (model.BaseHitEventId != firstHitEvent)
+                        throw new InvalidOperationException($"firstImpactCueMissed firstHitEvent={firstHitEvent} latestHitEvent={model.BaseHitEventId}");
+                    var camera = Camera.main;
+                    // Look for the HUD objects on the rendered frame, since the hit fact outlives its animation.
+                    if (camera == null || !CueVisible(view, "BaseHitImpact")) continue;
+                    Capture(em, home, native, view, camera, model.PlayerHealth, CueVisible(view, "BaseHitShot"));
+                }
+                catch (Exception error) { Fail(error.Message); }
+            }
+        }
+
+        static bool CueVisible(SkirmishMatchView view, string name)
+        {
+            var cue = view.transform.Find(name);
+            return cue != null && cue.TryGetComponent<Graphic>(out var graphic) && graphic.isActiveAndEnabled &&
+                !graphic.canvasRenderer.cull && graphic.color.a > 0f;
+        }
+
+        static void Capture(EntityManager em, Entity home, SkirmishExpandedSessionComponent native,
+            SkirmishMatchView view, Camera camera, int baseHealth, bool shotLineVisible)
+        {
             int width = camera.pixelWidth, height = camera.pixelHeight;
             string prefix = SkirmishCameraFramingCapture.GroundFilePrefix("S002", native.Seed, width, height, locale);
             string png = Path.Combine(OutputDirectory(), prefix + "-" + ShotName + ".png");
-            ScreenCapture.CaptureScreenshot(png);
-            var row = new Row { label = label, shot = ShotName, catalog = native.CatalogId.ToString(), locale = locale, png = png, seed = native.Seed,
+            SkirmishCameraFramingCapture.SaveRenderedFrame(png, width, height);
+            var row = new Row { label = label, shot = ShotName, catalog = native.CatalogId.ToString(), attempt = native.SessionId.ToString(), locale = locale, png = png, seed = native.Seed,
                 width = width, height = height, frame = Time.frameCount, tapFrame = tapFrame, cameraPosition = camera.transform.position,
-                cameraEuler = camera.transform.eulerAngles, fieldOfView = camera.fieldOfView, aspect = camera.aspect, unitOrdersIssued = 0 };
+                cameraEuler = camera.transform.eulerAngles, fieldOfView = camera.fieldOfView, aspect = camera.aspect, unitOrdersIssued = 0,
+                hitEvent = firstHitEvent, baseHealth = baseHealth, shotLineVisible = shotLineVisible,
+                waitedSeconds = EditorApplication.timeSinceStartup - tappedAt };
             row.attackerShown = view.BaseAlertAttackerShown;
             row.attackerWorld = view.BaseAlertAttackerWorld;
-            if (SkirmishPublicObjectiveProjection.TryReadFocusPosition(em, match.PlayerMainBase, out float3 home))
-            { row.homeKnown = true; row.homeWorld = home; row.homeViewport = camera.WorldToViewportPoint(home); }
+            if (SkirmishPublicObjectiveProjection.TryReadFocusPosition(em, home, out float3 homeWorld))
+            { row.homeKnown = true; row.homeWorld = homeWorld; row.homeViewport = camera.WorldToViewportPoint(homeWorld); }
             if (row.attackerShown) row.attackerViewport = camera.WorldToViewportPoint(row.attackerWorld);
             if (view.TryReadSafePlayArea(out var pixels) && SkirmishCameraFraming.TryPixelsToViewport(pixels, camera.pixelRect, out var play))
             {
@@ -123,6 +162,8 @@ namespace Game.Editor
             File.AppendAllText(Path.Combine(OutputDirectory(), prefix + "-" + ShotName + ".jsonl"), JsonUtility.ToJson(row) + "\n");
             done = true;
             Debug.Log("[SkirmishBaseFocusCapture] result=Captured shot=" + ShotName + " png=" + png +
+                $" attempt={row.attempt} frame={row.frame} hitEvent={row.hitEvent} baseHealth={row.baseHealth} " +
+                $"waitedSeconds={row.waitedSeconds:F2} impactRingVisible=1 shotLineVisible={(shotLineVisible ? 1 : 0)}" +
                 " homeInPlayArea=" + (row.homeInPlayArea ? 1 : 0) + " attackerInPlayArea=" + (row.attackerInPlayArea ? 1 : 0) +
                 " playAreaKnown=" + (row.playAreaKnown ? 1 : 0) + " unitOrders=0 visualReview=Pending");
             if (Environment.GetEnvironmentVariable(ExitEnv) == "1") SkirmishS002AriaRunHarness.AbortFailedValidationAndExit();
@@ -137,7 +178,8 @@ namespace Game.Editor
 
         [Serializable] sealed class Row
         {
-            public string label, shot, catalog, locale, png; public int seed, width, height, frame, tapFrame, unitOrdersIssued;
+            public string label, shot, catalog, locale, png, attempt; public int seed, width, height, frame, tapFrame, unitOrdersIssued, hitEvent, baseHealth;
+            public double waitedSeconds; public bool shotLineVisible;
             public Vector3 cameraPosition, cameraEuler, homeWorld, attackerWorld, homeViewport, attackerViewport; public float fieldOfView, aspect;
             public bool homeKnown, attackerShown, playAreaKnown, homeInPlayArea, attackerInPlayArea; public Vector4 playArea;
         }

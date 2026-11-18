@@ -518,12 +518,14 @@ namespace Game.Tests.Editor
                 suite.SelectedCardTapDeselectsAndSecondTapSelects();
                 suite.CardTapUsesLiveTagsWhenCachedGroupFlagsDisagree();
                 suite.PresentedTrayClickUsesPageGroupWithoutLegacyReselection();
+                suite.AcceptedArmyOrdersRequireInputEvidence();
                 suite.SharedFogGatesAttackEligibility();
                 suite.GroundMoveExcludesAirAndHoldStampsGroup();
                 suite.ProducedTankJoinsNewGroupAndDeathKeepsIdentity();
                 suite.StandardGroundUnitsAdvanceWorldTransformOnMove();
                 suite.ArmyDrawerProjectsCurrentPlayerPage();
                 suite.PresentedHealthTracksDamageAndExcludesOtherAttempts();
+                suite.FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders();
                 suite.DeadGroupsDoNotHideSurvivorsOrLeaveAnInvalidPage();
                 suite.PublicAircraftMaskIncludesStrikeAcrossPagesAndExcludesNonAssaultAircraft();
                 Debug.Log("[SkirmishExpandedArmyTests] result=Passed");
@@ -542,20 +544,25 @@ namespace Game.Tests.Editor
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
-            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
+            const int s002Version = 2;
+            var catalog = Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Assert.IsNotNull(catalog, "The army fixture requires the packaged Skirmish catalog.");
+            Assert.IsTrue(catalog.TryGetDefinition("S002", s002Version, out var definition),
+                "The army fixture requires the reviewed S002 v2 binding.");
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
                 "S002",
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 104731,
-                authored,
+                catalog.ToAuthoredSet(),
                 matrix,
                 manifest,
                 out setup,
                 out _,
-                out var reasons),
+                out var reasons,
+                contentVersion: s002Version),
                 reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
             session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
             Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(

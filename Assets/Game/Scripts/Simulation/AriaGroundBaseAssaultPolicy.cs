@@ -709,6 +709,8 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             return handled;
         }
 
+        private const int MapNavigationCloseWithoutFocus = 4;
+
         private static bool StepExpandedAdvanceNavigation(in AriaS002Observation view,
             ref AriaS002PlanState plan, ref AriaS002ContactState touch,
             ref AriaS002Decision output)
@@ -723,6 +725,16 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                     Target(view.FocusAdvance, false, ref output);
                     return true;
                 }
+                // The full map can lose the approach offered by the compact map.
+                // Once closed, try the reported-position readout once before reopening it.
+                if (plan.MapNavigationStage == MapNavigationCloseWithoutFocus &&
+                    view.AttackMode && view.SelectionVisible && !view.EnemyBase.Admitted &&
+                    !view.AdvanceGround.Admitted && view.FocusEnemy.Admitted &&
+                    !(touch.Actions > plan.MapFocusActions && touch.LastCompletedTargetId == view.FocusEnemy.Id))
+                {
+                    Target(view.FocusEnemy, false, ref output);
+                    return true;
+                }
                 plan.AdvanceNavigation = 0; plan.MapNavigationStage = 0; plan.MapOpenedAt = 0;
                 plan.MapNavigationReadyAt = view.Time + 6;
                 plan.ObserveUntil = view.Time + 1;
@@ -731,12 +743,13 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             if (plan.MapOpenedAt == 0) plan.MapOpenedAt = view.Time;
             if (plan.MapNavigationStage == 1)
             {
-                if (!view.FocusAdvance.Admitted && view.Time < plan.MapOpenedAt + 5) return true;
-                if (view.FocusAdvance.Admitted)
+                if (!view.FocusAdvance.Admitted)
                 {
-                    plan.MapNavigationStage = 2;
-                    plan.MapFocusActions = touch.Actions;
+                    if (view.Time < plan.MapOpenedAt + 5) return true;
+                    plan.MapNavigationStage = MapNavigationCloseWithoutFocus;
                 }
+                else plan.MapNavigationStage = 2;
+                plan.MapFocusActions = touch.Actions;
             }
             if (plan.MapNavigationStage == 2 &&
                 !(touch.TargetId == -20011 && touch.Actions > plan.MapFocusActions))
@@ -746,7 +759,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 return true;
             }
             // One camera gesture, then close and settle before any separate order.
-            plan.MapNavigationStage = 3;
+            if (plan.MapNavigationStage != MapNavigationCloseWithoutFocus) plan.MapNavigationStage = 3;
             Target(view.CloseMap, false, ref output);
             return true;
         }

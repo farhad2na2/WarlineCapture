@@ -57,6 +57,7 @@ namespace Game.Editor
         {
             NoteLongSessionTerminal(em, session, in match, elapsed);
             EmitGateUnitsUsed(em);
+            EmitTerminalObjectiveEvidence(em, session, in match, elapsed); // FC/BT/CE only
             RecordProductionResolvedSnapshot(em, session, in match, SkirmishLaunchProjection.IsSimulationActive(em), elapsed, "TerminalSnapshot");
             StopS004ManualProbe();
             terminalSnapshotValid = terminalProbeActive = true;

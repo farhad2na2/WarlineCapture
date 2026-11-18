@@ -91,7 +91,10 @@ namespace Game.Simulation {
  // Gunner and Tank (bits 64, 128): producible in some catalogs without being in the starting force
  // (lane 12 S049 never fielded either).
  // Siege (bit 256) needs Full Arsenal; it is offered once the research step has unlocked it.
- public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli,Gunner,Tank,Siege}
+ // AntiAir and AttackHeli (bits 512, 1024; air-capable armies only, lane 24 S004): the AA is usually in the
+ // starting force (covered at once, then ordered by AriaSupportOrderPolicy); the attack heli is bought when the
+ // tactical air cap has room. Ground-only armies (S002, S026) never offer either, so their masks are unchanged.
+ public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli,Gunner,Tank,Siege,AntiAir,AttackHeli}
  public enum AriaCoverageAction:byte {None,Waiting,Recruit}
  public struct AriaCoverageView {
   // AssaultIssued: the first assault and structure orders were accepted.
@@ -114,12 +117,14 @@ namespace Game.Simulation {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
   // GapSeconds: between drawer visits, so new groups join the column before the next purchase (lane 8 S050).
   // PerVisit: kinds per drawer visit (lane 12 S026 won at 218 s with six kinds still unbought).
-  public const int Kinds=9,All=(1<<Kinds)-1,PerVisit=3;
+  public const int Kinds=11,All=(1<<Kinds)-1,PerVisit=3;
+  // Coverage kinds that take a tactical air slot (drone, transport heli, attack heli).
+  public const int AirKinds=16|32|1024;
   public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=12f;
   // Purchase order: combat kinds first, then support kinds.
   static readonly byte[] Order={(byte)AriaCoverageKind.Marksman,(byte)AriaCoverageKind.ApcFast,(byte)AriaCoverageKind.Gunner,
    (byte)AriaCoverageKind.Tank,(byte)AriaCoverageKind.Radar,(byte)AriaCoverageKind.ApcHeavy,(byte)AriaCoverageKind.Drone,
-   (byte)AriaCoverageKind.TransportHeli,(byte)AriaCoverageKind.Siege};
+   (byte)AriaCoverageKind.TransportHeli,(byte)AriaCoverageKind.Siege,(byte)AriaCoverageKind.AntiAir,(byte)AriaCoverageKind.AttackHeli};
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -163,6 +168,21 @@ namespace Game.Simulation {
    return false;
   }
   static void EndVisit(ref AriaCoverageState plan,float time){plan.Batch=0;plan.Deadline=time+GapSeconds;}
+  // Air-capable armies: the air opening's light attack helicopter (AriaSkirmishPlanSystem RecruitAir) keeps the
+  // first claim on a free tactical air slot. Until it has been queued once, coverage does not spend that slot on
+  // a drone, transport heli or attack heli (Standard air cap 2: lane 24 S004 starts with a transport heli, so one
+  // slot is free). Afterwards a slot freed by a loss goes to the next unused air kind. Identity otherwise.
+  public static int AirOpeningAfford(int affordMask,bool airProfile,bool airOpeningSettled,bool airOpeningOffered)=>
+   airProfile&&!airOpeningSettled&&airOpeningOffered?affordMask&~AirKinds:affordMask;
+ }
+
+ // Which expanded skirmishes run the generic gate-3 coverage (breacher, coverage purchases, research, producer
+ // buildings, support orders). Base Assault: ground and air-capable armies alike (lane 24 S004, army A: the old
+ // !AirProfile gate left breacher, marksman, apc_fast, radar, AA and transport heli unused on every seed);
+ // Combined Arms keeps its own structure-force path. Objective missions (FC/BT/CE) use the objective skill rule.
+ public static class AriaCoverageEligibility {
+  public static bool BaseAssault(bool expandedSession,bool expandedBaseAssault,bool combinedArmsField,bool publicObjective)=>
+   expandedSession&&expandedBaseAssault&&!combinedArmsField&&!publicObjective;
  }
 
  // Coverage purchases currently possible are finished: nothing in flight or queued, and every kind
@@ -260,12 +280,14 @@ namespace Game.Simulation {
  // radar and transport heli Move (Attack Move when Move is not offered) onto clear ground
  // behind the presented column; the drone Scans clear ground ahead of it. Starts only with no
  // visible selection and no other owner; bounded attempts; one order per unit kind per match.
- // Support kinds (SupportSlots: 2 bits per roster slot): 1 radar, 2 drone, 3 transport heli.
- public enum AriaSupportKind:byte {None,Radar,Drone,TransportHeli}
+ // Support kinds (SupportSlots: 3 bits per roster slot): 1 radar, 2 drone, 3 transport heli, 4 AA.
+ // AA (lane 24 S004): not an assault role, so the column sweep never orders the starting AA; it Moves
+ // behind the column like the radar and covers it from the enemy air.
+ public enum AriaSupportKind:byte {None,Radar,Drone,TransportHeli,AntiAir}
  public enum AriaSupportMode:byte {None,Move,Attack,Scan}
  public enum AriaSupportAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmMove,ArmAttack,ArmScan,TargetRear,TargetFront}
  public struct AriaSupportView {
-  // FieldedMask: support kinds alive (bits 1 radar, 2 drone, 4 transport heli).
+  // FieldedMask: support kinds alive (bits 1 radar, 2 drone, 4 transport heli, 8 AA).
   public int FieldedMask;
   public bool Busy,ArmyMoving,EnemyAlive,ToggleAvailable,MoveAvailable,AttackAvailable,ScanAvailable,RearAvailable,FrontAvailable;
   public AriaSupportMode Mode;
@@ -280,14 +302,15 @@ namespace Game.Simulation {
  public struct AriaSupportDecision {public AriaSupportAction Action;public int Slot;public byte Trace;public AriaSupportKind Kind;}
  public static class AriaSupportOrderPolicy {
   public const float OrderSeconds=12f,CooldownSeconds=6f;
-  public static AriaSupportKind SlotKind(int supportSlots,int slot)=>(AriaSupportKind)((supportSlots>>(slot*2))&3);
+  public const int SlotBits=3,AllKinds=15;
+  public static AriaSupportKind SlotKind(int supportSlots,int slot)=>(AriaSupportKind)((supportSlots>>(slot*SlotBits))&7);
   public static int KindBit(AriaSupportKind kind)=>kind==AriaSupportKind.None?0:1<<((int)kind-1);
   public static int Slots(AriaSupportKind slot0,AriaSupportKind slot1,AriaSupportKind slot2,AriaSupportKind slot3,AriaSupportKind slot4)=>
-   (int)slot0|((int)slot1<<2)|((int)slot2<<4)|((int)slot3<<6)|((int)slot4<<8);
+   (int)slot0|((int)slot1<<SlotBits)|((int)slot2<<(2*SlotBits))|((int)slot3<<(3*SlotBits))|((int)slot4<<(4*SlotBits));
   public static bool Step(in AriaSupportView view,ref AriaSupportState plan,out AriaSupportDecision output){
    output=default;
    if(plan.Stage==0){
-    if((view.FieldedMask&~plan.Done&7)==0||view.Busy||!view.ArmyMoving||!view.EnemyAlive||view.Mode!=AriaSupportMode.None||
+    if((view.FieldedMask&~plan.Done&AllKinds)==0||view.Busy||!view.ArmyMoving||!view.EnemyAlive||view.Mode!=AriaSupportMode.None||
        view.SelectedGroups>0||view.Time<plan.ReadyAt)return false;
     int slot=-1;
     for(int i=0;i<5&&slot<0;i++){

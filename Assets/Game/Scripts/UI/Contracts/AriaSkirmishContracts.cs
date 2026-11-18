@@ -91,11 +91,12 @@ namespace Game.UI.Contracts
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public AriaTouchTarget RecruitBreacher;
-        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli)
-        // and their Build -> catalog card targets.
+        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli,
+        // 64 gunner, 128 tank, 256 siege, 512 AA, 1024 attack heli) and their Build -> catalog card targets
+        // (the AA card is RecruitAntiAir; RecruitAttackHeli is the Helipad's Unit_Veh_Helicopter_Attack card).
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
         public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar, RecruitApcHeavy, RecruitDrone, RecruitTransportHeli,
-            RecruitGunner, RecruitTank, RecruitSiege;
+            RecruitGunner, RecruitTank, RecruitSiege, RecruitAttackHeli;
         // Research and producer buildings (see SkirmishAriaPublicView); readiness from the HUD readiness model.
         public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask, ReadinessStage, ResearchCost;
         public bool ResearchInProgress;

@@ -241,6 +241,7 @@ namespace Game.UI.Runtime
                 view.RecruitGunner = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_01") : openBuild;
                 view.RecruitTank = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Tank_USA") : openBuild;
                 view.RecruitSiege = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Ground") : openBuild;
+                view.RecruitAttackHeli = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack") : openBuild;
                 view.BuildDish = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Satelite_Dish") : openBuild;
                 view.ResearchNeedMask = model.ResearchNeedMask;
                 view.BuildingNeedMask = model.BuildingNeedMask;

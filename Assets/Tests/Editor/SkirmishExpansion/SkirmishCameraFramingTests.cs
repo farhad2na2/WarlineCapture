@@ -1,4 +1,6 @@
 using Game.Configs;
+using Game.Editor;
+using Game.UI.Contracts;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -181,6 +183,44 @@ namespace Game.Tests.Editor
                 50f, 0f, 60f, .3f, float.NaN, .3f, 1f, 300f, out _, out _, out _));
         }
 
+        [Test] public void CaptureLocaleDefaultsToEnglishAndAcceptsOnlyQueueLocales()
+        {
+            Assert.IsTrue(SkirmishCameraFramingCapture.TryResolveCaptureLocale(null, out var locale, out _)); Assert.AreEqual(GameLocalization.EnglishLocaleCode, locale);
+            Assert.IsTrue(SkirmishCameraFramingCapture.TryResolveCaptureLocale("  ", out locale, out _)); Assert.AreEqual(GameLocalization.EnglishLocaleCode, locale);
+            Assert.IsTrue(SkirmishCameraFramingCapture.TryResolveCaptureLocale("en", out locale, out _)); Assert.AreEqual("en", locale);
+            Assert.IsTrue(SkirmishCameraFramingCapture.TryResolveCaptureLocale("fa-IR", out locale, out _)); Assert.AreEqual(GameLocalization.PersianLocaleCode, locale);
+            foreach (var refused in new[] { "fa", "FA-IR", "de", "en-US" })
+            {
+                Assert.IsFalse(SkirmishCameraFramingCapture.TryResolveCaptureLocale(refused, out _, out var error), refused);
+                StringAssert.Contains(SkirmishCameraFramingCapture.LocaleEnv, error);
+            }
+        }
+
+        [Test] public void CaptureFileNamesCarryTheLocaleOnlyWhenNotEnglish()
+        {
+            // English names stay byte-identical to the committed "after" sets.
+            Assert.AreEqual("S002-130365-2400x1080-ground", SkirmishCameraFramingCapture.GroundFilePrefix("S002", 130365, 2400, 1080, "en"));
+            Assert.AreEqual("S002-130365-2400x1080-ground", SkirmishCameraFramingCapture.GroundFilePrefix("S002", 130365, 2400, 1080, null));
+            Assert.AreEqual("S026-2400x1080-air", SkirmishCameraFramingCapture.AirFilePrefix("S026", 2400, 1080, "en"));
+            Assert.AreEqual("S002-130365-2400x1080-fa-IR-ground", SkirmishCameraFramingCapture.GroundFilePrefix("S002", 130365, 2400, 1080, "fa-IR"));
+            Assert.AreEqual("S026-1920x1080-fa-IR-air", SkirmishCameraFramingCapture.AirFilePrefix("S026", 1920, 1080, "fa-IR"));
+        }
+
+        [Test] public void HelicopterCardIsFoundByItsGroupEvenWhenAirMaskIsEmpty()
+        {
+            // A delivered transport helicopter is a support role: its card is presented but AirMask stays 0.
+            var page = new UiExpandedSquadPage { Group0 = 3, Group1 = 4, Group2 = 9, AirMask = 0, AssaultMask = 0b011, SupportSlots = 3 << 4 };
+            Assert.AreEqual(2, SkirmishCameraFramingCapture.HelicopterCardSlot(page, 9));
+            Assert.AreEqual(-1, SkirmishCameraFramingCapture.HelicopterCardSlot(page, 12), "card on another page");
+            Assert.AreEqual(-1, SkirmishCameraFramingCapture.HelicopterCardSlot(page, 0), "no group and no assault air");
+            page.AirMask = 1 << 1;
+            Assert.AreEqual(1, SkirmishCameraFramingCapture.HelicopterCardSlot(page, 0), "assault air is the fallback without a group");
+            Assert.AreEqual(2, SkirmishCameraFramingCapture.HelicopterCardSlot(page, 9), "the group wins over another air card");
+            string described = SkirmishCameraFramingCapture.DescribeSquadPage(true, page, 9);
+            StringAssert.Contains("airMask=0x02", described); StringAssert.Contains("groups=[3,4,9,0,0]", described); StringAssert.Contains("page=0/0", described);
+            StringAssert.Contains("squadPage=unread", SkirmishCameraFramingCapture.DescribeSquadPage(false, default, 9));
+        }
+
         public static void RunFocusedValidation()
         {
             var tests = new SkirmishCameraFramingTests();
@@ -191,7 +231,10 @@ namespace Game.Tests.Editor
             tests.S002OpeningFacesTheHighwayApproachFromTheHomeBase();
             tests.HelicopterViewShowsWholeAircraftGroundAndHeadingFromAbove();
             tests.AircraftViewRefusesInsteadOfClampingAnOversizedFit();
-            Debug.Log("[SkirmishCameraFramingTests] result=Passed tests=7 nativeCaptureReview=Pending phoneAcceptance=Pending");
+            tests.CaptureLocaleDefaultsToEnglishAndAcceptsOnlyQueueLocales();
+            tests.CaptureFileNamesCarryTheLocaleOnlyWhenNotEnglish();
+            tests.HelicopterCardIsFoundByItsGroupEvenWhenAirMaskIsEmpty();
+            Debug.Log("[SkirmishCameraFramingTests] result=Passed tests=10 nativeCaptureReview=Pending phoneAcceptance=Pending");
         }
     }
 }

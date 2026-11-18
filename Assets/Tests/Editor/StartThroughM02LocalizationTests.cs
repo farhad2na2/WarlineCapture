@@ -119,7 +119,10 @@ public sealed class StartThroughM02LocalizationTests
         foreach (var entry in V3UiLocalizationCatalogBuilder.ReadUiStringConfigs().Where(e => e.key.StartsWith("ui.loading.") && e.key != "ui.loading.map_unload_failed"))
         {
             apply.Invoke(view, new object[] { .5f, entry.source });
-            Assert.That(target.OriginalText, Is.EqualTo(entry.translations.Single(t => t.locale == "fa-IR").value), entry.source);
+            // The Farsi TMP atlas has no ZWNJ glyph, so V3LocalizedTextBindingView intentionally strips
+            // format characters (StripMissingFormatGlyphs) rather than drawing a missing-glyph box.
+            var expected = entry.translations.Single(t => t.locale == "fa-IR").value.Replace("\u200C", string.Empty);
+            Assert.That(target.OriginalText, Is.EqualTo(expected), entry.source);
         }
         apply.Invoke(view, new object[] { .5f, "Map unload failed: internal/path/Exception" });
         Assert.That(target.OriginalText, Is.EqualTo(GameLocalization.Get("ui.loading.map_unload_failed")));

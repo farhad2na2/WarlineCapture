@@ -38,8 +38,10 @@ def main():
             if candidate:
                 if row is None or row['objective_id'] not in ('FC', 'BT', 'CE'):
                     raise ValueError('candidate catalog_id does not identify an FC/BT/CE mission')
-                if 'candidate=1, unmeasured' not in draft['notes']:
-                    raise ValueError('candidate draft must be marked candidate=1, unmeasured in notes')
+                # Same rule as test_check_draft: measured candidates carry area_measurement, unmeasured ones do not.
+                marker = 'candidate=1, measured' if 'area_measurement' in draft else 'candidate=1, unmeasured'
+                if marker not in draft['notes']:
+                    raise ValueError('candidate draft must be marked ' + marker + ' in notes')
             elif row is None or row['objective_id'] != 'BA':
                 raise ValueError('catalog_id does not identify a BA mission')
             if row['map_id'] not in SOURCES or draft['campaign_source'] != SOURCES[row['map_id']]:

@@ -115,7 +115,7 @@ blocking. Public player controls only; fog of war stays. Add an EditMode test th
 Windows. Counted S002 matches stay on the Mac. Branch `missions/win-w12-s002-second-defense`.
 
 ## W13 — Starting structures and enemy construction placed on map runways (2026-11-18)
-status: READY
+status: DONE (65bcf4d15; merged e11d22253; only S004 enemy base moves, S004 needs counted re-runs)
 codex effort: xhigh
 Owner saw an ENEMY refinery on an airport runway in a Mac Editor match. Traced (Windows + Mac, read-only, computed not measured):
 S004 (CityEdgeAirfield) enemy refinery preferred rect x 894..919, z 562..577 covers ~225 of 375 m2 of the east runway end
@@ -177,6 +177,18 @@ Make it Burst-compatible with identical behaviour and priority order (e.g. pass 
 arrays directly without passing them). No behaviour change. Grep the other Aria*Policy files for the same pattern and fix those too.
 Prove: Editor log with no BC10xx for Aria* after a domain reload, compile marker, and `Game.Tests.Editor.SkirmishExpandedAriaTests`
 EditMode all passing. Branch `missions/win-w17-aria-burst`. Per-task results file.
+
+## W18 — Building readiness red on base: BuildingFootprintAudit EvidenceChain_Clinic + 6 older building EditMode failures (2026-11-18)
+status: READY
+codex effort: high
+Windows W13 evidence (`windows_dev_results/2026-11-18-w13-runway-placement.md`): `BuildingFootprintReadinessValidation.Run` fails on base
+7970b1c54 and on W13 at its first step `BuildingFootprintAudit.Run`: "EvidenceChain_Clinic: footprint must enclose the model with less than one
+cell of rounding", so `[BuildingFootprintReadiness] result=Passed` is unreachable. Also failing on base: CanonicalBarracksRuntimeAndCatalogFootprintsFitTheM2Lot,
+3x BuildingProductionQueueCompositionSystemHelperTests, SkirmishStartingBuildingsTests.StartingGrantsWaitForSharedResultsAndBindTheActualBaseOnce
+(componentMissing), GroundMissileLauncherRuntimeTests.AttackOrder…. For each, decide with evidence: stale test/fixture vs real defect; fix the right
+side minimally, never weaken a test, no stat changes, no model/prefab edits under Assets/Game/Prefabs/UI. If the Clinic footprint is a real
+authored-footprint mismatch, report the numbers and stop for the Mac lead rather than resizing. Prove: the marker above on Windows, plus the
+UTF `-testFilter Building` set with 0 failures. Branch `missions/win-w18-building-readiness`, cut after W13 is merged. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

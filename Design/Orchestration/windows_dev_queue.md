@@ -92,6 +92,28 @@ codex effort: high. As W9 on Mountain Pass (host S050). Branches `missions/win-w
 Order: W6 and W7 first (Unity serial: W6 runs, then W7 measurements); Codex can draft W9/W10 in parallel meanwhile.
 quickcheck needs the .NET 8 SDK, which Windows lacks; the Mac lead runs quickcheck on your branches. Do not install software.
 
+## W11 — SkirmishExpandedArmyTests paging failure (2026-11-18)
+status: READY
+codex effort: high
+Mac lane 31 on integration 2529f7ee7: 15/16 pass; `FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders` fails
+"pageCount Expected: 2 But was: 3" (SkirmishExpandedArmyTests.cs:410), both in RunFocusedValidation and EditMode. The fixture
+now loads packaged S002 v2 (Codex 039). Decide with evidence whether the test's expectation (2 pages) is stale for the S002 v2
+roster or the tray paging is wrong; fix the right side minimally, never weaken the test. Prove with
+`Game.Tests.Editor.SkirmishExpandedArmyTests.RunFocusedValidation` → `[SkirmishExpandedArmyTests] result=Passed` on Windows.
+Branch `missions/win-w11-army-paging`.
+
+## W12 — S002 ARIA stall on the second base alert, reason 114 (2026-11-18)
+status: READY
+codex effort: xhigh
+Evidence: `Design/AgentReports/SkirmishExpansion/S002/_Evidence/lane31-second-defense-stall-130365-en.txt`. The first defense now
+selects before Attack (Codex 034 fix works; base held at 520). On the second alert (t=238.5, attacker shown, defenderSlot=-1)
+home defense escalated to group=all with homeGroundRefusal=2/7, then `[AriaBlocked] reason=114 kind=Unavailable intent=DefendBase`
+with `control=Attack selectedMask=15 homeDefenseStage=5`. Find why the Attack target became unavailable with four groups selected
+(code: Assets/Game/Scripts/Simulation/AriaHomeDefensePolicy.cs, AriaGroundBaseAssaultPolicy.cs, UI/Shell/Ecs/AriaPlayInputSystem.cs,
+AriaSkirmishPlanSystem.cs) and fix ARIA so it re-plans (e.g. aims at the visible attacker or the home ground it can tap) instead of
+blocking. Public player controls only; fog of war stays. Add an EditMode test that reproduces the stage-5 state and passes on
+Windows. Counted S002 matches stay on the Mac. Branch `missions/win-w12-s002-second-defense`.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

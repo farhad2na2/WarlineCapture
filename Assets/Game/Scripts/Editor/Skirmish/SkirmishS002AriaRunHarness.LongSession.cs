@@ -191,7 +191,12 @@ namespace Game.Editor
                     if (now > longPurchaseDeadline)
                     {
                         longEvidence.PurchaseFailures++;
-                        Debug.Log("[SkirmishLongSession] purchaseSkipped role=" + role + " reason=noReceiptWithin" + LongSessionPurchaseTimeout + "s");
+                        var skipButton = open ? UnityEngine.Object.FindAnyObjectByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include)
+                            ?.ResolveCatalogTarget(BuildDrawerCategory.Soldiers, LongSessionPrefabKey(em, session, role)) : null;
+                        string why = LongSessionRefusal(em, session, role, skipButton, open, out bool byCap);
+                        if (byCap) longEvidence.PurchaseRefusedByCap++;
+                        Debug.Log("[SkirmishLongSession] purchaseSkipped role=" + role + " reason=" + why +
+                            " noReceiptWithin" + LongSessionPurchaseTimeout + "s");
                         longStep = 2;
                         return;
                     }
@@ -219,6 +224,27 @@ namespace Game.Editor
                 Debug.LogException(error);
                 Finish(true, "longSession:" + error.Message);
             }
+        }
+
+        // Diagnostic only: why a purchase attempt produced no receipt. Uses the same quote the build pipeline uses.
+        private static string LongSessionRefusal(EntityManager em, Entity session, SkirmishRoleKind role, Button button, bool drawerOpen, out bool byCap)
+        {
+            byCap = false;
+            string buttonState = !drawerOpen ? "drawerClosed" : button == null ? "buttonMissing"
+                : "interactable=" + (button.IsActive() && button.IsInteractable() ? 1 : 0);
+            try
+            {
+                var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var decision = SkirmishProductionService.EvaluateQueue(em, session, SkirmishRoleIds.ToId(role), 1,
+                    SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId), 1);
+                var cap = em.GetComponentData<SkirmishCapacityComponent>(session);
+                byCap = !decision.Accepted && decision.Reason == SkirmishReasonCode.InsufficientCapacity;
+                string reason = decision.Accepted ? "QuoteAcceptedNoReceipt" : byCap ? "ArmyCapacityReached" : decision.Reason.ToString();
+                return reason + " field=" + (decision.Field ?? "") + " army=" + (cap.InfantryLive + cap.InfantryReserved) + "/" + cap.InfantryCap +
+                    " supply=" + (cap.SupplyLive + cap.SupplyReserved) + "/" + cap.SupplyCap +
+                    " materials=" + SkirmishMaterialsService.Read(em, session, 1) + " " + buttonState;
+            }
+            catch (Exception error) { return "diagnosticUnavailable:" + error.GetType().Name + " " + buttonState; }
         }
 
         private static uint LatestPlayerReceipt(EntityManager em, Entity session)

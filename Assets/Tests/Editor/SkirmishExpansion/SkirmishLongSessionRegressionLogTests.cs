@@ -21,7 +21,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual("Passed", SkirmishLongSessionRegressionLog.Verdict(e));
             Assert.AreEqual("[SkirmishLongSessionRegression] catalog=S026 seed=104729 result=Passed allocatorErrors=0 exceptions=0 errors=0 " +
                 "resultScreen=1 returnToMenu=1 expiry=1 outcome=Defeat endReason=TimeLimit elapsed=1080.2 purchases=20 purchaseFailures=0 " +
-                "archetypes=4100 queryShapes=1720 queryBlocks=301/2048 abort=none firstError=none", SkirmishLongSessionRegressionLog.Format(e));
+                "archetypes=4100 queryShapes=1720 queryBlocks=301/2048 abort=none firstError=none purchaseRefusedByCap=0", SkirmishLongSessionRegressionLog.Format(e));
         }
 
         [Test]

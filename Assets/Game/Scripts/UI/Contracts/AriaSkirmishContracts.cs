@@ -73,6 +73,12 @@ namespace Game.UI.Contracts
         // HomeGroundFar: clear home ground on the side away from the column (-20006).
         public AriaTouchTarget HomeAttacker, HomeAttackerGround, HomeGroundFar;
         public int HomeAttackerSight; public float HomeAttackerDistance;
+        // HUD base-under-attack warning, read from ISkirmishBaseAlertPresentation exactly as presented.
+        // Reason 1 perimeter entry, 2 base damage. BaseAlertDefenderHighlight: slot + 1 of the squad card the
+        // warning highlights on this page (0 none or another page); BaseAlertDefenderPage: its paging control.
+        public bool BaseAlertPresented, BaseAlertAttackerShown, BaseAlertDefenderKnown;
+        public byte BaseAlertReason; public int BaseAlertSequence, BaseAlertDefenderHighlight;
+        public AriaTouchTarget BaseAlertDefenderPage;
         public int OwnStructureAttackUnits;
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;

@@ -141,6 +141,15 @@ public AriaS002ActionTarget HomeGroundFar;
 public int HomeAttackerSight;
 // Policy-derived each step from the HUD base-health readout; never set by adapters.
 public bool BaseDamageHomeThreat;
+// HUD base-under-attack warning as presented (ISkirmishBaseAlertPresentation). Reason 1 perimeter, 2 damage.
+// HomeDefenderHighlight: slot + 1 of the card the warning highlights on this page (0 none / other page);
+// HomeDefenderPage: the warning's control that pages the roster to that card.
+public bool BaseAlertPresented;
+public byte BaseAlertReason;
+public int BaseAlertSequence;
+public int HomeDefenderHighlight;
+public bool HomeDefenderKnown;
+public AriaS002ActionTarget HomeDefenderPage;
 public AriaS002ActionTarget FocusAdvance;
 public AriaS002ActionTarget DefenseBuild;
 public AriaS002ActionTarget PlacementConfirm;
@@ -299,6 +308,7 @@ public int HomeDefenseReason;
 public int HomeDefenseSlot;
 public int HomeDefenseScope;
 public int HomeDefenseRounds;
+public int HomeDefenseMask;
 public int HomeDefenseRecovery;
 public int HomeDefenseRecoveryAction;
 public float HomeHealthSeen;

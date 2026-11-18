@@ -295,6 +295,7 @@ namespace Game.UI.Runtime
 #endif
 
             ObserveMapThreat(ref view);
+            ObserveBaseAlert(ref view);
             ObserveIntercept(ref view, model);
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
@@ -678,8 +679,9 @@ namespace Game.UI.Runtime
         // Public ranged raid: the presented attacker near home. A fog-visible unit offers a direct attack
         // tap; either kind offers clear ground beside its marker for an attack-move.
         private void ObserveHomeAttacker(ref AriaSkirmishObservation view, in MatchHudMinimapView.PresentedMapContact attacker, int sight, float squaredDistance)
+            => ObserveHomeAttackerAt(ref view, attacker.Model.Position, sight, squaredDistance);
+        private void ObserveHomeAttackerAt(ref AriaSkirmishObservation view, Vector3 position, int sight, float squaredDistance)
         {
-            var position = attacker.Model.Position;
             var home = watchSkirmish.PlayerBaseObjectivePosition;
             view.HomeAttackerSight = sight;
             view.HomeAttackerDistance = Mathf.Sqrt(squaredDistance);
@@ -694,6 +696,39 @@ namespace Game.UI.Runtime
             view.HomeAttackerGround = ObserveClearAttackGround(position, toward, -20006, 18f);
         }
 
+        private ISkirmishBaseAlertPresentation watchBaseAlert;
+        private int watchBaseAlertProbeFrame = -1000;
+        // The HUD base-under-attack warning, exactly as presented to the player: on screen or not, why,
+        // the attacker it points at (only while the player can see it) and the card it highlights as the
+        // nearest defender. No other source: hidden units, damage events and positions are never read here.
+        private void ObserveBaseAlert(ref AriaSkirmishObservation view)
+        {
+            if (watchSkirmish == null) return;
+            if ((watchBaseAlert as Object) == null && Time.frameCount - watchBaseAlertProbeFrame >= 30)
+            {
+                watchBaseAlertProbeFrame = Time.frameCount;
+                watchBaseAlert = watchSkirmish.GetComponentInChildren<ISkirmishBaseAlertPresentation>(true);
+            }
+            var alert = (watchBaseAlert as Object) != null ? watchBaseAlert : null;
+            if (alert == null || !alert.BaseAlertPresented) return;
+            view.BaseAlertPresented = true;
+            view.BaseAlertReason = alert.BaseAlertReason;
+            view.BaseAlertSequence = alert.BaseAlertSequence;
+            view.BaseAlertDefenderKnown = alert.BaseAlertDefenderKnown;
+            int slot = alert.BaseAlertDefenderSlot;
+            view.BaseAlertDefenderHighlight = slot >= 0 && slot < 5 ? slot + 1 : 0;
+            if (view.BaseAlertDefenderKnown && view.BaseAlertDefenderHighlight == 0 && !view.MapOpen && !view.DrawerOpen)
+                view.BaseAlertDefenderPage = ObserveWatchButton(alert.BaseAlertDefenderButton);
+            view.BaseAlertAttackerShown = alert.BaseAlertAttackerShown;
+            // The attacker the warning points at replaces a minimap guess (a presented contact inside the home
+            // radius keeps its own target path).
+            if (alert.BaseAlertAttackerShown && !view.PresentedHomeThreat && !view.MapOpen && !view.DrawerOpen && Camera.main != null)
+            {
+                var attacker = alert.BaseAlertAttackerWorld; var home = watchSkirmish.PlayerBaseObjectivePosition;
+                view.HomeAttacker = default; view.HomeAttackerGround = default;
+                ObserveHomeAttackerAt(ref view, attacker, 1, (attacker - home).sqrMagnitude);
+            }
+        }
         private void ObserveGroupRectangle(ref AriaSkirmishObservation view)
         {
             if (watchMap == null || view.MapOpen || view.DrawerOpen || Camera.main == null) return;

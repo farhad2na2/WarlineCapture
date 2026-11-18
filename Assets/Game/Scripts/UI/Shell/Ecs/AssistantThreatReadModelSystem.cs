@@ -157,7 +157,12 @@ namespace Game.UI.Shell.Ecs
                 em,
                 observation.TargetEntity,
                 new FixedString64Bytes("FRIENDLY UNIT"));
-            FixedString64Bytes hostileName = observation.SourceEntity == Entity.Null
+            // Skirmish fog: ARIA knows no more than the player. A shooter the player cannot see is not
+            // named, located or offered as an attack target; only the hit on the friendly target is reported.
+            bool sourceHidden = observation.SourceEntity != Entity.Null && em.Exists(observation.SourceEntity) &&
+                                em.HasComponent<SkirmishAttemptOwnedComponent>(observation.SourceEntity) &&
+                                !Game.Runtime.SkirmishFogService.IsVisibleToFaction(em, observation.SourceEntity, 1);
+            FixedString64Bytes hostileName = observation.SourceEntity == Entity.Null || sourceHidden
                 ? new FixedString64Bytes("SOURCE UNKNOWN")
                 : ResolveName(em, observation.SourceEntity, new FixedString64Bytes("HOSTILE SOURCE"));
             byte hostileFactionId = observation.SourceEntity != Entity.Null &&
@@ -180,12 +185,12 @@ namespace Game.UI.Shell.Ecs
                 Kind = kind,
                 Priority = priority,
                 FriendlyTarget = observation.TargetEntity,
-                HostileSource = observation.SourceEntity,
+                HostileSource = sourceHidden ? Entity.Null : observation.SourceEntity,
                 FriendlyFactionId = playerOwned ? targetFactionId : FactionIdentity.PlayerFactionId,
                 HostileFactionId = hostileFactionId,
                 FriendlyWorldPosition = observation.TargetWorldPosition,
-                HostileWorldPosition = observation.SourceWorldPosition,
-                Distance = observation.SourceEntity == Entity.Null ? 0f : math.length(horizontalDelta),
+                HostileWorldPosition = sourceHidden ? observation.TargetWorldPosition : observation.SourceWorldPosition,
+                Distance = observation.SourceEntity == Entity.Null || sourceHidden ? 0f : math.length(horizontalDelta),
                 Damage = observation.DamageApplied,
                 FriendlyHealth = observation.TargetHealthAfter,
                 FriendlyMaxHealth = observation.TargetMaxHealth,

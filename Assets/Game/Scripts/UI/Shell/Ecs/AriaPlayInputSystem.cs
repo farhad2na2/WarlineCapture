@@ -33,16 +33,25 @@ namespace Game.UI.Shell.Ecs
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             Debug.Log($"[AriaS002Trace] event={eventName} frame={v.Frame} time={v.Time} phase={session.Phase} reason={session.StopReason} intent={p.Intent} kind={observation.Kind} target={session.TargetId} offered={observation.TargetId} goal={observation.GoalId} attempts={session.Attempts} actions={session.Actions} screen={session.Target} drag={session.Drag} dragEnd={session.DragEnd} lastProgress={session.LastProgressAt} objectiveProgress={session.LastObjectiveProgressAt} planProgress={p.LastProgressAt} infantry={v.Infantry} playerHealth={v.PlayerHealth} enemyHealth={v.EnemyHealth} distanceKnown={v.AssaultDistanceVisible} distance={v.NearestFriendlyObjectiveDistance} selected={v.SelectedCount} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} groups={v.ExpandedTotalGroups} group0={v.ExpandedGroup0} group1={v.ExpandedGroup1} group2={v.ExpandedGroup2} group3={v.ExpandedGroup3} group4={v.ExpandedGroup4} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} inspectStage={p.AssaultInspectStage} mapOpen={v.MapOpen} mapOwned={v.AssaultMap.ExpectedIdentity} mapId={v.AssaultMap.Identity} expectedMapId={p.AssaultInspectMapIdentity} closeAvailable={v.CloseMap.Available} precisionStage={p.PrecisionStage} precisionGroup={p.PrecisionGroup} precisionAttempts={p.PrecisionAttempts} receiptPresented={v.PrecisionAttack.Presented} receiptGroup={v.PrecisionAttack.GroupId} receiptAccepted={v.PrecisionAttack.AcceptedMembers} receiptSource={v.PrecisionAttack.SourceMembers} goalKind={gestureGoal.Kind} goalKnown={gestureGoal.Known} goalX={gestureGoal.ObjectiveX} goalZ={gestureGoal.ObjectiveZ}");
         }
-        private int tracedHomeDefenseStage, tracedHomeDefenseReason;
+        private int tracedHomeDefenseStage, tracedHomeDefenseReason, tracedAlertSequence = -1;
+        private float tracedAlertOnset = -1f;
         // Evidence only: reports home-defence transitions of the planner state.
         private void TraceHomeDefense()
         {
             if (!AriaCommandEvidence.Active) return;
             var query = ariaStateQuery;
-            if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = 0; return; }
+            if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = 0; tracedAlertSequence = -1; tracedAlertOnset = -1f; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (!v.ExpandedBaseAssault) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            // The HUD base-under-attack warning as ARIA observed it; alertAge on home_defense lines is the
+            // reaction time from that onset (match clock).
+            if (v.BaseAlertPresented && v.BaseAlertSequence != tracedAlertSequence)
+            {
+                tracedAlertSequence = v.BaseAlertSequence; tracedAlertOnset = matchSeconds;
+                Debug.Log($"[AriaS002Trace] event=base_alert state=onset reason={(v.BaseAlertReason == 1 ? "perimeter" : v.BaseAlertReason == 2 ? "damage" : "unknown")} seq={v.BaseAlertSequence} attackerShown={v.BaseAlertAttackerShown} defenderKnown={v.BaseAlertDefenderKnown} defenderSlot={v.BaseAlertDefenderHighlight - 1} pageControl={v.BaseAlertDefenderPage.Available} homeDefenseStage={p.HomeDefenseStage} baseHealth={v.PlayerHealth} t={matchSeconds:F2}");
+            }
             int priorStage = tracedHomeDefenseStage, priorReason = tracedHomeDefenseReason;
             tracedHomeDefenseStage = p.HomeDefenseStage; tracedHomeDefenseReason = p.HomeDefenseReason;
             string state = priorStage == 0 && p.HomeDefenseStage != 0 ? "triggered"
@@ -53,10 +62,10 @@ namespace Game.UI.Shell.Ecs
                 : priorReason != 0 && p.HomeDefenseReason == 0 ? "cleared" : null;
             if (state == null) return;
             int reasonCode = p.HomeDefenseReason != 0 ? p.HomeDefenseReason : priorReason;
-            string reason = reasonCode == 2 ? "baseDamage" : reasonCode == 1 ? "minimap" : "none";
+            string reason = reasonCode == 3 ? "baseAlert" : reasonCode == 2 ? "baseDamage" : reasonCode == 1 ? "minimap" : "none";
             string group = p.HomeDefenseReason == 0 ? "none" : p.HomeDefenseScope == 1 ? (p.HomeDefenseSlot - 1).ToString() : "all";
-            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
-            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} recovery={p.HomeDefenseRecovery} attackMode={v.AttackMode} homeGround={v.HomeGround.Available} homeGroundRefusal={v.HomeGroundRefusal} threatGround={v.ThreatGround.Available} threat={v.Threat.Available} attacker={v.HomeAttackerSight} attackerDistance={v.HomeAttackerDistance:F0} attackerTap={v.HomeAttacker.Available} attackerGround={v.HomeAttackerGround.Available} farGround={v.HomeGroundFar.Available} antiArmorMask={v.ExpandedAntiArmorMask} selectedMask={v.ExpandedSelectedMask} focus={v.FocusPlayer.Available} t={matchSeconds:F2}");
+            string alertAge = tracedAlertOnset >= 0f ? (matchSeconds - tracedAlertOnset).ToString("F2") : "none";
+            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} recovery={p.HomeDefenseRecovery} attackMode={v.AttackMode} homeGround={v.HomeGround.Available} homeGroundRefusal={v.HomeGroundRefusal} threatGround={v.ThreatGround.Available} threat={v.Threat.Available} attacker={v.HomeAttackerSight} attackerDistance={v.HomeAttackerDistance:F0} attackerTap={v.HomeAttacker.Available} attackerGround={v.HomeAttackerGround.Available} farGround={v.HomeGroundFar.Available} antiArmorMask={v.ExpandedAntiArmorMask} selectedMask={v.ExpandedSelectedMask} defenderMask={p.HomeDefenseMask} alert={v.BaseAlertPresented} alertAge={alertAge} defenderSlot={v.BaseAlertDefenderHighlight - 1} focus={v.FocusPlayer.Available} t={matchSeconds:F2}");
         }
         private int tracedInterceptStage; private bool tracedInterceptKnown, tracedInterceptOffered;
         // Evidence only: reports intercept transitions ("finish what slips past") of the

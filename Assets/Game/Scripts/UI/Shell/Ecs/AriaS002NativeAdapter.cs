@@ -120,6 +120,9 @@ HomeAttacker=Target(v.HomeAttacker,AriaS002Action.AttackVisibleObjective,-1),
 HomeAttackerGround=Target(v.HomeAttackerGround,AriaS002Action.AttackPublicTerrain,-1),
 HomeGroundFar=Target(v.HomeGroundFar,AriaS002Action.AttackPublicTerrain,-1),
 HomeAttackerSight=v.HomeAttackerSight,
+BaseAlertPresented=v.BaseAlertPresented,BaseAlertReason=v.BaseAlertReason,BaseAlertSequence=v.BaseAlertSequence,
+HomeDefenderHighlight=v.BaseAlertDefenderHighlight,HomeDefenderKnown=v.BaseAlertDefenderKnown,
+HomeDefenderPage=Target(v.BaseAlertDefenderPage,AriaS002Action.NextPage,-1),
 FocusAdvance=Target(v.FocusAdvance,AriaS002Action.InspectObjective,-1),
 DefenseBuild=Target(v.DefenseBuild,AriaS002Action.OpenDefensePreview,-1),
 PlacementConfirm=Target(v.PlacementConfirm,AriaS002Action.ConfirmDefensePreview,-1),
@@ -267,6 +270,7 @@ HomeDefenseReason=v.HomeDefenseReason,
 HomeDefenseSlot=v.HomeDefenseSlot,
 HomeDefenseScope=v.HomeDefenseScope,
 HomeDefenseRounds=v.HomeDefenseRounds,
+HomeDefenseMask=v.HomeDefenseMask,
 HomeDefenseRecovery=v.HomeDefenseRecovery,
 HomeDefenseRecoveryAction=v.HomeDefenseRecoveryAction,
 HomeHealthSeen=v.HomeHealthSeen,
@@ -422,6 +426,7 @@ target.HomeDefenseReason=v.HomeDefenseReason;
 target.HomeDefenseSlot=v.HomeDefenseSlot;
 target.HomeDefenseScope=v.HomeDefenseScope;
 target.HomeDefenseRounds=v.HomeDefenseRounds;
+target.HomeDefenseMask=v.HomeDefenseMask;
 target.HomeDefenseRecovery=v.HomeDefenseRecovery;
 target.HomeDefenseRecoveryAction=v.HomeDefenseRecoveryAction;
 target.HomeHealthSeen=v.HomeHealthSeen;

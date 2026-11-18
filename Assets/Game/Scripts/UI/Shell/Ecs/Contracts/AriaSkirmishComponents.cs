@@ -34,7 +34,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int ObservedPageIndex;
         public int HomeDefenseStage, HomeDefenseAction, HomeDefensePage;
         public float HomeDefenseObserveUntil;
-        public int HomeDefenseReason, HomeDefenseSlot, HomeDefenseScope, HomeDefenseRounds;
+        public int HomeDefenseReason, HomeDefenseSlot, HomeDefenseScope, HomeDefenseRounds, HomeDefenseMask;
         // AriaHomeDefensePolicy recovery bits (re-centre once, re-tap once, last press was focus, disarmed once).
         public int HomeDefenseRecovery, HomeDefenseRecoveryAction;
         public float HomeHealthSeen, HomeHealthPeak, HomeDamageAt;

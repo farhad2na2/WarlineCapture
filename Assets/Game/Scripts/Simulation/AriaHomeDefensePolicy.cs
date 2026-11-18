@@ -1,6 +1,6 @@
 using System;
 namespace Game.Simulation {
- public enum AriaHomeDefenseAction:byte {None,Waiting,Unavailable,CancelPlacement,CloseDrawer,CloseMap,InspectHome,PreviousPage,NextPage,ToggleSelected,SelectSlot,ArmAttack,AttackThreatTerrain,AttackThreatVisible,AttackHomeTerrain,AttackAttackerVisible,AttackAttackerTerrain,AttackHomeFarTerrain}
+ public enum AriaHomeDefenseAction:byte {None,Waiting,Unavailable,CancelPlacement,CloseDrawer,CloseMap,InspectHome,PreviousPage,NextPage,ToggleSelected,SelectSlot,ArmAttack,AttackThreatTerrain,AttackThreatVisible,AttackHomeTerrain,AttackAttackerVisible,AttackAttackerTerrain,AttackHomeFarTerrain,PageToDefender}
  public readonly struct AriaStrategyTarget {public readonly bool Available;public readonly AriaHomeDefenseAction Action;public readonly int Slot;public AriaStrategyTarget(bool available,AriaHomeDefenseAction action,int slot=-1){Available=available;Action=action;Slot=slot;}}
  public struct AriaHomeDefenseView {
   public bool PresentedHomeThreat,PlacementOpen,DrawerOpen,MapOpen,AttackMode;
@@ -18,6 +18,11 @@ namespace Game.Simulation {
   // used when no attacker is presented and the column-side ground already failed once.
   // AntiArmorMask: roster cards on this page whose presented role fights armour (rocketeer, tank, siege).
   public bool AttackerVisibleAvailable,AttackerGroundAvailable,HomeGroundFarAvailable;public int AntiArmorMask;
+  // HUD base-under-attack warning (ISkirmishBaseAlertPresentation): BaseAlert is the warning on screen.
+  // HighlightedDefender: slot + 1 of the squad card the warning highlights as nearest defender on this page
+  // (0 none or on another page). DefenderKnown: a card is highlighted somewhere; DefenderPageAvailable: the
+  // warning's control that pages the roster to that card is offered.
+  public bool BaseAlert,DefenderKnown,DefenderPageAvailable;public int HighlightedDefender;
   public AriaStrategyTarget PlacementCancel=>new AriaStrategyTarget(CancelAvailable,AriaHomeDefenseAction.CancelPlacement);
   public AriaStrategyTarget CloseDrawer=>new AriaStrategyTarget(CloseDrawerAvailable,AriaHomeDefenseAction.CloseDrawer);
   public AriaStrategyTarget CloseMap=>new AriaStrategyTarget(CloseMapAvailable,AriaHomeDefenseAction.CloseMap);
@@ -32,16 +37,21 @@ namespace Game.Simulation {
   public AriaStrategyTarget Attacker=>new AriaStrategyTarget(AttackerVisibleAvailable,AriaHomeDefenseAction.AttackAttackerVisible);
   public AriaStrategyTarget AttackerGround=>new AriaStrategyTarget(AttackerGroundAvailable,AriaHomeDefenseAction.AttackAttackerTerrain);
   public AriaStrategyTarget HomeGroundFar=>new AriaStrategyTarget(HomeGroundFarAvailable,AriaHomeDefenseAction.AttackHomeFarTerrain);
+  public AriaStrategyTarget DefenderPage=>new AriaStrategyTarget(DefenderPageAvailable,AriaHomeDefenseAction.PageToDefender);
   public AriaStrategyTarget Squad(int slot)=>new AriaStrategyTarget(slot>=0&&slot<5&&(AvailableSquadMask&(1<<slot))!=0,AriaHomeDefenseAction.SelectSlot,slot);
  }
  public struct AriaHomeDefenseState {public int HomeDefenseStage,HomeDefenseAction,HomeDefensePage,DefenseStage;public float HomeDefenseObserveUntil;public AriaGroundColumnState Column;
   // Reason: 0 none, 1 minimap contact, 2 HUD base damage. Slot: chosen roster slot + 1 (0 none).
   // Scope: 0 all assault groups (legacy sweep), 1 single proportionate defender. Rounds: triggers since the last clear.
   public int HomeDefenseReason,HomeDefenseSlot,HomeDefenseScope,HomeDefenseRounds;
+  // Single-defender round: the roster bits chosen once for this round (DefenderMask), so a moving
+  // nearest-card highlight cannot add cards; at most two cards are ever selected for one round.
+  public int HomeDefenseMask;
   // Recovery bits: 1 the camera was re-centred once this round, 2 the ground tap was repeated once this round,
   // 4 (kept across rounds) the last new press of this policy was the home focus control,
   // 8 Attack was toggled off once for the re-centre this round,
-  // 16 (fast sweep) the squads already selected on this roster page were ordered first.
+  // 16 (fast sweep) the squads already selected on this roster page were ordered first,
+  // 32 the warning's nearest-defender control was pressed once this round.
   // RecoveryAction: completed-contact count when the recovery touch was issued.
   public int HomeDefenseRecovery,HomeDefenseRecoveryAction;
   // Public HUD base-health history (see AriaBaseDamagePolicy).
@@ -79,8 +89,8 @@ namespace Game.Simulation {
             {
                 if (!view.FocusPlayer.Available) return true;
                 plan.HomeDefenseRounds++;
-                plan.HomeDefenseReason = view.BaseDamageOnly ? ReasonBaseDamage : ReasonMinimap;
-                plan.HomeDefenseSlot = 0;
+                plan.HomeDefenseReason = view.BaseAlert ? ReasonBaseAlert : view.BaseDamageOnly ? ReasonBaseDamage : ReasonMinimap;
+                plan.HomeDefenseSlot = 0; plan.HomeDefenseMask = 0;
                 // One group answers a raid. The whole roster only returns when
                 // the base is about to fall or a first defender did not stop it.
                 plan.HomeDefenseScope = view.ProportionateDefense && !view.BaseCritical && plan.HomeDefenseRounds <= 1 ? 1 : 0;
@@ -109,6 +119,25 @@ namespace Game.Simulation {
             {
                 if (view.CompletedContacts <= plan.HomeDefenseAction)
                 { Target(view.FocusPlayer, false, ref output); return true; }
+                if (FastSweep(view) && plan.HomeDefenseScope == 1)
+                {
+                    // Nearest defender: the card the warning highlights. It is on this page, or the
+                    // warning's own control pages the roster to it (one press per round). Without a
+                    // warning, a page that already shows an anti-armour card is used as it is.
+                    bool paged = (plan.HomeDefenseRecovery & RecoveryNearestPaged) != 0;
+                    if (view.HighlightedDefender > 0 ||
+                        !view.DefenderKnown && (view.ExpandedAssaultMask & view.AvailableSquadMask & view.AntiArmorMask) != 0)
+                    { plan.HomeDefensePage = view.ExpandedPageIndex; plan.HomeDefenseStage = 2; }
+                    else if (view.DefenderKnown && view.DefenderPageAvailable &&
+                        (!paged || view.CompletedContacts <= plan.HomeDefenseRecoveryAction))
+                    {
+                        if (!paged) { plan.HomeDefenseRecovery |= RecoveryNearestPaged; plan.HomeDefenseRecoveryAction = view.CompletedContacts; }
+                        Target(view.DefenderPage, false, ref output); return true;
+                    }
+                }
+            }
+            if (plan.HomeDefenseStage == 1)
+            {
                 if (view.ExpandedPageIndex > 0)
                 { Target(view.PreviousSquadPage, false, ref output); return true; }
                 plan.HomeDefensePage = 0;
@@ -118,8 +147,10 @@ namespace Game.Simulation {
             {
                 // An all-group sweep orders every assault squad to the same target: keep a selection
                 // (here or on an earlier page) instead of spending a tap per card to clear it.
-                bool keep = FastSweep(view) && plan.HomeDefenseScope == 0 &&
-                    (view.ExpandedSelectedMask & ~view.ExpandedAssaultMask) == 0;
+                bool keep = FastSweep(view) && (plan.HomeDefenseScope == 0
+                    ? (view.ExpandedSelectedMask & ~view.ExpandedAssaultMask) == 0
+                    // A single defence keeps a selection that is exactly part of its defenders on this page.
+                    : (view.ExpandedSelectedMask & ~DefenderMask(view)) == 0 && view.ExpandedSelectedGroups == Bits(view.ExpandedSelectedMask));
                 if (!keep && TryDeselectSquads(view, ref output)) return true;
                 // Deselecting an off-screen squad may have moved the roster.
                 // Restore this sweep's window, including later defense windows.
@@ -136,10 +167,11 @@ namespace Game.Simulation {
                 if (view.ExpandedAssaultMask == 0) plan.HomeDefenseScope = 0;
                 else
                 {
-                    int slot = PreferredDefender(view);
-                    plan.HomeDefenseSlot = slot + 1;
-                    if ((view.ExpandedSelectedMask & (1 << slot)) == 0)
-                    { Target(view.Squad(slot), false, ref output); return true; }
+                    if (plan.HomeDefenseMask == 0) plan.HomeDefenseMask = DefenderMask(view);
+                    plan.HomeDefenseSlot = LowestSetBit(plan.HomeDefenseMask) + 1;
+                    int pending = plan.HomeDefenseMask & ~view.ExpandedSelectedMask & view.AvailableSquadMask;
+                    if (pending != 0)
+                    { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
                     plan.HomeDefenseStage = 4;
                 }
             }
@@ -283,8 +315,8 @@ namespace Game.Simulation {
             if (view.Time >= plan.HomeDefenseObserveUntil || plan.HomeDefenseScope == 1 && view.BaseCritical) plan.HomeDefenseStage = 0;
             return true;
         }
- public const int ReasonNone=0,ReasonMinimap=1,ReasonBaseDamage=2;
- public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8,RecoveryPageOrdered=16;
+ public const int ReasonNone=0,ReasonMinimap=1,ReasonBaseDamage=2,ReasonBaseAlert=3;
+ public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8,RecoveryPageOrdered=16,RecoveryNearestPaged=32;
  public const float SingleDefenderObserveSeconds=20f,RetrySeconds=4f,DisarmSeconds=3f,RecentreSeconds=4f;
  // A presented contact is fought where it is; base damage alone sends defenders onto the home ground.
  // When the preferred ground is not offered, any other offered defence target is used.
@@ -303,10 +335,18 @@ namespace Game.Simulation {
  }
  // Fast sweep is the S002 proportionate defence (the generic planner keeps its original sweep).
  static bool FastSweep(in AriaHomeDefenseView view)=>view.ProportionateDefense;
- // Anti-armour card first (a tank shelling the HQ), else the first assault card.
- static int PreferredDefender(in AriaHomeDefenseView view){
+ // One card for an order-first sweep: the nearest highlighted card, else anti-armour, else the first assault card.
+ static int PreferredDefender(in AriaHomeDefenseView view)=>LowestSetBit(DefenderMask(view));
+ // The cards a single defence selects on this page (at most two): the card the warning highlights as the
+ // nearest defender, plus one anti-armour card when the nearest one does not fight armour (a tank shelling
+ // the HQ); without a highlight, one anti-armour card, else the first offered assault card.
+ public static int DefenderMask(in AriaHomeDefenseView view){
   int assault=view.ExpandedAssaultMask,offered=assault&view.AvailableSquadMask,armour=offered&view.AntiArmorMask;
-  return LowestSetBit(armour!=0?armour:offered!=0?offered:assault);}
+  int slot=view.HighlightedDefender-1,nearest=slot>=0&&slot<5&&(offered&(1<<slot))!=0?1<<slot:0;
+  if(nearest!=0)return (nearest&armour)!=0||armour==0?nearest:nearest|LowestBit(armour);
+  return LowestBit(armour!=0?armour:offered!=0?offered:assault);}
+ static int LowestBit(int mask)=>mask&-mask;
+ static int Bits(int mask){int n=0;while(mask!=0){mask&=mask-1;n++;}return n;}
  // No defence target after the one re-centre (or a ground tap that left Attack armed twice):
  // toggle Attack off, observe briefly, then a new round starts from the home focus. Different
  // controls alternate, so no control is pressed three times in a row and ARIA keeps playing.

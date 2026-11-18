@@ -23,6 +23,12 @@ namespace Game.UI.Contracts
         public bool ProgressKnown,RepairWorkActive;
         public uint PublicProgressRevision;
     }
+    // The goal HUD's score line exactly as rendered (zones, tickets, delivered/evacuated, lost, exit state).
+    public struct AriaObjectiveScoreObservation
+    {
+        public bool Known, TicketsKnown, ExitOpen;
+        public int OwnZones, OpposingZones, OwnTickets, OpposingTickets, Completed, Required, Lost, Alive;
+    }
     public struct AriaObjectiveTouchPlan
     {
         public uint GroupId, NavigationGroupId, RosterRevision, PresentationEpoch, OrderRevisionAtIssue, ProgressRevision;

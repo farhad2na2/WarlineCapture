@@ -29,8 +29,9 @@ namespace Game.UI.Shell.Ecs
             if(support.NextAircraftCheck==0)support.NextAircraftCheck=now+45;
             bool urgent=facts.CriticalPublicRisk||objective.RepairWorkActive||
                 objective.Action==AriaObjectiveAction.Repair||objective.Action==AriaObjectiveAction.Unload;
-            bool changedGoal=plan.ObjectiveTouch.GroupId!=objective.GroupId||
-                plan.ObjectiveTouch.PublicKey!=objective.PublicKey||plan.ObjectiveTouch.Action!=objective.Action;
+            // No current choice is not a new order to pre-empt support for (objective skill production window).
+            bool changedGoal=objective.GroupId!=0&&(plan.ObjectiveTouch.GroupId!=objective.GroupId||
+                plan.ObjectiveTouch.PublicKey!=objective.PublicKey||plan.ObjectiveTouch.Action!=objective.Action);
             if(urgent||changedGoal||plan.ObjectiveTouch.CommandPending||plan.ObjectiveTouch.Stage==3)
             {
                 // Cancel only this plan's unconfirmed placement through its visible
@@ -79,7 +80,9 @@ namespace Game.UI.Shell.Ecs
             // no eligible objective group remains, without inventing replacements
             // for the immutable BT originals or CE trucks.
             bool recovery=facts.DismountedCombatGroups==0;
-            if(plan.ObjectiveTouch.Stage!=4&&!recovery)return false;
+            // No current objective choice (every group committed, or BT originals held back for support
+            // infantry) is also a production window, not only an accepted order.
+            if(plan.ObjectiveTouch.Stage!=4&&!recovery&&objective.GroupId!=0)return false;
             var chosen=ChoosePublicObjectiveSupport(view);
             if(chosen==AriaObjectiveSupportAction.None&&now>=support.NextAircraftCheck&&view.ExpandedTotalGroups>0)
             {
@@ -111,6 +114,9 @@ namespace Game.UI.Shell.Ecs
                 return AriaObjectiveSupportAction.Rifle;
             if(view.VisibleHostileAir>0&&!view.AntiAirCommitted&&view.CanAffordAntiAir)
                 return AriaObjectiveSupportAction.AntiAir;
+            // Objective skill: keep the type's ordinary infantry strength (zone holders, corridor openers, escorts).
+            if(f.InfantryTarget>0&&view.Infantry<f.InfantryTarget&&!view.RifleRecruitPending&&view.CanAffordRifle)
+                return AriaObjectiveSupportAction.Rifle;
             if(!view.LogisticsTruckCommitted&&view.CanAffordLogisticsTruck)return AriaObjectiveSupportAction.LogisticsTruck;
             if(view.TankersCommitted<2&&view.CanAffordTanker)return AriaObjectiveSupportAction.Tanker;
             if(ChoosePublicAirRecruit(view)!=AriaPublicAirRole.None)return AriaObjectiveSupportAction.AttackAircraft;

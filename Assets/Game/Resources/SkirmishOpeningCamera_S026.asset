@@ -15,7 +15,7 @@ MonoBehaviour:
   SchemaVersion: 1
   CatalogId: S026
   LayoutId: layout.skirmish.s026
-  LayoutContentHash: authored.s026.1577d04a83fdb5e9
+  LayoutContentHash: authored.s026.190ecd8bc5372b35
   YawFromAnchorRoleId: 
   YawTowardAnchorRoleId: 
   YawFromWorldXZ: {x: 982, y: 692}

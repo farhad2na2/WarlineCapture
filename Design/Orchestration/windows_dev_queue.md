@@ -167,6 +167,17 @@ tactics if that is the defect; otherwise tune only starting forces/resources/dea
 direction 2026-11-06). No unit-stat or rule changes, no map changes. Windows proves with check_draft/quickcheck + the FC/ARIA EditMode
 tests it touches; Mac runs the counted queue. Branch `missions/win-w16-fc-established`. Per-task results file.
 
+## W17 — Burst BC1016: managed byte[] in AriaCoverageRecruitPolicy.TryStart (2026-11-18)
+status: READY
+codex effort: high
+Windows W15 log: Burst error BC1016 at `Assets/Game/Scripts/Simulation/AriaExpandedPreparationPolicy.cs:174`. `TryStart(..., byte[] order, ...)`
+(:177) receives the `static readonly byte[] Order`/`AirPriority` arrays (:136, :139) as managed parameters inside Burst-compiled
+AriaSkirmishPlanSystem/AriaPlayDecisionSystem (from a7c6eeabe). The Editor silently falls back to managed code; device/AOT Burst may fail.
+Make it Burst-compatible with identical behaviour and priority order (e.g. pass a FixedList/unsafe pointer, or index the static readonly
+arrays directly without passing them). No behaviour change. Grep the other Aria*Policy files for the same pattern and fix those too.
+Prove: Editor log with no BC10xx for Aria* after a domain reload, compile marker, and `Game.Tests.Editor.SkirmishExpandedAriaTests`
+EditMode all passing. Branch `missions/win-w17-aria-burst`. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

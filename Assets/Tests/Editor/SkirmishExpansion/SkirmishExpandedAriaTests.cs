@@ -291,6 +291,65 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void S002SecondAlertReplansWhenThePendingDefenseTapDisappears()
+        {
+            // Lane 31: Attack armed with four squads, but the threat terrain offered on entry to
+            // stage 5 is gone. The HUD can show the attacker without offering a reachable world tap.
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, ExpandedBaseAssault = true, SourceScenarioIndex = 4,
+                Time = 310.48f, PlayerHealth = 520, Infantry = 23, AttackMode = true,
+                PresentedHomeThreat = true, BaseAlertPresented = true, BaseAlertSequence = 2,
+                BaseAlertAttackerShown = true, BaseAlertDefenderHighlight = 0, HomeGroundRefusal = 7,
+                ExpandedAssaultMask = 15, ExpandedSelectedMask = 15, ExpandedSelectedGroups = 4,
+                Attack = new AriaTouchTarget { Id = 12, Available = true },
+                FocusPlayer = new AriaTouchTarget { Id = 51, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent
+            {
+                HomeDefenseStage = 5, HomeDefenseAction = 113, HomeDefenseRounds = 2, HomeDefenseScope = 0,
+                HomeDefenseReason = Game.Simulation.AriaHomeDefensePolicy.ReasonBaseAlert,
+                HomeDefenseRecovery = Game.Simulation.AriaHomeDefensePolicy.RecoveryPageOrdered |
+                    Game.Simulation.AriaHomeDefensePolicy.RecoveryDisarmed,
+                LastProgressAt = 227.67f, PlayerHealth = view.PlayerHealth, Infantry = view.Infantry
+            };
+            var touch = new AriaPlaySessionComponent
+            {
+                Phase = AriaPlayPhase.Verifying, Actions = 113, Attempts = 1, TargetId = view.Attack.Id,
+                LastProgressAt = 295.45f, LastObjectiveProgressAt = 227.67f, GoalId = 10000,
+                ObjectiveWatchdogInitialized = 1, VisitedGoalMask = 1UL << (10000 & 63)
+            };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            AriaPlayDecisionSystem.Step(output, ref touch);
+            Assert.AreEqual(AriaPlayPhase.Aiming, touch.Phase, "the lost world tap would otherwise block with reason 114");
+            Assert.AreEqual(AriaPlayObservationKind.Control, output.Kind);
+            Assert.AreEqual(view.Attack.Id, output.TargetId, "disarm the current Attack mode before focusing home");
+            Assert.AreEqual(AriaSkirmishIntent.DefendBase, plan.Intent);
+
+            touch.Phase = AriaPlayPhase.Verifying;
+            touch.Actions++;
+            view.Time += 1.75f;
+            view.AttackMode = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(view.FocusPlayer.Id, output.TargetId, "the disarm is not a completed defense order");
+
+            touch.Actions++;
+            view.Time += 1.75f;
+            view.Threat = new AriaTouchTarget { Id = -20002, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(view.Attack.Id, output.TargetId, "arm Attack for the now reachable attacker");
+
+            touch.Actions++;
+            view.Time += 1.75f;
+            view.AttackMode = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayObservationKind.WorldTarget, output.Kind);
+            Assert.AreEqual(view.Threat.Id, output.TargetId);
+            Assert.AreEqual(5, plan.HomeDefenseStage);
+        }
+
+        [Test]
         public void FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity()
         {
             var perception = new SkirmishPublicPerception
@@ -475,7 +534,7 @@ namespace Game.Tests.Editor
                 typeof(UnitHealth), typeof(SkirmishArmyGroupMembershipComponent), typeof(SkirmishRoleOverlayComponent));
             em.SetComponentData(defender, new SkirmishAttemptOwnedComponent
                 { SessionId = sessionId, FactionId = 2 });
-            em.SetComponentData(defender, LocalTransform.FromPosition(basePosition + new float3(20, 0, 0)));
+            em.SetComponentData(defender, LocalTransform.FromPosition(basePosition + new float3(75, 0, 0)));
             em.SetComponentData(defender, new UnitHealth { Current = 100, Max = 100 });
             em.SetComponentData(defender, new SkirmishArmyGroupMembershipComponent { GroupId = groupId });
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
@@ -490,7 +549,8 @@ namespace Game.Tests.Editor
             FixtureSet(em, defender, new Faction { Id = 2 });
             FixtureSet(em, defender, new UnitCombat { AggroRangeCells = 35 });
             AdvanceNativeFog(world);
-            AssertDirectObservation(em, pad, 2, defender);
+            // At 35 m from the base and 40 m from the defender, only the base can see the pad.
+            AssertDirectObservation(em, pad, 2, enemyBase);
             Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
                 { Damage = 10, TargetDomains = SkirmishTargetDomain.Infantry, RangeWorld = 35 });
@@ -503,10 +563,18 @@ namespace Game.Tests.Editor
             em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
             PlaceFixtureContact(em, defender, basePosition + new float3(300, 0, 0));
             AdvanceNativeFog(world);
+            AssertDirectObservation(em, pad, 2, enemyBase);
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            // The pad is still inside the defense area, but outside both acquisition radii.
+            em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(60, 0, 0)));
             PlaceFixtureContact(em, defender, basePosition + new float3(20, 0, 0));
             AdvanceNativeFog(world);
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, pad, 2));
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            PlaceFixtureContact(em, defender, basePosition + new float3(30, 0, 0));
+            AdvanceNativeFog(world);
             AssertDirectObservation(em, pad, 2, defender);
+            Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(pad, new UnitHealth { Current = 0, Max = 100 });
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
         }
@@ -1984,6 +2052,7 @@ namespace Game.Tests.Editor
                 suite.CombinedArmsPreservesStructureForceBeforeBuyingRifles();
                 suite.LegacyDefenseConfirmationDoesNotWaitForUnavailableBuildingCensus();
                 suite.PresentedHomeRaidUsesSquadAttackAndResumesObjectiveOnlyAfterItClears();
+                suite.S002SecondAlertReplansWhenThePendingDefenseTapDisappears();
                 suite.FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity();
                 suite.SharedScoringUsesEligibilityAndHidesHostileCash();
                 suite.EnemyStrategyRecruitsThroughSharedProduceAndLeavesPlayerStocks();

@@ -14,26 +14,26 @@ differ by army and start; copy the template's measured geometry, never invent co
 as a candidate or unmeasured stays marked so.
 
 ## W1 — Desert Base Frontline Control siblings S008–S012 (2026-11-18)
-status: READY
+status: DONE (merged 6c1ff8fcd; Mac check_draft 5/5, quickcheck passed)
 codex effort: medium
 template: `Tools/Missions/drafts/s007-desert-base-fc-ground-field-candidate.json`
 deliverable: one draft per row S008, S009, S010, S011, S012 (army and start from missions.csv), each passing
 check_draft.py, plus one quickcheck run over S007–S012 at Standard. Branch `missions/win-w1-db-fc`.
 
 ## W2 — Desert Base Breakthrough siblings S014–S018 (2026-11-18)
-status: READY
+status: DONE (merged 6c1ff8fcd; Mac check_draft 5/5, quickcheck passed)
 codex effort: medium
 template: `Tools/Missions/drafts/s013-desert-base-bt-ground-field-candidate.json`
 deliverable: as W1 for S014–S018. Branch `missions/win-w2-db-bt`.
 
 ## W3 — Desert Base Convoy Escort siblings S020–S024 (2026-11-18)
-status: READY
+status: DONE (merged 6c1ff8fcd; Mac check_draft 5/5, quickcheck passed)
 codex effort: medium
 template: `Tools/Missions/drafts/s019-desert-base-ce-ground-field-candidate.json`
 deliverable: as W1 for S020–S024. Branch `missions/win-w3-db-ce`.
 
 ## W4 — City Crossroads Frontline Control S031–S036 (2026-11-18)
-status: READY
+status: DONE as drafts (branch kept unmerged: area.measurement missing -> W7)
 codex effort: high
 templates: the S007 FC draft (structure) and `s026-city-crossroads-ba-ground-established.json` (City Crossroads source,
 bases and measured anchors).
@@ -44,9 +44,53 @@ quickcheck S031–S036 Standard. In Unity on Windows: the compile check, then an
 method the catalog docs name for a draft (read-only; do not write assets). Branch `missions/win-w4-cc-fc`.
 
 ## W5 — Mountain Pass Frontline Control S055–S060 (2026-11-18)
-status: READY
+status: DONE as drafts (branch kept unmerged: area.measurement missing -> W8)
 codex effort: high
 templates: the S007 FC draft and `s049-mountain-pass-ba-ground-field.json`. Same method as W4. Branch `missions/win-w5-mp-fc`.
+
+## W6 — Author and contain the 15 Desert Base sibling drafts (2026-11-18)
+status: READY
+codex effort: medium (scripting the runs); you run Unity yourself, serially, in the main Windows checkout
+drafts: S008–S012, S014–S018, S020–S024 (on missions/integration since 6c1ff8fcd)
+deliverable per row, in this order, each with its marker (Windows wrappers; same methods as the Mac steps in
+`WarlineCapture-program-logs` lane 22, quoted here):
+  b. `python -B Tools/Missions/pad_preflight.py --draft <draft>`, then `WARLINE_MISSION_DRAFT=<draft>` with
+     `-quit -executeMethod Game.Editor.SkirmishMissionAuthoringEntry.AuthorFromDraft` → `[SkirmishMissionAuthoring] result=Passed catalog=<id>`
+     (check the exact entry name in `Assets/Game/Scripts/Editor`; the S007 run used it).
+  c. `WARLINE_MISSION_DRAFT=<draft>` with `-quit -executeMethod Game.Tests.Editor.SkirmishInstancePadContainmentTests.RunAuthoredLayoutValidation`
+     → `[SkirmishInstancePadContainment] catalog=<id> result=Passed`.
+  d. One NON-counted menu launch per row (`run_aria_queue.py --launcher windows --jobs <id>:130365:en --menu-journey --no-table`):
+     record the menu-journey line, any `expandedStartupFailure`, `[StartingGrantPlacement] failed ... preferredFirstReject=`,
+     result line and clock. A win is not required; fps does not matter here.
+Commit only the authored assets for these rows (with their .meta files) and the results file on `missions/win-w6-db-author`.
+Do not change catalog visibility. A row whose b or c fails twice: record the first failing line, leave its assets out, go on.
+
+## W7 — City Crossroads FC area measurement and fixes, S031 then S032–S036 (2026-11-18)
+status: READY
+codex effort: high (draft fixes); Unity serial in the main checkout
+Measure on the City Crossroads host match: `WARLINE_SKIRMISH_CATALOG=S026 WARLINE_S002_SEED=130365 WARLINE_S002_LOCALE=en
+WARLINE_MISSION_DRAFT=<s031 draft> WARLINE_AREA_MEASUREMENT_OUT=Design/AgentReports/SkirmishExpansion/S031/area-measurement-r1.json`,
+Play mode (no -quit), `-executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunCatalogAreaMeasurementAndExit`. Fix the open items you
+found (FlankNorth/FlankSouth sharing S026 waypoints 00–06; FrontlineB 19 m x 59 m) using only measured positions, re-measure,
+set `area_measurement.artifact` and the `candidate=1, measured <date>` note, check_draft must PASS. Siblings reuse S031's
+measurement. Then W6 steps b–d for S031–S036. Branch `missions/win-w4-cc-fc` (continue it).
+
+## W8 — Mountain Pass FC area measurement and fixes, S055–S060 (2026-11-18)
+status: READY
+As W7 on the Mountain Pass host (`WARLINE_SKIRMISH_CATALOG=S050`, the same Citywide Alert binding the S049/S050 drafts use;
+the missions.csv "Armor Break approach sector" text is stale; follow the drafts). Branch `missions/win-w5-mp-fc` (continue it).
+
+## W9 — City Crossroads Breakthrough S037–S042 and Convoy Escort S043–S048 drafts (2026-11-18)
+status: READY
+codex effort: high. Templates: S013 BT / S019 CE drafts (structure) + S026 (source, bases, measured anchors). S037 and S043 first
+as family templates, then siblings. Measure as W7 (host S026). Branches `missions/win-w9-cc-bt`, `missions/win-w9-cc-ce`.
+
+## W10 — Mountain Pass Breakthrough S061–S066 and Convoy Escort S067–S072 drafts (2026-11-18)
+status: READY
+codex effort: high. As W9 on Mountain Pass (host S050). Branches `missions/win-w10-mp-bt`, `missions/win-w10-mp-ce`.
+
+Order: W6 and W7 first (Unity serial: W6 runs, then W7 measurements); Codex can draft W9/W10 in parallel meanwhile.
+quickcheck needs the .NET 8 SDK, which Windows lacks; the Mac lead runs quickcheck on your branches. Do not install software.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

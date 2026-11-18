@@ -32,5 +32,6 @@ Runway (x 490.66..909.34, z 543.35..576.65): the W13 refinery rect starts at x 9
 **Re-runs:** of the rows with Mac match evidence, only **S004** starts differently (enemy base). S008–S012 and S020/S022/S024 are unchanged by W13.
 
 ## Notes
-- S050's W13 startup launch logged all 20 placements, then exited 2 with `[SkirmishS003Startup] result=Failed reason=candidateSourceChangedDuringRun`; I had created a local branch in another worktree during that run. Its placement lines are kept; no other row was affected.
+- S050's W13 startup launch logged all 20 placements, then exited 2 with `[SkirmishS003Startup] result=Failed reason=candidateSourceChangedDuringRun` (harness finish-time source-hash check). Cause not established: the run coincided with creating the local comparison branch in another worktree; no file in the main checkout changed in that window. Its placement lines are kept; no other row was affected.
+- Separately, Editor runs earlier that day (19:04–19:09, during the W13 UTF runs) wrote 8 untracked `Assets/Game/GeneratedOperationMaps/DenseCity/PhysicsFreePrefabDefinitions/destroyed-*.prefab(.meta)` files; they were moved out of the checkout to `win-dev-unity\local-untracked-densecity-prefabs` and are not committed.
 - Counted S004 matches stay on the Mac.

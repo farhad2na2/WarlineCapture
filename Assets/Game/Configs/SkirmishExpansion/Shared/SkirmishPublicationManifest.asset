@@ -67,3 +67,10 @@ MonoBehaviour:
     Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
       source fit, normal-input/ARIA journeys, result/return and device acceptance
       required; asset existence does not set Playable.
+  - CatalogId: S007
+    DefinitionId: skirmish.s007
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S007/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.

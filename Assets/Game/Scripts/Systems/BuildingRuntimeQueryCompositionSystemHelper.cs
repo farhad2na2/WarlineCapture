@@ -132,7 +132,23 @@ namespace Game.Runtime
                 if (building?.Definition == null || building.IsDestroyed)
                     continue;
 
-                RectInt existingRect = getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false);
+                Vector3 runwayForward = building.Definition.HasRunway && building.Instance != null
+                    ? building.Instance.transform.forward
+                    : Vector3.forward;
+                RectInt existingRect;
+                if (Mathf.Abs(runwayForward.x) > Mathf.Abs(runwayForward.z))
+                {
+                    // The committed model size already includes the quarter turn.
+                    // Apply the rotation only to the runway, which is stored in local space.
+                    existingRect = source.BuildingRunwaySystem.GetEffectivePlacementRect(
+                        building.Definition, building.OriginCell, grid, true,
+                        source.BuildingPlacementStartupSystemHelper.BuildPlaneY,
+                        static (definition, _) => definition.FootprintCells);
+                }
+                else
+                {
+                    existingRect = getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false);
+                }
                 if (candidateRect.Overlaps(existingRect))
                     return true;
             }

@@ -67,6 +67,7 @@ namespace Game.UI.Runtime
                 if (model.Finished || model.StartupFailed) { baseFire.Reset(); baseHitCue.Reset(); baseHitCueEvent = 0; }
                 SetBaseFireVisible(false);
                 HideBaseHitCue();
+                RefreshDefenseHeld(model, false);
                 return;
             }
             PresentBaseHitCue(model);
@@ -76,6 +77,7 @@ namespace Game.UI.Runtime
             if (!active || model.PlayerHealth <= 0)
             {
                 SetBaseFireVisible(false);
+                RefreshDefenseHeld(model, true);
                 return;
             }
             if (baseFireRow == null) BuildBaseUnderFire();
@@ -92,6 +94,7 @@ namespace Game.UI.Runtime
             baseAlertAttackerShown = model.BaseAttackerVisible;
             baseAlertAttackerWorld = model.BaseAttackerVisible ? model.BaseAttackerWorld : Vector3.zero;
             SetBaseFireVisible(true);
+            RefreshDefenseHeld(model, true);
             PositionBaseFireRow();
 
             var text = UiShellRuntimeGateway.Localization;

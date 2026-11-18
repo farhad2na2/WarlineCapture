@@ -58,6 +58,8 @@
     { "key": "ui.skirmish.base_alert.attacker_in_sight", "source": "ATTACKER IN SIGHT", "translations": [{ "locale": "fa-IR", "value": "مهاجم در دید" }] },
     { "key": "ui.skirmish.base_alert.source_unknown", "source": "SOURCE UNKNOWN", "translations": [{ "locale": "fa-IR", "value": "منبع نامعلوم" }] },
     { "key": "ui.skirmish.base_alert.show_home_guard", "source": "SHOW HOME GUARD", "translations": [{ "locale": "fa-IR", "value": "نمایش نگهبان پایگاه" }] },
-    { "key": "ui.skirmish.base_alert.show_nearest", "source": "SHOW NEAREST SQUAD", "translations": [{ "locale": "fa-IR", "value": "نمایش نزدیک‌ترین جوخه" }] }
+    { "key": "ui.skirmish.base_alert.show_nearest", "source": "SHOW NEAREST SQUAD", "translations": [{ "locale": "fa-IR", "value": "نمایش نزدیک‌ترین جوخه" }] },
+    { "key": "ui.skirmish.defense_held.title", "source": "BASE HELD", "translations": [{ "locale": "fa-IR", "value": "پایگاه حفظ شد" }] },
+    { "key": "ui.skirmish.defense_held.choice", "source": "Keep a guard at your base. Scout the reported enemy base.", "translations": [{ "locale": "fa-IR", "value": "نگهبانی در پایگاهت بگذار. پایگاه گزارش‌شدهٔ دشمن را شناسایی کن." }] }
   ]
 }

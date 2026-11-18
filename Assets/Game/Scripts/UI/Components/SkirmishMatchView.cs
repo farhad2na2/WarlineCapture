@@ -112,7 +112,7 @@ namespace Game.UI.Runtime
             RefreshMapInformation(model);
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
-            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
+            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,EnemyReadout(model));RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
             RefreshPublicObjectiveHud(model);
             RefreshMissionGuidance(model);
@@ -192,6 +192,15 @@ namespace Game.UI.Runtime
             foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Include))
                 setup.ReturnLibraryToScenario(scenarioId);
             Send(UiSkirmishAction.AdjustSetup);
+        }
+        // The enemy-base readout frames its reported or last-seen position when tapped. While the base
+        // is out of sight a forward chevron marks it as a control (mirrored for right-to-left).
+        private static string EnemyReadout(in UiSkirmishModel model)
+        {
+            string source = model.EnemyBase ?? string.Empty;
+            if (!model.EnemyBaseKnowledgeKnown || model.EnemyBaseKnowledge == SkirmishEnemyBaseMarkerState.ReadoutVisible) return source;
+            int line = source.IndexOf('\n');
+            return line < 0 || line == source.Length - 1 ? source : source + " \u203A";
         }
         private static ModeResultContent BuildResult(UiSkirmishModel model)
         {

@@ -51,7 +51,7 @@ namespace Game.Editor
                 }
             }
             var feedback = FindDeepChild(tray.parent, "FeedbackPanel") as RectTransform;
-            if (feedback != null) SetTopLeft(feedback, 719, 710, 652, 48);
+            if (feedback != null) SetTopLeft(feedback, 719f, CommandFeedbackTop, 532f, CommandFeedbackHeight);
             // Preserve every existing responsive anchor while replacing only authored widths.
             foreach (var layout in root.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
             {
@@ -62,7 +62,7 @@ namespace Game.Editor
                 {
                     var target = targets.GetArrayElementAtIndex(i).objectReferenceValue;
                     if (target == rail) sizes.GetArrayElementAtIndex(i).vector2Value = new Vector2(943, 167);
-                    if (target == feedback) sizes.GetArrayElementAtIndex(i).vector2Value = new Vector2(652, 48);
+                    if (feedback != null && target == feedback) sizes.GetArrayElementAtIndex(i).vector2Value = feedback.sizeDelta;
                 }
                 data.ApplyModifiedPropertiesWithoutUndo();
             }

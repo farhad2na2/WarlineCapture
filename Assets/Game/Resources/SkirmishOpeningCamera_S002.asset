@@ -16,14 +16,29 @@ MonoBehaviour:
   CatalogId: S002
   LayoutId: layout.skirmish.db.ba
   LayoutContentHash: measured.db.ba.v2
-  YawFromAnchorRoleId: base.player
-  YawTowardAnchorRoleId: highway.near
+  YawFromAnchorRoleId: 
+  YawTowardAnchorRoleId: 
   YawFromWorldXZ: {x: 0, y: 0}
   YawTowardWorldXZ: {x: 0, y: 0}
-  FrameAnchorRoleIds:
-  - base.player
+  UseFixedYaw: 1
+  FixedYawDegrees: 65
+  FrameAnchorRoleIds: []
   FrameWorldXZ: []
   FrameWorldLabels: []
-  Provenance: 'Layout anchors only. Screen-up from the home base (949, 344.7) toward the
-    highway approach highway.near (1143, 282.4), yaw 107.8, so the lone tank arrives from
-    the top of the frame; the opening frames the home base with the actual opening group.'
+  FrameActualPlayerBase: 1
+  ApproachFromAnchorRoleId: 
+  ApproachTowardAnchorRoleId: supply.expansion.a
+  ApproachFrameMetres: 15
+  FrameInsideHudPlayArea: 1
+  Provenance: 'Designer retest 2026-11-18 (seed 104729): the yaw 107.8 opening framed the
+    base.player anchor (949, 345), but the live Barracks stands at cell (1001, 303) (Unity
+    log, Barracks hit by the Battle Tank from cell (1001, 278)), so the HQ was off the top
+    of the frame and a parked fighter filled it. Frames the live player base, the actual
+    opening Rifle group and a point 15 m from the base toward supply.expansion.a (1156,
+    190), which lies on the road the ambush tank drives in on, inside the HUD-free play
+    area. Yaw 65 is the smallest rotation from north-up (5 degree steps) that fits this
+    opening and also the alert framing of the base with the tank at its firing cell inside
+    the play area logged during the alert (437,241 to 1920,611 at 1920x1080), both at least
+    1.5 m under the 40 m mobile height cap at 1920x1080 and 2400x1080 (yaw 60 leaves 0.7 m).
+    North-up (yaw 0) fits the opening (37.1 m) but needs 67 m for the alert pair. See
+    SkirmishS002CameraRetestTests.'

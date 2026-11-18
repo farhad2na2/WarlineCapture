@@ -227,6 +227,10 @@ namespace Game.Composition
             bool framed = missionViewBound && framing.IsValid;
             if (missionViewBound) focusHeight = framed ? framing.WideHeight : missionView.NormalHeight;
             focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focusHeight);
+            // Player base tap: frame the base with the attacker in sight (or its struck side)
+            // inside the open play area (designer retest 2026-11-18). Camera request only.
+            if (!opening && !enemy && framed &&
+                TryRequestBaseThreatFocus(entity, (Vector3)focusPosition, framing, query.GetSingletonEntity())) return true;
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,

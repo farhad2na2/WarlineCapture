@@ -316,10 +316,11 @@ namespace Game.Tests.Editor
                 Assert.AreEqual("role.rifle.1.0.0",owner.ActorId.ToString());Assert.IsTrue(SkirmishS005OpeningViewPolicy.OwnsIntroduction(f.Em,f.Session));
                 using var requests=f.Em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));var entity=requests.GetSingletonEntity();
                 var request=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity);Assert.AreEqual(1,request.Requested);
-                // S002 has an opening camera config: composed between tactical and wide, facing the highway approach.
+                // S002 has an opening camera config: yaw 65 (re-pinned 2026-11-18 from 107.8), composed between
+                // tactical and wide, or the group at tactical height when the live base is not in this fixture.
                 var framing=SkirmishMissionViewProfileApplication.ResolveFraming(f.Em,resolved);Assert.IsTrue(framing.HasMissionYaw);
                 Assert.That(request.Perspective.x,Is.InRange(framing.TacticalHeight-.01f,framing.WideHeight+.01f));
-                Assert.AreEqual(framing.Yaw,request.Perspective.z,.01f);Assert.AreEqual(107.8f,framing.Yaw,.5f);
+                Assert.AreEqual(framing.Yaw,request.Perspective.z,.01f);Assert.AreEqual(65f,framing.Yaw,.01f);
                 request.Requested=0;f.Em.SetComponentData(entity,request);
                 Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(f.Em,f.Session,out error),error);Assert.AreEqual(0,f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity).Requested);
                 var native=f.Em.GetComponentData<SkirmishExpandedSessionComponent>(f.Session);native.CatalogId="S003";f.Em.SetComponentData(f.Session,native);

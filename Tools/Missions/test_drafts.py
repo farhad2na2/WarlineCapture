@@ -28,10 +28,10 @@ def main():
             draft = json.loads(path.read_text())
             # instance_pads and structure_footprints are optional (per-building pads, see check_draft.py).
             optional = {'instance_pads', 'structure_footprints', 'pad_slack_m'}
-            # FC/BT/CE candidates (-candidate.json) are unmeasured: typed areas but no area_measurement yet.
+            # FC/BT/CE candidates (-candidate.json): typed areas, plus area_measurement once a Unity measurement is attached.
             candidate = path.name.endswith('-candidate.json')
             if candidate:
-                optional |= {'objective_areas'}
+                optional |= {'objective_areas', 'area_measurement'}
             if not isinstance(draft, dict) or set(draft) - optional != set(example) - optional:
                 raise ValueError('top-level keys differ from example')
             row = catalog.get(draft['catalog_id'])

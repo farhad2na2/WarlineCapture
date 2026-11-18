@@ -237,11 +237,14 @@ namespace Game.Runtime
         private static double s_coverageQuoteAt;
         private static int s_coverageQuoteMask, s_researchNeedMask, s_buildingNeedMask, s_buildingPresentMask, s_buildingAffordMask;
 
-        // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
+        // Gate-3 coverage kinds; bit i of the coverage masks is CoverageRoles[i] (AriaCoverageKind i+1).
+        // AA and attack heli (bits 9, 10) are air-capable army roles (lane 24 S004); ground-only armies reject
+        // them as UnsupportedRole, so their bits stay 0 there and the earlier bits keep their meaning.
         private static readonly SkirmishRoleKind[] CoverageRoles =
             { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar,
               SkirmishRoleKind.ApcHeavy, SkirmishRoleKind.Drone, SkirmishRoleKind.TransportHeli,
-              SkirmishRoleKind.Gunner, SkirmishRoleKind.Tank, SkirmishRoleKind.Siege };
+              SkirmishRoleKind.Gunner, SkirmishRoleKind.Tank, SkirmishRoleKind.Siege,
+              SkirmishRoleKind.AntiAir, SkirmishRoleKind.AttackHeli };
 
         private static int PendingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
         {

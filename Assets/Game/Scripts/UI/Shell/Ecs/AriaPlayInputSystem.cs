@@ -130,8 +130,8 @@ namespace Game.UI.Shell.Ecs
         }
         private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
         private byte tracedSupportStage, tracedSupportDone;
-        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank", "siege" };
-        private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli" };
+        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank", "siege", "aa", "attack_heli" };
+        private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli", "aa" };
         // Evidence only, every expanded base assault (S002 native and generic planners):
         // coverage purchases (event=coverage kind=... state=buying|done|gave_up|pending|fielded) and each
         // support unit's one order (event=support_order kind=radar|drone|transport_heli

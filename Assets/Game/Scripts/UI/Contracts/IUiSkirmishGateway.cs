@@ -91,7 +91,7 @@ namespace Game.UI.Contracts
         public UiExpandedPrecisionAttackResult PrecisionAttack;
         public uint Group(int slot) => slot switch { 0=>Group0,1=>Group1,2=>Group2,3=>Group3,4=>Group4,_=>0 };
         public int AirMask;
-        // Support unit kind per slot (2 bits per slot: 1 radar, 2 drone, 3 transport heli); not assault roles,
+        // Support unit kind per slot (3 bits per slot: 1 radar, 2 drone, 3 transport heli, 4 AA); not assault roles,
         // ordered once by AriaSupportOrderPolicy.
         public int SupportSlots;
         // Cards whose presented role fights armour (rocketeer, tank, siege): home defence against a shelling tank.

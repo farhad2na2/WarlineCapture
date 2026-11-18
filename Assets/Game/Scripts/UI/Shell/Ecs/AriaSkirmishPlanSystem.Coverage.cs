@@ -4,7 +4,9 @@ using Game.UI.Shell.Contracts.Ecs;
 namespace Game.UI.Shell.Ecs
 {
     // Gate-3 unit coverage for the generic expanded base-assault planner (every expanded
-    // ground base assault other than the S002 native adapter, e.g. S026). The same pure
+    // base assault other than the S002 native adapter: ground armies such as S026 and, since lane 24,
+    // air-capable armies such as S004 army A, which also cover the AA (one Move order behind the
+    // column) and the attack heli (bought when the air cap has room). The same pure
     // policies as the S002 adapter: one breacher squad, then one squad of each other
     // available kind (marksman, apc_fast, radar, apc_heavy, drone, transport heli), one at
     // a time after the first assault order, through Build and the catalog card; then one
@@ -33,8 +35,17 @@ namespace Game.UI.Shell.Ecs
         }
 
         static bool CoverageEligible(in AriaSkirmishObservation v) =>
-            v.ExpandedSession && v.ExpandedBaseAssault && !v.AirProfile && !v.CombinedArmsField && !v.PublicObjective.Applicable ||
+            Game.Simulation.AriaCoverageEligibility.BaseAssault(v.ExpandedSession, v.ExpandedBaseAssault, v.CombinedArmsField, v.PublicObjective.Applicable) ||
             ObjectiveCoverageEligible(v);
+
+        // Coverage affordability with the air opening's claim on a free air slot (base assault, air-capable army).
+        // The latch is set once the light attack heli is queued or alive.
+        static int CoverageAfford(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p)
+        {
+            if (v.OwnAttackAirLive > 0 || v.AirRecruitPending) p.CoverageAirOpened = 1;
+            return Game.Simulation.AriaCoverageRecruitPolicy.AirOpeningAfford(v.CoverageAffordMask,
+                v.AirProfile && !v.PublicObjective.Applicable, p.CoverageAirOpened != 0, v.AirQueueOffered);
+        }
 
         // FC/BT/CE objective skill: the same one-at-a-time coverage, research, building and support orders
         // (AriaSkirmishPlanSystem.ObjectiveSkill latches CoverageAssaultSeen after the first accepted order).
@@ -110,7 +121,8 @@ namespace Game.UI.Shell.Ecs
             if (!CoverageEligible(v)) return false;
             int cards = (v.RecruitMarksman.Available ? 1 : 0) | (v.RecruitApcFast.Available ? 2 : 0) | (v.RecruitRadar.Available ? 4 : 0) |
                 (v.RecruitApcHeavy.Available ? 8 : 0) | (v.RecruitDrone.Available ? 16 : 0) | (v.RecruitTransportHeli.Available ? 32 : 0) |
-                (v.RecruitGunner.Available ? 64 : 0) | (v.RecruitTank.Available ? 128 : 0) | (v.RecruitSiege.Available ? 256 : 0);
+                (v.RecruitGunner.Available ? 64 : 0) | (v.RecruitTank.Available ? 128 : 0) | (v.RecruitSiege.Available ? 256 : 0) |
+                (v.RecruitAntiAir.Available ? 512 : 0) | (v.RecruitAttackHeli.Available ? 1024 : 0);
             // The first accepted assault is latched (see the S002 adapter).
             if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
@@ -119,7 +131,7 @@ namespace Game.UI.Shell.Ecs
                 Busy = CoverageOtherOwner(v, p, t) || p.BreacherStage == 1 || (p.CoverageCurrent == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
-                AffordMask = v.CoverageAffordMask, PendingMask = v.CoveragePendingMask,
+                AffordMask = CoverageAfford(v, ref p), PendingMask = v.CoveragePendingMask,
                 FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions,
                 DrawerOpen = v.DrawerOpen, Time = v.Time };
             var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline,
@@ -147,15 +159,22 @@ namespace Game.UI.Shell.Ecs
             Game.Simulation.AriaCoverageKind.Gunner => v.RecruitGunner,
             Game.Simulation.AriaCoverageKind.Tank => v.RecruitTank,
             Game.Simulation.AriaCoverageKind.Siege => v.RecruitSiege,
+            Game.Simulation.AriaCoverageKind.AntiAir => v.RecruitAntiAir,
+            Game.Simulation.AriaCoverageKind.AttackHeli => v.RecruitAttackHeli,
             _ => default
         };
+
+        // Coverage fielded bits -> support kinds: radar (4) -> 1, drone (16) -> 2, transport heli (32) -> 4, AA (512) -> 8.
+        public static int SupportFielded(int coverageFielded) =>
+            ((coverageFielded & 4) != 0 ? 1 : 0) | ((coverageFielded & 16) != 0 ? 2 : 0) | ((coverageFielded & 32) != 0 ? 4 : 0) |
+            ((coverageFielded & 512) != 0 ? 8 : 0);
 
         static bool StepGenericSupportOrder(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p,
             ref AriaPlaySessionComponent t, ref AriaPlayObservationComponent o)
         {
             if (!CoverageEligible(v)) return false;
             var facts = new Game.Simulation.AriaSupportView {
-                FieldedMask = ((v.CoverageFieldedMask & 4) != 0 ? 1 : 0) | ((v.CoverageFieldedMask & 16) != 0 ? 2 : 0) | ((v.CoverageFieldedMask & 32) != 0 ? 4 : 0),
+                FieldedMask = SupportFielded(v.CoverageFieldedMask),
                 Busy = t.Phase == AriaPlayPhase.Manual || v.DrawerOpen || v.PlacementOpen || v.MapOpen || v.PresentedHomeThreat ||
                     p.HomeDefenseStage != 0 || p.PrecisionStage != 0 || p.AdvanceNavigation != 0 || p.AssaultInspectStage != 0 ||
                     p.PadStage != 0 || p.InterceptStage != 0 || p.AssaultFocusStage == 1 || p.BreacherStage == 1 || p.CoverageCurrent != 0,
@@ -199,7 +218,7 @@ namespace Game.UI.Shell.Ecs
                 Busy = OtherThanResearch(v, p, t) || p.CoverageCurrent != 0 || p.BreacherStage == 1 ||
                     (p.ResearchCurrent == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
-                CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, v.CoverageAffordMask, v.CoveragePendingMask),
+                CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, CoverageAfford(v, ref p), v.CoveragePendingMask),
                 InProgress = v.ResearchInProgress, CanUpgrade = v.CanUpgradeReadiness, UpgradeAvailable = v.UpgradeReadiness.Available,
                 Stage = v.ReadinessStage, Cost = v.ResearchCost, Materials = v.OwnMaterials,
                 Reserve = Game.Simulation.AriaResearchPolicy.Reserve, NeedMask = v.ResearchNeedMask,
@@ -239,7 +258,7 @@ namespace Game.UI.Shell.Ecs
             int cards = (v.AirPad.Available ? 1 : 0) | (v.BuildDish.Available ? 2 : 0);
             var facts = new Game.Simulation.AriaBuildingView {
                 AssaultSeen = p.CoverageAssaultSeen != 0, Busy = busy, EnemyAlive = CoverageEnemyAlive(v),
-                CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, v.CoverageAffordMask, v.CoveragePendingMask),
+                CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, CoverageAfford(v, ref p), v.CoveragePendingMask),
                 ResearchIdle = p.ResearchCurrent == 0 && !v.ResearchInProgress, PlacementOpen = v.PlacementOpen,
                 PlacementGaveUp = placing && p.PadStage == 8,
                 NeedMask = v.BuildingNeedMask, AffordMask = v.BuildingAffordMask,

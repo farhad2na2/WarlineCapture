@@ -81,6 +81,9 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int CoverageActions;
         public float CoverageStarted;
         public byte CoverageAssaultSeen, CoverageBatch;
+        // Air-capable base assault: the air opening's light attack heli has been queued once (pending or live),
+        // so coverage may now spend a free air slot (AriaCoverageRecruitPolicy.AirOpeningAfford).
+        public byte CoverageAirOpened;
         // AriaResearchPolicy (readiness research, one per stage) and AriaBuildingPolicy (producer buildings once).
         public byte ResearchCurrent, ResearchTried, ResearchDone;
         public int ResearchActions;

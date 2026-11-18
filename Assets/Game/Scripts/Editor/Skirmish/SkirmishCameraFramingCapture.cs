@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -28,18 +29,24 @@ namespace Game.Editor
     /// Output: Design/AgentReports/SkirmishExpansion/CameraFraming/{label}/
     ///   {catalog}-{seed}-{w}x{h}-ground-{opening|wide|close|default}.png, ...-ground.jsonl
     ///   {catalog}-{w}x{h}-air-{nn}-{event}.png, ...-air.jsonl
+    /// {seed} is the seed of the launched session; {w}x{h} is the Game view's fixed target
+    /// size (WARLINE_REVIEW_WIDTH/HEIGHT), which is what ScreenCapture writes. Screen.width/height
+    /// are not used: inside EditorApplication.update they report the current Editor GUI view
+    /// (1836x1016 on the lane machine), not the Game view.
     /// </summary>
     [InitializeOnLoad]
     public static class SkirmishCameraFramingCapture
     {
         const string ModeEnv = "WARLINE_CAMERA_FRAMING_CAPTURE", LabelEnv = "WARLINE_CAMERA_FRAMING_LABEL", ExitEnv = "WARLINE_CAMERA_FRAMING_EXIT";
         const int SettleFrames = 45, MaxAirCaptures = 14;
-        public const int Seed = 104729;
+        public const int DefaultSeed = 104729, S002Seed = 130365;
+        const string ReviewWidthEnv = "WARLINE_REVIEW_WIDTH", ReviewHeightEnv = "WARLINE_REVIEW_HEIGHT";
 
         static string mode, label;
         static int step, stableFrames, airCaptures, lastAirCaptureFrame = -100000, pendingClearedFrame = -1;
         static Vector3 lastPosition; static Quaternion lastRotation; static float lastFov;
         static double groundDeadline;
+        static bool reviewSizeReapplied;
         static readonly Dictionary<int, AirTrack> tracks = new();
         sealed class AirTrack { public float groundedY = float.NaN, lastY, lastHeading; public double headingAt; public bool tookOff, cruised, landed; public double airborneSince; }
 
@@ -67,7 +74,7 @@ namespace Game.Editor
         static void LaunchGround(string catalog)
         {
             Arm("ground");
-            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, catalog == "S002" ? 130365 : Seed, GameLocalization.EnglishLocaleCode);
+            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, catalog == "S002" ? S002Seed : DefaultSeed, GameLocalization.EnglishLocaleCode);
         }
 
         static void Arm(string requested)
@@ -75,7 +82,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable(ModeEnv, requested);
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(LabelEnv))) Environment.SetEnvironmentVariable(LabelEnv, "unlabelled");
             mode = requested; label = Environment.GetEnvironmentVariable(LabelEnv);
-            step = 0; stableFrames = 0; airCaptures = 0; tracks.Clear();
+            step = 0; stableFrames = 0; airCaptures = 0; tracks.Clear(); reviewSizeReapplied = false;
             EditorApplication.update -= Tick; EditorApplication.update += Tick;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded -= OnAircraftFocus;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded += OnAircraftFocus;
@@ -85,6 +92,63 @@ namespace Game.Editor
 
         static string OutputDirectory() => Path.GetFullPath(Path.Combine(Application.dataPath, "..",
             "Design/AgentReports/SkirmishExpansion/CameraFraming", label ?? "unlabelled"));
+
+        // ------------------------------------------------------------ review size
+        static bool TryRequestedSize(out int width, out int height)
+        {
+            height = 0;
+            return int.TryParse(Environment.GetEnvironmentVariable(ReviewWidthEnv), NumberStyles.Integer, CultureInfo.InvariantCulture, out width) &&
+                int.TryParse(Environment.GetEnvironmentVariable(ReviewHeightEnv), NumberStyles.Integer, CultureInfo.InvariantCulture, out height) &&
+                width > 0 && height > 0;
+        }
+
+        /// <summary>Main Game view render target size (internal PlayModeView API, read by reflection).</summary>
+        static bool TryGameViewTargetSize(out int width, out int height)
+        {
+            width = height = 0;
+            Assembly editor = typeof(EditorWindow).Assembly;
+            foreach (string typeName in new[] { "UnityEditor.PlayModeView", "UnityEditor.GameView" })
+            {
+                MethodInfo method = editor.GetType(typeName)?.GetMethod("GetMainPlayModeViewTargetSize",
+                    BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+                if (method == null || method.ReturnType != typeof(Vector2)) continue;
+                var size = (Vector2)method.Invoke(null, null);
+                width = Mathf.RoundToInt(size.x); height = Mathf.RoundToInt(size.y);
+                return width > 0 && height > 0;
+            }
+            return false;
+        }
+
+        static void ReviewSize(out int width, out int height, out string source)
+        {
+            if (TryGameViewTargetSize(out width, out height)) { source = "GameViewTarget"; return; }
+            if (TryRequestedSize(out width, out height)) { source = "Requested"; return; }
+            width = Screen.width; height = Screen.height; source = "Screen";
+        }
+
+        /// <summary>
+        /// Captures only when the Game view renders at the requested fixed size. One re-apply of the
+        /// harness's fixed-resolution entry is allowed (play-mode entry can reselect the window size);
+        /// a second mismatch fails closed instead of writing mislabelled evidence.
+        /// </summary>
+        static bool ReviewSizeReady()
+        {
+            if (!TryRequestedSize(out int requestedWidth, out int requestedHeight) ||
+                !TryGameViewTargetSize(out int width, out int height) ||
+                (width == requestedWidth && height == requestedHeight)) return true;
+            if (!reviewSizeReapplied)
+            {
+                reviewSizeReapplied = true; stableFrames = 0;
+                Debug.Log("[SkirmishCameraFramingCapture] reapplyGameViewSize requested=" + requestedWidth + "x" + requestedHeight + " actual=" + width + "x" + height);
+                MainMenuV3PrefabBuilder.SetGameViewResolution(requestedWidth, requestedHeight);
+                return false;
+            }
+            Debug.LogError("[SkirmishCameraFramingCapture] result=Failed reason=GameViewSizeMismatch requested=" + requestedWidth + "x" + requestedHeight +
+                " actual=" + width + "x" + height + " label=" + label);
+            mode = null;
+            if (Environment.GetEnvironmentVariable(ExitEnv) == "1") SkirmishS002AriaRunHarness.AbortFailedValidationAndExit();
+            return false;
+        }
 
         // ------------------------------------------------------------------- tick
         static void Tick()
@@ -144,9 +208,10 @@ namespace Game.Editor
                 if (groundDeadline <= 0) groundDeadline = EditorApplication.timeSinceStartup + 60;
                 if (!owned && EditorApplication.timeSinceStartup < groundDeadline) { stableFrames = 0; return; }
             }
-            if (!Settled(camera)) return;
+            if (!ReviewSizeReady() || !Settled(camera)) return;
             string catalog = native.CatalogId.ToString();
-            string prefix = catalog + "-" + Seed.ToString(CultureInfo.InvariantCulture) + "-" + Screen.width + "x" + Screen.height + "-ground";
+            ReviewSize(out int width, out int height, out _);
+            string prefix = catalog + "-" + native.Seed.ToString(CultureInfo.InvariantCulture) + "-" + width + "x" + height + "-ground";
             string png = Path.Combine(OutputDirectory(), prefix + "-" + GroundShots[step] + ".png");
             ScreenCapture.CaptureScreenshot(png);
             AppendJson(prefix + ".jsonl", GroundShots[step], camera, em, native, png, null);
@@ -211,9 +276,10 @@ namespace Game.Editor
         {
             if (camera == null || airCaptures >= MaxAirCaptures || Time.frameCount - lastAirCaptureFrame < 20) return;
             var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated || !TryReadSession(world.EntityManager, out _, out var native)) return;
+            if (world == null || !world.IsCreated || !TryReadSession(world.EntityManager, out _, out var native) || !ReviewSizeReady()) return;
             lastAirCaptureFrame = Time.frameCount;
-            string prefix = native.CatalogId + "-" + Screen.width + "x" + Screen.height + "-air";
+            ReviewSize(out int width, out int height, out _);
+            string prefix = native.CatalogId + "-" + width + "x" + height + "-air";
             string png = Path.Combine(OutputDirectory(), prefix + "-" + airCaptures.ToString("00", CultureInfo.InvariantCulture) + "-" + kind + ".png");
             airCaptures++;
             ScreenCapture.CaptureScreenshot(png);
@@ -223,7 +289,7 @@ namespace Game.Editor
         // ------------------------------------------------------------------- facts
         [Serializable] sealed class Shot
         {
-            public string label, shot, catalog, png, subject; public int frame, width, height;
+            public string label, shot, catalog, png, subject, sizeSource; public int frame, seed, width, height, editorScreenWidth, editorScreenHeight;
             public float elapsed, fieldOfView, aspect, cameraAboveSubjectMin; public Vector3 cameraPosition, cameraEuler, groundCenterZeroPlane;
             public bool profileResolved; public float profileNormalHeight, profileMaxHeight, profileMinHeight, profileGroundY;
             public int ownAirVisible, ownAirAboveCamera, unitOrdersIssued;
@@ -231,8 +297,9 @@ namespace Game.Editor
 
         static void AppendJson(string file, string shot, Camera camera, EntityManager em, SkirmishExpandedSessionComponent native, string png, string subject)
         {
+            ReviewSize(out int width, out int height, out string sizeSource);
             var row = new Shot { label = label, shot = shot, catalog = native.CatalogId.ToString(), png = png, subject = subject, frame = Time.frameCount,
-                width = Screen.width, height = Screen.height, elapsed = Time.timeSinceLevelLoad, fieldOfView = camera.fieldOfView, aspect = camera.aspect,
+                seed = native.Seed, width = width, height = height, sizeSource = sizeSource, editorScreenWidth = Screen.width, editorScreenHeight = Screen.height, elapsed = Time.timeSinceLevelLoad, fieldOfView = camera.fieldOfView, aspect = camera.aspect,
                 cameraPosition = camera.transform.position, cameraEuler = camera.transform.eulerAngles, cameraAboveSubjectMin = float.NaN, unitOrdersIssued = 0 };
             var ray = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0));
             if (new Plane(Vector3.up, Vector3.zero).Raycast(ray, out float distance)) row.groundCenterZeroPlane = ray.GetPoint(distance);

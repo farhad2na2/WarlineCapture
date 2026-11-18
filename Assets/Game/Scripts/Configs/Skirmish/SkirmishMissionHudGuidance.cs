@@ -40,7 +40,7 @@ namespace Game.Configs
         private static readonly SkirmishMissionHudGuidance[] Rows =
         {
             new("S026", "skirmish.s026.first_order", "Advance your infantry along the main avenue to the crossroads.",
-                "anchor.skirmish.s026.candidate_route_tank_primary_waypoint_03",
+                "anchor.skirmish.s026.candidate_route_shared_waypoint_02",
                 "skirmish.s026.rendezvous", "RENDEZVOUS"),
         };
 

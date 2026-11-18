@@ -163,3 +163,10 @@ acceptance.
   - Airport: same choices as the City/Mountain Airport entry above. (a) No Airport / no fixed-wing for army A on this source; gate 3 then lists only what is available. (b) Move S004 to another existing Campaign source with an Airport site. No new map.
 - **Recommendation:** Airport (a), consistent with the CC/MP entry. Air cap: raise only after the coverage-9 run shows how much S004 pacing changes; decide it together for all army-A rows, not per mission.
 - **Meanwhile:** coverage-9 merges and runs (lane 26). S004 stays not accepted; the pacing re-measurement uses full coverage.
+
+## Gate 3 ("every available unit type used") on objective missions (FC/BT/CE) — 2026-11-18, program lead
+**Question.** Should gate 3 on Frontline Control, Breakthrough and Convoy Escort require every available type, or only the objective-relevant roles, with full-catalog coverage proven in a separate production validation?
+**Evidence.** Codex 038 (`WarlineCapture-program-logs/briefs/codex-038-fcbtce-gate3-budget-report.txt`). All three start with 450 materials, an 800 bank cap and one depot (50 per 30 s). Buying one of each unused type costs 1,845 (S007), 2,165 (S013) and 2,565 (S019), plus 720 for readiness research. With the matches ending at 593 s, 377 s and 115 s, the starting stock would need to be 2,415 / 2,925 / 3,575, above the 800 cap. Longer deadlines do not help, because tickets, evacuation and delivery end these missions early. S019 is also under the 20% pacing floor (won at 10.7%).
+**Options.** (a) An objective-specific gate 3: objective-relevant roles must be used in the mission run, and every type is proven once in a dedicated production/coverage run. (b) Keep gate 3 and raise resources and the bank cap per mission; this changes the economy feel of these missions. (c) Keep everything; FC/BT/CE cannot be accepted.
+**Recommendation.** (a). The economy stays as designed, and every type still gets exercised.
+**Meanwhile.** No gate change. Lane runs continue to record `unused=`. The S019 pacing (10.7%) is handled as a separate pacing item.

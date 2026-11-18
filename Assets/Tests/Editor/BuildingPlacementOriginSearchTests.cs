@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using Game.Components;
 using Game.Runtime;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class BuildingPlacementOriginSearchTests
@@ -87,6 +89,127 @@ public sealed class BuildingPlacementOriginSearchTests
         Assert.IsTrue(search.TryFindValidInitialBuildingOrigin(context, new BuildingDefinition(), preferred, false,
             new GridConfig { Width=2048, Height=1024, CellSize=1 }, default, default, out var actual));
         Assert.AreEqual(clear, actual);
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void S004EnemyRefinerySearchRespectsBakedBuildingPlacement(bool blockRunway)
+    {
+        using var world = new World("S004 refinery placement");
+        var previous = World.DefaultGameObjectInjectionWorld;
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            var grid = new GridConfig { Origin = new float3(870, 0, 520), Width = 96, Height = 80, CellSize = 1 };
+            // Crop the baked grid around the east runway end. Keep its world coordinates.
+            var surfaceOrigin = new float3(880, 0, 527);
+            var dimensions = new int2(64, 64);
+            var runway = new RectInt(10, 23, 30, 34);
+            using var builder = new BlobBuilder(Allocator.Temp);
+            ref var blobRoot = ref builder.ConstructRoot<MapSurfaceBlob>();
+            blobRoot.GridOrigin = surfaceOrigin;
+            blobRoot.CellSize = grid.CellSize;
+            blobRoot.Dimensions = dimensions;
+            blobRoot.RuntimeEncoding = MapSurfaceRuntimeEncoding.SingleLayerCompact;
+            builder.Allocate(ref blobRoot.Cells, 0);
+            builder.Allocate(ref blobRoot.Samples, 0);
+            builder.Allocate(ref blobRoot.Connections, 0);
+            var samples = builder.Allocate(ref blobRoot.CompactSamples, dimensions.x * dimensions.y);
+            for (int z = 0; z < dimensions.y; z++)
+            {
+                for (int x = 0; x < dimensions.x; x++)
+                {
+                    bool onRunway = runway.Contains(new Vector2Int(x + 10, z + 7));
+                    var movement = MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded;
+                    if (!blockRunway || !onRunway)
+                        movement |= MapSurfaceMovementMask.BuildingPlacement;
+                    samples[x + z * dimensions.x] = new MapSurfaceCompactSample
+                    {
+                        SurfaceType = onRunway ? MapSurfaceType.Plaza : MapSurfaceType.Terrain,
+                        NormalY = sbyte.MaxValue,
+                        MovementMask = movement
+                    };
+                }
+            }
+
+            using var blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
+            var em = world.EntityManager;
+            em.SetComponentData(em.CreateEntity(typeof(MapSurfaceComponent)), new MapSurfaceComponent
+            {
+                SurfaceBlob = blob,
+                HasSurfaceData = 1,
+                GridOrigin = surfaceOrigin,
+                Dimensions = dimensions,
+                CellSize = grid.CellSize
+            });
+            var source = new BuildingGameplaySourceCompositionSystemHelper();
+            var roads = em.AddBuffer<GridRoad>(em.CreateEntity());
+            roads.ResizeUninitialized(grid.Width * grid.Height);
+            for (int i = 0; i < roads.Length; i++)
+                roads[i] = default;
+
+            var refinery = new BuildingDefinition { DisplayName = "Oil Refinery", FootprintCells = new Vector2Int(25, 15) };
+            var preferred = new Vector2Int(24, 42); // World x=894, z=562.
+            var context = Context(refinery.FootprintCells, (definition, origin, footprint, rotated, g, r, blockers) =>
+                source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
+                    source, definition, origin, footprint, rotated, g, r, blockers,
+                    (_, building, cell, _, _) => new RectInt(cell, building.FootprintCells),
+                    (_, _) => false));
+
+            var search = new BuildingRuntimeSpawnCompositionSystemHelper();
+            Assert.That(new RectInt(preferred, refinery.FootprintCells).Overlaps(runway), Is.True);
+            Assert.That(search.TryFindValidInitialBuildingOrigin(context, refinery, preferred, false,
+                grid, roads, default, out _, requirePreferredOrigin: true), Is.EqualTo(!blockRunway));
+            Assert.That(search.TryFindValidInitialBuildingOrigin(context, refinery, preferred, false,
+                grid, roads, default, out var actual), Is.True);
+            if (blockRunway)
+                Assert.That(new RectInt(actual, refinery.FootprintCells).Overlaps(runway), Is.False);
+            else
+                Assert.That(actual, Is.EqualTo(preferred));
+            Assert.That(search.TryFindValidInitialBuildingOrigin(context, refinery, new Vector2Int(71, 42), false,
+                grid, roads, default, out _, requirePreferredOrigin: true), Is.True,
+                "Cells beyond the baked surface use the existing grid checks.");
+        }
+        finally { World.DefaultGameObjectInjectionWorld = previous; }
+    }
+
+    [Test]
+    public void PlacedAirportOverlapUsesRotatedRunwayAndStoredModelDimensions()
+    {
+        var instance = new GameObject("Placed airport");
+        try
+        {
+            instance.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+            var source = new BuildingGameplaySourceCompositionSystemHelper();
+            var query = source.BuildingRuntimeQueryCompositionSystemHelper;
+            source.RuntimeBuildingSystem.AddBuilding(1, new RuntimeBuildingEntity
+            {
+                Definition = new BuildingDefinition
+                {
+                    FootprintCells = new Vector2Int(8, 4), HasRunway = true,
+                    RunwayLocalPosition = new Vector3(0, 0, 12),
+                    RunwayLocalRotation = Quaternion.identity, RunwayHalfExtents = new Vector3(1, .5f, 4)
+                },
+                OriginCell = new Vector2Int(20, 20),
+                Instance = instance
+            });
+
+            bool ReadGrid(BuildingGameplaySourceCompositionSystemHelper _, out Entity entity, out GridConfig grid,
+                out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockers)
+            {
+                entity = Entity.Null;
+                grid = new GridConfig { Width = 64, Height = 64, CellSize = 1 };
+                roads = default;
+                blockers = default;
+                return true;
+            }
+
+            bool Overlaps(int x, int z) => query.OverlapsAnyRuntimeBuilding(
+                source, new RectInt(x, z, 1, 1), ReadGrid, query.GetEffectivePlacementRect);
+            Assert.That(Overlaps(39, 22), Is.True, "The far end of the rotated runway must block placement.");
+            Assert.That(Overlaps(24, 34), Is.False, "The old runway projection must leave this cell free.");
+        }
+        finally { Object.DestroyImmediate(instance); }
     }
 
     private static BuildingRuntimeSpawnCompositionSystemHelper.Context Context(Vector2Int footprint,

@@ -135,6 +135,8 @@ namespace Game.Runtime
                 : new RectInt(originCell, footprintCells);
             return CampaignMissionBuildingPlacementPolicy.IsAllowed(source, definition, footprint) &&
                 IsSkirmishSurfaceValid(source, footprint) &&
+                (!source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery.TryGetSingleton(out MapSurfaceComponent surface) ||
+                    AllowsBuildingPlacement(surface, grid, footprint)) &&
                 source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.IsPlacementValid(
                 definition,
                 originCell,
@@ -148,6 +150,32 @@ namespace Game.Runtime
                 (candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical) =>
                     getEffectivePlacementRect(source, candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical),
                 candidateRect => overlapsAnyPlacementOccupant(source, candidateRect));
+        }
+
+        private static bool AllowsBuildingPlacement(MapSurfaceComponent surface, GridConfig grid, RectInt footprint)
+        {
+            if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated || surface.CellSize <= 0f ||
+                footprint.width <= 0 || footprint.height <= 0)
+                return true;
+
+            // Check every baked cell covered by the effective footprint, even where
+            // the placement grid and the surface have different origins or cell sizes.
+            float2 offset = grid.Origin.xz - surface.GridOrigin.xz;
+            float2 min = (offset + new float2(footprint.xMin, footprint.yMin) * grid.CellSize) / surface.CellSize;
+            float2 max = (offset + new float2(footprint.xMax, footprint.yMax) * grid.CellSize) / surface.CellSize;
+            int2 first = math.max(0, (int2)math.floor(min));
+            int2 end = math.min(surface.Dimensions, (int2)math.ceil(max));
+            ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+            for (int y = first.y; y < end.y; y++)
+            {
+                for (int x = first.x; x < end.x; x++)
+                {
+                    if (MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, new int2(x, y), out MapSurfaceSample sample) &&
+                        (sample.MovementMask & MapSurfaceMovementMask.BuildingPlacement) == 0)
+                        return false;
+                }
+            }
+            return true;
         }
 
         private bool IsSkirmishSurfaceValid(Source source, RectInt footprint)

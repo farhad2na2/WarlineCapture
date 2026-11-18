@@ -7162,6 +7162,20 @@ MonoBehaviour:
       value: Combined arms
     - key: ui.skirmish.army.g
       value: Ground maneuver
+    - key: ui.skirmish.atlas.airfield_plains
+      value: AIRFIELD PLAINS
+    - key: ui.skirmish.atlas.choose_map
+      value: Choose a map, then select a mission.
+    - key: ui.skirmish.atlas.choose_missions
+      value: CHOOSE MISSIONS
+    - key: ui.skirmish.atlas.heading
+      value: SKIRMISH / SELECT MAP
+    - key: ui.skirmish.atlas.mission_count
+      value: 24 MISSIONS
+    - key: ui.skirmish.atlas.mountain_pass
+      value: MOUNTAIN PASS
+    - key: ui.skirmish.atlas.quick_battle
+      value: QUICK BATTLE
     - key: ui.skirmish.authored_count
       value: SHOWING 120 OF 120 BATTLES
     - key: ui.skirmish.base_alert.attacker_in_sight
@@ -23908,6 +23922,23 @@ MonoBehaviour:
       value: "\u0646\u06CC\u0631\u0648\u06CC \u062A\u0631\u06A9\u06CC\u0628\u06CC"
     - key: ui.skirmish.army.g
       value: "\u0646\u06CC\u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u06CC"
+    - key: ui.skirmish.atlas.airfield_plains
+      value: "\u062F\u0634\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.atlas.choose_map
+      value: "\u0627\u0648\u0644 \u0646\u0642\u0634\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u0628\u0639\u062F \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0627."
+    - key: ui.skirmish.atlas.choose_missions
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u200C\u0647\u0627"
+    - key: ui.skirmish.atlas.heading
+      value: "\u062F\u0631\u06AF\u06CC\u0631\u06CC / \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0646\u0642\u0634\u0647"
+    - key: ui.skirmish.atlas.mission_count
+      value: "\u06F2\u06F4 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: ui.skirmish.atlas.mountain_pass
+      value: "\u06AF\u0630\u0631\u06AF\u0627\u0647 \u06A9\u0648\u0647\u0633\u062A\u0627\u0646"
+    - key: ui.skirmish.atlas.quick_battle
+      value: "\u0646\u0628\u0631\u062F \u0633\u0631\u06CC\u0639"
     - key: ui.skirmish.authored_count
       value: "\u0646\u0645\u0627\u06CC\u0634 \u06F1\u06F2\u06F0 \u0627\u0632 \u06F1\u06F2\u06F0
         \u0646\u0628\u0631\u062F"

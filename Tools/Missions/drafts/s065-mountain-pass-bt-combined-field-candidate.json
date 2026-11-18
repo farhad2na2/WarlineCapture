@@ -1,7 +1,7 @@
 {
   "catalog_id": "S065",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "candidate=1, unmeasured. Citywide Alert using the S049 layout and the S050 salvage source binding. Bases, stagings, economy, service, supply, spawn and rally pads, field instance pads and the first two routes retain S049 provisional placements. Unmeasured Breakthrough rectangles use S049 anchor pairs s050.f1.satellite_dish to service.enemy, s050.f1.fuel_bladder to air.enemy, and spawn.infantry.enemy to staging.enemy, respectively. FlankSouthSweep is an unmeasured connection through the S049 vehicle spawn anchors using the local S049 main-route dimensions and flags. Both defense tower pads are unmeasured for this use. Their centres reuse the S051 enemy economy and infantry spawn anchors for A and B, respectively. The Breakthrough schema, defense pad sizes, structure footprints and pad slack come from S013. Airport placement and capacity are unmeasured. The starting roster uses helipads only when established.",
+  "notes": "candidate=1, unmeasured. Citywide Alert uses the S049 layout and the S050 salvage source binding. All three vehicle routes reuse the W8 S055 area-measurement-r2 chains on host S050, from base.player to rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293). MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate 292. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates 31, 1, 37 and 95 in route order. Dump indices are zero-based and both flanks are 6 m wide. The Breakthrough rectangles and defense pads retain their S061 r1 geometry. The rectangles use S049 anchor pairs s050.f1.satellite_dish to service.enemy, s050.f1.fuel_bladder to air.enemy, and spawn.infantry.enemy to staging.enemy, respectively. Defense pad centres reuse the S051 enemy economy and infantry spawn anchors for A and B, respectively. The Breakthrough schema, defense pad sizes, structure footprints and pad slack come from S013. Airport placement and capacity are unmeasured. The starting roster uses helipads only when established.",
   "anchors": {
     "base.player": [
       1002.0,
@@ -122,6 +122,26 @@
     "basemove.route.2.waypoint.02": [
       1202.0,
       398.0
+    ],
+    "basemove.route.2.waypoint.03": [
+      1183.5,
+      363.0
+    ],
+    "basemove.route.3.waypoint.00": [
+      996.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.01": [
+      1019.5,
+      322.0
+    ],
+    "basemove.route.3.waypoint.02": [
+      1164.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.03": [
+      1206.0,
+      339.5
     ],
     "defense.approach.a": [
       1209.5,
@@ -508,7 +528,7 @@
         "basemove.route.1.waypoint.02",
         "basemove.route.1.waypoint.03",
         "basemove.route.1.waypoint.04",
-        "base.enemy"
+        "rally.enemy"
       ],
       "width": 3.0,
       "vehicles": true,
@@ -521,21 +541,24 @@
         "basemove.route.2.waypoint.00",
         "basemove.route.2.waypoint.01",
         "basemove.route.2.waypoint.02",
-        "base.enemy"
+        "basemove.route.2.waypoint.03",
+        "rally.enemy"
       ],
-      "width": 1.0,
-      "vehicles": false,
+      "width": 6,
+      "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankSouthSweep",
       "via": [
         "base.player",
-        "spawn.vehicle.player",
-        "spawn.vehicle.enemy",
-        "base.enemy"
+        "basemove.route.3.waypoint.00",
+        "basemove.route.3.waypoint.01",
+        "basemove.route.3.waypoint.02",
+        "basemove.route.3.waypoint.03",
+        "rally.enemy"
       ],
-      "width": 3.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     }

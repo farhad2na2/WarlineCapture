@@ -244,6 +244,19 @@ namespace Game.Runtime
         public bool QueueFocusOwnAircraft(EntityManager em,Entity actor)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.FocusAircraft,TargetEntity=actor,Flag=0});
         public bool QueueZoomAircraft(EntityManager em,int level)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ZoomAircraft,Value=level});
         public bool QueueClearAircraftFocus(EntityManager em)=>TryEnqueue(em,new RtsCameraRequestElement{Kind=RtsCameraRequestKind.ClearAircraftFocus});
+
+        internal bool HasPendingAircraftFocusRequest(EntityManager em)
+        {
+            if (!em.Exists(_cameraEntity) || !em.HasBuffer<RtsCameraRequestElement>(_cameraEntity))
+                return false;
+
+            foreach (var request in em.GetBuffer<RtsCameraRequestElement>(_cameraEntity, true))
+                if (request.Kind == RtsCameraRequestKind.FocusAircraft)
+                    return true;
+
+            return false;
+        }
+
         public void ProcessPendingRequests(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested = null)
         {
             if (cameraSystem == null)

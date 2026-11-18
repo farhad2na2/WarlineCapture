@@ -107,11 +107,72 @@ namespace Game.Tests.Editor
             var view = Alert(67f); view.ExpandedPageIndex = 2; view.AttackerGroundAvailable = true; view.AntiArmorMask = 0b00010;
             var actions = PlayToOrder(ref view, ref plan, nearestPage: 0, nearestSlot: 1);
             Assert.AreEqual(AriaHomeDefenseAction.PageToDefender, actions[0]);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, actions[1]);
             Assert.AreEqual(1, actions.FindAll(a => a == AriaHomeDefenseAction.PageToDefender).Count, "one paging press");
             Assert.IsFalse(actions.Contains(AriaHomeDefenseAction.PreviousPage), "no page-by-page walk");
             Assert.AreEqual(AriaHomeDefenseAction.AttackAttackerTerrain, actions[actions.Count - 1]);
             Assert.AreEqual(0b00010, view.ExpandedSelectedMask);
             Assert.IsTrue(actions.Count <= MaxTouchesToOrder + 1);
+        }
+
+        [Test]
+        public void ShowHomeGuardWaitsForTheHighlightedCardThenSelectsItBeforeAttack()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = Alert(67f);
+            view.DefenderKnown = view.DefenderPageAvailable = true;
+            AriaHomeDefensePolicy.Step(view, ref plan, out var decision);
+            Assert.AreEqual(AriaHomeDefenseAction.PageToDefender, decision.Action);
+
+            // SHOW moves the tray without selecting. Its highlighted slot can appear before the card offers a tap.
+            view.CompletedContacts++;
+            view.ExpandedPageIndex = 0;
+            view.DefenderPageAvailable = false;
+            view.HighlightedDefender = 3;
+            view.AvailableSquadMask = 0;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.Waiting, decision.Action);
+
+            view.AntiArmorMask = 0b00001;
+            view.AvailableSquadMask = 0b00101;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
+            Assert.AreEqual(2, decision.Slot, "the next touch is the highlighted card even with a lower anti-armour slot");
+
+            view.CompletedContacts++;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action, "a completed tap alone does not confirm selection");
+            Assert.AreEqual(2, decision.Slot);
+
+            view.ExpandedSelectedMask = 0b00100;
+            view.ExpandedSelectedGroups = 1;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
+            Assert.AreEqual(0, decision.Slot);
+            view.ExpandedSelectedMask |= 0b00001;
+            view.ExpandedSelectedGroups++;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, decision.Action);
+        }
+
+        [Test]
+        public void SelectionLostWhileAimingAttackReturnsToCardSelection()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = Alert(67f);
+            view.DefenderKnown = true;
+            view.HighlightedDefender = 2;
+            view.ExpandedSelectedMask = 0b00010;
+            view.ExpandedSelectedGroups = 1;
+            AriaHomeDefensePolicy.Step(view, ref plan, out var decision);
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, decision.Action);
+
+            view.ExpandedSelectedMask = view.ExpandedSelectedGroups = 0;
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.Waiting, decision.Action);
+            AriaHomeDefensePolicy.Step(view, ref plan, out decision);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
+            Assert.AreEqual(1, decision.Slot);
         }
 
         [Test]

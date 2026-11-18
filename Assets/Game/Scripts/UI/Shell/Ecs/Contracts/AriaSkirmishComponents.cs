@@ -87,7 +87,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         // Air-capable base assault (lane 26): kinds whose purchase was interrupted once, the interrupted breacher
         // purchase, and the support order's one Home focus and disarm presses.
         public int CoverageInterrupted;
-        public byte BreacherRetried, SupportFocused, SupportPresses;
+        public byte BreacherRetried, SupportFocused, SupportPresses, SupportPageDirection, SupportTrace;
         // AriaResearchPolicy (readiness research, one per stage) and AriaBuildingPolicy (producer buildings once).
         public byte ResearchCurrent, ResearchTried, ResearchDone;
         public int ResearchActions;

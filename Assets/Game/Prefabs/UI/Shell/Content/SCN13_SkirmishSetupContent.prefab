@@ -2000,6 +2000,7 @@ GameObject:
   - component: {fileID: 2152830775389572122}
   - component: {fileID: 1513045022823944109}
   - component: {fileID: 1461351891326349891}
+  - component: {fileID: 1436791960297441286}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -2126,6 +2127,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1436791960297441286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324713455662632642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &325027775322927145
 GameObject:
   m_ObjectHideFlags: 0
@@ -2265,6 +2283,7 @@ GameObject:
   - component: {fileID: 7699580950714423920}
   - component: {fileID: 2200608970065154044}
   - component: {fileID: 6297933233150341486}
+  - component: {fileID: 1848121420821243217}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2391,6 +2410,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1848121420821243217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 387497617983533342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.v3.intel_confidence.ce55837a78
+  englishFallback: INTEL CONFIDENCE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &389922978933565948
 GameObject:
   m_ObjectHideFlags: 0
@@ -3291,6 +3327,7 @@ GameObject:
   - component: {fileID: 8643475303676729579}
   - component: {fileID: 1940822076612874462}
   - component: {fileID: 4139516201014446024}
+  - component: {fileID: 4200050477888111347}
   m_Layer: 0
   m_Name: Objective
   m_TagString: Untagged
@@ -3417,6 +3454,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4200050477888111347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475154259905357504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.base_objective
+  englishFallback: DESTROY THE ENEMY MAIN BASE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &484622600628137838
 GameObject:
   m_ObjectHideFlags: 0
@@ -7903,6 +7957,7 @@ GameObject:
   - component: {fileID: 702806861687502913}
   - component: {fileID: 4792925925269525511}
   - component: {fileID: 2685375058797412282}
+  - component: {fileID: 4142888350905571469}
   m_Layer: 0
   m_Name: ScreenTitle
   m_TagString: Untagged
@@ -8029,6 +8084,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4142888350905571469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992758953909315675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.heading
+  englishFallback: SKIRMISH / SELECT MAP
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &998246887824041988
 GameObject:
   m_ObjectHideFlags: 0
@@ -9102,6 +9174,7 @@ GameObject:
   - component: {fileID: 539280488726926882}
   - component: {fileID: 908382444317725938}
   - component: {fileID: 7612346046977874037}
+  - component: {fileID: 3671081246349531731}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -9228,6 +9301,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3671081246349531731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070127862526732396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.seed
+  englishFallback: AI SEED
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1076743005341911099
 GameObject:
   m_ObjectHideFlags: 0
@@ -11205,6 +11295,7 @@ GameObject:
   - component: {fileID: 4530710205824885232}
   - component: {fileID: 9124419087423975986}
   - component: {fileID: 3163900857746680317}
+  - component: {fileID: 1371216626021014203}
   m_Layer: 0
   m_Name: ScreenTitle
   m_TagString: Untagged
@@ -11331,6 +11422,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1371216626021014203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225044725616223490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.v3.skirmish_setup.ad862f98f3
+  englishFallback: SKIRMISH SETUP
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1229163110009030681
 GameObject:
   m_ObjectHideFlags: 0
@@ -11971,6 +12079,7 @@ GameObject:
   - component: {fileID: 2648241293747978052}
   - component: {fileID: 6760155723036708623}
   - component: {fileID: 1621598571326335620}
+  - component: {fileID: 3933312617027289269}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -12097,6 +12206,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3933312617027289269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285407778391803909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1299417940361462934
 GameObject:
   m_ObjectHideFlags: 0
@@ -12272,6 +12398,7 @@ GameObject:
   - component: {fileID: 3576209857677065840}
   - component: {fileID: 6884410594981655804}
   - component: {fileID: 4158807394591772914}
+  - component: {fileID: 9208752107852004406}
   m_Layer: 0
   m_Name: Value
   m_TagString: Untagged
@@ -12398,6 +12525,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &9208752107852004406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322249934474433687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.guidance.high
+  englishFallback: HIGH
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1323262703450937395
 GameObject:
   m_ObjectHideFlags: 0
@@ -15759,6 +15903,7 @@ GameObject:
   - component: {fileID: 6609626615092478656}
   - component: {fileID: 7410749195980956547}
   - component: {fileID: 5343159058039059804}
+  - component: {fileID: 5796638242102091261}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -15885,6 +16030,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5796638242102091261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791481428308222424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.base_assault_map
+  englishFallback: DESERT BASE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1808629543854283541
 GameObject:
   m_ObjectHideFlags: 0
@@ -19527,6 +19689,7 @@ GameObject:
   - component: {fileID: 3993942165483190618}
   - component: {fileID: 718804436545353899}
   - component: {fileID: 4781647168542715259}
+  - component: {fileID: 4758171897900917304}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -19653,6 +19816,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4758171897900917304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2157754026780661863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2203919170206212527
 GameObject:
   m_ObjectHideFlags: 0
@@ -21594,6 +21774,7 @@ GameObject:
   - component: {fileID: 669936422429755123}
   - component: {fileID: 6276406627201714427}
   - component: {fileID: 3593016279112601490}
+  - component: {fileID: 6798161986893351608}
   m_Layer: 0
   m_Name: Purpose
   m_TagString: Untagged
@@ -21720,6 +21901,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6798161986893351608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2342090844812443023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.choose_map
+  englishFallback: Choose a map, then select a mission.
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2361371761829216461
 GameObject:
   m_ObjectHideFlags: 0
@@ -22107,6 +22305,7 @@ GameObject:
   - component: {fileID: 586383424860464669}
   - component: {fileID: 6506171369039477487}
   - component: {fileID: 99008463829380436}
+  - component: {fileID: 3723903649632664155}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -22233,6 +22432,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3723903649632664155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2402917791333691421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.industrial_basin_map
+  englishFallback: INDUSTRIAL BASIN
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2410111071780673647
 GameObject:
   m_ObjectHideFlags: 0
@@ -24699,6 +24915,7 @@ GameObject:
   - component: {fileID: 7450044755083898470}
   - component: {fileID: 7328585332273768077}
   - component: {fileID: 345267562695542629}
+  - component: {fileID: 4319597376262944989}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -24825,6 +25042,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4319597376262944989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2709612516596148966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mountain_pass
+  englishFallback: MOUNTAIN PASS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2711026669812733800
 GameObject:
   m_ObjectHideFlags: 0
@@ -27958,6 +28192,7 @@ GameObject:
   - component: {fileID: 5784925304209543031}
   - component: {fileID: 382934634925436048}
   - component: {fileID: 1676181122571872241}
+  - component: {fileID: 2064850050153708073}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -28084,6 +28319,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2064850050153708073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3141235351638060761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3156746694796625986
 GameObject:
   m_ObjectHideFlags: 0
@@ -32192,6 +32444,7 @@ GameObject:
   - component: {fileID: 5715229878768699270}
   - component: {fileID: 8443924954918073151}
   - component: {fileID: 8967709476859610494}
+  - component: {fileID: 3873347311338262319}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -32318,6 +32571,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3873347311338262319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3639265042098940514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3664418475382120681
 GameObject:
   m_ObjectHideFlags: 0
@@ -34617,7 +34887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
-  localizationKey: ui.skirmish.library_purpose
+  localizationKey: ui.skirmish.seed_hint
   englishFallback: Same map. Seed changes AI choices.
   observeRuntimeSourceChanges: 1
   minimumPresentationSize: 0
@@ -37042,6 +37312,7 @@ GameObject:
   - component: {fileID: 6433886780512568677}
   - component: {fileID: 3427671677912850606}
   - component: {fileID: 1727314118996831037}
+  - component: {fileID: 3399999725396689481}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -37168,6 +37439,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3399999725396689481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4128523302589811660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.quick_battle
+  englishFallback: QUICK BATTLE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4139749014853314217
 GameObject:
   m_ObjectHideFlags: 0
@@ -37506,6 +37794,7 @@ GameObject:
   - component: {fileID: 8989740406511803974}
   - component: {fileID: 5633110103019165162}
   - component: {fileID: 8964360760118247929}
+  - component: {fileID: 172411536764139760}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -37632,6 +37921,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &172411536764139760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4173384092669736281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.industrial_basin_map
+  englishFallback: INDUSTRIAL BASIN
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4176621010312415248
 GameObject:
   m_ObjectHideFlags: 0
@@ -39356,6 +39662,7 @@ GameObject:
   - component: {fileID: 4870982347482114157}
   - component: {fileID: 2222703545446936910}
   - component: {fileID: 2984661331588939050}
+  - component: {fileID: 6970821867106795504}
   m_Layer: 0
   m_Name: Value
   m_TagString: Untagged
@@ -39482,6 +39789,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6970821867106795504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4400693345653986087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.v3.med.0852bdaf94
+  englishFallback: MED
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4401290227713116483
 GameObject:
   m_ObjectHideFlags: 0
@@ -40080,6 +40404,7 @@ GameObject:
   - component: {fileID: 6212218911298737088}
   - component: {fileID: 1223054968589218986}
   - component: {fileID: 7546333339541527092}
+  - component: {fileID: 8116132308702249244}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -40206,6 +40531,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8116132308702249244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4463606902545685253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4473399891768413892
 GameObject:
   m_ObjectHideFlags: 0
@@ -47442,6 +47784,7 @@ GameObject:
   - component: {fileID: 6435409710887488038}
   - component: {fileID: 2530394513657639732}
   - component: {fileID: 8078979835785438212}
+  - component: {fileID: 1793739123774578800}
   m_Layer: 0
   m_Name: SelectedMission
   m_TagString: Untagged
@@ -47568,6 +47911,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1793739123774578800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5339035364627813508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.base_assault_map
+  englishFallback: DESERT BASE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5360338289005386825
 GameObject:
   m_ObjectHideFlags: 0
@@ -52839,6 +53199,7 @@ GameObject:
   - component: {fileID: 7829646109565081963}
   - component: {fileID: 6343380266849443767}
   - component: {fileID: 6314768284569040338}
+  - component: {fileID: 2831255473367000489}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -52965,6 +53326,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2831255473367000489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5911510205290906330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5957375165850017931
 GameObject:
   m_ObjectHideFlags: 0
@@ -54339,6 +54717,7 @@ GameObject:
   - component: {fileID: 1196202937275352252}
   - component: {fileID: 4093755643430610625}
   - component: {fileID: 3821321444280884194}
+  - component: {fileID: 8538994582977362572}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -54465,6 +54844,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8538994582977362572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6104594142617500395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.airfield_plains
+  englishFallback: AIRFIELD PLAINS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6119926285793480766
 GameObject:
   m_ObjectHideFlags: 0
@@ -60257,6 +60653,7 @@ GameObject:
   - component: {fileID: 5082226346816776416}
   - component: {fileID: 78824009893487551}
   - component: {fileID: 1047927174881326895}
+  - component: {fileID: 3988871077214240127}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -60383,6 +60780,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3988871077214240127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6736057008332508340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.city_crossroads_map
+  englishFallback: CITY CROSSROADS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6744035851279751702
 GameObject:
   m_ObjectHideFlags: 0
@@ -62515,6 +62929,7 @@ GameObject:
   - component: {fileID: 1038323026311524083}
   - component: {fileID: 619160798416715538}
   - component: {fileID: 8085007903945392281}
+  - component: {fileID: 5171328923000350916}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -62641,6 +63056,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5171328923000350916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6929960497739723684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6939696461354787396
 GameObject:
   m_ObjectHideFlags: 0
@@ -62652,6 +63084,7 @@ GameObject:
   - component: {fileID: 370525231322136568}
   - component: {fileID: 1123562829932979588}
   - component: {fileID: 5155098309183510575}
+  - component: {fileID: 5466580175997790833}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -62778,6 +63211,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5466580175997790833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6939696461354787396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6939889176913902362
 GameObject:
   m_ObjectHideFlags: 0
@@ -63616,6 +64066,7 @@ GameObject:
   - component: {fileID: 6517672973796473364}
   - component: {fileID: 2907078684197655574}
   - component: {fileID: 8100898259885061583}
+  - component: {fileID: 2118569808773183322}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -63742,6 +64193,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2118569808773183322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6992547991217324742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.choose_missions
+  englishFallback: CHOOSE MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7017955478960510565
 GameObject:
   m_ObjectHideFlags: 0
@@ -68420,6 +68888,7 @@ GameObject:
   - component: {fileID: 5755678852076693324}
   - component: {fileID: 694916163215168559}
   - component: {fileID: 6631764274180568754}
+  - component: {fileID: 1996244780968121537}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -68546,6 +69015,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1996244780968121537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7495472170020747627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mountain_pass
+  englishFallback: MOUNTAIN PASS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7505145573801059772
 GameObject:
   m_ObjectHideFlags: 0
@@ -69677,6 +70163,7 @@ GameObject:
   - component: {fileID: 1690630085209340799}
   - component: {fileID: 7301812139677439121}
   - component: {fileID: 8633597622276348045}
+  - component: {fileID: 775131059873333302}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -69803,6 +70290,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &775131059873333302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7610211849716307665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: mission.trust_under_fire.intel.civilian
+  englishFallback: CIVILIAN RISK
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7635195744280337547
 GameObject:
   m_ObjectHideFlags: 0
@@ -73798,6 +74302,7 @@ GameObject:
   - component: {fileID: 1449265242983209761}
   - component: {fileID: 197290006010068640}
   - component: {fileID: 7422164984181407976}
+  - component: {fileID: 7019612997001951363}
   m_Layer: 0
   m_Name: BattleLibraryCount
   m_TagString: Untagged
@@ -73924,6 +74429,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7019612997001951363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8139527301396234633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.authored_count
+  englishFallback: SHOWING 120 OF 120 BATTLES
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8150592090542207938
 GameObject:
   m_ObjectHideFlags: 0
@@ -75476,6 +75998,7 @@ GameObject:
   - component: {fileID: 2500934150219518279}
   - component: {fileID: 196868428144608798}
   - component: {fileID: 6764751227167026164}
+  - component: {fileID: 7724061310534970977}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -75602,6 +76125,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7724061310534970977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8265165013008184989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.navigation.back
+  englishFallback: BACK
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8268003178274498062
 GameObject:
   m_ObjectHideFlags: 0
@@ -78163,6 +78703,7 @@ GameObject:
   - component: {fileID: 4620346309092158100}
   - component: {fileID: 2108872032321838495}
   - component: {fileID: 2109823894535499153}
+  - component: {fileID: 3711940198205530246}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -78289,6 +78830,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3711940198205530246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8515436095335597888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.base_assault_map
+  englishFallback: DESERT BASE
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8522625042861171839
 GameObject:
   m_ObjectHideFlags: 0
@@ -78300,6 +78858,7 @@ GameObject:
   - component: {fileID: 5934025844317443246}
   - component: {fileID: 1087191936660374415}
   - component: {fileID: 9125308325887574733}
+  - component: {fileID: 1740482704314687710}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -78426,6 +78985,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1740482704314687710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8522625042861171839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.city_crossroads_map
+  englishFallback: CITY CROSSROADS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8537454828720364678
 GameObject:
   m_ObjectHideFlags: 0
@@ -82521,6 +83097,7 @@ GameObject:
   - component: {fileID: 4889131400619306782}
   - component: {fileID: 1979583811768808637}
   - component: {fileID: 123896451604186076}
+  - component: {fileID: 3155605867523954924}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -82647,6 +83224,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3155605867523954924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8903969273307582663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.mission_count
+  englishFallback: 24 MISSIONS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8908669558330582843
 GameObject:
   m_ObjectHideFlags: 0
@@ -83095,6 +83689,7 @@ GameObject:
   - component: {fileID: 611578106125233934}
   - component: {fileID: 2471694005767293607}
   - component: {fileID: 2968441629256656792}
+  - component: {fileID: 7651427930155567701}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -83221,6 +83816,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7651427930155567701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8982671311879042706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
+  localizationKey: ui.skirmish.atlas.airfield_plains
+  englishFallback: AIRFIELD PLAINS
+  observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8983766747318219561
 GameObject:
   m_ObjectHideFlags: 0

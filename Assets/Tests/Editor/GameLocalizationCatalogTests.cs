@@ -478,6 +478,19 @@ public sealed class GameLocalizationCatalogTests
     }
 
     [Test]
+    public void SharedPersianAtlas_BakesJoinedAlefMadda()
+    {
+        var shippedCatalog = UnityEditor.AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+            V3UiLocalizationCatalogBuilder.CatalogPath);
+        Assert.IsNotNull(shippedCatalog);
+        var font = shippedCatalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset;
+        Assert.IsNotNull(font);
+        const char joinedAlefMadda = '\uFE82';
+        Assert.IsTrue(font.HasCharacter(joinedAlefMadda, searchFallbacks: false, tryAddCharacter: false),
+            "U+FE82 must be baked into the shared Persian TMP atlas.");
+    }
+
+    [Test]
     public void DisabledUi_KeepsTextMeshProFontMaterialAndReadableGlyphColor()
     {
         GameObject root = new("DisabledTextTest", typeof(RectTransform), typeof(CanvasRenderer));

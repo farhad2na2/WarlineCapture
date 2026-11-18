@@ -132,10 +132,35 @@ namespace Game.Editor
                 var nav=new MissionAtlasItem[5];for(int i=0;i<5;i++)
                 {string id=SkirmishBattleLibraryArt.MapIds[i];SkirmishBattleLibraryArt.Copy(id,false,out string title,out _);nav[i]=new MissionAtlasItem{Id="TheaterPin_"+id,Title=title,Subtitle="24 MISSIONS",Enabled=true,Selected=i==0,Medals=-1,Texture=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(id))};}
                 atlas.Present(new MissionAtlasPresentation {Skirmish=true,Heading="SKIRMISH / SELECT MAP",Navigation=nav,Overview=map,DetailTitle=nav[0].Title,Preview=nav[0].Texture,Purpose="Choose a map, then select a mission.",Primary="CHOOSE MISSIONS",Secondary="QUICK BATTLE",CanLaunch=true});
-                PrefabUtility.SaveAsPrefabAsset(root,SkirmishSetupPrefabBuilder.PrefabPath);
+                V3UiLocalizationCatalogBuilder.BindSkirmishSetup(root);
+                SaveSkirmishPrefab(root);
             }
             finally{PrefabUtility.UnloadPrefabContents(root);}
+            AssetDatabase.SaveAssets();
         }
+
+        [MenuItem("Game/UI/V3/Localization/Repair Skirmish Setup Bindings And Font")]
+        public static void RepairSkirmishLocalization()
+        {
+            var root = PrefabUtility.LoadPrefabContents(SkirmishSetupPrefabBuilder.PrefabPath);
+            int repaired;
+            try
+            {
+                repaired = V3UiLocalizationCatalogBuilder.BindSkirmishSetup(root);
+                if (repaired != 0) SaveSkirmishPrefab(root);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+            AssetDatabase.SaveAssets();
+            V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage();
+            Debug.Log($"[SkirmishSetupLocalization] result=Passed repairedBindings={repaired}");
+        }
+
+        private static void SaveSkirmishPrefab(GameObject root)
+        {
+            if (PrefabUtility.SaveAsPrefabAsset(root, SkirmishSetupPrefabBuilder.PrefabPath) == null)
+                throw new InvalidOperationException("Failed to save " + SkirmishSetupPrefabBuilder.PrefabPath);
+        }
+
         private static UISegmentedControlView CreateMissionSize(Transform parent)
         {
             var root=new GameObject("MissionSizeSegmented",typeof(RectTransform),typeof(UISegmentedControlView));root.transform.SetParent(parent,false);

@@ -139,7 +139,7 @@ namespace Game.Tests.Editor
             Assert.Greater(View(framing, eye, 16f / 9f, Home).y, 1f, "Live Barracks above the frame");
         }
 
-        [Test] public void Yaw65IsTheSmallestRotationFromNorthThatFitsOpeningAndAlert()
+        [Test] public void AuthoredYaw65FitsOpeningAndAlertWithMobileHeadroom()
         {
             var config = SkirmishOpeningCameraConfig.Load("S002");
             var layout = Layout();
@@ -152,20 +152,19 @@ namespace Game.Tests.Editor
                 var framing = SkirmishCameraFraming.Resolve(profile, yaw);
                 foreach (float aspect in Aspects)
                 {
-                    if (!SkirmishCameraFraming.TryFitLowest(framing, points, aspect, SkirmishCameraFraming.OpeningFitViewport, framing.TacticalHeight, limit, out _, out bool opening) || !opening) return false;
+                    if (!SkirmishCameraFraming.TryFitLowest(framing, points, aspect, config.OpeningViewport, framing.TacticalHeight, limit, out _, out bool opening) || !opening) return false;
                     if (!SkirmishCameraFraming.TryFitLowest(framing, new[] { Home, TankFiring }, aspect, alert, framing.TacticalHeight, limit, out _, out bool both) || !both) return false;
                 }
                 return true;
             }
-            Assert.IsTrue(Fits(65f));
-            for (int offset = 0; offset < 65; offset += 5)
-            {
-                Assert.IsFalse(Fits(offset), "yaw " + offset);
-                Assert.IsFalse(Fits(360 - offset), "yaw " + (360 - offset));
-            }
+            Assert.IsTrue(config.TryResolveYaw(layout, out float yaw));
+            Assert.AreEqual(65f, yaw, .001f);
+            Assert.IsTrue(Fits(yaw), "Authored yaw fits both landscape aspects with headroom");
+            Assert.IsTrue(Fits(60f), "The measured fixtures also fit at 60 degrees");
             // North-up fits the opening alone; the alert pair is what needs the turn.
             var north = SkirmishCameraFraming.Resolve(profile, 0f);
-            Assert.IsTrue(SkirmishCameraFraming.TryFitLowest(north, points, 16f / 9f, SkirmishCameraFraming.OpeningFitViewport, north.TacticalHeight, limit, out _, out bool northOpening) && northOpening);
+            Assert.IsTrue(SkirmishCameraFraming.TryFitLowest(north, points, 16f / 9f, config.OpeningViewport, north.TacticalHeight, limit, out _, out bool northOpening) && northOpening);
+            Assert.IsFalse(Fits(0f), "North-up does not fit both views with headroom");
         }
 
         [Test] public void DefaultPlayAreaLiesInsideEveryMeasuredHudLayout()
@@ -268,7 +267,7 @@ namespace Game.Tests.Editor
             tests.OpeningConfigFramesTheLiveBaseAndTheTankRoad();
             tests.OpeningShowsBaseSquadAndApproachInsideThePlayArea();
             tests.LegacyOpeningLeftTheBaseOffTheTopAndTheAnchorUnderTheCards();
-            tests.Yaw65IsTheSmallestRotationFromNorthThatFitsOpeningAndAlert();
+            tests.AuthoredYaw65FitsOpeningAndAlertWithMobileHeadroom();
             tests.DefaultPlayAreaLiesInsideEveryMeasuredHudLayout();
             tests.AlertTapFramesBaseAndTankInsideTheLiveAlertPlayArea();
             tests.FarAttackerStaysInThePlayAreaWithTheWayBackTowardBase();

@@ -299,8 +299,9 @@ namespace Game.Editor
                     LayoutGeometry.Apply(draft, source, catalogId, layout, plan);
                     EditorUtility.SetDirty(layout);
                     int measuredRows = plan.Rows.Count(row => plan.Pads.First(pad => pad.Key == row.PadKey).Measured);
+                    int roleRows = plan.Rows.Count(row => plan.Pads.First(pad => pad.Key == row.PadKey).ExistingRole != null);
                     Debug.Log(Tag + " instancePads catalog=" + catalogId + " rows=" + plan.Rows.Count + " measured=" + measuredRows +
-                        " derived=" + (plan.Rows.Count - measuredRows) + " pads=" + plan.Pads.Count + " unusedMeasuredPads=" + plan.UnusedMeasured +
+                        " rolePads=" + roleRows + " derived=" + (plan.Rows.Count - measuredRows - roleRows) + " pads=" + plan.Pads.Count + " unusedMeasuredPads=" + plan.UnusedMeasured +
                         " variants=" + plannerVariants.Count);
                 }
             }
@@ -953,6 +954,18 @@ namespace Game.Editor
                     float slackMin = float.MaxValue, slackMax = 0f; int slackCapped = 0;
                     foreach (var planned in plan.Pads)
                     {
+                        if (planned.ExistingRole != null)
+                        {
+                            // BT/CE defender tower: the row points at the typed role pad and its own anchor (TryPadForStructure
+                            // places it only there; StructureInstanceBinding needs the anchor exactly on the pad centre).
+                            string role = planned.ExistingRole;
+                            if (!padSpecs.TryGetValue(role, out var spec) || PadKind(role) != planned.Kind || Faction(role) != planned.Faction)
+                                throw new AuthoringFailure("instancePads", role + " needs its typed pads{} entry (kind " + planned.Kind + ", faction " + planned.Faction + ").");
+                            if (spec.anchor != role || !points.TryGetValue(role, out var rolePoint) || (spec.at - rolePoint).sqrMagnitude > 1e-6f)
+                                throw new AuthoringFailure("instancePads", role + " pad must be centred on its own anchor (no \"at\"/\"anchor\" override) to carry the instance row.");
+                            padKeys.Add(planned.Key, ("pad.skirmish." + token + "." + role.Replace('.', '_'), anchorId(role)));
+                            continue;
+                        }
                         string slug = planned.Measured ? planned.MeasuredId.Replace('.', '_') : planned.Slug;
                         string padId = "pad.skirmish." + token + "." + (planned.Measured ? "i_" : "") + slug;
                         string padAnchor;

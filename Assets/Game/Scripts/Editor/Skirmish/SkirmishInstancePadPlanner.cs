@@ -14,6 +14,10 @@
 //   (b) otherwise a derived pad centred on the position the setup compiler already gave the
 //       structure (SpawnWorldX/Z = typed pad + frame offset), with a footprint the caller can
 //       prove; with no provable footprint planning fails instead of guessing.
+// BT/CE defender towers (building.watchtower.defense_approach_a/b, faction 2) are the exception:
+// they never get a new pad. Their row reuses the mode-owned typed pad of role defense.approach.a/b
+// (draft pads{} with a measured size), because SkirmishMapLayoutBuilder.TryPadForStructure places
+// them only on that exact role pad and anchor; the runtime pad lookup reads the same row.
 // No Unity API is used apart from enums and value types, so the rules are testable offline.
 // =============================================================================
 using System;
@@ -49,8 +53,9 @@ namespace Game.Editor
         public byte Faction;
         public SkirmishLegalPadKind Kind;
         public float X, Z, Width, Depth;
-        public string AnchorRole;     // measured: the draft anchor role; derived: null (new anchor)
+        public string AnchorRole;     // measured: the draft anchor role; role pad: the role; derived: null (new anchor)
         public string Slug;           // derived only: stable short id token
+        public string ExistingRole;   // "r:" pads only: the typed role pad (defense.approach.a/b) the row reuses
     }
 
     public struct PlannedInstanceRow
@@ -68,7 +73,8 @@ namespace Game.Editor
         public readonly List<PlannedInstancePad> Pads = new List<PlannedInstancePad>();
         public readonly List<PlannedInstanceRow> Rows = new List<PlannedInstanceRow>();
         public int MeasuredPads => Pads.Count(p => p.Measured);
-        public int DerivedPads => Pads.Count(p => !p.Measured);
+        public int DerivedPads => Pads.Count(p => !p.Measured && p.ExistingRole == null);
+        public int RolePads => Pads.Count(p => p.ExistingRole != null);
         public int UnusedMeasured;
     }
 
@@ -145,6 +151,11 @@ namespace Game.Editor
 
         public delegate bool FootprintResolver(string structureId, out float widthMetres, out float depthMetres);
 
+        /// <summary>The typed role pad a BT/CE defender tower must use, or null for any other structure.</summary>
+        public static string DefenseApproachRole(string structureId) =>
+            structureId == SkirmishStructureIds.DefenseApproachA ? "defense.approach.a" :
+            structureId == SkirmishStructureIds.DefenseApproachB ? "defense.approach.b" : null;
+
         public static bool IsInstancePadKind(SkirmishLegalPadKind kind) =>
             kind == SkirmishLegalPadKind.BaseBarracks || kind == SkirmishLegalPadKind.GroundStaging ||
             kind == SkirmishLegalPadKind.AirReturn || kind == SkirmishLegalPadKind.Supply || kind == SkirmishLegalPadKind.Service;
@@ -190,6 +201,28 @@ namespace Game.Editor
                 {
                     var structure = structures[i];
                     var kind = Game.Configs.SkirmishMapLayoutBuilder.PadKindForStructure(structure.StructureId);
+                    string approachRole = DefenseApproachRole(structure.StructureId);
+                    if (kind == SkirmishLegalPadKind.DefenseApproach && approachRole != null)
+                    {
+                        if (structure.FactionId != 2)
+                            throw new InstancePadPlanException(scope + ": " + structure.StructureId + " is an enemy defender tower; faction " + structure.FactionId + " has no " + approachRole + " pad.");
+                        string roleKey = "r:" + approachRole;
+                        if (!padsByKey.TryGetValue(roleKey, out var rolePad))
+                        {
+                            rolePad = new PlannedInstancePad
+                            {
+                                Key = roleKey, Measured = false, Faction = 2, Kind = kind, X = structure.SpawnWorldX, Z = structure.SpawnWorldZ,
+                                AnchorRole = approachRole, ExistingRole = approachRole
+                            };
+                            padsByKey.Add(roleKey, rolePad); plan.Pads.Add(rolePad);
+                        }
+                        plan.Rows.Add(new PlannedInstanceRow
+                        {
+                            Size = variant.Size, Difficulty = variant.Difficulty, Faction = structure.FactionId,
+                            StructureId = structure.StructureId, Ordinal = ordinals[i], PadKey = rolePad.Key
+                        });
+                        continue;
+                    }
                     if (!IsInstancePadKind(kind))
                         throw new InstancePadPlanException(scope + ": " + structure.StructureId + " needs a " + kind + " pad, which per-building authoring does not support.");
                     if (structure.FactionId < 1 || structure.FactionId > 2)
@@ -261,7 +294,7 @@ namespace Game.Editor
             {
                 var pad = padsByKey[plan.Rows[i].PadKey];
                 if (!pads.Add(pad.Key)) throw new InstancePadPlanException(scope + ": pad " + pad.Key + " is used by two structure instances.");
-                string anchor = pad.Measured ? "a:" + pad.AnchorRole : pad.Key;
+                string anchor = pad.Measured || pad.ExistingRole != null ? "a:" + pad.AnchorRole : pad.Key;
                 if (!anchors.Add(anchor)) throw new InstancePadPlanException(scope + ": anchor " + anchor + " is used by two structure instances.");
             }
         }

@@ -34,10 +34,12 @@ candidate commit, marks the lane as held for you, and starts no agent Unity run 
   probably too weak; some unit types (drone, heavy APC, transport helicopter, siege) are not yet used by ARIA.
 - **Please judge:** same questions as S002; also whether City Crossroads feels too easy.
 
-## 2. Frontline Control — not ready to play (2026-11-18: areas measured, authoring blocked)
-S007 area measurement Completed (lane18/s007/measure.log; all three areas inside the playable window, infantry reachable from both bases); draft passes check_draft/pad_preflight. `AuthorFromDraft` FAILED: `compile.Standard.Recruit MissingReference:missionLogicalBinding` (lane18/s007/author.log:679). The authoring entry forces a null logical binding but the setup compiler demands one for every non-Base-Assault objective, so FC/BT/CE cannot be authored without a tooling change. Nothing was made visible or launched.
-## 3. Breakthrough — not ready to play (2026-11-18: areas measured, authoring blocked)
-S013 area measurement Completed (lane18/s013/measure.log; both corridors and the exit inside the playable window and infantry-reachable; both tower pads fit the 3x4 m tower). Authoring not attempted: same objective-kind blocker as S007 (deterministic). Nothing visible or launched.
+## 2. Frontline Control — authored, not playable (2026-11-18: startup BlockedSpawn)
+S007 authored by `AuthorFromDraft` after the logical-binding merge (lane20/s007/author.log, `result=Passed catalog=S007`, commit 2773d4970, containment clean) and made internally visible (not published; the publication row stays InProgress). One real-menu launch (`--menu-journey`, seed 130365, lane20/s007/menu/unity.log): menu journey Passed (Hotspot>ObjectiveTab_FC>BattleCard_S007>StartBattleButton), but the match did not start: `expandedStartupFailure=BlockedSpawn` (log line 2925) because starting-grant buildings find no legal spot: `[BuildingInitialPlacement] failed prefab=Building_Barrack preferred=(1373, 643)` (line 2478; enemy barracks blocked by source buildings) and both Ground Staging placements (road). The draft pads need re-placement; this is not playable yet.
+
+## 3. Breakthrough — not ready to play (2026-11-18: authoring blocked on a defense pad)
+S013 `AuthorFromDraft` FAILED at the real check (lane20/s013/author.log:686): `instancePads: Standard/Recruit: building.watchtower.defense_approach_a needs a DefenseApproach pad, which per-building authoring does not support.` Partial assets were removed; nothing visible or launched. Needs a tooling change (DefenseApproach pad kind in per-building authoring) or a draft without defense_approach pads.
+
 ## 4. Convoy Escort — not ready (S019 candidate draft; same measurement step)
 
 Your notes: write them in this file or tell the program lead; they are recorded as owner sampling in `missions.csv`

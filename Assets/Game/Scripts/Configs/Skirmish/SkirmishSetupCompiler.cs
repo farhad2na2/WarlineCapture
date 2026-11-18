@@ -405,6 +405,7 @@ namespace Game.Configs
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
             setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateForArmy(definition.ArmyProfileConfig, preserveLegacyBinding);
+            ApplyUnavailableRoles(setup, SkirmishMissionRoleExclusions.UnavailableRoleIds(definition.CatalogId), reasons);
             if (preserveLegacyBinding)
             {
                 SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
@@ -447,6 +448,24 @@ namespace Game.Configs
             setup.SetupHash = ComputeHash(setup, seed);
             setup.Report = BuildReport(setup);
             return setup;
+        }
+
+        // Mission-level exclusion (SkirmishMissionRoleExclusions) removes roles from the
+        // overlays both factions produce from. An empty list leaves the setup untouched.
+        // A starting force cannot use a withheld role, and every id must be a known role.
+        private static void ApplyUnavailableRoles(
+            SkirmishResolvedSetup setup, string[] unavailableRoleIds, List<SkirmishCompileReason> reasons)
+        {
+            if (unavailableRoleIds == null || unavailableRoleIds.Length == 0)
+                return;
+            for (int i = 0; i < unavailableRoleIds.Length; i++)
+                if (!SkirmishRoleIds.TryParse(unavailableRoleIds[i], out _))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.UnsupportedRole, "unavailableRoleIds", unavailableRoleIds[i] ?? string.Empty));
+            if (setup.Forces != null)
+                foreach (var force in setup.Forces)
+                    if (System.Array.IndexOf(unavailableRoleIds, force.RoleId) >= 0)
+                        reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.UnsupportedRole, "unavailableRoleIds", force.RoleId));
+            setup.RoleOverlays = SkirmishRoleOverlayCatalog.WithoutRoles(setup.RoleOverlays, unavailableRoleIds);
         }
 
         private static void AddForce(

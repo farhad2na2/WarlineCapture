@@ -80,6 +80,36 @@ namespace Game.Editor
             _ => null
         };
 
+        /// <summary>The gate-3 event=available model (pure): the player's starting roles, every role the
+        /// compiled catalog produces, and each producer structure of those roles the player does not start
+        /// with. Adds to <paramref name="available"/>; returns the number of producible roles.</summary>
+        public static int GateAvailableTypes(SkirmishResolvedSetup setup, SkirmishProductionCatalog catalog, ISet<string> available)
+        {
+            var startingStructures = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var structure in setup.Structures ?? Array.Empty<SkirmishResolvedStructureEntry>())
+                if (structure.FactionId == setup.PlayerFaction && !string.IsNullOrEmpty(structure.StructureId))
+                    startingStructures.Add(structure.StructureId);
+            foreach (var force in setup.Forces ?? Array.Empty<SkirmishResolvedForceEntry>())
+                if (force.FactionId == setup.PlayerFaction && !string.IsNullOrEmpty(force.RoleId))
+                    available.Add(force.RoleId);
+            int producible = 0;
+            for (int k = 1; k <= (int)SkirmishRoleKind.ConvoyLogic; k++)
+            {
+                var kind = (SkirmishRoleKind)k;
+                string prefabKey;
+                try { prefabKey = SkirmishRoleCatalogConfig.RuntimePrefabKey(kind); }
+                catch (Exception) { continue; }
+                if (string.IsNullOrEmpty(prefabKey) || !catalog.TryRole(prefabKey, out var overlay)) continue;
+                // One prefab can serve two roles; only the catalog's own role is producible.
+                if (!GateCatalogListsRole(kind, overlay.RoleKind)) continue;
+                available.Add(SkirmishRoleIds.ToId(kind));
+                producible++;
+                string structureId = GateProducerStructure(overlay.Producer);
+                if (structureId != null && !startingStructures.Contains(structureId)) available.Add(structureId);
+            }
+            return producible;
+        }
+
         private static void StopGateUnits()
         {
             AriaCommandEvidence.Recorded -= GateOnCommand;
@@ -106,28 +136,7 @@ namespace Game.Editor
                 if (string.IsNullOrEmpty(state.SessionId) || state.SessionId.IndexOfAny(new[] { ' ', '\t' }) >= 0)
                     throw new InvalidOperationException("session id is empty or contains whitespace");
 
-                var startingStructures = new HashSet<string>(StringComparer.Ordinal);
-                foreach (var structure in setup.Structures ?? Array.Empty<SkirmishResolvedStructureEntry>())
-                    if (structure.FactionId == setup.PlayerFaction && !string.IsNullOrEmpty(structure.StructureId))
-                        startingStructures.Add(structure.StructureId);
-                foreach (var force in setup.Forces ?? Array.Empty<SkirmishResolvedForceEntry>())
-                    if (force.FactionId == setup.PlayerFaction && !string.IsNullOrEmpty(force.RoleId))
-                        state.Available.Add(force.RoleId);
-                int producible = 0;
-                for (int k = 1; k <= (int)SkirmishRoleKind.ConvoyLogic; k++)
-                {
-                    var kind = (SkirmishRoleKind)k;
-                    string prefabKey;
-                    try { prefabKey = SkirmishRoleCatalogConfig.RuntimePrefabKey(kind); }
-                    catch (Exception) { continue; }
-                    if (string.IsNullOrEmpty(prefabKey) || !catalog.TryRole(prefabKey, out var overlay)) continue;
-                    // One prefab can serve two roles; only the catalog's own role is producible.
-                    if (!GateCatalogListsRole(kind, overlay.RoleKind)) continue;
-                    state.Available.Add(SkirmishRoleIds.ToId(kind));
-                    producible++;
-                    string structureId = GateProducerStructure(overlay.Producer);
-                    if (structureId != null && !startingStructures.Contains(structureId)) state.Available.Add(structureId);
-                }
+                int producible = GateAvailableTypes(setup, catalog, state.Available);
                 if (producible == 0) throw new InvalidOperationException("production catalog lists no role");
                 foreach (var id in state.Available)
                     if (SkirmishRoleIds.TryParse(id, out var supportKind) && GateSupportRole(supportKind))

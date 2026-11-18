@@ -1,7 +1,7 @@
 {
   "catalog_id": "S060",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "candidate=1, unmeasured FC geometry. Standard/Regular placements and the CH05M01 Citywide Alert binding come from S049/S050. S055 r1 found FrontlineA/B/C inside playable and reachable from both bases and stagings. All routes start at base.player and end at rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293) to avoid the code 7 goal at base.enemy. MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 (S050 dump candidate 292) to approach west of the enemy barracks. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 (S050 dump candidates 31, 1, 37, 95 in route order) along the south edge. Dump indices are zero-based. Both flanks use the S007 north flank's 6 m width. Native route connectivity and clearance need a fresh measurement. S007 supplies the footprint table and 12 m pad slack. Combined/Established (FC-C-E). S050 BA ground established supplies the same S049 field buildings plus approach watchtowers and satellite dishes. S054 supplies the helipad anchors and pads for both sides. War and LargeWar second refinery module positions are unmeasured for both sides and left to derived instance pads. Airport positions remain unmeasured on both sides. The matrix grants no starting airport, and the same-map BA drafts supply only helipad pads.",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W8 r2 on Mountain Pass host S050 seed 130365: FrontlineA/B/C inside playable (1824/2139/1936 m2), infantry and truck reachable from both bases and stagings, three vehicle routes flood/native-measured with no failed segment (MainHighway 223 m, FlankNorthRuins 292 m, FlankSouthSweep 322 m); Design/AgentReports/SkirmishExpansion/S055/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured FC geometry. Standard/Regular placements and the CH05M01 Citywide Alert binding come from S049/S050. S055 r1 found FrontlineA/B/C inside playable and reachable from both bases and stagings. All routes start at base.player and end at rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293) to avoid the code 7 goal at base.enemy. MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 (S050 dump candidate 292) to approach west of the enemy barracks. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 (S050 dump candidates 31, 1, 37, 95 in route order) along the south edge. Dump indices are zero-based. Both flanks use the S007 north flank's 6 m width. Native route connectivity and clearance need a fresh measurement. S007 supplies the footprint table and 12 m pad slack. Combined/Established (FC-C-E). S050 BA ground established supplies the same S049 field buildings plus approach watchtowers and satellite dishes. S054 supplies the helipad anchors and pads for both sides. War and LargeWar second refinery module positions are unmeasured for both sides and left to derived instance pads. Airport positions remain unmeasured on both sides. The matrix grants no starting airport, and the same-map BA drafts supply only helipad pads.",
   "anchors": {
     "base.player": [
       1002.0,
@@ -777,5 +777,8 @@
       3.0,
       4.0
     ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S055/area-measurement-r2.json"
   }
 }

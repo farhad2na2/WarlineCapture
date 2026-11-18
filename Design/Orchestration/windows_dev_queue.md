@@ -147,7 +147,7 @@ established start. Re-author the affected rows (W6 steps b–c), then a menu lau
 `expandedStartupFailure`. Add an EditMode or authoring test that fails on today's S020 layout. Branch `missions/win-w14-ce-established-spawn`.
 
 ## W15 — SkirmishExpandedAriaTests: EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective (2026-11-18)
-status: READY
+status: DONE (e7a115bb2; merged deed06125)
 codex effort: high
 Windows W12 evidence: fails identically on base ca5b7ccbb and on W12 ("Expected Entity(47:9) But was Entity(34:9)"), so it predates W12 and
 keeps `[SkirmishExpandedAriaTests] result=Passed` red. Decide with evidence whether the test's expected entity is stale (fixture/roster change)

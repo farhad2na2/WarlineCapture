@@ -217,6 +217,17 @@ expansion catalog` (same for S025), with and without --validation-library. S001/
 queue/harness a dispatch path for coded presets (the way the menu launches them), with no change to the presets themselves. Tooling/harness only;
 prove with the queue's Python tests and a Windows menu-journey launch of S001 and S025. Branch `missions/win-w21-preset-dispatch`. Per-task results file.
 
+## W22 — pad_preflight misses objective/defense pads on non-placeable cells (2026-11-18)
+status: READY (after W9/W10)
+codex effort: high
+Windows W9 run 2: all 12 BT/CE menu launches aborted `expandedStartupFailure=BlockedSpawn`. The enemy guard towers for defense.approach sat on
+S027-derived anchors that land on the S026 road band (z 348-360, no BuildingPlacement). pad_preflight skips objective pads, containment is
+envelope-only, and r2 reported fitsAsIs=true, so no check caught it. Extend `pad_preflight.py` (and `--surface`, from W13) to check every
+objective, defense and convoy pad that spawns a structure against the bitmap's BuildingPlacement flag (and road/sidewalk flags). It must
+report which pad failed and where. Then run it over every merged draft (`git ls-files Tools/Missions/drafts`) and list any failure, without
+fixing drafts in this task. Tooling only; prove with new Python tests (a known-bad W9 r2 pad must fail, the W9 fix must pass) and the full
+`Tools/Missions` unittest run. Branch `missions/win-w22-preflight-objective-pads`. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

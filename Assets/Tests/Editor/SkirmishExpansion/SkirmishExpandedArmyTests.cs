@@ -407,7 +407,12 @@ namespace Game.Tests.Editor
                 out int total, out int selected, out int offPage, out uint revision,
                 out var a, out var b, out var c, out var d, out var fifth));
             Assert.AreEqual(0, page); Assert.IsFalse(previous); Assert.IsTrue(next);
-            Assert.AreEqual(2, pageCount); Assert.AreEqual(8, total); Assert.AreEqual(0, selected);
+            // The S002 Standard row in INITIAL_SETUP_MATRIX.csv gives eight combat groups
+            // and three logistics groups, so the five-slot pages hold 5, 5, and 1 group.
+            const int expectedPageCount = 3;
+            Assert.AreEqual(expectedPageCount, pageCount);
+            Assert.AreEqual(11, total);
+            Assert.AreEqual(0, selected);
             var ids = new[] { a.GroupId, b.GroupId, c.GroupId, d.GroupId, fifth.GroupId };
             Assert.AreEqual(5, ids.Length);
             for (int i = 0; i < ids.Length; i++) Assert.AreNotEqual(0u, ids[i]);
@@ -419,15 +424,23 @@ namespace Game.Tests.Editor
             bool foundSelected = false;
             for (int i = 0; i < records.Length; i++) if (records[i].GroupId == fifthId) foundSelected = records[i].Selected != 0;
             Assert.IsTrue(foundSelected, "slot 4 selects its stable GroupId");
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryHoldSelection(em, session));
             Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthBefore));
-            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
-            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
-            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
-            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthAfterPaging));
-            Assert.AreEqual(fifthBefore.LastOrder, fifthAfterPaging.LastOrder);
+            Assert.AreEqual(SkirmishGroupOrderKind.Hold, fifthBefore.LastOrder);
+            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 2));
+            for (int expectedPage = 1; expectedPage < expectedPageCount; expectedPage++)
+            {
+                Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+                var selection = em.GetComponentData<SkirmishArmySelectionComponent>(session);
+                Assert.AreEqual(expectedPage, selection.PageIndex);
+                Assert.AreEqual(1, selection.SelectedGroupCount);
+                Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthAfterPaging));
+                Assert.IsTrue(fifthAfterPaging.Selected != 0);
+                Assert.AreEqual(fifthBefore.LastOrder, fifthAfterPaging.LastOrder);
+            }
             Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1), "last page does not wrap");
             Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 0));
-            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 2));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1));
             Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1));
             Assert.IsTrue(SkirmishExpandedPresentedOrders.TryClearSelection(em, session));
             Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);

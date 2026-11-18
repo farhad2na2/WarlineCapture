@@ -67,7 +67,7 @@ namespace Game.Editor
         static void LaunchGround(string catalog)
         {
             Arm("ground");
-            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, Seed, GameLocalization.EnglishLocaleCode);
+            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, catalog == "S002" ? 130365 : Seed, GameLocalization.EnglishLocaleCode);
         }
 
         static void Arm(string requested)

@@ -411,7 +411,7 @@ namespace Game.Runtime
                     decision.Field = "queue";
                     return false;
                 }
-                if (state.Readiness >= SkirmishReadinessStage.FullArsenal)
+                if (state.Readiness >= SkirmishReadinessStage.FullArsenal || state.Readiness >= HighestUsefulReadiness(em, session))
                 {
                     decision.Reason = SkirmishReasonCode.AlreadyCompleted;
                     return false;
@@ -481,6 +481,13 @@ namespace Game.Runtime
 
             return true;
         }
+
+        /// <summary>Per-mission readiness ceiling (SkirmishMissionRoleExclusions): Full Arsenal unless
+        /// the mission withholds every role that stage unlocks. Applies to both factions.</summary>
+        public static SkirmishReadinessStage HighestUsefulReadiness(EntityManager em, Entity session) =>
+            em.HasComponent<SkirmishResolvedSetupRecord>(session)
+                ? SkirmishMissionRoleExclusions.HighestUsefulReadiness(em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup)
+                : SkirmishReadinessStage.FullArsenal;
 
         private static bool HasFunctionalProduction(EntityManager em, Entity session, byte factionId)
         {

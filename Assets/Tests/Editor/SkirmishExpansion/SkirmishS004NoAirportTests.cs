@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Components;
 using Game.Configs;
 using Game.Editor;
 using Game.Runtime;
@@ -35,7 +36,8 @@ namespace Game.Tests.Editor
                 tests.S003ArmyAStillOffersAirportAndFixedWing();
                 tests.S002AndS026CompileTheirUnchangedArmySlices();
                 tests.OnlyS004WithholdsRoles();
-                Debug.Log(Marker + " result=Passed tests=4 s004Sizes=3");
+                tests.S004DoesNotOfferFullArsenalResearch();
+                Debug.Log(Marker + " result=Passed tests=5 s004Sizes=3 fullArsenalOffered=0");
             }
             catch (Exception error) { Debug.LogError(Marker + " result=Failed\n" + error); throw; }
         }
@@ -49,6 +51,8 @@ namespace Game.Tests.Editor
                 var setup = Compile("S004", size, SkirmishS004FirstVisit.SeedA);
                 string label = "S004/" + size;
                 Assert.AreEqual(SkirmishArmyProfileId.AirMobile, setup.ArmyProfileId, label);
+                // Full Arsenal unlocks only the withheld roles here, so Established is the last useful stage.
+                Assert.AreEqual(SkirmishReadinessStage.Established, SkirmishMissionRoleExclusions.HighestUsefulReadiness(setup), label);
                 Assert.IsTrue(SkirmishSetupMatrixTable.TryFind(Matrix(), "S004", size, out var row), label);
                 Assert.AreEqual(row.TacticalAirCapEach, setup.TacticalAirCapEach, label + " air cap unchanged");
                 foreach (var overlay in setup.RoleOverlays)
@@ -98,6 +102,7 @@ namespace Game.Tests.Editor
             Assert.IsEmpty(SkirmishMissionRoleExclusions.UnavailableRoleIds("S003"));
             var setup = Compile("S003", SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA);
             Assert.AreEqual(SkirmishArmyProfileId.AirMobile, setup.ArmyProfileId);
+            Assert.AreEqual(SkirmishReadinessStage.FullArsenal, SkirmishMissionRoleExclusions.HighestUsefulReadiness(setup));
             var army = SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
             for (int i = 0; i < FixedWing.Length; i++)
             {
@@ -125,11 +130,42 @@ namespace Game.Tests.Editor
             Assert.IsEmpty(SkirmishMissionRoleExclusions.UnavailableRoleIds("S026"));
             foreach (var size in Sizes)
             {
-                AssertSameOverlays(SkirmishRoleOverlayCatalog.CreateS002GroundSlice(),
-                    Compile("S002", size, 155926).RoleOverlays, "S002/" + size);
-                AssertSameOverlays(SkirmishRoleOverlayCatalog.CreateGroundManeuverSlice(),
-                    Compile("S026", size, 155926).RoleOverlays, "S026/" + size);
+                var s002 = Compile("S002", size, 155926);
+                var s026 = Compile("S026", size, 155926);
+                AssertSameOverlays(SkirmishRoleOverlayCatalog.CreateS002GroundSlice(), s002.RoleOverlays, "S002/" + size);
+                AssertSameOverlays(SkirmishRoleOverlayCatalog.CreateGroundManeuverSlice(), s026.RoleOverlays, "S026/" + size);
+                // Their readiness research keeps Full Arsenal exactly as before.
+                Assert.AreEqual(SkirmishReadinessStage.FullArsenal, SkirmishMissionRoleExclusions.HighestUsefulReadiness(s002), "S002/" + size);
+                Assert.AreEqual(SkirmishReadinessStage.FullArsenal, SkirmishMissionRoleExclusions.HighestUsefulReadiness(s026), "S026/" + size);
             }
+        }
+
+        [Test]
+        public void S004DoesNotOfferFullArsenalResearch()
+        {
+            using var world = new Unity.Entities.World(nameof(S004DoesNotOfferFullArsenalResearch));
+            var em = world.EntityManager;
+            var packaged = SkirmishExpansionCatalogConfig.Load();
+            Assert.IsNotNull(packaged);
+            Assert.IsTrue(packaged.TryGetDefinition("S004", out var definition));
+            Assert.IsTrue(Game.Composition.SkirmishExpandedLaunchResolver.TryCompileAndQueue(em, "S004",
+                SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, SkirmishS004FirstVisit.SeedA, packaged.ToAuthoredSet(),
+                Matrix(), new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds },
+                out var setup, out _, out var reasons), reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            var session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(em, session, setup, out var spawnReason, out _), spawnReason.ToString());
+            Assert.AreEqual(SkirmishReadinessStage.Established, em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness);
+            Assert.AreEqual(SkirmishReadinessStage.Established, SkirmishResearchService.HighestUsefulReadiness(em, session));
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
+            Assert.GreaterOrEqual(materials, SkirmishResearchCosts.ReadinessFullArsenalMaterials, "Refusal is not a stock shortfall");
+            foreach (byte faction in new byte[] { 1, 2 })
+            {
+                Assert.IsFalse(SkirmishResearchService.CanQueue(em, session, SkirmishResearchKind.Readiness, faction, out var decision, out _), "faction " + faction);
+                Assert.AreEqual(SkirmishReasonCode.AlreadyCompleted, decision.Reason, "faction " + faction);
+                Assert.IsFalse(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.Readiness, faction, out _), "faction " + faction);
+            }
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1), "No Full Arsenal payment");
+            Assert.AreEqual(0, em.GetBuffer<SkirmishResearchQueueItem>(session).Length);
         }
 
         [Test]

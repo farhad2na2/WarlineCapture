@@ -38,6 +38,13 @@ namespace Game.UI.Shell.Ecs
             using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
             if (gameplay.CalculateEntityCount() == 1 && gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
                 model.CanUpgrade = model.CanCancel = false;
+            // A mission whose exclusions leave no use for the next stage (S004: Full Arsenal) hides the
+            // readiness card instead of offering an upgrade that unlocks nothing. Full Arsenal missions
+            // keep their existing card unchanged.
+            var ceiling = SkirmishResearchService.HighestUsefulReadiness(em, session);
+            if (ceiling < Game.Skirmish.Contracts.SkirmishReadinessStage.FullArsenal && !model.InProgress &&
+                model.Stage >= (byte)ceiling)
+                model.Visible = false;
             return true;
         }
 

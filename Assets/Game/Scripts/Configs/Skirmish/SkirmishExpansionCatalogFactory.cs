@@ -84,6 +84,26 @@ namespace Game.Configs
 
         public static string[] UnavailableRoleIds(string catalogId) =>
             catalogId == "S004" ? (string[])S004.Clone() : System.Array.Empty<string>();
+
+        /// <summary>
+        /// The highest readiness stage that still unlocks something in this mission. A mission
+        /// without an exclusion keeps Full Arsenal unchanged. With an exclusion, it is the highest
+        /// stage any remaining role overlay requires (S004: Established, since Full Arsenal only
+        /// unlocks the withheld fixed-wing roles and their Airport), so research never sells a
+        /// stage that unlocks nothing.
+        /// </summary>
+        public static SkirmishReadinessStage HighestUsefulReadiness(SkirmishResolvedSetup setup)
+        {
+            if (setup == null || UnavailableRoleIds(setup.CatalogId).Length == 0)
+                return SkirmishReadinessStage.FullArsenal;
+            var highest = SkirmishReadinessStage.Field;
+            foreach (var overlay in setup.RoleOverlays ?? System.Array.Empty<SkirmishRoleOverlay>())
+            {
+                var required = SkirmishProductionEligibility.RequiredReadiness(overlay.RoleKind);
+                if (required > highest) highest = required;
+            }
+            return highest;
+        }
     }
 
     public static class SkirmishS005FirstVisit

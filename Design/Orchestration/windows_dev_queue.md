@@ -33,7 +33,7 @@ template: `Tools/Missions/drafts/s019-desert-base-ce-ground-field-candidate.json
 deliverable: as W1 for S020–S024. Branch `missions/win-w3-db-ce`.
 
 ## W4 — City Crossroads Frontline Control S031–S036 (2026-11-18)
-status: DONE as drafts (branch kept unmerged: area.measurement missing -> W7)
+status: DONE (64ba63811; merged aee6ee07c with W7)
 codex effort: high
 templates: the S007 FC draft (structure) and `s026-city-crossroads-ba-ground-established.json` (City Crossroads source,
 bases and measured anchors).
@@ -66,7 +66,7 @@ Commit only the authored assets for these rows (with their .meta files) and the 
 Do not change catalog visibility. A row whose b or c fails twice: record the first failing line, leave its assets out, go on.
 
 ## W7 — City Crossroads FC area measurement and fixes, S031 then S032–S036 (2026-11-18)
-status: READY
+status: DONE (985c00437; merged aee6ee07c; Mac quickcheck/counted runs next)
 codex effort: high (draft fixes); Unity serial in the main checkout
 Measure on the City Crossroads host match: `WARLINE_SKIRMISH_CATALOG=S026 WARLINE_S002_SEED=130365 WARLINE_S002_LOCALE=en
 WARLINE_MISSION_DRAFT=<s031 draft> WARLINE_AREA_MEASUREMENT_OUT=Design/AgentReports/SkirmishExpansion/S031/area-measurement-r1.json`,
@@ -189,6 +189,33 @@ cell of rounding", so `[BuildingFootprintReadiness] result=Passed` is unreachabl
 side minimally, never weaken a test, no stat changes, no model/prefab edits under Assets/Game/Prefabs/UI. If the Clinic footprint is a real
 authored-footprint mismatch, report the numbers and stop for the Mac lead rather than resizing. Prove: the marker above on Windows, plus the
 UTF `-testFilter Building` set with 0 failures. Branch `missions/win-w18-building-readiness`, cut after W13 is merged. Per-task results file.
+
+## W19 — S049 (Mountain Pass BA) ARIA stalls with reason 101 on 2 of 4 seeds (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 37 (`program-logs/2026-11-18/lane37/counted/unity.log`): 155923 en Abort ariaStopped:Blocked at 353 s `[AriaBlocked] reason=101 kind=Waiting
+intent=Inspect` (:88940); 104731 en same at 323 s with intent=Recruit (:269540). 130365 en (smoke/unity.log:279722) and 130365 fa-IR (:382455) win.
+Gate-3 unused on the wins: helipad, satellite_dish, apc_heavy, drone, gunner, radar, siege, tank, transport_heli (:279707).
+Diagnose reason 101 from the log context (what ARIA waited on, why nothing was offered), fix ARIA (or the S049 data if a placement/spawn is wrong);
+no stat/rule changes. Prove with a unit test reproducing the stall plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
+Branch `missions/win-w19-s049-reason101`. Per-task results file.
+
+## W20 — S003 (Desert Base BA, army A field) ARIA loses its base without starting home defense (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 37 (`program-logs/2026-11-18/lane37/smoke-s003/unity.log`), seed 130366 en: Defeat MainBaseDestroyed at 185 s (17% of deadline, :477593).
+First base_alert at t=162.8 with base 800 hp (:411875), 778 at t=174.5 (:442646); homeDefenseStage stayed 0; enemy base untouched at 800 (:477150).
+Find why the home-defense policy never left stage 0 on S003 (S002 uses the same policy and reaches stage 5) and fix it; no stat/rule changes.
+Prove with a unit test reproducing the S003 alert sequence plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
+Branch `missions/win-w20-s003-home-defense`. Per-task results file. S003 first-visit seeds are 104732, 130366, 155924.
+
+## W21 — ARIA queue cannot dispatch coded legacy presets S001/S025 (2026-11-18)
+status: READY
+codex effort: high
+Mac lane 37 (`program-logs/2026-11-18/lane37/smoke/unity.log:601, :1064`): `launchFailed=1 error=Catalog S001 does not resolve to a definition in the
+expansion catalog` (same for S025), with and without --validation-library. S001/S025 are coded presets with no SkirmishScenario asset. Give the
+queue/harness a dispatch path for coded presets (the way the menu launches them), with no change to the presets themselves. Tooling/harness only;
+prove with the queue's Python tests and a Windows menu-journey launch of S001 and S025. Branch `missions/win-w21-preset-dispatch`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

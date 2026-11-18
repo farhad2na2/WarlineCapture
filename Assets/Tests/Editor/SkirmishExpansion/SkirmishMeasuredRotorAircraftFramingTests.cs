@@ -9,6 +9,7 @@ using Game.Rendering.Contracts;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
@@ -78,6 +79,97 @@ namespace Game.Tests.Editor
             }
             finally{RenderBoundsGateway.Bind(originalProvider);UnityEngine.Object.DestroyImmediate(go);}
         }
+        [Test]
+        public void LandedHelicopterSquadSelectionAppliesOnIdleHudCameraTick()
+        {
+            using var world = new World("LandedHelicopterSquadSelectionFixture");
+            var em = world.EntityManager;
+            var previousWorld = World.DefaultGameObjectInjectionWorld;
+            var previousBounds = RenderBoundsGateway.Provider;
+            var go = new GameObject("LandedHelicopterSquadSelectionCamera");
+            try
+            {
+                World.DefaultGameObjectInjectionWorld = world;
+                var session = CreateSession(em);
+                Assert.IsTrue(SkirmishMissionViewProfileApplication.TryResolve(em, out var profile));
+                const SkirmishRoleKind role = SkirmishRoleKind.TransportHeli;
+                string key = SkirmishCanonicalAircraftGeometryConfig.ExpectedKey(role);
+                var actor = CreateActor(em, role, key, true);
+                var pad = new float3(100f, profile.GroundReferenceY + .5f, 100f);
+                em.SetComponentData(actor, LocalTransform.FromPosition(pad));
+                em.AddComponentData(actor, new UnitAirComponent { HomePosition = pad, HomeInitialized = 1 });
+                var bounds = new Bounds((Vector3)pad + Vector3.up * 2f, new Vector3(14f, 4f, 16f));
+                RenderBoundsGateway.Bind(new HelicopterBoundsFixture(bounds));
+                em.AddComponentData(actor, new UnitDetailedVisualReference { Root = em.CreateEntity() });
+                em.AddComponentData(actor, new UnitRenderVisualComponent
+                {
+                    Current = (byte)UnitRenderVisualKind.Detail,
+                    Desired = (byte)UnitRenderVisualKind.Detail
+                });
+                uint group = SkirmishArmyGroupSystem.OpenGroup(em, session, 1, role, SkirmishRoleIds.Category(role));
+                SkirmishArmyGroupSystem.BindMember(em, session, actor, group);
+
+                var camera = go.AddComponent<Camera>();
+                camera.aspect = 2400f / 1080f;
+                var owner = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+                var queue = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+                var hudCamera = new SelectionUiCameraSystemHelper(owner, queue);
+                hudCamera.Init(null, camera);
+
+                // Use the same selection and camera paths as a player tapping the expanded squad card.
+                Assert.IsTrue(SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session, group));
+                var context = new MatchHudSquadTraySelectionUiSystemHelper.Context(camera, null, null, null,
+                    null, null, null, null, new SelectionStateCompositionSystemHelper(),
+                    new FocusedUnitLifecycleCompositionSystemHelper());
+                new MatchHudSquadTraySelectionUiSystemHelper().SynchronizeExpandedSelection(context, em);
+                Assert.IsTrue(em.HasComponent<SelectedUnitTag>(actor));
+                Assert.IsFalse(owner.HasAircraftFocusContext, "The selection has only queued the request");
+
+                hudCamera.UpdateZoomTransition();
+
+                Assert.IsTrue(owner.TryReadAircraftFollowState(out var follow), "An idle HUD tick must start the queued follow");
+                Assert.AreEqual(actor, follow.Actor);
+                Assert.IsTrue(follow.Following);
+                Assert.AreEqual("Measured", follow.BoundsSource);
+                Assert.AreEqual(bounds.center, follow.LookAt);
+                Assert.AreEqual(0, em.GetComponentData<UnitAirComponent>(actor).Airborne);
+                Assert.IsFalse(em.HasComponent<UnitTarget>(actor));
+                var viewport = camera.WorldToViewportPoint(follow.LookAt);
+                Assert.That(viewport.x, Is.EqualTo(.5f).Within(.001f));
+                Assert.That(viewport.y, Is.EqualTo(.5f).Within(.001f));
+                Assert.Greater(viewport.z, 0f);
+            }
+            finally
+            {
+                World.DefaultGameObjectInjectionWorld = previousWorld;
+                RenderBoundsGateway.Bind(previousBounds);
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        private sealed class HelicopterBoundsFixture : IRenderBoundsPresentation, IRenderAircraftVisibleGeometryPresentation
+        {
+            private readonly Bounds _bounds;
+
+            public HelicopterBoundsFixture(Bounds bounds) => _bounds = bounds;
+
+            public bool TryReadAircraftVisibleGeometryBounds(EntityManager manager, Entity actor, Entity draw,
+                out Bounds bounds, out bool hasDraw, out string failure)
+            {
+                bounds = _bounds;
+                hasDraw = true;
+                failure = null;
+                return true;
+            }
+
+            public bool TryReadWorldBounds(EntityManager manager, Entity entity, out Bounds bounds) => throw new NotSupportedException();
+            public void CollectStaticBounds(EntityManager manager, Rect area, float minExtent, float maxExtent,
+                ref NativeList<Bounds> results) => throw new NotSupportedException();
+            public int CountAuthoredBuildingGeometry(EntityManager manager) => throw new NotSupportedException();
+            public void CollectAuthoredBuildingBounds(EntityManager manager, ref NativeList<Bounds> results) => throw new NotSupportedException();
+            public void CollectWaterFootprints(EntityManager manager, ref NativeList<RenderSurfaceFootprint> results) => throw new NotSupportedException();
+        }
+
         [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)][TestCase(7)]
         public void ExactActorSourceAndSelectionScopeRejectsCorruption(int mutation)
         {
@@ -114,13 +206,14 @@ namespace Game.Tests.Editor
             }
             finally{UnityEngine.Object.DestroyImmediate(copy);}
         }
-        static void CreateSession(EntityManager em)
+        static Entity CreateSession(EntityManager em)
         {
             var definition=AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset");
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out _));
             Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,155926,new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var setup,out var errors),string.Join(";",errors));
             var session=em.CreateEntity();em.AddComponentData(session,new SkirmishExpandedSessionComponent{SessionId="canonical-aircraft-fixture",Phase=SkirmishSessionPhase.Playing});em.AddComponentObject(session,new SkirmishResolvedSetupRecord{Setup=setup});
             em.AddComponentData(em.CreateEntity(),new RuntimeGameplayStateComponent());
+            return session;
         }
         static Entity CreateActor(EntityManager em,SkirmishRoleKind role,string key,bool paid)
         {
@@ -289,13 +382,46 @@ namespace Game.Tests.Editor
         }
         static string FindHash(SkirmishCanonicalAircraftGeometryConfig.Entry entry,Mesh mesh,int sub)
         {Assert.IsTrue(entry.TryRead(mesh,sub,out var draw));return draw.GeometrySha256;}
+        [Test]
+        public void StaleSourceDependencyHashIsRejectedWithSourceAndBothHashes()
+        {
+            var measured = SkirmishCanonicalAircraftGeometryAuthoring.Measure();
+            SkirmishCanonicalAircraftGeometryConfig fixture = null;
+            try
+            {
+                fixture = UnityEngine.Object.Instantiate(measured);
+                var entry = fixture.Roles[0];
+                var source = entry.Sources[0];
+                string measuredHash = source.DependencyHash;
+                string staleHash = (measuredHash[0] == '0' ? "1" : "0") + measuredHash.Substring(1);
+                source.DependencyHash = staleHash;
+
+                var error = Assert.Throws<InvalidOperationException>(
+                    () => SkirmishCanonicalAircraftGeometryAuthoring.Validate(fixture));
+                Assert.AreEqual(
+                    $"Actual source dependency changed for {entry.Role}: path={source.Path} installed={staleHash} measured={measuredHash}",
+                    error.Message);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(fixture);
+                UnityEngine.Object.DestroyImmediate(measured);
+            }
+        }
+        public static void RunLandedHelicopterSquadSelectionValidation()
+        {
+            new SkirmishMeasuredRotorAircraftFramingTests().LandedHelicopterSquadSelectionAppliesOnIdleHudCameraTick();
+            Debug.Log("[LandedHelicopterSquadSelectionTests] result=Passed");
+        }
+
         public static void RunFocusedValidation()
         {
             var tests=new SkirmishMeasuredRotorAircraftFramingTests();for(int i=0;i<12;i++)tests.ActualIndexedDrawsApplyAndKeepRoleSizedCapturedCenter(i);for(int i=0;i<8;i++)tests.ExactActorSourceAndSelectionScopeRejectsCorruption(i);for(int i=0;i<4;i++)tests.FrozenMetadataRejectsMutationAndMissingFighterLod(i);
             for(int i=0;i<9;i++)tests.ActualRotorDrawJoinRejectsCorruption(i);
             for(int i=0;i<16;i++)tests.OrdinaryIndependentMidLowUsesMeasuredPivotAndActualFixedMotion(i);
             for(int i=0;i<6;i++)tests.IndependentLodOwnershipAndPivotCorruptionRefuses(i);
-            Debug.Log("[MeasuredRotorAircraftFramingTests] result=Passed controls=55 roleNativePoseAndPixelAcceptance=Pending");
+            tests.LandedHelicopterSquadSelectionAppliesOnIdleHudCameraTick();
+            Debug.Log("[MeasuredRotorAircraftFramingTests] result=Passed controls=56 roleNativePoseAndPixelAcceptance=Pending");
         }
     }
 }

@@ -216,12 +216,12 @@
       359.5
     ],
     "air.player": [
-      1013.0,
-      719.5
+      1052.0,
+      651.5
     ],
     "air.enemy": [
-      1064.0,
-      374.5
+      1052.0,
+      459.5
     ],
     "candidate.structure.standard.14": [
       1009.5,
@@ -236,8 +236,8 @@
       350.0
     ],
     "candidate.structure.standard.17": [
-      1091.0,
-      320.0
+      1028.0,
+      315.5
     ],
     "candidate.route.tank.west_refined.bypass.waypoint.00": [
       977.0,
@@ -524,8 +524,8 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        1013.0,
-        719.5
+        1052.0,
+        651.5
       ],
       "size": [
         16.0,
@@ -650,8 +650,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1091.0,
-        320.0
+        1028.0,
+        315.5
       ],
       "size": [
         10.0,
@@ -664,8 +664,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1064.0,
-        374.5
+        1052.0,
+        459.5
       ],
       "size": [
         16.0,

@@ -288,7 +288,7 @@
       "role": "defense.approach.a",
       "at": [
         1098.5,
-        352.0
+        366.0
       ],
       "draftSizeMetres": [
         10.0,
@@ -301,14 +301,14 @@
       "fitsAsIs": true,
       "fitsRotated": true,
       "padCells": 100,
-      "vehiclePassableCellsInPad": 85,
+      "vehiclePassableCellsInPad": 100,
       "padFrame": "forward=base.player->base.enemy (layout local x), across=perpendicular (layout local z)"
     },
     {
       "role": "defense.approach.b",
       "at": [
-        1071.5,
-        359.5
+        1057.0,
+        368.0
       ],
       "draftSizeMetres": [
         10.0,
@@ -320,8 +320,8 @@
       ],
       "fitsAsIs": true,
       "fitsRotated": true,
-      "padCells": 97,
-      "vehiclePassableCellsInPad": 97,
+      "padCells": 100,
+      "vehiclePassableCellsInPad": 100,
       "padFrame": "forward=base.player->base.enemy (layout local x), across=perpendicular (layout local z)"
     }
   ],

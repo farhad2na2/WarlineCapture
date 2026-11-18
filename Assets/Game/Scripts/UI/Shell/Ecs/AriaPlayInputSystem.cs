@@ -116,7 +116,7 @@ namespace Game.UI.Shell.Ecs
             var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) { tracedBreacherStage = 0; tracedBreacherPending = tracedBreacherFielded = false; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault && !v.PublicObjective.Applicable) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             string state = tracedBreacherStage == 0 && p.BreacherStage == 1 ? "buying"
                 : tracedBreacherStage == 1 && p.BreacherStage == 2 ? "done"
@@ -143,7 +143,7 @@ namespace Game.UI.Shell.Ecs
             if (query.CalculateEntityCount() != 1)
             { tracedCoverageCurrent = tracedSupportStage = tracedSupportDone = 0; tracedCoveragePending = tracedCoverageFielded = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault && !v.PublicObjective.Applicable) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
             for (int k = 1; k < CoverageKindNames.Length; k++)
@@ -179,7 +179,7 @@ namespace Game.UI.Shell.Ecs
             if (query.CalculateEntityCount() != 1)
             { tracedResearchCurrent = tracedResearchTried = tracedResearchDone = tracedBuildCurrent = tracedBuildTried = tracedBuildDone = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault && !v.PublicObjective.Applicable) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
             string research = tracedResearchCurrent == 0 && p.ResearchCurrent != 0 ? "started"
@@ -284,6 +284,7 @@ namespace Game.UI.Shell.Ecs
             TraceCoverage();
             TraceColumnRecovery();
             TraceResearchAndBuild();
+            TraceObjective();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

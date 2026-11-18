@@ -152,3 +152,13 @@ acceptance.
 - **Options:** (a) keep Save off for FC/BT/CE (gate 4 records "checkpoint: not offered"); (b) relax the Kind check and prove capture/resume/recovery per objective in Unity.
 - **Recommendation:** (a) for now; revisit after ARIA can play FC/BT/CE. Missions run 18–20 minutes, so Save is a convenience rather than a necessity.
 - **Meanwhile:** nothing enabled; FC/BT/CE rows record "checkpoint: not offered".
+
+## S004 (Desert Base, army A Airfield): Airport does not fit, and the air cap blocks drone/attack-heli coverage (program lead, 2026-11-18)
+- **Evidence:** lane 24 S004 runs (`program-logs/2026-11-18/lane24/`): 3 wins at 16–17% of 1080 s, gate 3 unused = airport, aa, apc_fast, attack_heli, breacher, drone, fighter, marksman, radar, strike, transport_heli, transport_plane. Coverage worker analysis (missions/aria-coverage-9 8bb2ba21e): 6 types were policy gaps (now fixed in code, unverified). The remaining 6 have two causes:
+  1. **Air cap.** InitialSetupMatrix S004 Standard `tactical_air_cap_each`=2. The starting transport heli plus the bought light attack heli fill it, so drone and attack_heli can never be fielded together with them.
+  2. **Airport source fit.** The lane3 S004 layout dump has 0 Airport candidates (no clear 210×55 m site on the S004 playable area). Fighter, strike and transport_plane need the Airport (and Full Arsenal research, 440–520 materials each against 900 starting).
+- **Options:**
+  - Air cap: (a) raise S004's `tactical_air_cap_each` to 3–4. This is production-capacity tuning, which the 2026-11-06 owner direction allows, but it also changes player air limits, and the same question applies to every army-A row. (b) Keep 2 and accept sequential coverage (a drone only after an air loss). This is unreliable for gate 3.
+  - Airport: same choices as the City/Mountain Airport entry above. (a) No Airport / no fixed-wing for army A on this source; gate 3 then lists only what is available. (b) Move S004 to another existing Campaign source with an Airport site. No new map.
+- **Recommendation:** Airport (a), consistent with the CC/MP entry. Air cap: raise only after the coverage-9 run shows how much S004 pacing changes; decide it together for all army-A rows, not per mission.
+- **Meanwhile:** coverage-9 merges and runs (lane 26). S004 stays not accepted; the pacing re-measurement uses full coverage.

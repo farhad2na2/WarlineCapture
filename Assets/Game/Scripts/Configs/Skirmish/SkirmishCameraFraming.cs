@@ -21,6 +21,9 @@ namespace Game.Configs
             BuildFieldOfView > 1f && BuildFieldOfView < 179f;
     }
 
+    /// <summary>How a base focus framed the home base (alert/base tap).</summary>
+    public enum SkirmishBaseFocusKind : byte { None = 0, Home = 1, HomeAndThreat = 2, ThreatTowardHome = 3 }
+
     /// <summary>
     /// Skirmish-wide presentation framing (owner request 2026-11-17: "camera too close,
     /// especially when a helicopter is flying"). Pure math: no orders, no selection, no
@@ -42,6 +45,19 @@ namespace Game.Configs
         // Opening composition safe area (viewport fractions): leaves the squad cards
         // at the bottom and the resource/objective strip at the top uncovered.
         public const float SafeMinU = .06f, SafeMaxU = .94f, SafeMinV = .12f, SafeMaxV = .90f, SafeTolerance = .005f;
+        public static Rect LegacySafeViewport => Rect.MinMaxRect(SafeMinU, SafeMinV, SafeMaxU, SafeMaxV);
+        // HUD-free play area of the Skirmish match HUD (viewport fractions, y up), inside every
+        // measured calm layout: S002 designer retest 1920x1080 "[SkirmishHudChipPlacement]
+        // playArea=457,241,1444,855" (squad panel open: u .238-.752, v .223-.792) and the S026
+        // 2400x1080 chip layout (u .189-.803, v .222-.724). The base focus prefers the live area.
+        // The legacy band above left the S002 home base under the squad cards.
+        public const float HudPlayMinU = .24f, HudPlayMaxU = .75f, HudPlayMinV = .23f, HudPlayMaxV = .72f;
+        public static Rect DefaultHudPlayViewport => Rect.MinMaxRect(HudPlayMinU, HudPlayMinV, HudPlayMaxU, HudPlayMaxV);
+        // Framed points keep this margin from the play-area edge, so nothing sits on a panel border.
+        public const float FitMarginFraction = .02f;
+        public static Rect OpeningFitViewport => Inset(DefaultHudPlayViewport, FitMarginFraction);
+        // Unseen attacker: frame the struck side of the base this far out, never the source itself.
+        public const float DamagedSideMetres = 18f;
         // Aircraft. The aircraft and its rotor fill at most this share of the view,
         // the ground below (or at most MaximumGroundDrop below it) and a lead point
         // along its heading stay in frame, and every view ray descends.
@@ -127,11 +143,18 @@ namespace Game.Configs
         /// tactical and wide heights that fits; otherwise the wide height, centred.
         /// </summary>
         public static bool TryComposeOpening(in SkirmishGroundFraming framing, Vector3 group, Vector2[] landmarksXZ,
-            float aspect, out Vector3 camera, out bool allFramed)
+            float aspect, out Vector3 camera, out bool allFramed) =>
+            TryComposeOpening(framing, group, landmarksXZ, aspect, LegacySafeViewport, out camera, out allFramed);
+
+        /// <summary>
+        /// Opening composition inside an explicit viewport rectangle (fractions, y up), for
+        /// example <see cref="OpeningFitViewport"/> (the HUD-free play area less its margin).
+        /// </summary>
+        public static bool TryComposeOpening(in SkirmishGroundFraming framing, Vector3 group, Vector2[] landmarksXZ,
+            float aspect, Rect viewport, out Vector3 camera, out bool allFramed)
         {
             camera = default; allFramed = false;
-            if (!framing.IsValid || !float.IsFinite(aspect) || aspect <= 0f ||
-                !float.IsFinite(group.x) || !float.IsFinite(group.y) || !float.IsFinite(group.z)) return false;
+            if (!framing.IsValid || !float.IsFinite(aspect) || aspect <= 0f || !Finite(group)) return false;
             int count = 1 + (landmarksXZ?.Length ?? 0);
             var points = new Vector3[count];
             points[0] = group;
@@ -142,20 +165,41 @@ namespace Game.Configs
                 points[i] = new Vector3(xz.x, group.y, xz.y);
             }
             float low = Mathf.Max(framing.TacticalHeight, group.y + 4f), high = Mathf.Max(framing.WideHeight, low);
-            if (TryCenter(framing, points, aspect, low, out camera, out bool fits) && fits) { allFramed = true; return true; }
-            if (!TryCenter(framing, points, aspect, high, out var wide, out bool wideFits)) return false;
+            return TryFitLowest(framing, points, aspect, viewport, low, high, out camera, out allFramed);
+        }
+
+        /// <summary>
+        /// Lowest camera height in [<paramref name="low"/>, <paramref name="high"/>] whose view puts every
+        /// point inside <paramref name="viewport"/>, with the points' bounding box centred there. When no
+        /// height fits, the camera sits at <paramref name="high"/>, centred (<paramref name="allFramed"/> false).
+        /// </summary>
+        public static bool TryFitLowest(in SkirmishGroundFraming framing, Vector3[] points, float aspect, Rect viewport,
+            float low, float high, out Vector3 camera, out bool allFramed)
+        {
+            camera = default; allFramed = false;
+            if (!framing.IsValid || points == null || points.Length == 0 || !ValidViewport(viewport) ||
+                !float.IsFinite(aspect) || aspect <= 0f || !float.IsFinite(low) || !float.IsFinite(high)) return false;
+            foreach (var point in points) if (!Finite(point)) return false;
+            high = Mathf.Max(high, low);
+            if (TryCenter(framing, points, aspect, low, viewport, out camera, out bool fits) && fits) { allFramed = true; return true; }
+            if (!TryCenter(framing, points, aspect, high, viewport, out var wide, out bool wideFits)) return false;
             if (!wideFits) { camera = wide; return true; }
             for (int i = 0; i < 14; i++)
             {
                 float mid = (low + high) * .5f;
-                if (TryCenter(framing, points, aspect, mid, out var candidate, out bool ok) && ok) { high = mid; wide = candidate; }
+                if (TryCenter(framing, points, aspect, mid, viewport, out var candidate, out bool ok) && ok) { high = mid; wide = candidate; }
                 else low = mid;
             }
             camera = wide; allFramed = true;
             return true;
         }
 
-        static bool TryCenter(in SkirmishGroundFraming framing, Vector3[] points, float aspect, float height, out Vector3 camera, out bool fits)
+        static bool ValidViewport(Rect viewport) =>
+            float.IsFinite(viewport.xMin) && float.IsFinite(viewport.yMin) && float.IsFinite(viewport.xMax) && float.IsFinite(viewport.yMax) &&
+            viewport.width > .05f && viewport.height > .05f && viewport.xMin >= -.001f && viewport.yMin >= -.001f &&
+            viewport.xMax <= 1.001f && viewport.yMax <= 1.001f;
+
+        static bool TryCenter(in SkirmishGroundFraming framing, Vector3[] points, float aspect, float height, Rect viewport, out Vector3 camera, out bool fits)
         {
             fits = false;
             Axes(framing.Pitch, framing.Yaw, out var right, out var up, out var forward);
@@ -165,7 +209,7 @@ namespace Game.Configs
             foreach (var point in points) centroid += point;
             centroid /= points.Length;
             camera = CameraForGroundCenter(centroid, height, framing.Pitch, framing.Yaw);
-            var safeCenter = new Vector2((SafeMinU + SafeMaxU) * .5f, (SafeMinV + SafeMaxV) * .5f);
+            var safeCenter = viewport.center;
             for (int iteration = 0; iteration < 10; iteration++)
             {
                 if (!ViewportBounds(framing, points, aspect, camera, out var min, out var max)) return false;
@@ -177,10 +221,88 @@ namespace Game.Configs
                 if (shift.sqrMagnitude < .0004f) break;
             }
             if (!ViewportBounds(framing, points, aspect, camera, out var finalMin, out var finalMax)) return false;
-            fits = finalMin.x >= SafeMinU - SafeTolerance && finalMax.x <= SafeMaxU + SafeTolerance &&
-                finalMin.y >= SafeMinV - SafeTolerance && finalMax.y <= SafeMaxV + SafeTolerance;
-            return float.IsFinite(camera.x) && float.IsFinite(camera.y) && float.IsFinite(camera.z);
+            fits = finalMin.x >= viewport.xMin - SafeTolerance && finalMax.x <= viewport.xMax + SafeTolerance &&
+                finalMin.y >= viewport.yMin - SafeTolerance && finalMax.y <= viewport.yMax + SafeTolerance;
+            return Finite(camera);
         }
+
+        // -------------------------------------------------------------- base threat
+        /// <summary>
+        /// Base focus (alert tap, "YOUR BASE" tap). With a threat point (the attacker while the
+        /// player can see it, otherwise the damaged side of the base) the home and the threat are
+        /// framed together inside <paramref name="playViewport"/> at the lowest height that fits.
+        /// When the pair is farther apart than the widest allowed view (the S002 tank fires from
+        /// about 85 m; at pitch 50 and the 40 m height cap no yaw fits that in the HUD-free area),
+        /// the attacker - the action the player must tap to order Attack - stays inside the play
+        /// area at one end and the rest of the area runs from it back toward the home
+        /// (<see cref="SkirmishBaseFocusKind.ThreatTowardHome"/>; <paramref name="corridorFraction"/>
+        /// is the framed share of the way). Without a threat the home is centred in the play
+        /// area at the wide height. Pure camera math: no selection, no orders.
+        /// </summary>
+        public static bool TryFrameHomeThreat(in SkirmishGroundFraming framing, Vector3 home, bool hasThreat, Vector3 threat,
+            float aspect, Rect playViewport, float maximumHeight, out Vector3 camera, out SkirmishBaseFocusKind kind, out float corridorFraction)
+        {
+            camera = default; kind = SkirmishBaseFocusKind.None; corridorFraction = 0f;
+            if (!framing.IsValid || !Finite(home) || !float.IsFinite(maximumHeight) || !ValidViewport(playViewport)) return false;
+            var fit = Inset(playViewport, FitMarginFraction);
+            float low = Mathf.Max(framing.TacticalHeight, home.y + 4f);
+            float high = Mathf.Max(low, Mathf.Min(framing.WideHeight, maximumHeight));
+            hasThreat = hasThreat && Finite(threat);
+            if (hasThreat)
+            {
+                threat.y = home.y; // Frame on the home's ground plane.
+                if (new Vector2(threat.x - home.x, threat.z - home.z).sqrMagnitude < 1f) hasThreat = false;
+            }
+            if (!hasThreat)
+            {
+                if (!TryFitLowest(framing, new[] { home }, aspect, fit, high, high, out camera, out _)) return false;
+                kind = SkirmishBaseFocusKind.Home;
+                return true;
+            }
+            if (TryFitLowest(framing, new[] { home, threat }, aspect, fit, low, high, out camera, out bool both) && both)
+            {
+                kind = SkirmishBaseFocusKind.HomeAndThreat; corridorFraction = 1f;
+                return true;
+            }
+            // The longest stretch from the threat back toward home that still fits at the widest view.
+            float lo = 0f, hi = 1f; Vector3 best = default; bool found = false;
+            for (int i = 0; i < 16; i++)
+            {
+                float t = (lo + hi) * .5f;
+                if (TryCenter(framing, new[] { threat, Vector3.Lerp(threat, home, t) }, aspect, high, fit, out var candidate, out bool ok) && ok)
+                { lo = t; best = candidate; found = true; }
+                else hi = t;
+            }
+            if (!found && !TryFitLowest(framing, new[] { threat }, aspect, fit, high, high, out best, out _)) return false;
+            camera = best; kind = SkirmishBaseFocusKind.ThreatTowardHome; corridorFraction = found ? lo : 0f;
+            return true;
+        }
+
+        /// <summary>A point <paramref name="metres"/> from home toward <paramref name="source"/> (direction only).</summary>
+        public static bool TryDamagedSide(Vector3 home, Vector3 source, float metres, out Vector3 side)
+        {
+            side = default;
+            if (!Finite(home) || !Finite(source) || !(metres > 0f) || !float.IsFinite(metres)) return false;
+            var direction = new Vector2(source.x - home.x, source.z - home.z);
+            if (!(direction.sqrMagnitude > .01f)) return false;
+            direction.Normalize();
+            side = new Vector3(home.x + direction.x * metres, home.y, home.z + direction.y * metres);
+            return true;
+        }
+
+        /// <summary>Screen-pixel play area to viewport fractions of <paramref name="cameraPixels"/>.</summary>
+        public static bool TryPixelsToViewport(Rect pixels, Rect cameraPixels, out Rect viewport)
+        {
+            viewport = default;
+            if (!(cameraPixels.width > 0f) || !(cameraPixels.height > 0f)) return false;
+            viewport = Rect.MinMaxRect(
+                Mathf.Clamp01((pixels.xMin - cameraPixels.xMin) / cameraPixels.width), Mathf.Clamp01((pixels.yMin - cameraPixels.yMin) / cameraPixels.height),
+                Mathf.Clamp01((pixels.xMax - cameraPixels.xMin) / cameraPixels.width), Mathf.Clamp01((pixels.yMax - cameraPixels.yMin) / cameraPixels.height));
+            return ValidViewport(viewport);
+        }
+
+        public static Rect Inset(Rect viewport, float fraction) =>
+            Rect.MinMaxRect(viewport.xMin + fraction, viewport.yMin + fraction, viewport.xMax - fraction, viewport.yMax - fraction);
 
         static bool ViewportBounds(in SkirmishGroundFraming framing, Vector3[] points, float aspect, Vector3 camera, out Vector2 min, out Vector2 max)
         {

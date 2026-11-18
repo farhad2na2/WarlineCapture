@@ -154,8 +154,11 @@ namespace Game.Runtime
             var camera = Camera.main;
             float aspect = camera != null && camera.aspect > 0f && float.IsFinite(camera.aspect) ? camera.aspect : FallbackLandscapeAspect;
             float height = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(framing.TacticalHeight);
-            if (opening != null && opening.TryResolveFramePoints(layout, out var landmarks) &&
-                Game.Configs.SkirmishCameraFraming.TryComposeOpening(framing, group, landmarks, aspect, out var eye, out bool allFramed))
+            bool hasBase = false; Vector2 baseXZ = default;
+            if (opening != null && opening.FrameActualPlayerBase && TryReadActualPlayerBase(em, out var basePosition))
+            { hasBase = true; baseXZ = new Vector2(basePosition.x, basePosition.z); }
+            if (opening != null && opening.TryResolveFramePoints(layout, hasBase, baseXZ, out var landmarks) &&
+                Game.Configs.SkirmishCameraFraming.TryComposeOpening(framing, group, landmarks, aspect, opening.OpeningViewport, out var eye, out bool allFramed))
             {
                 float capped = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(eye.y);
                 if (capped < eye.y)
@@ -169,15 +172,40 @@ namespace Game.Runtime
                 composed = true;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("[SkirmishCameraFraming] opening=Composed catalog=" + opening.CatalogId + " allFramed=" + (allFramed ? 1 : 0) +
-                    " group=" + group + " landmarks=" + landmarks.Length + " height=" + eye.y.ToString("F2") +
+                    " group=" + group + " landmarks=" + landmarks.Length + (hasBase ? " playerBase=" + baseXZ : "") + " height=" + eye.y.ToString("F2") +
                     " aboveGround=" + (eye.y - framing.GroundY).ToString("F2") + " pitch=" + framing.Pitch + " yaw=" + framing.Yaw.ToString("F1") +
-                    " fov=" + framing.FieldOfView + " aspect=" + aspect.ToString("F3") + " groundRequest=" + groundRequest + " orders=0");
+                    " fov=" + framing.FieldOfView + " aspect=" + aspect.ToString("F3") + " groundRequest=" + groundRequest +
+                    " viewport=" + (opening.FrameInsideHudPlayArea ? "HudPlayArea" : "Legacy") + " orders=0");
 #endif
                 return true;
             }
             if (!SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(group, height, framing.Pitch, framing.Yaw, out groundRequest)) return false;
             perspective = new Unity.Mathematics.float4(height, framing.Pitch, framing.Yaw, framing.FieldOfView);
             return true;
+        }
+
+        /// <summary>
+        /// The live player base of this attempt (its PlayerBase objective-role structure): the
+        /// player's own structure, public by definition. Read only; no selection, no orders.
+        /// </summary>
+        public static bool TryReadActualPlayerBase(EntityManager em, out Vector3 position)
+        {
+            position = default;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            if (sessions.CalculateEntityCount() != 1) return false;
+            var attempt = em.GetComponentData<SkirmishExpandedSessionComponent>(sessions.GetSingletonEntity()).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishObjectiveRoleComponent), typeof(SkirmishAttemptOwnedComponent), typeof(LocalTransform));
+            using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            int found = 0;
+            foreach (var entity in entities)
+            {
+                if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId.Equals(attempt) ||
+                    em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role != SkirmishObjectiveRoleKind.PlayerBase) continue;
+                Vector3 candidate = em.GetComponentData<LocalTransform>(entity).Position;
+                if (!Finite(candidate)) return false;
+                position = candidate; found++;
+            }
+            return found == 1;
         }
 
         // Called only by the existing public follow-mode pose owner. Uses the

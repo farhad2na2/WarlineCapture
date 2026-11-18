@@ -118,22 +118,29 @@ namespace Game.Tests.Editor
             finally { Object.DestroyImmediate(profile); }
         }
 
-        [Test] public void S002OpeningFacesTheHighwayApproachFromTheHomeBase()
+        // Re-pinned 2026-11-18 (designer retest): yaw 107.8 toward highway.near and the base.player
+        // anchor (949, 345) became yaw 65, the live Barracks (cell 1001, 303) and an approach point
+        // toward supply.expansion.a, composed in the HUD-free play area. Full checks:
+        // SkirmishS002CameraRetestTests.
+        [Test] public void S002OpeningFramesTheLiveBaseSquadAndApproach()
         {
             var config = SkirmishOpeningCameraConfig.Load("S002");
             Assert.IsNotNull(config);
             var layout = Layout("Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishLayout_S002.asset");
             Assert.IsTrue(config.Matches("S002", layout));
-            Assert.IsTrue(config.TryResolveYaw(layout, out float yaw)); Assert.AreEqual(107.8f, yaw, .5f);
-            Assert.IsTrue(config.TryResolveFramePoints(layout, out var points)); Assert.AreEqual(1, points.Length);
-            Assert.Less(Vector2.Distance(points[0], new Vector2(949f, 344.7f)), .5f, "Home base anchor");
+            Assert.IsTrue(config.TryResolveYaw(layout, out float yaw)); Assert.AreEqual(65f, yaw, .01f);
+            Assert.IsFalse(config.TryResolveFramePoints(layout, out _), "Without the live base the opening falls back instead of framing an anchor");
+            var home = new Vector2(1001.5f, 303.5f);
+            Assert.IsTrue(config.TryResolveFramePoints(layout, true, home, out var points)); Assert.AreEqual(2, points.Length);
+            Assert.Less(Vector2.Distance(points[0], home), .001f, "Live base");
+            Assert.AreEqual(15f, Vector2.Distance(points[1], home), .01f, "Approach point");
             var profile = Profile(12, 20, 20, 65, 307);
             try
             {
                 var framing = SkirmishCameraFraming.Resolve(profile, yaw);
                 foreach (float aspect in LandscapeAspects)
                 {
-                    Assert.IsTrue(SkirmishCameraFraming.TryComposeOpening(framing, new Vector3(980f, Ground + 1f, 318f), points, aspect, out var eye, out bool all));
+                    Assert.IsTrue(SkirmishCameraFraming.TryComposeOpening(framing, new Vector3(983f, 0f, 318.5f), points, aspect, config.OpeningViewport, out var eye, out bool all));
                     Assert.IsTrue(all); Assert.That(eye.y, Is.InRange(framing.TacticalHeight - .01f, framing.WideHeight + .01f));
                 }
             }
@@ -228,7 +235,7 @@ namespace Game.Tests.Editor
             tests.GroundFramingNeverMovesCloserThanAnAlreadyWideProfile();
             tests.TacticalViewKeepsInfantryTapTargetsAtLandscapePhoneSize();
             tests.S026OpeningFramesGroupBarracksAndJunctionLookingDownTheAvenue();
-            tests.S002OpeningFacesTheHighwayApproachFromTheHomeBase();
+            tests.S002OpeningFramesTheLiveBaseSquadAndApproach();
             tests.HelicopterViewShowsWholeAircraftGroundAndHeadingFromAbove();
             tests.AircraftViewRefusesInsteadOfClampingAnOversizedFit();
             tests.CaptureLocaleDefaultsToEnglishAndAcceptsOnlyQueueLocales();

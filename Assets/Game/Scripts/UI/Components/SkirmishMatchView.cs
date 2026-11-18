@@ -112,7 +112,7 @@ namespace Game.UI.Runtime
             RefreshMapInformation(model);
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
-            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
+            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,EnemyReadout(model));RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
             RefreshPublicObjectiveHud(model);
             RefreshMissionGuidance(model);
@@ -121,7 +121,7 @@ namespace Game.UI.Runtime
             modal.SetActive(terminal||confirming);
             if(!modal.activeSelf)return;
             resultCard.gameObject.SetActive(terminal);
-            if(terminal) resultCard.Present(BuildPresentedSkirmishResult(model));
+            if(terminal) resultCard.Present(BuildPresentedSkirmishResult(model, BaseLostToRole));
             confirmText.gameObject.SetActive(confirming&&!terminal);
             confirmationActions.SetActive(confirming&&!terminal);
         }
@@ -193,7 +193,16 @@ namespace Game.UI.Runtime
                 setup.ReturnLibraryToScenario(scenarioId);
             Send(UiSkirmishAction.AdjustSetup);
         }
-        private static ModeResultContent BuildResult(UiSkirmishModel model)
+        // The enemy-base readout frames its reported or last-seen position when tapped. While the base
+        // is out of sight a forward chevron marks it as a control (mirrored for right-to-left).
+        private static string EnemyReadout(in UiSkirmishModel model)
+        {
+            string source = model.EnemyBase ?? string.Empty;
+            if (!model.EnemyBaseKnowledgeKnown || model.EnemyBaseKnowledge == SkirmishEnemyBaseMarkerState.ReadoutVisible) return source;
+            int line = source.IndexOf('\n');
+            return line < 0 || line == source.Length - 1 ? source : source + " \u203A";
+        }
+        private static ModeResultContent BuildResult(UiSkirmishModel model, Game.Skirmish.Contracts.SkirmishRoleKind baseLostTo = Game.Skirmish.Contracts.SkirmishRoleKind.None)
         {
             string mapKey = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "ui.skirmish.industrial_basin_map"
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "ui.skirmish.city_crossroads_map"
@@ -202,6 +211,8 @@ namespace Game.UI.Runtime
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
             string map = string.IsNullOrEmpty(model.MissionTitle)
                 ? UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback) : model.MissionTitle;
+            // The Battle Library card name ("COMMAND SIEGE") so the player recognises the retry.
+            string libraryName = SkirmishLibraryMissionNames.ForCatalogId(model.CatalogId);
             string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get("ui.skirmish.result." + key, fallback);
             string complete = Text("complete", "Complete");
             string failed = Text("failed", "Failed");
@@ -223,10 +234,14 @@ namespace Game.UI.Runtime
             {
                 Victory = victory,
                 Title = string.IsNullOrEmpty(model.ResultTitle) ? (victory ? "VICTORY" : "DEFEAT") : model.ResultTitle,
-                Identity = Text("mode", "SKIRMISH") + "\n" + map,
+                Identity = string.IsNullOrEmpty(libraryName)
+                    ? Text("mode", "SKIRMISH") + "\n" + map
+                    : Text("mode", "SKIRMISH") + " · " + model.CatalogId + "\n" + libraryName,
                 ObjectiveTitle = model.EnemyBaseDestroyed
                     ? Text("enemy_destroyed", "Enemy main base destroyed.")
-                    : model.PlayerBaseHeld ? Text("base_standing", "Your main base is still standing.") : Text("base_lost", "Your main base was lost."),
+                    : model.PlayerBaseHeld ? Text("base_standing", "Your main base is still standing.")
+                    : baseLostTo != Game.Skirmish.Contracts.SkirmishRoleKind.None ? BaseLossRecap(baseLostTo)
+                    : Text("base_lost", "Your main base was lost."),
                 Status = model.StartupFailed ? Text("startup_failed", "MATCH DID NOT START") : victory ? Text("match_complete", "MATCH COMPLETE") : model.ResultTitle,
                 Elapsed = model.ResultElapsed,
                 Stars = model.ResultStars,
@@ -268,9 +283,17 @@ namespace Game.UI.Runtime
                 ShowBattlefieldBack = !string.IsNullOrEmpty(model.CatalogId),
                 BattlefieldBackLabel = Text("battlefield", "BATTLEFIELD"),
                 Signature = model.ResultTitle + "|" + model.ResultStars + "|" + model.PlayerUnitsLost + "|" + model.ScenarioIndex + "|" +
-                            (medal.Visible ? model.MedalScenarioId : string.Empty) + "|" + model.CatalogId + "|" +
+                            (medal.Visible ? model.MedalScenarioId : string.Empty) + "|" + model.CatalogId + "|" + (int)baseLostTo + "|" +
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode
             };
+        }
+        // One recap line naming what destroyed the base, only when the player saw that attacker.
+        private static string BaseLossRecap(Game.Skirmish.Contracts.SkirmishRoleKind role)
+        {
+            var text = UiShellRuntimeGateway.Localization;
+            string label = SkirmishSetupBriefing.RoleLabel(role, text.IsRightToLeft);
+            if (string.IsNullOrEmpty(label)) return text.Get("ui.skirmish.result.base_lost", "Your main base was lost.");
+            return text.Format(SkirmishBaseLossRecap.RecapKey(role), SkirmishBaseLossRecap.RecapFallback(role), label);
         }
         private static string CriterionText(SkirmishCriterionState state, string earned, string metNeedsVictory, string failed) =>
             state == SkirmishCriterionState.Earned ? earned
@@ -315,6 +338,9 @@ namespace Game.UI.Runtime
                 if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out var bottom))
                     top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
             }
+            // While a base alert is up the strip (and the alert row under it) keeps its place when the
+            // top banner expires; it returns once the alert clears.
+            top = SkirmishBaseAlertRowLayout.HoldDown(top, ref baseFireStripHeld, BaseUnderFirePresented);
             var rect = (RectTransform)hud.transform;
             rect.offsetMin = new Vector2(rect.offsetMin.x, -top - (previousPublicApplicable ? 147 : 115));
             rect.offsetMax = new Vector2(rect.offsetMax.x, -top);

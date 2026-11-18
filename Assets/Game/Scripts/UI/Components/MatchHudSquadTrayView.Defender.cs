@@ -9,6 +9,9 @@ namespace Game.UI.Runtime
         // never issues an order and never moves the camera.
         private uint _defenderGroupId;
         private RectTransform _defenderHighlight;
+        private float _defenderFlashUntil = -1f;
+        /// <summary>How long the outline flashes after the player asks to see the card.</summary>
+        public const float DefenderFlashSeconds = 1.2f;
         private static readonly Color DefenderHighlightColor = new(1f, .65f, .1f, 1f);
 
         /// <summary>Outline the given own squad's card (0 clears). Does not scroll.</summary>
@@ -19,8 +22,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Player-requested: page the tray so the squad's card is visible. Uses the same
-        /// page change as the tray's own scroll edges. Returns false when the card is unknown.
+        /// Player-requested: page the tray so the squad's card is visible and flash its outline.
+        /// Uses the same page change as the tray's own scroll edges, which keeps the selection and
+        /// every order. Returns false when the card is unknown.
         /// </summary>
         public bool TryRevealGroup(uint groupId)
         {
@@ -29,7 +33,14 @@ namespace Game.UI.Runtime
             {
                 if (_rosterModels[i].GroupId != groupId) continue;
                 int page = i / 5;
-                if (page != _logicalPage) ScrollPage(page - _logicalPage);
+                // The roster pages one step at a time (the session refuses larger jumps).
+                for (int guard = 0; page != _logicalPage && guard < 32; guard++)
+                {
+                    int before = _logicalPage;
+                    ScrollPage(page > _logicalPage ? 1 : -1);
+                    if (_logicalPage == before) break;
+                }
+                _defenderFlashUntil = Time.unscaledTime + DefenderFlashSeconds;
                 RefreshDefenderHighlight();
                 return true;
             }
@@ -74,9 +85,12 @@ namespace Game.UI.Runtime
                 _defenderHighlight.offsetMax = new Vector2(3f, 3f);
                 _defenderHighlight.SetAsLastSibling();
             }
-            // A slow pulse reads as "this one" without competing with the selection check.
+            // A slow pulse reads as "this one" without competing with the selection check; a quick,
+            // full-strength flash answers the player's SHOW tap.
             var graphic = _defenderHighlight.GetComponent<V3GradientGraphic>();
-            float alpha = .55f + .45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 3f));
+            bool flash = Time.unscaledTime < _defenderFlashUntil;
+            float alpha = flash ? .6f + .4f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 12f))
+                : .55f + .45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 3f));
             graphic.color = new Color(1f, 1f, 1f, alpha);
             _defenderHighlight.gameObject.SetActive(true);
         }

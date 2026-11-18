@@ -7164,6 +7164,18 @@ MonoBehaviour:
       value: Ground maneuver
     - key: ui.skirmish.authored_count
       value: SHOWING 120 OF 120 BATTLES
+    - key: ui.skirmish.base_alert.attacker_in_sight
+      value: "ATTACKER IN SIGHT"
+    - key: ui.skirmish.base_alert.enemy_at_base
+      value: "ENEMY AT BASE"
+    - key: ui.skirmish.base_alert.show_home_guard
+      value: "SHOW HOME GUARD"
+    - key: ui.skirmish.base_alert.show_nearest
+      value: "SHOW NEAREST SQUAD"
+    - key: ui.skirmish.base_alert.source_unknown
+      value: "SOURCE UNKNOWN"
+    - key: ui.skirmish.base_alert.under_fire
+      value: "BASE UNDER FIRE"
     - key: ui.skirmish.base_assault
       value: BASE ASSAULT
     - key: ui.skirmish.base_assault_map
@@ -7194,6 +7206,10 @@ MonoBehaviour:
       value: CITY CROSSROADS
     - key: ui.skirmish.confirm
       value: CONFIRM
+    - key: ui.skirmish.defense_held.choice
+      value: "Keep a guard at your base. Scout the reported enemy base."
+    - key: ui.skirmish.defense_held.title
+      value: "BASE HELD"
     - key: ui.skirmish.enemy_base
       value: ENEMY BASE
     - key: ui.skirmish.fog_description
@@ -7403,6 +7419,10 @@ MonoBehaviour:
       value: RESTART MATCH
     - key: ui.skirmish.result.base_lost
       value: Your main base was lost.
+    - key: ui.skirmish.result.base_lost_to_squad
+      value: "Your main base was destroyed by an enemy {0} squad."
+    - key: ui.skirmish.result.base_lost_to_unit
+      value: "Your main base was destroyed by an enemy {0}."
     - key: ui.skirmish.result.base_standing
       value: Your main base is still standing.
     - key: ui.skirmish.result.battlefield
@@ -23891,6 +23911,18 @@ MonoBehaviour:
     - key: ui.skirmish.authored_count
       value: "\u0646\u0645\u0627\u06CC\u0634 \u06F1\u06F2\u06F0 \u0627\u0632 \u06F1\u06F2\u06F0
         \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.base_alert.attacker_in_sight
+      value: "\u0645\u0647\u0627\u062C\u0645 \u062F\u0631 \u062F\u06CC\u062F"
+    - key: ui.skirmish.base_alert.enemy_at_base
+      value: "\u062F\u0634\u0645\u0646 \u062F\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.base_alert.show_home_guard
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0646\u06AF\u0647\u0628\u0627\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.base_alert.show_nearest
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631\u06CC\u0646 \u062C\u0648\u062E\u0647"
+    - key: ui.skirmish.base_alert.source_unknown
+      value: "\u0645\u0646\u0628\u0639 \u0646\u0627\u0645\u0639\u0644\u0648\u0645"
+    - key: ui.skirmish.base_alert.under_fire
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u06CC\u0631 \u0622\u062A\u0634"
     - key: ui.skirmish.base_assault
       value: "\u062D\u0645\u0644\u0647 \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647"
     - key: ui.skirmish.base_assault_map
@@ -23926,6 +23958,10 @@ MonoBehaviour:
       value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
     - key: ui.skirmish.confirm
       value: "\u062A\u0623\u06CC\u06CC\u062F"
+    - key: ui.skirmish.defense_held.choice
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u06CC \u062F\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647\u062A \u0628\u06AF\u0630\u0627\u0631. \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647\u0654 \u062F\u0634\u0645\u0646 \u0631\u0627 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u06A9\u0646."
+    - key: ui.skirmish.defense_held.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062D\u0641\u0638 \u0634\u062F"
     - key: ui.skirmish.enemy_base
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646"
     - key: ui.skirmish.fog_description
@@ -24286,6 +24322,10 @@ MonoBehaviour:
     - key: ui.skirmish.result.base_lost
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
         \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: ui.skirmish.result.base_lost_to_squad
+      value: "\u06CC\u06A9 \u062C\u0648\u062E\u0647\u0654 {0} \u062F\u0634\u0645\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062A\u0648 \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F."
+    - key: ui.skirmish.result.base_lost_to_unit
+      value: "\u06CC\u06A9 {0} \u062F\u0634\u0645\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062A\u0648 \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F."
     - key: ui.skirmish.result.base_standing
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
         \u0647\u0645\u0686\u0646\u0627\u0646 \u0633\u0627\u0644\u0645 \u0627\u0633\u062A."

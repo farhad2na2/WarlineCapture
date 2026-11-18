@@ -109,31 +109,35 @@ namespace Game.UI.Runtime
             baseMarkerShown = signature;
             UiLocalizedText.Set(baseMarkerTitle, text.Get("ui.skirmish.marker.enemy_base", text.IsRightToLeft ? "پایگاه دشمن" : "ENEMY BASE"));
             UiLocalizedText.Set(baseMarkerDetail, detail);
-            baseMarkerTitle.color = tone;
-            baseMarkerChip.Configure(new Color(.10f, .14f, .15f, .92f), new Color(.025f, .07f, .08f, .92f), tone,
-                knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? 3 : 2);
+            baseMarkerChip.Configure(new Color32(25, 34, 38, 247), new Color32(3, 8, 10, 252), tone, 3f);
             baseMarkerStem.color = new Color(tone.r, tone.g, tone.b, knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? 1f : .6f);
         }
         private void BuildEnemyBaseMarker()
         {
             baseMarker = Panel("EnemyBaseObjectiveMarker", transform, false);
-            baseMarker.sizeDelta = new Vector2(250, 112);
+            const float stemHeight = 22f;
+            baseMarker.sizeDelta = new Vector2(350f, 184f);
             baseMarker.pivot = new Vector2(.5f, 0);
             var stem = Panel("Stem", baseMarker, false);
             stem.anchorMin = stem.anchorMax = new Vector2(.5f, 0); stem.pivot = new Vector2(.5f, 0);
-            stem.sizeDelta = new Vector2(4, 26); stem.anchoredPosition = Vector2.zero;
+            stem.sizeDelta = new Vector2(4f, stemHeight); stem.anchoredPosition = Vector2.zero;
             baseMarkerStem = stem.gameObject.AddComponent<Image>(); baseMarkerStem.raycastTarget = false;
             var chip = Panel("Chip", baseMarker, false);
             chip.anchorMin = new Vector2(0, 0); chip.anchorMax = new Vector2(1, 1);
-            chip.offsetMin = new Vector2(0, 26); chip.offsetMax = Vector2.zero;
+            chip.offsetMin = new Vector2(0f, stemHeight); chip.offsetMax = Vector2.zero;
             baseMarkerChip = chip.gameObject.AddComponent<V3GradientGraphic>(); baseMarkerChip.raycastTarget = false;
-            baseMarkerTitle = Label(chip, "", 22);
-            baseMarkerTitle.rectTransform.anchorMin = new Vector2(0, .55f); baseMarkerTitle.rectTransform.anchorMax = Vector2.one;
-            baseMarkerTitle.rectTransform.offsetMin = new Vector2(8, 0); baseMarkerTitle.rectTransform.offsetMax = new Vector2(-8, -4);
-            baseMarkerDetail = Label(chip, "", 17);
-            baseMarkerDetail.color = new Color(.90f, .93f, .92f);
-            baseMarkerDetail.rectTransform.anchorMin = Vector2.zero; baseMarkerDetail.rectTransform.anchorMax = new Vector2(1, .58f);
-            baseMarkerDetail.rectTransform.offsetMin = new Vector2(8, 4); baseMarkerDetail.rectTransform.offsetMax = new Vector2(-8, 0);
+            baseMarkerTitle = Label(chip, "", 30f);
+            baseMarkerTitle.rectTransform.anchorMin = new Vector2(0f, 1f);
+            baseMarkerTitle.rectTransform.anchorMax = Vector2.one;
+            baseMarkerTitle.rectTransform.offsetMin = new Vector2(14f, -64f);
+            baseMarkerTitle.rectTransform.offsetMax = new Vector2(-14f, -4f);
+
+            baseMarkerDetail = Label(chip, "", 24f);
+            baseMarkerDetail.color = new Color32(222, 233, 237, 255);
+            baseMarkerDetail.rectTransform.anchorMin = Vector2.zero;
+            baseMarkerDetail.rectTransform.anchorMax = Vector2.one;
+            baseMarkerDetail.rectTransform.offsetMin = new Vector2(14f, 5f);
+            baseMarkerDetail.rectTransform.offsetMax = new Vector2(-14f, -64f);
         }
     }
 }

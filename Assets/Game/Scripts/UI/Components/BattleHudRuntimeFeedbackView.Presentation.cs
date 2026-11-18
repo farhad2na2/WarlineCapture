@@ -45,54 +45,8 @@ namespace Game.UI.Runtime
             };
             V3GradientGraphic gradient = feedbackPanel.GetComponentInChildren<V3GradientGraphic>(true);
             gradient?.SetBorder(accent, 3f);
-            if (feedbackText != null)
-                feedbackText.color = accent;
             if (feedbackIcon != null)
                 feedbackIcon.color = accent;
-            ApplyV3FeedbackLayout(severity == CommandFeedbackSeverity.Error);
-        }
-
-        private void ApplyV3FeedbackLayout(bool expandedError)
-        {
-            RectTransform panelRect = feedbackPanel != null ? feedbackPanel.transform as RectTransform : null;
-            if (panelRect == null)
-                return;
-
-            MainMenuV3SectionLayoutView responsiveLayout = panelRect.GetComponentInParent<MainMenuV3SectionLayoutView>();
-            float extraWidth = responsiveLayout != null ? responsiveLayout.LastAppliedExtraWidth : 0f;
-            panelRect.anchorMin = panelRect.anchorMax = new Vector2(0f, 1f);
-            panelRect.pivot = new Vector2(0f, 1f);
-            panelRect.anchoredPosition = expandedError
-                ? new Vector2(465f, -660f)
-                : new Vector2(719f, -710f);
-            panelRect.sizeDelta = expandedError
-                ? new Vector2(816f + extraWidth, 70f)
-                : new Vector2(532f + extraWidth, 48f);
-
-            if (feedbackIcon != null)
-            {
-                RectTransform iconRect = feedbackIcon.rectTransform;
-                iconRect.anchorMin = iconRect.anchorMax = new Vector2(0f, 1f);
-                iconRect.pivot = new Vector2(0f, 1f);
-                iconRect.anchoredPosition = expandedError
-                    ? new Vector2(14f, -13f)
-                    : new Vector2(12f, -9f);
-                iconRect.sizeDelta = expandedError ? new Vector2(44f, 44f) : new Vector2(30f, 30f);
-            }
-
-            if (feedbackText != null)
-            {
-                RectTransform textRect = feedbackText.rectTransform;
-                textRect.anchorMin = textRect.anchorMax = new Vector2(0f, 1f);
-                textRect.pivot = new Vector2(0f, 1f);
-                textRect.anchoredPosition = expandedError
-                    ? new Vector2(66f, -5f)
-                    : new Vector2(53f, -4f);
-                textRect.sizeDelta = expandedError
-                    ? new Vector2(734f + extraWidth, 60f)
-                    : new Vector2(panelRect.sizeDelta.x - 53f - 16f, 40f);
-                feedbackText.fontSize = expandedError ? 24f : 18f;
-            }
         }
 
         private void ApplyFeedbackIcon(CommandFeedbackSeverity severity)

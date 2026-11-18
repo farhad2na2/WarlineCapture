@@ -433,6 +433,11 @@ namespace Game.Editor
         // The delivered helicopter's squad card can appear a few frames after the entity (group record,
         // drawer projection and tray roster rebuild); wait this long in real time before failing.
         internal const double S026HeliCardWaitSeconds = 20d;
+        // A VTOL that reaches its Move goal turns home and lands by itself (UnitAirMovementSystem sets
+        // UnitAirComponent.ReturningHome on arrival; the goal here is only ~40-60 m out). The player's
+        // Return is therefore tapped shortly after liftoff, while the helicopter is still outbound.
+        const double S026HeliOutboundDwellSeconds = 1.5d, S026HeliReturnObserveSeconds = 10d;
+        const int S026HeliMaxOutboundFlights = 3;
         static readonly (SkirmishRoleKind kind, string roleId, string prefab)[] S026HeliChoices =
         {
             (SkirmishRoleKind.TransportHeli, SkirmishRoleIds.TransportHeli, "Unit_Veh_Helicopter_Transport"),
@@ -444,7 +449,10 @@ namespace Game.Editor
         static bool s026HeliReturnPhase, s026HeliPageForward = true;
         static double s026HeliCardDeadline;
         static float s026HeliWaitStartMatch = -1f;
-        static double s026HeliMoveAt, s026HeliAirborneAt, s026HeliLandedAt, s026HeliLastStatusAt;
+        static double s026HeliMoveAt, s026HeliAirborneAt, s026HeliLandedAt, s026HeliLastStatusAt, s026HeliReturnTappedAt;
+        static int s026HeliOutboundFlights;
+        static string s026HeliStateAtReturnTap = "";
+        static Vector3 s026HeliMoveGoal;
         static string s026HeliLastReason = "";
 
         public static void RunS026HelicopterFramingProbeAndExit(int seed, string locale = GameLocalization.EnglishLocaleCode)
@@ -471,6 +479,7 @@ namespace Game.Editor
             s026HeliPageForward = true; s026HeliCardDeadline = 0d;
             s026HeliWaitStartMatch = -1f; s026HeliMoveAt = s026HeliAirborneAt = s026HeliLandedAt = s026HeliLastStatusAt = 0d;
             s026HeliLastReason = "";
+            s026HeliReturnTappedAt = 0d; s026HeliOutboundFlights = 0; s026HeliStateAtReturnTap = "";
             helipadProbeStage = S026HeliStageBase;
             new GameObject("NativeS026HelicopterFramingProbe").AddComponent<SkirmishHelipadInputProbeFrame>().Session = session;
             helipadProbeDeadline = UnityEditor.EditorApplication.timeSinceStartup + 1500d;
@@ -643,31 +652,68 @@ namespace Game.Editor
                 if (!helipadProbeTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime))
                 { EndS026HelicopterFraming(false, "moveTouchRejected"); return; }
                 Debug.Log("[S026HelicopterFraming] input=Touch command=Move world=" + world3 + " point=" + point);
-                s026HeliMoveAttempts++; s026HeliMoveAt = now;
+                s026HeliMoveAttempts++; s026HeliMoveAt = now; s026HeliMoveGoal = world3;
                 helipadProbeStage = S026HeliStageBase + 6;
                 helipadProbeNext = now + 1d;
                 return;
             }
-            // 106: takeoff must follow the order; cruise for a while (capture fires takeoff/turn/cruise).
+            // 106: takeoff must follow the order. Hand over to Return shortly after liftoff, while the
+            // helicopter is still outbound; capture fires takeoff/turn/cruise/landing on its own.
             if (helipadProbeStage == S026HeliStageBase + 6)
             {
                 if (air.Airborne == 0 && s026HeliAirborneAt <= 0d)
                 {
                     if (now - s026HeliMoveAt < 15d) return;
-                    if (s026HeliMoveAttempts >= 2) { EndS026HelicopterFraming(false, "moveOrderDidNotLaunchHelicopter"); return; }
+                    if (s026HeliMoveAttempts >= 2) { EndS026HelicopterFraming(false, "moveOrderDidNotLaunchHelicopter " + S026HeliAirState(em, air, controls)); return; }
                     helipadProbeStage = S026HeliStageBase + 4;
                     return;
                 }
-                if (s026HeliAirborneAt <= 0d) { s026HeliAirborneAt = now; Debug.Log("[S026HelicopterFraming] airborne=1"); }
-                if (now - s026HeliAirborneAt < 20d) return;
+                if (s026HeliAirborneAt <= 0d) { s026HeliAirborneAt = now; Debug.Log("[S026HelicopterFraming] airborne=1 " + S026HeliAirState(em, air, controls)); }
+                if (now - s026HeliAirborneAt < S026HeliOutboundDwellSeconds) return;
                 s026HeliReturnPhase = true;
                 helipadProbeStage = S026HeliStageBase + 7;
                 return;
             }
-            // 107: bring it home with the command wheel's visible Return action.
+            // 107: bring it home with the command wheel's visible Return action. Exactly one Return-sector
+            // tap; afterwards only observe. An accepted Return on an airborne helicopter sets
+            // UnitAirComponent.ReturningHome and clears its Move target (UnitReturnToBaseCommandService);
+            // the flight home then keeps ReturningHome set until touchdown. Arriving at the Move goal does
+            // the same by itself, so the tap is made, and the state accepted, only well short of that goal.
             if (helipadProbeStage == S026HeliStageBase + 7)
             {
-                if (air.ReturningHome != 0) { Debug.Log("[S026HelicopterFraming] input=Touch command=Return"); helipadProbeStage = S026HeliStageBase + 8; return; }
+                bool hasTarget = em.HasComponent<UnitTarget>(s026HeliActor);
+                var position = em.GetComponentData<LocalTransform>(s026HeliActor).Position;
+                float toGoal = math.distance(position.xz, new float2(s026HeliMoveGoal.x, s026HeliMoveGoal.z));
+                float toHome = math.distance(position.xz, air.HomePosition.xz);
+                if (s026HeliReturnTappedAt > 0d)
+                {
+                    helipadProbeNext = now + .05d;
+                    if (air.ReturningHome != 0 && !hasTarget)
+                    {
+                        if (toGoal <= 8f)
+                        { EndS026HelicopterFraming(false, "returnAmbiguousArrivedAtMoveGoal atTap=[" + s026HeliStateAtReturnTap + "] now=[" + S026HeliAirState(em, air, controls) + "]"); return; }
+                        Debug.Log("[S026HelicopterFraming] input=Touch command=Return observed=ReturningHome afterSeconds=" +
+                            (now - s026HeliReturnTappedAt).ToString("0.00", CultureInfo.InvariantCulture) + " toGoal=" +
+                            toGoal.ToString("0.0", CultureInfo.InvariantCulture) + " atTap=[" + s026HeliStateAtReturnTap + "]");
+                        helipadProbeStage = S026HeliStageBase + 8;
+                        return;
+                    }
+                    if (now - s026HeliReturnTappedAt > S026HeliReturnObserveSeconds)
+                        EndS026HelicopterFraming(false, "returnCommandNotObserved returnTaps=1 waitedSeconds=" +
+                            S026HeliReturnObserveSeconds.ToString("0", CultureInfo.InvariantCulture) + " atTap=[" + s026HeliStateAtReturnTap + "] now=[" + S026HeliAirState(em, air, controls) + "]");
+                    return;
+                }
+                // Not outbound any more (it reached its goal and turned home, or landed): a Return now
+                // would have nothing to do. Fly it out again with a normal Move, then Return.
+                if (air.Airborne == 0 || air.ReturningHome != 0 || !hasTarget)
+                {
+                    if (++s026HeliOutboundFlights > S026HeliMaxOutboundFlights)
+                    { EndS026HelicopterFraming(false, "helicopterNotOutboundForReturn flights=" + S026HeliMaxOutboundFlights + " " + S026HeliAirState(em, air, controls)); return; }
+                    Debug.Log("[S026HelicopterFraming] returnDeferred=notOutbound flight=" + s026HeliOutboundFlights + " " + S026HeliAirState(em, air, controls));
+                    s026HeliReturnPhase = false; s026HeliMoveAttempts = 0; s026HeliAirborneAt = 0d;
+                    helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; s026HeliCardDeadline = 0d;
+                    return;
+                }
                 if (!em.HasComponent<SelectedUnitTag>(s026HeliActor))
                 {
                     if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var mode) && mode.ActiveCommandMode != TacticalCommandMode.None &&
@@ -675,8 +721,26 @@ namespace Game.Editor
                     helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; s026HeliCardDeadline = 0d; // reselect, then come back here
                     return;
                 }
-                TapHelipadButton(controls?.CommandWheelPanel?.NextReturnButton, now);
-                if (now - s026HeliAirborneAt > 120d) EndS026HelicopterFraming(false, "returnCommandNotObserved");
+                if (now - s026HeliAirborneAt > 60d)
+                { EndS026HelicopterFraming(false, "returnTapWindowNotReached toGoal=" + toGoal.ToString("0.0", CultureInfo.InvariantCulture) + " " + S026HeliAirState(em, air, controls)); return; }
+                var wheel = controls?.CommandWheelPanel;
+                if (wheel == null) { EndS026HelicopterFraming(false, "commandWheelUnavailable " + S026HeliAirState(em, air, controls)); return; }
+                // Opening the wheel issues no order; do it while the helicopter climbs out.
+                if (!wheel.IsOpen) { TapHelipadButton(wheel.OpenButton, now); return; }
+                // Tap Return only clear of the pad and well short of the Move goal (no touch otherwise).
+                if (toHome < 8f || toGoal < 20f) return;
+                var returnButton = wheel.NextReturnButton;
+                if (returnButton == null || returnButton == wheel.OpenButton)
+                { EndS026HelicopterFraming(false, "returnSectorUnavailable " + S026HeliAirState(em, air, controls)); return; }
+                string before = S026HeliAirState(em, air, controls) + " toGoal=" + toGoal.ToString("0.0", CultureInfo.InvariantCulture) +
+                    " returnInteractable=" + (returnButton != null && returnButton.interactable ? 1 : 0);
+                if (TapHelipadButton(returnButton, now))
+                {
+                    s026HeliReturnTappedAt = now;
+                    s026HeliStateAtReturnTap = before;
+                    helipadProbeNext = now + .1d; // observe from the next tick; no further Return taps
+                    Debug.Log("[S026HelicopterFraming] input=Touch command=Return tap=ReturnSector " + before);
+                }
                 return;
             }
             // 108: touchdown at home; leave time for the landing and ground switch-back frames.
@@ -684,7 +748,7 @@ namespace Game.Editor
             {
                 bool home = air.HomeInitialized != 0 && air.Airborne == 0 && air.ReturningHome == 0 &&
                     math.distance(em.GetComponentData<LocalTransform>(s026HeliActor).Position, air.HomePosition) <= 1.5f;
-                if (!home) { if (now - s026HeliAirborneAt > 300d) EndS026HelicopterFraming(false, "touchdownNotObserved"); return; }
+                if (!home) { if (now - s026HeliReturnTappedAt > 300d) EndS026HelicopterFraming(false, "touchdownNotObserved " + S026HeliAirState(em, air, controls)); return; }
                 if (s026HeliLandedAt <= 0d) { s026HeliLandedAt = now; Debug.Log("[S026HelicopterFraming] touchdown=1"); }
                 if (now - s026HeliLandedAt < 4d) return;
                 EndS026HelicopterFraming(true, "paidHelicopterRecruitReturnMoveCruiseReturnTouchdown");
@@ -733,6 +797,7 @@ namespace Game.Editor
             if (camera == null) return false;
             Vector3 from = em.GetComponentData<LocalTransform>(s026HeliActor).Position;
             var ground = new Plane(Vector3.up, new Vector3(0f, from.y, 0f));
+            float best = 0f;
             foreach (var v in new[] { new Vector2(.78f, .55f), new Vector2(.22f, .55f), new Vector2(.5f, .72f), new Vector2(.5f, .38f), new Vector2(.7f, .7f), new Vector2(.3f, .7f) })
             {
                 var candidate = new Vector2(Screen.width * v.x, Screen.height * v.y);
@@ -744,10 +809,25 @@ namespace Game.Editor
                 var ray = camera.ScreenPointToRay(candidate);
                 if (!ground.Raycast(ray, out float distance)) continue;
                 var hit = ray.GetPoint(distance);
-                if (Vector3.Distance(new Vector3(hit.x, 0, hit.z), new Vector3(from.x, 0, from.z)) < 40f) continue;
-                point = candidate; world = hit; return true;
+                float reach = Vector3.Distance(new Vector3(hit.x, 0, hit.z), new Vector3(from.x, 0, from.z));
+                if (reach < 40f || reach <= best) continue;
+                // The farthest visible open ground gives the longest outbound leg before Return.
+                best = reach; point = candidate; world = hit;
             }
-            return false;
+            return best > 0f;
+        }
+
+        /// <summary>Read-only diagnostics of the probed helicopter's native air state.</summary>
+        static string S026HeliAirState(EntityManager em, UnitAirComponent air, MatchOverlayCommandControlsView controls)
+        {
+            var position = em.GetComponentData<LocalTransform>(s026HeliActor).Position;
+            return "airborne=" + air.Airborne + " returningHome=" + air.ReturningHome + " homeInitialized=" + air.HomeInitialized +
+                " usesRunway=" + air.UsesRunway + " moveTarget=" + (em.HasComponent<UnitTarget>(s026HeliActor) ? 1 : 0) +
+                " manualMove=" + (em.HasComponent<ManualMoveOrderTag>(s026HeliActor) ? 1 : 0) +
+                " selected=" + (em.HasComponent<SelectedUnitTag>(s026HeliActor) ? 1 : 0) +
+                " height=" + position.y.ToString("0.0", CultureInfo.InvariantCulture) +
+                " toHome=" + math.distance(position, air.HomePosition).ToString("0.0", CultureInfo.InvariantCulture) +
+                " wheelOpen=" + (controls != null && controls.CommandWheelPanel != null && controls.CommandWheelPanel.IsOpen ? 1 : 0);
         }
     }
 }

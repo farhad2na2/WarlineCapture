@@ -34,13 +34,32 @@ candidate commit, marks the lane as held for you, and starts no agent Unity run 
   probably too weak; some unit types (drone, heavy APC, transport helicopter, siege) are not yet used by ARIA.
 - **Please judge:** same questions as S002; also whether City Crossroads feels too easy.
 
-## 2. Frontline Control — authored, not playable (2026-11-18: startup BlockedSpawn)
-S007 authored by `AuthorFromDraft` after the logical-binding merge (lane20/s007/author.log, `result=Passed catalog=S007`, commit 2773d4970, containment clean) and made internally visible (not published; the publication row stays InProgress). One real-menu launch (`--menu-journey`, seed 130365, lane20/s007/menu/unity.log): menu journey Passed (Hotspot>ObjectiveTab_FC>BattleCard_S007>StartBattleButton), but the match did not start: `expandedStartupFailure=BlockedSpawn` (log line 2925) because starting-grant buildings find no legal spot: `[BuildingInitialPlacement] failed prefab=Building_Barrack preferred=(1373, 643)` (line 2478; enemy barracks blocked by source buildings) and both Ground Staging placements (road). The draft pads need re-placement; this is not playable yet.
+## 2. Frontline Control — S007 (Desert Base, Ground Maneuver, Field Base): starts from the menu (2026-11-18, lane 22)
+- **Commit:** `missions/integration` from `68be965d4` (S007 re-authored from the measured draft r2; visible internally since `8ab8f5eeb`, not published; publication row stays InProgress).
+- **What was fixed:** lane 20's launch aborted `BlockedSpawn` (draft copied from an old S006 example). The draft now uses the measured legal base, side and per-building pads; re-measured (`Design/AgentReports/SkirmishExpansion/S007/area-measurement-r2.json`), authored (168 measured instance pads, 0 derived), pad containment Passed.
+- **Menu path** (automated menu journey, lane22/s007menu/unity.log:2324): Main menu → Skirmish hotspot → Back → Desert Base theater pin → Start Battle → **FC** objective tab → the S007 card → Start Battle (Standard / Regular). The card is a validation card (internal).
+- **What the automated launch shows:** menu journey Passed, the match starts with no startup failure and no building-placement failure; both sides spawn (8 riflemen, 4 rocketeers, armoured APC, car, truck, tanker, watchtower each). ARIA then stops at 8.6 s (`[AriaBlocked] reason=101 intent=Recruit`): ARIA has only a Base Assault skill, so it cannot play this objective. **Nobody has played S007 to a result yet**; that is your play.
+- **Known unfinished:** see section 5 (common) plus: zone/ticket HUD and enemy zone allocation are unobserved in a native match; deadline is the packaged 1200/1500/1800 s by size.
 
-## 3. Breakthrough — not ready to play (2026-11-18: authoring blocked on a defense pad)
-S013 `AuthorFromDraft` FAILED at the real check (lane20/s013/author.log:686): `instancePads: Standard/Recruit: building.watchtower.defense_approach_a needs a DefenseApproach pad, which per-building authoring does not support.` Partial assets were removed; nothing visible or launched. Needs a tooling change (DefenseApproach pad kind in per-building authoring) or a draft without defense_approach pads.
+## 3. Breakthrough — S013 (Desert Base, Ground Maneuver, Field Base): starts from the menu (2026-11-18, lane 22)
+- **Commit:** `d487e0bf0` (authored) + `b3285b36c` (visible internally, not published).
+- **What was fixed:** lane 20's authoring failed on the DefenseApproach pad; the enemy defender towers now reuse the typed `defense.approach.a/b` pads (e4aa8e42b). Re-measured (`S013/area-measurement-r2.json`: both corridors and the exit reachable for infantry, both tower pads fit), authored (192 instance rows: 168 measured + 24 defender role pads), pad containment Passed.
+- **Menu path** (lane22/s013menu/unity.log:2163): Main menu → Skirmish hotspot → **BT** objective tab → the S013 card → Start Battle.
+- **What the automated launch shows:** menu journey Passed, clean start, both sides spawn (player 12 riflemen + APC, car, truck, tanker). ARIA stops at 8.4 s (same `reason=101 intent=Recruit`). The two defender towers at the approach pads are outside the start trace's 90 m radius, so their spawn is not shown in the log; check them in play. Not played to a result.
+- **Known unfinished:** end reasons `BreakthroughEvacuated` / `BreakthroughImpossible` show the raw-name fallback; enemy defence policy unobserved; attacker advantage not tuned (packaged matrix row).
 
-## 4. Convoy Escort — not ready (S019 candidate draft; same measurement step)
+## 4. Convoy Escort — S019 (Desert Base, Ground Maneuver, Field Base): starts from the menu (2026-11-18, lane 22)
+- **Commit:** `3e57302a9` (authored) + `38c0405fc` (visible internally, not published).
+- **Done:** convoy logical assets verified (`created=0`), re-measured (`S019/area-measurement-r2.json`: destination reachable for trucks, the three bays fit the 3x3 truck), authored (192 instance rows), pad containment Passed.
+- **Menu path** (lane22/s019menu/unity.log:2303): Main menu → Skirmish hotspot → **CE** objective tab → the S019 card → Start Battle.
+- **What the automated launch shows:** menu journey Passed, clean start, the player has the three convoy trucks (`ConvoyLogic:3`) plus the usual starting army. ARIA stops at 8.5 s (same `reason=101`). Not played to a result.
+- **Known unfinished:** the deadline is the fixed size deadline, not a route-time deadline; truck commands, repair and enemy interdiction are unobserved; route native path queries failed on the middle segments (flood fill reached them).
+
+## 5. Common to S007 / S013 / S019 (what you will see that is unfinished)
+- Result text falls back to raw end-reason names and the neutral headline `MATCH COMPLETE` (copy keys not in the catalog).
+- No Save & Exit (the pause menu shows RESTART MATCH).
+- Menu/briefing copy is catalog fallback text; no mission-specific purpose copy.
+- ARIA cannot play these objectives (switch it off and play yourself); no automated result/return evidence exists for them.
 
 Your notes: write them in this file or tell the program lead; they are recorded as owner sampling in `missions.csv`
 (`owner_manual_win` and notes), never as a gate.

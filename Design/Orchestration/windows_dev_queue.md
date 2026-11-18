@@ -178,6 +178,18 @@ arrays directly without passing them). No behaviour change. Grep the other Aria*
 Prove: Editor log with no BC10xx for Aria* after a domain reload, compile marker, and `Game.Tests.Editor.SkirmishExpandedAriaTests`
 EditMode all passing. Branch `missions/win-w17-aria-burst`. Per-task results file.
 
+## W18 — Building readiness red on base: BuildingFootprintAudit EvidenceChain_Clinic + 6 older building EditMode failures (2026-11-18)
+status: READY
+codex effort: high
+Windows W13 evidence (`windows_dev_results/2026-11-18-w13-runway-placement.md`): `BuildingFootprintReadinessValidation.Run` fails on base
+7970b1c54 and on W13 at its first step `BuildingFootprintAudit.Run`: "EvidenceChain_Clinic: footprint must enclose the model with less than one
+cell of rounding", so `[BuildingFootprintReadiness] result=Passed` is unreachable. Also failing on base: CanonicalBarracksRuntimeAndCatalogFootprintsFitTheM2Lot,
+3x BuildingProductionQueueCompositionSystemHelperTests, SkirmishStartingBuildingsTests.StartingGrantsWaitForSharedResultsAndBindTheActualBaseOnce
+(componentMissing), GroundMissileLauncherRuntimeTests.AttackOrder…. For each, decide with evidence: stale test/fixture vs real defect; fix the right
+side minimally, never weaken a test, no stat changes, no model/prefab edits under Assets/Game/Prefabs/UI. If the Clinic footprint is a real
+authored-footprint mismatch, report the numbers and stop for the Mac lead rather than resizing. Prove: the marker above on Windows, plus the
+UTF `-testFilter Building` set with 0 failures. Branch `missions/win-w18-building-readiness`, cut after W13 is merged. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

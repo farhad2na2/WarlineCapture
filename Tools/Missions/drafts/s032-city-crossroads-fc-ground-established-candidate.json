@@ -1,7 +1,7 @@
 {
   "catalog_id": "S032",
   "campaign_source": "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset",
-  "notes": "candidate=1, unmeasured FC geometry. S026 supplies the Campaign binding, side anchors, pads and MainHighway (tank primary). FlankNorthRuins keeps west_refined except 06 and 07. The bypass uses S026 dump candidate 274 and the S026 candidate.route.tank.primary.waypoint.04 goal, which passed in r1. r1 returned code 7 (GoalPlacementBlocked) on the two replaced legs. FlankSouthSweep follows the southeast side of MainHighway via dump candidates 303, 393, 398, 279, 371, 360 and 357 in order, sharing only the S026 tank.start and tank.goal positions with the other approaches. FrontlineB spans about 3503 m2 between S026 candidate.route.tank.primary.waypoint.02 and dump candidate 303. FrontlineA uses S026 west_refined 05 and 03. FrontlineC uses S026 west_refined 06 and primary 03 and 05. Dump indices are zero-based in Design/AgentReports/SkirmishExpansion/LayoutDumps/S026/dump.json. S007 supplies the objective roles, route kinds, structure footprints and pad slack. FC Unity re-measurement is pending. FC-G-E follows the S031 family layout. Adds the S026 approach watchtower, satellite dish and helipad pads for each faction. S026 also supplies both air anchors. The S027-S030 pads describe an alternate provisional compound. The War and LargeWar refinery-module pads for both factions are unmeasured and left to derivation.",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W7 r2 on City Crossroads host S026 seed 130365: FrontlineA/B/C inside playable (6069/3567/2902 m2), infantry and truck reachable from both bases and stagings, three vehicle routes flood/native-measured with no failed segment (MainHighway 416 m, FlankNorthRuins 491 m, FlankSouthSweep 664 m); Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json; r1 showed shared flank waypoints, native code 7 on west_refined 05-07 and a 1200 m2 FrontlineB; geometry still a candidate). Earlier: unmeasured FC geometry. S026 supplies the Campaign binding, side anchors, pads and MainHighway (tank primary). FlankNorthRuins keeps west_refined except 06 and 07. The bypass uses S026 dump candidate 274 and the S026 candidate.route.tank.primary.waypoint.04 goal, which passed in r1. r1 returned code 7 (GoalPlacementBlocked) on the two replaced legs. FlankSouthSweep follows the southeast side of MainHighway via dump candidates 303, 393, 398, 279, 371, 360 and 357 in order, sharing only the S026 tank.start and tank.goal positions with the other approaches. FrontlineB spans about 3503 m2 between S026 candidate.route.tank.primary.waypoint.02 and dump candidate 303. FrontlineA uses S026 west_refined 05 and 03. FrontlineC uses S026 west_refined 06 and primary 03 and 05. Dump indices are zero-based in Design/AgentReports/SkirmishExpansion/LayoutDumps/S026/dump.json. S007 supplies the objective roles, route kinds, structure footprints and pad slack. FC Unity re-measurement is pending. FC-G-E follows the S031 family layout. Adds the S026 approach watchtower, satellite dish and helipad pads for each faction. S026 also supplies both air anchors. The S027-S030 pads describe an alternate provisional compound. The War and LargeWar refinery-module pads for both factions are unmeasured and left to derivation.",
   "anchors": {
     "base.player": [
       1020.0,
@@ -776,5 +776,8 @@
       3.0,
       4.0
     ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json"
   }
 }

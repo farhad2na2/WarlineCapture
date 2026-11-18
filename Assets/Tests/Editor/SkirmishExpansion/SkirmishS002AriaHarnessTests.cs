@@ -3264,9 +3264,10 @@ namespace Game.Tests.Editor
             session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
             world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
             world.GetOrCreateSystem<SkirmishScenarioSpawnSystem>().Update(world.Unmanaged);
-            Assert.AreEqual(SkirmishSessionPhase.Playing, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            Assert.AreEqual(SkirmishSessionPhase.Playing, state.Phase, $"FailureCode: {state.FailureCode}");
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
-            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            FixedString64Bytes sessionId = state.SessionId;
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, setup);
             SkirmishArmyGroupSystem.RefreshAlive(em, session, owned, sessionId);

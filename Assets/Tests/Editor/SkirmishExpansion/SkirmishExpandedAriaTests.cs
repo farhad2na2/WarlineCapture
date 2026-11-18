@@ -534,7 +534,7 @@ namespace Game.Tests.Editor
                 typeof(UnitHealth), typeof(SkirmishArmyGroupMembershipComponent), typeof(SkirmishRoleOverlayComponent));
             em.SetComponentData(defender, new SkirmishAttemptOwnedComponent
                 { SessionId = sessionId, FactionId = 2 });
-            em.SetComponentData(defender, LocalTransform.FromPosition(basePosition + new float3(20, 0, 0)));
+            em.SetComponentData(defender, LocalTransform.FromPosition(basePosition + new float3(75, 0, 0)));
             em.SetComponentData(defender, new UnitHealth { Current = 100, Max = 100 });
             em.SetComponentData(defender, new SkirmishArmyGroupMembershipComponent { GroupId = groupId });
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
@@ -549,7 +549,8 @@ namespace Game.Tests.Editor
             FixtureSet(em, defender, new Faction { Id = 2 });
             FixtureSet(em, defender, new UnitCombat { AggroRangeCells = 35 });
             AdvanceNativeFog(world);
-            AssertDirectObservation(em, pad, 2, defender);
+            // At 35 m from the base and 40 m from the defender, only the base can see the pad.
+            AssertDirectObservation(em, pad, 2, enemyBase);
             Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
                 { Damage = 10, TargetDomains = SkirmishTargetDomain.Infantry, RangeWorld = 35 });
@@ -562,10 +563,18 @@ namespace Game.Tests.Editor
             em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
             PlaceFixtureContact(em, defender, basePosition + new float3(300, 0, 0));
             AdvanceNativeFog(world);
+            AssertDirectObservation(em, pad, 2, enemyBase);
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            // The pad is still inside the defense area, but outside both acquisition radii.
+            em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(60, 0, 0)));
             PlaceFixtureContact(em, defender, basePosition + new float3(20, 0, 0));
             AdvanceNativeFog(world);
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, pad, 2));
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            PlaceFixtureContact(em, defender, basePosition + new float3(30, 0, 0));
+            AdvanceNativeFog(world);
             AssertDirectObservation(em, pad, 2, defender);
+            Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(pad, new UnitHealth { Current = 0, Max = 100 });
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
         }

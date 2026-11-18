@@ -63,20 +63,20 @@ namespace Game.Runtime
             var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(session);
             if(clock.ElapsedSeconds!=0||clock.Playing!=1||clock.Paused!=0||
                 !TryFindOpeningFocus(em,session,native,setup,profile,out var actorId,out var position)||
-                !SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(position,profile.NormalHeight,profile.Pitch,profile.Yaw,out var ground))return false;
+                !SkirmishMissionViewProfileApplication.TryResolveOpeningRequest(em,profile,position,out var ground,out var perspective,out _))return false;
             var facade=new RuntimeGameplayStateSystem(em);facade.ReadCameraFocusRequest();
             using var requests=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if(requests.CalculateEntityCount()!=1)return false;
             em.SetComponentData(requests.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {
                 Requested=1,Smooth=1,UseExplicitPerspective=1,World=ground,
-                Perspective=new float4(profile.NormalHeight,profile.Pitch,profile.Yaw,profile.NormalFieldOfView),
+                Perspective=perspective,
                 SmoothTimeSeconds=RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(2.25f) });
             em.AddComponentData(session,new SkirmishS005OpeningFocusOwner { Attempt=native.SessionId,SetupHash=setup.SetupHash,
                 ActorId=new FixedString64Bytes(actorId),ActualActorWorld=position,GroundRequest=ground,RequestedFrame=Time.frameCount });
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("[SkirmishS005OpeningViewPolicy] result=Queued attempt="+native.SessionId+" actor="+actorId+
                 " setupHash="+setup.SetupHash+" actorWorld="+position+" groundRequest="+ground+
-                " normalHeight="+profile.NormalHeight+" nativeVisualAccepted=0");
+                " normalHeight="+perspective.x+" authoredNormalHeight="+profile.NormalHeight+" nativeVisualAccepted=0");
 #endif
             error=null;return true;
         }

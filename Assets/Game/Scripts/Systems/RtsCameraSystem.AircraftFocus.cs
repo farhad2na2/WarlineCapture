@@ -44,9 +44,11 @@ namespace Game.Runtime
         public bool TryRequestAircraftFocus(EntityManager em,Entity actor,Camera camera,int request,bool requirePaid=true)
         {
             if(camera==null||!OwnAircraft(em,actor,requirePaid,out var owner)||!SkirmishMissionViewProfileApplication.TryResolve(em,out var profile))return false;
+            // Leaving the lens restores the Skirmish tactical ground view, not the closer authored floor.
+            var framing=SkirmishMissionViewProfileApplication.ResolveFraming(em,profile);
             aircraftLens=new AircraftLens{Actor=actor,World=em.World.SequenceNumber,Attempt=owner.SessionId,Stable=owner.StableObjectId.ToString(),Reservation=owner.ReservationId,
                 RequiresPaid=requirePaid,Request=request,RequestedFrame=UnityEngine.Time.frameCount,Deadline=UnityEngine.Time.realtimeSinceStartupAsDouble+8,
-                GroundHeight=profile.NormalHeight,GroundPitch=profile.Pitch,GroundYaw=profile.Yaw,GroundFov=profile.NormalFieldOfView,MaxDistance=profile.AircraftMaximumDistance};
+                GroundHeight=framing.IsValid?SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(framing.TacticalHeight):profile.NormalHeight,GroundPitch=framing.IsValid?framing.Pitch:profile.Pitch,GroundYaw=framing.IsValid?framing.Yaw:profile.Yaw,GroundFov=framing.IsValid?framing.FieldOfView:profile.NormalFieldOfView,MaxDistance=profile.AircraftMaximumDistance};
             aircraftLens.Selection=SelectionFingerprint(em,out _);EmitAircraftFocus("Requested",null,camera);return true;
         }
         public bool TickAircraftFocus(EntityManager em,Camera camera,bool tacticalFollow)

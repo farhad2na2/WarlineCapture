@@ -221,14 +221,19 @@ namespace Game.Composition
             }
             float focusHeight = authoredOpening ? openingDistance : s004Focus ? campaignHeight : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55;
             bool missionViewBound = SkirmishMissionViewProfileApplication.TryResolve(EntityManager, out var missionView);
-            if (missionViewBound) focusHeight = missionView.NormalHeight;
+            // Objective/base focus uses the wide tactical view so the structure and its
+            // approach read together (designer playtest 2026-11-17).
+            var framing = missionViewBound ? SkirmishMissionViewProfileApplication.ResolveFraming(EntityManager, missionView) : default;
+            bool framed = missionViewBound && framing.IsValid;
+            if (missionViewBound) focusHeight = framed ? framing.WideHeight : missionView.NormalHeight;
             focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focusHeight);
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // S002 frames the Barracks and its deployment pad on every focus,
                 // including ARIA's subsequent public base-focus action.
-                Perspective=missionViewBound ? new Unity.Mathematics.float4(focusHeight,missionView.Pitch,missionView.Yaw,missionView.NormalFieldOfView) :
+                Perspective=framed ? new Unity.Mathematics.float4(focusHeight,framing.Pitch,framing.Yaw,framing.FieldOfView) :
+                    missionViewBound ? new Unity.Mathematics.float4(focusHeight,missionView.Pitch,missionView.Yaw,missionView.NormalFieldOfView) :
                     new Unity.Mathematics.float4(focusHeight,s004Focus ? 50 : 58,s004Focus ? campaignYaw : 0,s004Focus ? 50 : 60),
                 World=focusPosition+
                     (s004Focus ? (enemy ? Unity.Mathematics.float3.zero : new Unity.Mathematics.float3(-12,0,-8)) :

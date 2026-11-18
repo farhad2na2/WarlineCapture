@@ -4,6 +4,8 @@ using Game.Components;
 using Game.Rendering.Contracts;
 using Game.Skirmish.Contracts;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -62,6 +64,120 @@ namespace Game.Runtime
             state.BuildModeZoomHeight = Mathf.Clamp(profile.BuildHeight, state.NormalModeZoomHeight, state.MaxZoomHeight);
             state.NormalModePitch = state.BuildModePitch = profile.Pitch; state.NormalModeYaw = state.BuildModeYaw = profile.Yaw;
             state.NormalModeFieldOfView = profile.NormalFieldOfView; state.BuildModeFieldOfView = profile.BuildFieldOfView;
+        }
+
+        // ---- Skirmish-wide presentation framing (camera worker 2026-11-17) ----
+        // Owner request: wider default ground view, helicopter follow that shows the
+        // ground, and a composed mission opening. The authored profile above stays the
+        // reviewed engineering floor; these helpers never touch orders, selection,
+        // gameplay data or any fingerprinted asset.
+        static readonly Dictionary<string, Game.Configs.SkirmishOpeningCameraConfig> openingConfigs = new(StringComparer.Ordinal);
+        const float FallbackLandscapeAspect = 2400f / 1080f;
+
+        static bool TryReadSessionLayout(EntityManager em, out string catalogId, out Game.Configs.SkirmishMapLayoutConfig layout, out Entity session)
+        {
+            catalogId = null; layout = null; session = Entity.Null;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupRecord));
+            if (sessions.CalculateEntityCount() != 1) return false;
+            session = sessions.GetSingletonEntity();
+            var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            if (setup == null) return false;
+            catalogId = setup.CatalogId;
+            if (em.HasComponent<SkirmishLaunchDefinitionRecord>(session))
+            {
+                var record = em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
+                if (record?.Definition?.MapLayout != null && record.Definition.MapLayout.LayoutId == setup.LayoutId) layout = record.Definition.MapLayout;
+            }
+            return true;
+        }
+
+        public static Game.Configs.SkirmishOpeningCameraConfig LoadOpeningCamera(string catalogId)
+        {
+            if (string.IsNullOrEmpty(catalogId)) return null;
+            if (!openingConfigs.TryGetValue(catalogId, out var config))
+                openingConfigs[catalogId] = config = Game.Configs.SkirmishOpeningCameraConfig.Load(catalogId);
+            return config;
+        }
+
+        /// <summary>Opening config matching the live session's exact layout, or null.</summary>
+        public static Game.Configs.SkirmishOpeningCameraConfig ResolveOpeningCamera(EntityManager em, out Game.Configs.SkirmishMapLayoutConfig layout)
+        {
+            layout = null;
+            if (!TryReadSessionLayout(em, out var catalogId, out layout, out _)) return null;
+            var config = LoadOpeningCamera(catalogId);
+            return config != null && config.Matches(catalogId, layout) ? config : null;
+        }
+
+        /// <summary>Framing for an already resolved/validated profile in the live session.</summary>
+        public static Game.Configs.SkirmishGroundFraming ResolveFraming(EntityManager em, Game.Configs.SkirmishMissionViewProfile profile)
+        {
+            var opening = ResolveOpeningCamera(em, out var layout);
+            float? yaw = null;
+            if (opening != null && opening.TryResolveYaw(layout, out float missionYaw)) yaw = missionYaw;
+            return Game.Configs.SkirmishCameraFraming.Resolve(profile, yaw);
+        }
+
+        public static bool TryResolveFraming(EntityManager em, out Game.Configs.SkirmishGroundFraming framing)
+        {
+            framing = default;
+            if (!TryResolve(em, out var profile) || profile == null || !profile.IsValid) return false;
+            framing = ResolveFraming(em, profile);
+            return framing.IsValid;
+        }
+
+        public static void ApplyFraming(in Game.Configs.SkirmishGroundFraming framing, ref SelectionRuntimeConfigStartupSystemHelper.State state)
+        {
+            if (!framing.IsValid) return;
+            state.MaxZoomHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(framing.WideHeight);
+            state.MinZoomHeight = Mathf.Min(framing.CloseHeight, state.MaxZoomHeight);
+            state.NormalModeZoomHeight = Mathf.Clamp(framing.TacticalHeight, state.MinZoomHeight, state.MaxZoomHeight);
+            state.BuildModeZoomHeight = Mathf.Clamp(framing.BuildHeight, state.NormalModeZoomHeight, state.MaxZoomHeight);
+            state.NormalModePitch = state.BuildModePitch = framing.Pitch; state.NormalModeYaw = state.BuildModeYaw = framing.Yaw;
+            state.NormalModeFieldOfView = framing.FieldOfView; state.BuildModeFieldOfView = framing.BuildFieldOfView;
+        }
+
+        /// <summary>
+        /// One-shot opening camera request values for the actual own opening group. A
+        /// matching opening config composes group + landmarks; otherwise the group is
+        /// centred at the tactical height. Camera presentation only.
+        /// </summary>
+        public static bool TryResolveOpeningRequest(EntityManager em, Game.Configs.SkirmishMissionViewProfile profile, Vector3 group,
+            out Vector3 groundRequest, out Unity.Mathematics.float4 perspective, out bool composed)
+        {
+            groundRequest = default; perspective = default; composed = false;
+            if (profile == null) return false;
+            var opening = ResolveOpeningCamera(em, out var layout);
+            float? yaw = null;
+            if (opening != null && opening.TryResolveYaw(layout, out float missionYaw)) yaw = missionYaw;
+            var framing = Game.Configs.SkirmishCameraFraming.Resolve(profile, yaw);
+            if (!framing.IsValid) return false;
+            var camera = Camera.main;
+            float aspect = camera != null && camera.aspect > 0f && float.IsFinite(camera.aspect) ? camera.aspect : FallbackLandscapeAspect;
+            float height = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(framing.TacticalHeight);
+            if (opening != null && opening.TryResolveFramePoints(layout, out var landmarks) &&
+                Game.Configs.SkirmishCameraFraming.TryComposeOpening(framing, group, landmarks, aspect, out var eye, out bool allFramed))
+            {
+                float capped = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(eye.y);
+                if (capped < eye.y)
+                {
+                    // Keep the composed ground centre when a platform height cap applies.
+                    var centre = Game.Configs.SkirmishCameraFraming.ZeroPlaneGroundCenter(eye, framing.Pitch, framing.Yaw);
+                    eye = Game.Configs.SkirmishCameraFraming.CameraForGroundCenter(centre, capped, framing.Pitch, framing.Yaw);
+                }
+                groundRequest = Game.Configs.SkirmishCameraFraming.ZeroPlaneGroundCenter(eye, framing.Pitch, framing.Yaw);
+                perspective = new Unity.Mathematics.float4(eye.y, framing.Pitch, framing.Yaw, framing.FieldOfView);
+                composed = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log("[SkirmishCameraFraming] opening=Composed catalog=" + opening.CatalogId + " allFramed=" + (allFramed ? 1 : 0) +
+                    " group=" + group + " landmarks=" + landmarks.Length + " height=" + eye.y.ToString("F2") +
+                    " aboveGround=" + (eye.y - framing.GroundY).ToString("F2") + " pitch=" + framing.Pitch + " yaw=" + framing.Yaw.ToString("F1") +
+                    " fov=" + framing.FieldOfView + " aspect=" + aspect.ToString("F3") + " groundRequest=" + groundRequest + " orders=0");
+#endif
+                return true;
+            }
+            if (!SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(group, height, framing.Pitch, framing.Yaw, out groundRequest)) return false;
+            perspective = new Unity.Mathematics.float4(height, framing.Pitch, framing.Yaw, framing.FieldOfView);
+            return true;
         }
 
         // Called only by the existing public follow-mode pose owner. Uses the
@@ -123,10 +239,33 @@ namespace Game.Runtime
 
         public static bool TryApplyAircraftFollowPose(EntityManager em, Entity actor, Camera camera, ref TacticalFollowCameraPoseComponent pose)
         {
-            if (camera == null || !TryAircraftBounds(em,actor,out var profile,out var combined) ||
-                !TryAircraftPose(combined,profile,camera.aspect,camera.nearClipPlane,em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.TransportPlane?profile.AircraftMinimumDistance:camera.nearClipPlane*2+combined.extents.magnitude,out var position,out var rotation)) return false;
+            if (camera == null || !TryAircraftBounds(em,actor,out var profile,out var combined)) return false;
+            bool transport = em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.TransportPlane;
+            float minimum = transport ? profile.AircraftMinimumDistance : camera.nearClipPlane*2+combined.extents.magnitude;
+            // A mission yaw keeps the aircraft view on the same screen-up as the ground
+            // view, so switching back to infantry never swings the camera around.
+            var framing = ResolveFraming(em, profile);
+            float yaw = framing.IsValid && framing.HasMissionYaw ? framing.Yaw : profile.EffectiveAircraftYaw;
+            float fraction = transport ? profile.PlaneMaximumViewportDimension :
+                Mathf.Min(profile.PlaneMaximumViewportDimension, Game.Configs.SkirmishCameraFraming.AircraftMaximumViewportFraction);
+            Vector2 heading = default; bool airborne = combined.min.y - profile.GroundReferenceY > 3f;
+            if (em.HasComponent<LocalTransform>(actor))
+            {
+                var forward = math.mul(em.GetComponentData<LocalTransform>(actor).Rotation, new float3(0, 0, 1));
+                heading = new Vector2(forward.x, forward.z);
+            }
+            if (em.HasComponent<UnitAirComponent>(actor)) airborne = em.GetComponentData<UnitAirComponent>(actor).Airborne != 0 || airborne;
+            Vector3 position, lookAt; Quaternion rotation;
+            if (!Game.Configs.SkirmishCameraFraming.TryAircraftPose(combined, profile.GroundReferenceY, heading, airborne, profile.AircraftPitch, yaw,
+                    profile.AircraftFieldOfView, fraction, camera.aspect, camera.nearClipPlane, minimum, profile.AircraftMaximumDistance,
+                    out position, out rotation, out lookAt))
+            {
+                // Established bounds-only fit and its hard maximum-distance refusal.
+                if (!TryAircraftPose(combined,profile,camera.aspect,camera.nearClipPlane,minimum,yaw,out position,out rotation)) return false;
+                lookAt = combined.center;
+            }
             pose.DesiredPosition = position; pose.DesiredRotation = new Unity.Mathematics.quaternion(rotation.x,rotation.y,rotation.z,rotation.w);
-            pose.LookAt = combined.center; pose.FieldOfView = profile.AircraftFieldOfView; pose.Orthographic = 0; pose.OrthographicSize = 0;
+            pose.LookAt = lookAt; pose.FieldOfView = profile.AircraftFieldOfView; pose.Orthographic = 0; pose.OrthographicSize = 0;
             return true;
         }
 
@@ -135,14 +274,15 @@ namespace Game.Runtime
         public static bool TryAircraftPose(Bounds bounds, Game.Configs.SkirmishMissionViewProfile profile,
             float aspect, float nearClip, out Vector3 position, out Quaternion rotation)
         {
-            return TryAircraftPose(bounds,profile,aspect,nearClip,profile!=null?profile.AircraftMinimumDistance:0,out position,out rotation);
+            return TryAircraftPose(bounds,profile,aspect,nearClip,profile!=null?profile.AircraftMinimumDistance:0,profile!=null?profile.EffectiveAircraftYaw:0,out position,out rotation);
         }
-        static bool TryAircraftPose(Bounds bounds,Game.Configs.SkirmishMissionViewProfile profile,float aspect,float nearClip,float minimumDistance,out Vector3 position,out Quaternion rotation)
+        static bool TryAircraftPose(Bounds bounds,Game.Configs.SkirmishMissionViewProfile profile,float aspect,float nearClip,float minimumDistance,float yaw,out Vector3 position,out Quaternion rotation)
         {
             position = default; rotation = default;
             if (!float.IsFinite(minimumDistance)||minimumDistance<=0||profile == null || !profile.IsValid || !float.IsFinite(aspect) || aspect <= 0 || !float.IsFinite(nearClip) || nearClip <= 0 ||
                 !Finite(bounds.center) || !Finite(bounds.extents) || bounds.extents.x <= 0 || bounds.extents.y <= 0 || bounds.extents.z <= 0) return false;
-            rotation = Quaternion.Euler(profile.AircraftPitch, profile.EffectiveAircraftYaw, 0);
+            if (!float.IsFinite(yaw)) return false;
+            rotation = Quaternion.Euler(profile.AircraftPitch, yaw, 0);
             Vector3 right = rotation * Vector3.right, up = rotation * Vector3.up, forward = rotation * Vector3.forward;
             float tangent = Mathf.Tan(profile.AircraftFieldOfView * Mathf.Deg2Rad * .5f);
             float fraction = profile.PlaneMaximumViewportDimension;

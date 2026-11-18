@@ -54,8 +54,12 @@ namespace Game.Tests.Editor
             using var f=new Fixture();uint hash=f.Setup.SetupHash;
             Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueValidated(f.Em,f.Session,f.View,out string error),error);
             using var requests=f.Em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));var request=requests.GetSingleton<RuntimeCameraFocusRequestComponent>();
-            Assert.AreEqual(1,request.Requested);Assert.AreEqual(1,request.UseExplicitPerspective);Assert.AreEqual(f.View.NormalHeight,request.Perspective.x);
-            Assert.IsTrue(SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(new Vector3(30,9,80),f.View.NormalHeight,f.View.Pitch,f.View.Yaw,out var ground));
+            // Skirmish framing: no opening config for S005, so the group is centred at the
+            // wider tactical height/pitch (never closer than the authored floor).
+            var framing=SkirmishCameraFraming.Resolve(f.View);Assert.GreaterOrEqual(framing.TacticalHeight,f.View.NormalHeight);
+            Assert.AreEqual(1,request.Requested);Assert.AreEqual(1,request.UseExplicitPerspective);Assert.AreEqual(framing.TacticalHeight,request.Perspective.x);
+            Assert.AreEqual(framing.Pitch,request.Perspective.y);Assert.AreEqual(framing.Yaw,request.Perspective.z);Assert.AreEqual(framing.FieldOfView,request.Perspective.w);
+            Assert.IsTrue(SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(new Vector3(30,9,80),framing.TacticalHeight,framing.Pitch,framing.Yaw,out var ground));
             Assert.Less(math.distance(request.World,(float3)ground),.0001f);Assert.IsTrue(SkirmishS005OpeningViewPolicy.OwnsIntroduction(f.Em,f.Session));
             request.Requested=0;f.Em.SetComponentData(requests.GetSingletonEntity(),request);
             Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueValidated(f.Em,f.Session,f.View,out error),error);
@@ -123,7 +127,8 @@ namespace Game.Tests.Editor
         {
             using var f=new Fixture();var members=Formation(f);uint hash=f.Setup.SetupHash;
             Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueValidated(f.Em,f.Session,f.View,out string error),error);
-            Assert.IsTrue(SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(new Vector3(103,2,206),f.View.NormalHeight,f.View.Pitch,f.View.Yaw,out var ground));
+            var framing=SkirmishCameraFraming.Resolve(f.View);
+            Assert.IsTrue(SkirmishMissionLogicalBindingProvider.TryProjectRoleFocus(new Vector3(103,2,206),framing.TacticalHeight,framing.Pitch,framing.Yaw,out var ground));
             using var requests=f.Em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));var entity=requests.GetSingletonEntity();
             var request=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity);
             Assert.Less(math.distance(request.World,(float3)ground),.0001f);
@@ -310,7 +315,11 @@ namespace Game.Tests.Editor
                 var owner=f.Em.GetComponentData<SkirmishS005OpeningFocusOwner>(f.Session);
                 Assert.AreEqual("role.rifle.1.0.0",owner.ActorId.ToString());Assert.IsTrue(SkirmishS005OpeningViewPolicy.OwnsIntroduction(f.Em,f.Session));
                 using var requests=f.Em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));var entity=requests.GetSingletonEntity();
-                var request=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity);Assert.AreEqual(1,request.Requested);Assert.AreEqual(resolved.NormalHeight,request.Perspective.x);
+                var request=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity);Assert.AreEqual(1,request.Requested);
+                // S002 has an opening camera config: composed between tactical and wide, facing the highway approach.
+                var framing=SkirmishMissionViewProfileApplication.ResolveFraming(f.Em,resolved);Assert.IsTrue(framing.HasMissionYaw);
+                Assert.That(request.Perspective.x,Is.InRange(framing.TacticalHeight-.01f,framing.WideHeight+.01f));
+                Assert.AreEqual(framing.Yaw,request.Perspective.z,.01f);Assert.AreEqual(107.8f,framing.Yaw,.5f);
                 request.Requested=0;f.Em.SetComponentData(entity,request);
                 Assert.IsTrue(SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(f.Em,f.Session,out error),error);Assert.AreEqual(0,f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(entity).Requested);
                 var native=f.Em.GetComponentData<SkirmishExpandedSessionComponent>(f.Session);native.CatalogId="S003";f.Em.SetComponentData(f.Session,native);

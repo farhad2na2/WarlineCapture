@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 577b47fafc6344509577256a58fffd10, type: 3}
+  m_Name: SkirmishOpeningCamera_S026
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishOpeningCameraConfig
+  SchemaVersion: 1
+  CatalogId: S026
+  LayoutId: layout.skirmish.s026
+  LayoutContentHash: authored.s026.1577d04a83fdb5e9
+  YawFromAnchorRoleId: 
+  YawTowardAnchorRoleId: 
+  YawFromWorldXZ: {x: 982, y: 692}
+  YawTowardWorldXZ: {x: 982, y: 640}
+  FrameAnchorRoleIds:
+  - candidate.structure.standard.0
+  FrameWorldXZ:
+  - {x: 982, y: 692}
+  FrameWorldLabels:
+  - junction.s026.start
+  Provenance: 'Unity road bitmap WarlineCapture-program-logs/2026-11-17/lane4-dump-S026/dump.json
+    (4 m blocks, flag 1 = road). Junction (982, 692): E-W road z 688-696 (x 960-1008)
+    meets the N-S avenue x 972-988 that runs south to the z 624-636 cross road (980, 630)
+    toward the enemy. Yaw 180 looks down that avenue. Barracks = player barracks pad anchor.'

@@ -268,6 +268,111 @@ namespace Game.Runtime
         public static bool TryApplyAircraftFollowPose(EntityManager em, Entity actor, Camera camera, ref TacticalFollowCameraPoseComponent pose)
         {
             if (camera == null || !TryAircraftBounds(em,actor,out var profile,out var combined)) return false;
+            if (!TryComposeAircraftFollow(em, actor, camera, profile, combined, out var frame)) return false;
+            pose.DesiredPosition = frame.Position; pose.DesiredRotation = new Unity.Mathematics.quaternion(frame.Rotation.x,frame.Rotation.y,frame.Rotation.z,frame.Rotation.w);
+            pose.LookAt = frame.LookAt; pose.FieldOfView = frame.FieldOfView; pose.Orthographic = 0; pose.OrthographicSize = 0;
+            return true;
+        }
+
+        /// <summary>One solved aircraft follow view (camera presentation only).</summary>
+        public struct AircraftFollowFrame
+        {
+            public Vector3 Position, LookAt, LandingPatch; public Quaternion Rotation; public float FieldOfView;
+            public bool HasLandingPatch, LandingPatchFramed;
+        }
+
+        /// <summary>Measured visible aircraft geometry (the strict gate the lens and public Follow share).</summary>
+        public static bool TryReadAircraftFollowBounds(EntityManager em, Entity actor, out Game.Configs.SkirmishMissionViewProfile profile, out Bounds combined)
+            => TryAircraftBounds(em, actor, out profile, out combined);
+
+        /// <summary>
+        /// Role-sized stand-in box at the actor's live transform, from the role's installed
+        /// canonical source prefab (rotor disc covered for any heading). Used only by the
+        /// selected-aircraft follow while measured geometry is not readable (for example a
+        /// distant aircraft on a Far impostor), so the camera can reach it at all.
+        /// </summary>
+        public static bool TryNominalAircraftBounds(EntityManager em, Entity actor, out Game.Configs.SkirmishMissionViewProfile profile, out Bounds combined)
+        {
+            combined = default;
+            if (!TryResolve(em, out profile) || profile == null || !profile.IsValid || !em.Exists(actor) ||
+                !em.HasComponent<SkirmishUnitRoleComponent>(actor) || !em.HasComponent<LocalTransform>(actor)) return false;
+            var role = em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role;
+            if (role == SkirmishRoleKind.TransportPlane || SkirmishRoleIds.Category(role) != SkirmishPopulationCategory.Air) return false;
+            var transform = em.GetComponentData<LocalTransform>(actor);
+            if (!(transform.Scale > 0f) || !float.IsFinite(transform.Scale)) return false;
+            var local = NominalLocalBounds(role);
+            float horizontal = Mathf.Sqrt(local.extents.x * local.extents.x + local.extents.z * local.extents.z);
+            var center = (Vector3)transform.TransformPoint((float3)local.center);
+            var extents = new Vector3(horizontal, local.extents.y, horizontal) * transform.Scale;
+            combined = new Bounds(center, extents * 2f);
+            return Finite(combined.center) && Finite(combined.extents) && extents.x > 0f && extents.y > 0f;
+        }
+
+        public const float NominalAircraftHalfExtentMetres = 10f;
+        static readonly Dictionary<SkirmishRoleKind, Bounds> nominalLocalBounds = new();
+        static Bounds NominalLocalBounds(SkirmishRoleKind role)
+        {
+            if (nominalLocalBounds.TryGetValue(role, out var cached)) return cached;
+            var result = new Bounds(new Vector3(0f, NominalAircraftHalfExtentMetres * .3f, 0f), new Vector3(2f, .6f, 2f) * NominalAircraftHalfExtentMetres);
+            var catalog = Game.Configs.SkirmishCanonicalAircraftGeometryConfig.Load();
+            GameObject prefab = null;
+            if (catalog != null && catalog.Roles != null)
+                foreach (var entry in catalog.Roles)
+                {
+                    if (entry == null || entry.Role != role || entry.Sources == null) continue;
+                    foreach (var source in entry.Sources)
+                        if (source != null && source.VisualKind == 1 && source.Prefab != null) { prefab = source.Prefab; break; }
+                    if (prefab != null) break;
+                }
+            if (prefab != null)
+            {
+                var root = prefab.transform.worldToLocalMatrix; bool found = false; var measured = default(Bounds);
+                foreach (var filter in prefab.GetComponentsInChildren<MeshFilter>(true))
+                {
+                    var mesh = filter.sharedMesh; if (mesh == null) continue;
+                    var matrix = root * filter.transform.localToWorldMatrix; var b = mesh.bounds;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var p = matrix.MultiplyPoint3x4(b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1)));
+                        if (!Finite(p)) continue;
+                        if (!found) { measured = new Bounds(p, Vector3.zero); found = true; } else measured.Encapsulate(p);
+                    }
+                }
+                if (found && measured.extents.x > 0f && measured.extents.y > 0f && measured.extents.z > 0f) result = measured;
+            }
+            nominalLocalBounds[role] = result;
+            return result;
+        }
+
+        /// <summary>
+        /// The aircraft's intended landing patch for the follow view: its live Move goal cell,
+        /// else its home pad while it is flying home or airborne without an order. In Skirmish a
+        /// helicopter that reaches its goal flies home and lands on its pad (UnitAirMovementSystem).
+        /// </summary>
+        public static bool TryReadAircraftLandingPatch(EntityManager em, Entity actor, out Vector3 patch)
+        {
+            patch = default;
+            if (!em.Exists(actor)) return false;
+            if (em.HasComponent<UnitTarget>(actor))
+            {
+                using var grids = em.CreateEntityQuery(typeof(GridConfig));
+                if (grids.CalculateEntityCount() != 1) return false;
+                patch = GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), em.GetComponentData<UnitTarget>(actor).Cell);
+                return Finite(patch);
+            }
+            if (!em.HasComponent<UnitAirComponent>(actor)) return false;
+            var air = em.GetComponentData<UnitAirComponent>(actor);
+            if (air.HomeInitialized == 0 || air.ReturningHome == 0 && air.Airborne == 0) return false;
+            patch = air.HomePosition;
+            return Finite(patch);
+        }
+
+        /// <summary>Follow view for given aircraft bounds (measured, carried or nominal).</summary>
+        public static bool TryComposeAircraftFollow(EntityManager em, Entity actor, Camera camera, Game.Configs.SkirmishMissionViewProfile profile,
+            Bounds combined, out AircraftFollowFrame frame)
+        {
+            frame = default;
+            if (camera == null || profile == null || !em.Exists(actor) || !em.HasComponent<SkirmishUnitRoleComponent>(actor)) return false;
             bool transport = em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.TransportPlane;
             float minimum = transport ? profile.AircraftMinimumDistance : camera.nearClipPlane*2+combined.extents.magnitude;
             // A mission yaw keeps the aircraft view on the same screen-up as the ground
@@ -283,17 +388,18 @@ namespace Game.Runtime
                 heading = new Vector2(forward.x, forward.z);
             }
             if (em.HasComponent<UnitAirComponent>(actor)) airborne = em.GetComponentData<UnitAirComponent>(actor).Airborne != 0 || airborne;
-            Vector3 position, lookAt; Quaternion rotation;
-            if (!Game.Configs.SkirmishCameraFraming.TryAircraftPose(combined, profile.GroundReferenceY, heading, airborne, profile.AircraftPitch, yaw,
+            Vector3? patch = TryReadAircraftLandingPatch(em, actor, out var landing) ? landing : (Vector3?)null;
+            Vector3 position, lookAt; Quaternion rotation; bool patchFramed;
+            if (!Game.Configs.SkirmishCameraFraming.TryAircraftFollowPose(combined, profile.GroundReferenceY, heading, airborne, patch, profile.AircraftPitch, yaw,
                     profile.AircraftFieldOfView, fraction, camera.aspect, camera.nearClipPlane, minimum, profile.AircraftMaximumDistance,
-                    out position, out rotation, out lookAt))
+                    out position, out rotation, out lookAt, out patchFramed))
             {
                 // Established bounds-only fit and its hard maximum-distance refusal.
                 if (!TryAircraftPose(combined,profile,camera.aspect,camera.nearClipPlane,minimum,yaw,out position,out rotation)) return false;
-                lookAt = combined.center;
+                lookAt = combined.center; patchFramed = false;
             }
-            pose.DesiredPosition = position; pose.DesiredRotation = new Unity.Mathematics.quaternion(rotation.x,rotation.y,rotation.z,rotation.w);
-            pose.LookAt = lookAt; pose.FieldOfView = profile.AircraftFieldOfView; pose.Orthographic = 0; pose.OrthographicSize = 0;
+            frame = new AircraftFollowFrame { Position = position, Rotation = rotation, LookAt = lookAt, FieldOfView = profile.AircraftFieldOfView,
+                HasLandingPatch = patch.HasValue, LandingPatch = landing, LandingPatchFramed = patchFramed };
             return true;
         }
 

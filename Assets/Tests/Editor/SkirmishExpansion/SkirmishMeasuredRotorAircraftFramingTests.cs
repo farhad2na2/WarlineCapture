@@ -53,7 +53,12 @@ namespace Game.Tests.Editor
                     using(var entities=transforms.ToEntityArray(Unity.Collections.Allocator.Temp))
                         foreach(var part in entities){var value=em.GetComponentData<LocalToWorld>(part);value.Value.c3.x+=10;em.SetComponentData(part,value);}
                     var moved=em.GetComponentData<LocalTransform>(actor);moved.Position.x+=10;em.SetComponentData(actor,moved);
-                    Assert.IsTrue(owner.TickAircraftFocus(em,camera,false));Assert.AreEqual(captured,camera.transform.position,"One-shot context must not track moving actor or blades");
+                    // Owner 2026-11-18: the selected aircraft is followed (pin changed from one-shot).
+                    Assert.IsTrue(owner.TickAircraftFocus(em,camera,false));
+                    Assert.That(Vector3.Distance(captured+new Vector3(10,0,0),camera.transform.position),Is.LessThan(.001f),"Selected aircraft follow tracks the moved airframe exactly");
+                    Assert.IsTrue(owner.TryReadAircraftFollowState(out var follow));Assert.IsTrue(follow.Following);Assert.AreEqual("Measured",follow.BoundsSource);
+                    Assert.That(Vector3.Distance(center+new Vector3(10,0,0),follow.LookAt),Is.LessThan(.001f),"Look-at stays on the airframe");
+                    center=follow.LookAt;
                     float prior=-1;
                     for(int level=-1;level<=1;level++)
                     {

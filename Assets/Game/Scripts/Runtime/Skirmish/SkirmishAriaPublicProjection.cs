@@ -101,13 +101,15 @@ namespace Game.Runtime
                 double now = em.World.Time.ElapsedTime;
                 if (s_coverageQuoteSession != session || now < s_coverageQuoteAt || now - s_coverageQuoteAt >= 1d)
                 {
-                    int mask = 0, research = 0, buildingNeed = 0, buildingPresent = 0;
+                    int mask = 0, research = 0, buildingNeed = 0, buildingPresent = 0, objectiveMask = 0;
                     for (int i = 0; i < CoverageRoles.Length; i++)
                     {
                         string id = SkirmishRoleIds.ToId(CoverageRoles[i]);
                         var quote = SkirmishProductionService.EvaluateQueue(em, session, id, 1, army, 1);
                         if (quote.Accepted && view.OwnMaterials - quote.MaterialsCost >= CoverageReserveMaterials)
                             mask |= 1 << i;
+                        if (quote.Accepted && view.OwnMaterials - quote.MaterialsCost >= ObjectiveCoverageReserveMaterials)
+                            objectiveMask |= 1 << i;
                         // What more readiness (up to Full Arsenal) would unlock, and which producer
                         // buildings the mission offers: the game's own production rules, no duplicate table.
                         var full = SkirmishProductionService.EvaluateQueueAtReadiness(em, session, id, 1, army, 1, SkirmishReadinessStage.FullArsenal);
@@ -123,16 +125,22 @@ namespace Game.Runtime
                     int buildMaterials = view.OwnMaterials - CoverageReserveMaterials;
                     if ((buildingNeed & 1) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad), buildMaterials)) buildingAfford |= 1;
                     if ((buildingNeed & 2) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.SatelliteDish), buildMaterials)) buildingAfford |= 2;
+                    int objectiveBuildingAfford = 0, objectiveBuildMaterials = view.OwnMaterials - ObjectiveCoverageReserveMaterials;
+                    if ((buildingNeed & 1) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad), objectiveBuildMaterials)) objectiveBuildingAfford |= 1;
+                    if ((buildingNeed & 2) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.SatelliteDish), objectiveBuildMaterials)) objectiveBuildingAfford |= 2;
                     // Producer buildings below Established also need research before they can be placed.
                     if (buildingNeed != 0 && LiveReadiness(em, session, setup.Readiness) < SkirmishReadinessStage.Established) research |= buildingNeed << CoverageRoles.Length;
                     s_coverageQuoteMask = mask; s_coverageQuoteAt = now; s_coverageQuoteSession = session;
                     s_researchNeedMask = research; s_buildingNeedMask = buildingNeed; s_buildingPresentMask = buildingPresent; s_buildingAffordMask = buildingAfford;
+                    s_objectiveCoverageMask = objectiveMask; s_objectiveBuildingAffordMask = objectiveBuildingAfford;
                 }
                 view.CoverageAffordMask = s_coverageQuoteMask;
                 view.ResearchNeedMask = s_researchNeedMask;
                 view.BuildingNeedMask = s_buildingNeedMask;
                 view.BuildingPresentMask = s_buildingPresentMask;
                 view.BuildingAffordMask = s_buildingAffordMask;
+                view.CoverageObjectiveAffordMask = s_objectiveCoverageMask;
+                view.BuildingObjectiveAffordMask = s_objectiveBuildingAffordMask;
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
@@ -233,6 +241,10 @@ namespace Game.Runtime
         }
 
         public const int CoverageReserveMaterials = 250;
+        // FC/BT/CE objective skill only: keep one rifle squad of materials (FieldBase starts at 450, cap 800,
+        // and lane 25 S007 never rose above 470, so the 250 base-assault reserve blocked every coverage purchase).
+        public const int ObjectiveCoverageReserveMaterials = 80;
+        private static int s_objectiveCoverageMask, s_objectiveBuildingAffordMask;
         private static Entity s_coverageQuoteSession;
         private static double s_coverageQuoteAt;
         private static int s_coverageQuoteMask, s_researchNeedMask, s_buildingNeedMask, s_buildingPresentMask, s_buildingAffordMask;

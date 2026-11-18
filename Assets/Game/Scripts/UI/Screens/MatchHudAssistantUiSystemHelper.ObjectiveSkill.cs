@@ -77,7 +77,7 @@ namespace Game.UI.Runtime
                     CanMove = policy.CanMove, Originals = row.Originals, Target = target, Skipped = escortSkipped.Contains(key),
                     Done = escortDone.Contains(key) || policy.AcceptedOrderActive && policy.AcceptedGoalId == goalId });
             }
-            int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates);
+            int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective));
             if (pick < 0) { escortOfferKey = null; return; }
             var chosen = escortCandidates[pick];
             string offer = chosen.GroupId + "|" + goalId;

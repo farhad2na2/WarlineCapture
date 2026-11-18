@@ -105,5 +105,9 @@ namespace Game.UI.Shell.Contracts.Ecs
         // Presented simulation seconds minus observation time, so a helipad preview started on the objective
         // clock keeps its deadline while the Build drawer hides the goal HUD.
         public float ObjectiveClockOffset;
+        // Objective gate 3: one coverage turn after each accepted objective order (ObjectiveCoverageTurn) and the
+        // one-time rocketeer purchase (AriaObjectiveSkillPolicy.OneTimeBuy: 0 none, 1 buying, 2 done).
+        public byte ObjectiveCoverageTurn, ObjectiveRocketeerStage;
+        public float ObjectiveRocketeerDeadline;
     }
 }

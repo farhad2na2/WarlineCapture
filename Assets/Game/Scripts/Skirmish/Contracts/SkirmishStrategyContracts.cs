@@ -94,6 +94,9 @@ namespace Game.Skirmish.Contracts
         // Research and producer buildings: kinds/buildings unlocked by more readiness (coverage bits, buildings
         // shifted past them), producer buildings needed / present / affordable above the reserve (1 helipad, 2 dish).
         public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask;
+        // FC/BT/CE objective skill: the same quotes with SkirmishAriaPublicProjection.ObjectiveCoverageReserveMaterials
+        // (FieldBase economies cannot hold the base-assault reserve). Base Assault never reads these.
+        public int CoverageObjectiveAffordMask, BuildingObjectiveAffordMask;
         public int OwnStructureAttackUnits;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;

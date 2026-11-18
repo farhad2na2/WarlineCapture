@@ -99,6 +99,8 @@ namespace Game.UI.Contracts
             RecruitGunner, RecruitTank, RecruitSiege, RecruitAttackHeli;
         // Research and producer buildings (see SkirmishAriaPublicView); readiness from the HUD readiness model.
         public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask, ReadinessStage, ResearchCost;
+        // FC/BT/CE: coverage and producer-building affordability above the objective reserve (see SkirmishAriaPublicView).
+        public int CoverageObjectiveAffordMask, BuildingObjectiveAffordMask;
         public bool ResearchInProgress;
         // The satellite dish build card (the helipad card is AirPad).
         public AriaTouchTarget BuildDish;

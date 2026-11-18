@@ -13,6 +13,7 @@ namespace Game.Simulation
     // close it. ClosePopup: that popup stayed open too long; close it. Wait: the frame is missing for
     // another reason; never act on a stale objective. Block: missing for longer than the grace.
     public enum AriaObjectiveFrameAction : byte { Proceed, Popup, ClosePopup, Wait, Block }
+    public enum AriaObjectiveBuy : byte { None, Recruit, Waiting }
 
     public struct AriaObjectiveFrameState
     {
@@ -42,6 +43,36 @@ namespace Game.Simulation
         public const float PopupLimitSeconds = 60f, PopupCloseSeconds = 20f;
         public const float OrderRetrySeconds = 8f;
         public const int MaxOrderFailures = 6, MaxEscortFailures = 10;
+        // Gate 3 on FieldBase economies (450 start, cap 800, about 0.5 materials/s in lane 25 S007): coverage,
+        // research and producer buildings keep one rifle squad of materials (the projection's objective masks use
+        // the same value), and once coverage has started ordinary rifles only refill to this floor.
+        public const int CoverageReserve = 80, CoverageInfantryFloor = 16;
+        public const float OneTimeBuySeconds = 10f;
+
+        // Rifle top-up target: the type's strength until coverage starts, then the floor (coverage infantry,
+        // gunner/marksman/breacher, fills the rest, and the materials go to the other offered types).
+        public static int RifleTarget(AriaObjectiveType type, bool coverageStarted)
+        {
+            int target = InfantryTarget(type);
+            return coverageStarted && target > CoverageInfantryFloor ? CoverageInfantryFloor : target;
+        }
+
+        // One purchase of a kind the coverage policy does not list (the rocketeer), through Build and its card.
+        // stage: 0 not started, 1 buying, 2 done (queued, fielded, given up or interrupted). Bounded.
+        public static AriaObjectiveBuy OneTimeBuy(ref byte stage, ref float deadline, bool coverageStarted, bool busy,
+            bool canAfford, bool pending, bool cardAvailable, float now)
+        {
+            if (stage == 2) return AriaObjectiveBuy.None;
+            if (pending) { stage = 2; return AriaObjectiveBuy.None; }
+            if (stage == 1)
+            {
+                if (now > deadline || busy) { stage = 2; return AriaObjectiveBuy.None; }
+                return cardAvailable ? AriaObjectiveBuy.Recruit : AriaObjectiveBuy.Waiting;
+            }
+            if (!coverageStarted || busy || !canAfford || !cardAvailable) return AriaObjectiveBuy.None;
+            stage = 1; deadline = now + OneTimeBuySeconds;
+            return AriaObjectiveBuy.Recruit;
+        }
 
         // SkirmishPublicGoalPerspective: Capture (FC), Evacuate (BT), Escort (CE).
         public static AriaObjectiveType TypeOf(SkirmishPublicGoalPerspective perspective) => perspective switch
@@ -132,18 +163,29 @@ namespace Game.Simulation
 
         // Ground vehicles only. Radar keeps its support order; objective originals (BT riflemen, CE trucks)
         // and automatic logistics are never re-tasked by an escort order.
-        public static bool Eligible(in AriaEscortCandidate c) =>
-            c.GroupId != 0 && c.CanMove && !c.Originals && c.Domain == SkirmishPopulationCategory.Ground &&
-            c.Role != SkirmishRoleKind.Radar;
+        public static bool Eligible(in AriaEscortCandidate c) => Eligible(c, AriaObjectiveType.None);
 
-        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates)
+        // CE: ordinary combat infantry also escorts by moving to the destination ahead of the trucks (the chooser
+        // no longer orders infantry onto a moving truck, whose receipt can never cover a whole squad's move goals).
+        public static bool Eligible(in AriaEscortCandidate c, AriaObjectiveType type) =>
+            c.GroupId != 0 && c.CanMove && !c.Originals && c.Role != SkirmishRoleKind.Radar &&
+            (c.Domain == SkirmishPopulationCategory.Ground ||
+             type == AriaObjectiveType.ConvoyEscort && c.Domain == SkirmishPopulationCategory.Infantry && CombatInfantryRole(c.Role));
+
+        public static bool CombatInfantryRole(SkirmishRoleKind role) =>
+            role == SkirmishRoleKind.Rifle || role == SkirmishRoleKind.Gunner || role == SkirmishRoleKind.Marksman ||
+            role == SkirmishRoleKind.Breacher || role == SkirmishRoleKind.Rocketeer;
+
+        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates) => Pick(candidates, AriaObjectiveType.None);
+
+        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates, AriaObjectiveType type)
         {
             int best = -1;
             if (candidates == null) return best;
             for (int i = 0; i < candidates.Count; i++)
             {
                 var c = candidates[i];
-                if (!Eligible(c) || c.Done || c.Skipped || !c.Target) continue;
+                if (!Eligible(c, type) || c.Done || c.Skipped || !c.Target) continue;
                 if (best < 0 || c.GroupId < candidates[best].GroupId) best = i;
             }
             return best;

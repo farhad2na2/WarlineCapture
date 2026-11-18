@@ -115,7 +115,7 @@ blocking. Public player controls only; fog of war stays. Add an EditMode test th
 Windows. Counted S002 matches stay on the Mac. Branch `missions/win-w12-s002-second-defense`.
 
 ## W13 — Starting structures and enemy construction placed on map runways (2026-11-18)
-status: READY
+status: DONE (65bcf4d15; merged e11d22253; only S004 enemy base moves, S004 needs counted re-runs)
 codex effort: xhigh
 Owner saw an ENEMY refinery on an airport runway in a Mac Editor match. Traced (Windows + Mac, read-only, computed not measured):
 S004 (CityEdgeAirfield) enemy refinery preferred rect x 894..919, z 562..577 covers ~225 of 375 m2 of the east runway end

@@ -32,8 +32,10 @@ namespace Game.Editor
     /// onto missions/integration for the matched "before" captures.
     ///
     /// Output: Design/AgentReports/SkirmishExpansion/CameraFraming/{label}/
-    ///   {catalog}-{seed}-{w}x{h}-ground-{opening|wide|close|default}.png, ...-ground.jsonl
-    ///   {catalog}-{w}x{h}-air-{nn}-{event}.png, ...-air.jsonl
+    ///   {catalog}-{seed}-{w}x{h}[-{locale}]-ground-{opening|wide|close|default}.png, ...-ground.jsonl
+    ///   {catalog}-{w}x{h}[-{locale}]-air-{nn}-{event}.png, ...-air.jsonl
+    /// {locale} comes from WARLINE_CAPTURE_LOCALE (en or fa-IR, the locales the ARIA queue accepts;
+    /// default en) and appears in the names only when it is not English, so English names are unchanged.
     /// Air events: lens-applied, return-from-recruitment, takeoff, turn, cruise, landing, switch-back-ground.
     /// {seed} is the seed of the launched session; {w}x{h} is the Game view's fixed target
     /// size (WARLINE_REVIEW_WIDTH/HEIGHT), which is what ScreenCapture writes. Screen.width/height
@@ -47,8 +49,9 @@ namespace Game.Editor
         const int SettleFrames = 45, MaxAirCaptures = 16;
         public const int DefaultSeed = 104729, S002Seed = 130365;
         const string ReviewWidthEnv = "WARLINE_REVIEW_WIDTH", ReviewHeightEnv = "WARLINE_REVIEW_HEIGHT";
+        public const string LocaleEnv = "WARLINE_CAPTURE_LOCALE";
 
-        static string mode, label;
+        static string mode, label, captureLocale = GameLocalization.EnglishLocaleCode;
         static int step, stableFrames, airCaptures, lastAirCaptureFrame = -100000, pendingClearedFrame = -1;
         static Vector3 lastPosition; static Quaternion lastRotation; static float lastFov;
         static double groundDeadline;
@@ -62,6 +65,12 @@ namespace Game.Editor
             if (string.IsNullOrEmpty(mode)) return;
             label = Environment.GetEnvironmentVariable(LabelEnv);
             if (string.IsNullOrEmpty(label)) label = "unlabelled";
+            if (!TryResolveCaptureLocale(Environment.GetEnvironmentVariable(LocaleEnv), out captureLocale, out string localeError))
+            {
+                Debug.LogError("[SkirmishCameraFramingCapture] result=Failed reason=" + localeError);
+                mode = null; captureLocale = GameLocalization.EnglishLocaleCode;
+                return;
+            }
             EditorApplication.update -= Tick; EditorApplication.update += Tick;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded -= OnAircraftFocus;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded += OnAircraftFocus;
@@ -85,17 +94,21 @@ namespace Game.Editor
         public static void RunS026HelicopterFramingCapture()
         {
             Arm("aircraft");
-            SkirmishS002AriaRunHarness.RunS026HelicopterFramingProbeAndExit(DefaultSeed);
+            SkirmishS002AriaRunHarness.RunS026HelicopterFramingProbeAndExit(DefaultSeed, captureLocale);
         }
 
         static void LaunchGround(string catalog)
         {
             Arm("ground");
-            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, catalog == "S002" ? S002Seed : DefaultSeed, GameLocalization.EnglishLocaleCode);
+            SkirmishS002AriaRunHarness.LaunchCatalog(catalog, catalog == "S002" ? S002Seed : DefaultSeed, captureLocale);
         }
 
         static void Arm(string requested)
         {
+            // Fail before any Editor state changes: an unsupported locale must not launch a mislabelled run.
+            if (!TryResolveCaptureLocale(Environment.GetEnvironmentVariable(LocaleEnv), out string resolvedLocale, out string localeError))
+                throw new InvalidOperationException(localeError);
+            captureLocale = resolvedLocale;
             Environment.SetEnvironmentVariable(ModeEnv, requested);
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(LabelEnv))) Environment.SetEnvironmentVariable(LabelEnv, "unlabelled");
             mode = requested; label = Environment.GetEnvironmentVariable(LabelEnv);
@@ -104,7 +117,68 @@ namespace Game.Editor
             Game.Runtime.AircraftProductionFocusEvidence.Recorded -= OnAircraftFocus;
             Game.Runtime.AircraftProductionFocusEvidence.Recorded += OnAircraftFocus;
             Directory.CreateDirectory(OutputDirectory());
-            Debug.Log("[SkirmishCameraFramingCapture] armed mode=" + requested + " label=" + label + " output=" + OutputDirectory());
+            Debug.Log("[SkirmishCameraFramingCapture] armed mode=" + requested + " label=" + label + " locale=" + captureLocale + " output=" + OutputDirectory());
+        }
+
+        // ------------------------------------------------------------ locale and file names
+        /// <summary>
+        /// WARLINE_CAPTURE_LOCALE: empty means English; otherwise exactly one of the locale codes the
+        /// ARIA queue accepts (en, fa-IR). Anything else is refused rather than guessed.
+        /// </summary>
+        public static bool TryResolveCaptureLocale(string requested, out string locale, out string error)
+        {
+            error = null;
+            locale = GameLocalization.EnglishLocaleCode;
+            if (string.IsNullOrWhiteSpace(requested)) return true;
+            string trimmed = requested.Trim();
+            if (string.Equals(trimmed, GameLocalization.EnglishLocaleCode, StringComparison.Ordinal) ||
+                string.Equals(trimmed, GameLocalization.PersianLocaleCode, StringComparison.Ordinal))
+            { locale = trimmed; return true; }
+            error = "unsupportedCaptureLocale " + LocaleEnv + "=" + requested + " (use " +
+                GameLocalization.EnglishLocaleCode + " or " + GameLocalization.PersianLocaleCode + ")";
+            return false;
+        }
+
+        static string LocaleToken(string locale) =>
+            string.IsNullOrEmpty(locale) || string.Equals(locale, GameLocalization.EnglishLocaleCode, StringComparison.Ordinal) ? "" : "-" + locale;
+
+        /// <summary>{catalog}-{seed}-{w}x{h}[-{locale}]-ground; the locale is omitted for English.</summary>
+        public static string GroundFilePrefix(string catalog, int seed, int width, int height, string locale) =>
+            catalog + "-" + seed.ToString(CultureInfo.InvariantCulture) + "-" + width.ToString(CultureInfo.InvariantCulture) + "x" +
+            height.ToString(CultureInfo.InvariantCulture) + LocaleToken(locale) + "-ground";
+
+        /// <summary>{catalog}-{w}x{h}[-{locale}]-air; the locale is omitted for English.</summary>
+        public static string AirFilePrefix(string catalog, int width, int height, string locale) =>
+            catalog + "-" + width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture) + LocaleToken(locale) + "-air";
+
+        // ------------------------------------------------------------ helicopter squad card
+        /// <summary>
+        /// Presented slot (0-4) of the helicopter's squad card on the current page, or -1. With a known
+        /// group id the card is matched by group, which covers every helicopter kind: AirMask marks only
+        /// assault air (attack helicopters, strike), so a delivered transport helicopter, a support role,
+        /// never sets it. Without a group id the first assault-air card is the fallback.
+        /// </summary>
+        public static int HelicopterCardSlot(UiExpandedSquadPage page, uint groupId)
+        {
+            for (int slot = 0; slot < 5; slot++)
+                if (groupId != 0 ? page.Group(slot) == groupId : (page.AirMask & (1 << slot)) != 0) return slot;
+            return -1;
+        }
+
+        /// <summary>Observed squad page state for a failure reason (masks in hex, page as index/count).</summary>
+        public static string DescribeSquadPage(bool pageRead, UiExpandedSquadPage page, uint groupId)
+        {
+            var text = "heliGroup=" + groupId.ToString(CultureInfo.InvariantCulture);
+            if (!pageRead) return text + " squadPage=unread";
+            return text + " page=" + page.PageIndex.ToString(CultureInfo.InvariantCulture) + "/" + page.PageCount.ToString(CultureInfo.InvariantCulture) +
+                " totalGroups=" + page.TotalGroups.ToString(CultureInfo.InvariantCulture) +
+                " next=" + (page.NextPage ? 1 : 0) + " previous=" + (page.PreviousPage ? 1 : 0) +
+                " airMask=0x" + page.AirMask.ToString("x2", CultureInfo.InvariantCulture) +
+                " assaultMask=0x" + page.AssaultMask.ToString("x2", CultureInfo.InvariantCulture) +
+                " selectedMask=0x" + page.SelectedMask.ToString("x2", CultureInfo.InvariantCulture) +
+                " supportSlots=0x" + page.SupportSlots.ToString("x3", CultureInfo.InvariantCulture) +
+                " selectedGroups=" + page.SelectedGroups.ToString(CultureInfo.InvariantCulture) +
+                " groups=[" + string.Join(",", page.Group0, page.Group1, page.Group2, page.Group3, page.Group4) + "]";
         }
 
         static string OutputDirectory() => Path.GetFullPath(Path.Combine(Application.dataPath, "..",
@@ -228,7 +302,7 @@ namespace Game.Editor
             if (!ReviewSizeReady() || !Settled(camera)) return;
             string catalog = native.CatalogId.ToString();
             ReviewSize(out int width, out int height, out _);
-            string prefix = catalog + "-" + native.Seed.ToString(CultureInfo.InvariantCulture) + "-" + width + "x" + height + "-ground";
+            string prefix = GroundFilePrefix(catalog, native.Seed, width, height, captureLocale);
             string png = Path.Combine(OutputDirectory(), prefix + "-" + GroundShots[step] + ".png");
             ScreenCapture.CaptureScreenshot(png);
             AppendJson(prefix + ".jsonl", GroundShots[step], camera, em, native, png, null);
@@ -245,7 +319,7 @@ namespace Game.Editor
             step++; stableFrames = 0;
             if (step >= GroundShots.Length)
             {
-                Debug.Log("[SkirmishCameraFramingCapture] result=Captured mode=ground catalog=" + catalog + " label=" + label + " visualReview=Pending");
+                Debug.Log("[SkirmishCameraFramingCapture] result=Captured mode=ground catalog=" + catalog + " locale=" + captureLocale + " label=" + label + " visualReview=Pending");
                 if (Environment.GetEnvironmentVariable(ExitEnv) == "1") SkirmishS002AriaRunHarness.AbortFailedValidationAndExit();
             }
         }
@@ -301,7 +375,7 @@ namespace Game.Editor
             if (world == null || !world.IsCreated || !TryReadSession(world.EntityManager, out _, out var native) || !ReviewSizeReady()) return;
             lastAirCaptureFrame = Time.frameCount;
             ReviewSize(out int width, out int height, out _);
-            string prefix = native.CatalogId + "-" + width + "x" + height + "-air";
+            string prefix = AirFilePrefix(native.CatalogId.ToString(), width, height, captureLocale);
             string png = Path.Combine(OutputDirectory(), prefix + "-" + airCaptures.ToString("00", CultureInfo.InvariantCulture) + "-" + kind + ".png");
             airCaptures++;
             ScreenCapture.CaptureScreenshot(png);
@@ -311,7 +385,7 @@ namespace Game.Editor
         // ------------------------------------------------------------------- facts
         [Serializable] sealed class Shot
         {
-            public string label, shot, catalog, png, subject, sizeSource; public int frame, seed, width, height, editorScreenWidth, editorScreenHeight;
+            public string label, shot, catalog, locale, png, subject, sizeSource; public int frame, seed, width, height, editorScreenWidth, editorScreenHeight;
             public float elapsed, fieldOfView, aspect, cameraAboveSubjectMin; public Vector3 cameraPosition, cameraEuler, groundCenterZeroPlane;
             public bool profileResolved; public float profileNormalHeight, profileMaxHeight, profileMinHeight, profileGroundY;
             public int ownAirVisible, ownAirAboveCamera, unitOrdersIssued;
@@ -320,7 +394,7 @@ namespace Game.Editor
         static void AppendJson(string file, string shot, Camera camera, EntityManager em, SkirmishExpandedSessionComponent native, string png, string subject)
         {
             ReviewSize(out int width, out int height, out string sizeSource);
-            var row = new Shot { label = label, shot = shot, catalog = native.CatalogId.ToString(), png = png, subject = subject, frame = Time.frameCount,
+            var row = new Shot { label = label, shot = shot, catalog = native.CatalogId.ToString(), locale = captureLocale, png = png, subject = subject, frame = Time.frameCount,
                 seed = native.Seed, width = width, height = height, sizeSource = sizeSource, editorScreenWidth = Screen.width, editorScreenHeight = Screen.height, elapsed = Time.timeSinceLevelLoad, fieldOfView = camera.fieldOfView, aspect = camera.aspect,
                 cameraPosition = camera.transform.position, cameraEuler = camera.transform.eulerAngles, cameraAboveSubjectMin = float.NaN, unitOrdersIssued = 0 };
             var ray = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0));
@@ -356,6 +430,9 @@ namespace Game.Editor
         internal const string S026HelicopterFramingEnv = "WARLINE_S026_HELICOPTER_FRAMING";
         internal const int S026HeliStageBase = 100;
         const float S026HeliFundsWaitMatchSeconds = 360f;
+        // The delivered helicopter's squad card can appear a few frames after the entity (group record,
+        // drawer projection and tray roster rebuild); wait this long in real time before failing.
+        internal const double S026HeliCardWaitSeconds = 20d;
         static readonly (SkirmishRoleKind kind, string roleId, string prefab)[] S026HeliChoices =
         {
             (SkirmishRoleKind.TransportHeli, SkirmishRoleIds.TransportHeli, "Unit_Veh_Helicopter_Transport"),
@@ -364,12 +441,13 @@ namespace Game.Editor
         };
         static Entity s026HeliSession, s026HeliActor;
         static int s026HeliChoice = -1, s026HeliMoveAttempts, s026HeliPageTurns;
-        static bool s026HeliReturnPhase;
+        static bool s026HeliReturnPhase, s026HeliPageForward = true;
+        static double s026HeliCardDeadline;
         static float s026HeliWaitStartMatch = -1f;
         static double s026HeliMoveAt, s026HeliAirborneAt, s026HeliLandedAt, s026HeliLastStatusAt;
         static string s026HeliLastReason = "";
 
-        public static void RunS026HelicopterFramingProbeAndExit(int seed)
+        public static void RunS026HelicopterFramingProbeAndExit(int seed, string locale = GameLocalization.EnglishLocaleCode)
         {
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "0");
@@ -377,7 +455,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S026");
             Environment.SetEnvironmentVariable("WARLINE_S002_SEED", seed.ToString(CultureInfo.InvariantCulture));
-            Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", GameLocalization.EnglishLocaleCode);
+            Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", string.IsNullOrEmpty(locale) ? GameLocalization.EnglishLocaleCode : locale);
             Environment.SetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY", null);
             helipadProbeStage = 0;
             // Startup-only: ARIA is never begun (no AriaCommandEvidence/gate units); all input below is touch.
@@ -390,6 +468,7 @@ namespace Game.Editor
             helipadProbeAircraftCycle = false;
             s026HeliSession = session; s026HeliActor = Entity.Null;
             s026HeliChoice = -1; s026HeliMoveAttempts = 0; s026HeliPageTurns = 0; s026HeliReturnPhase = false;
+            s026HeliPageForward = true; s026HeliCardDeadline = 0d;
             s026HeliWaitStartMatch = -1f; s026HeliMoveAt = s026HeliAirborneAt = s026HeliLandedAt = s026HeliLastStatusAt = 0d;
             s026HeliLastReason = "";
             helipadProbeStage = S026HeliStageBase;
@@ -525,18 +604,33 @@ namespace Game.Editor
             if (!em.Exists(s026HeliActor) || em.GetComponentData<UnitHealth>(s026HeliActor).Current <= 0)
             { EndS026HelicopterFraming(false, "helicopterLost:stage=" + helipadProbeStage); return; }
             var air = em.GetComponentData<UnitAirComponent>(s026HeliActor);
-            // 104: select the helicopter through its squad card.
+            // 104: select the helicopter through its squad card, as a player would: find the card of the
+            // helicopter's own group on the squad tray (scrolling or paging the tray if needed) and tap it.
+            // A transport helicopter is a support role, so it is never in AirMask (assault air only); the
+            // group id is the identity that covers every helicopter kind. Waits up to S026HeliCardWaitSeconds
+            // of real time for the card to appear; no unit order is issued here.
             if (helipadProbeStage == S026HeliStageBase + 4)
             {
-                if (em.HasComponent<SelectedUnitTag>(s026HeliActor)) { helipadProbeStage = S026HeliStageBase + (s026HeliReturnPhase ? 7 : 5); return; }
-                if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return;
+                if (em.HasComponent<SelectedUnitTag>(s026HeliActor))
+                {
+                    s026HeliCardDeadline = 0d; s026HeliPageTurns = 0; s026HeliPageForward = true;
+                    helipadProbeStage = S026HeliStageBase + (s026HeliReturnPhase ? 7 : 5);
+                    return;
+                }
+                if (s026HeliCardDeadline <= 0d) s026HeliCardDeadline = now + S026HeliCardWaitSeconds;
+                uint group = em.HasComponent<SkirmishArmyGroupMembershipComponent>(s026HeliActor)
+                    ? em.GetComponentData<SkirmishArmyGroupMembershipComponent>(s026HeliActor).GroupId : 0u;
+                bool pageRead = UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page);
                 var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
-                if (tray == null) return;
-                if (page.SelectedGroups > 0) { DeselectHelipadSquads(tray, now); return; }
-                for (int slot = 0; slot < 5; slot++)
-                    if ((page.AirMask & (1 << slot)) != 0) { TapHelipadSquadSlot(tray, slot, now); return; }
-                if (page.NextPage && s026HeliPageTurns++ < 12) { SwipeHelipadSquadPage(tray, true, now); return; }
-                EndS026HelicopterFraming(false, "helicopterSquadCardNotFound");
+                if (now < s026HeliCardDeadline)
+                {
+                    if (pageRead && tray != null) S026SelectHelicopterCardStep(page, group, tray, now);
+                    return;
+                }
+                EndS026HelicopterFraming(false, "helicopterSquadCardNotFound waitedSeconds=" +
+                    S026HeliCardWaitSeconds.ToString("0", CultureInfo.InvariantCulture) + " role=" + choice.kind +
+                    " " + SkirmishCameraFramingCapture.DescribeSquadPage(pageRead, page, group) +
+                    " tray=" + (tray != null ? "present trayPage=" + tray.LogicalPageIndex : "absent") + " pageTurns=" + s026HeliPageTurns);
                 return;
             }
             // 105: HUD Move command, then a touch on visible open ground away from the helicopter.
@@ -578,7 +672,7 @@ namespace Game.Editor
                 {
                     if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var mode) && mode.ActiveCommandMode != TacticalCommandMode.None &&
                         mode.ActiveCommandMode != TacticalCommandMode.Select) { TapHelipadButton(controls?.SelectButton, now); return; }
-                    helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; // reselect, then come back here
+                    helipadProbeStage = S026HeliStageBase + 4; s026HeliPageTurns = 0; s026HeliCardDeadline = 0d; // reselect, then come back here
                     return;
                 }
                 TapHelipadButton(controls?.CommandWheelPanel?.NextReturnButton, now);
@@ -595,6 +689,41 @@ namespace Game.Editor
                 if (now - s026HeliLandedAt < 4d) return;
                 EndS026HelicopterFraming(true, "paidHelicopterRecruitReturnMoveCruiseReturnTouchdown");
             }
+        }
+
+        /// <summary>
+        /// At most one normal touch toward selecting the helicopter's card per call: clear a different
+        /// selection, tap the card on the current page, tap or scroll to the card anywhere in the tray
+        /// roster, else page the tray forward to the last page and back. Does nothing while a selection
+        /// of the card is pending or the input helper is busy (the caller re-reads next frame).
+        /// </summary>
+        static void S026SelectHelicopterCardStep(UiExpandedSquadPage page, uint group, MatchHudSquadTrayView tray, double now)
+        {
+            int slot = SkirmishCameraFramingCapture.HelicopterCardSlot(page, group);
+            if (slot >= 0 && (page.SelectedMask & (1 << slot)) != 0) return; // selected; the tag follows
+            if (page.SelectedGroups > 0) { DeselectHelipadSquads(tray, now); return; }
+            if (slot >= 0)
+            {
+                if (TapHelipadSquadSlot(tray, slot, now))
+                    Debug.Log("[S026HelicopterFraming] input=Touch squadCard slot=" + slot + " group=" + group + " page=" + page.PageIndex);
+                return;
+            }
+            if (group != 0)
+            {
+                var target = MatchHudSquadTouchNavigation.GroupTarget(tray, group);
+                if (target.Available)
+                {
+                    if (HelipadSquadInput(target, now, false))
+                        Debug.Log("[S026HelicopterFraming] input=Touch squadCard group=" + group + " kind=" + (target.Drag ? "TrayScroll" : "CardTap"));
+                    return;
+                }
+            }
+            if (page.PageCount <= 1) return; // single page: the card has not been presented yet
+            if (s026HeliPageForward && !page.NextPage) s026HeliPageForward = false;
+            else if (!s026HeliPageForward && !page.PreviousPage) s026HeliPageForward = true;
+            if (!SwipeHelipadSquadPage(tray, s026HeliPageForward, now)) return;
+            s026HeliPageTurns++;
+            Debug.Log("[S026HelicopterFraming] input=Touch squadPage forward=" + (s026HeliPageForward ? 1 : 0) + " page=" + page.PageIndex + "/" + page.PageCount);
         }
 
         static bool TryS026MoveGround(EntityManager em, out Vector2 point, out Vector3 world)

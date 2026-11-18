@@ -42,6 +42,7 @@ namespace Game.Tests.Editor
             em.AddComponentData(unit, new RecentAttacker { Attacker = Entity.Null });
             em.AddComponentData(unit, new RecentDamageHealthBarVisibility { TimeRemaining = 0.05f });
             em.AddComponent<UnitRenderBudgetCulledUnitTag>(unit);
+            world.SetTime(new TimeData(0d, 0.1f)); // creates the world time singleton once, before the baseline
             int archetypes = CountArchetypes(em);
 
             for (int cycle = 0; cycle < 4; cycle++)

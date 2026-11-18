@@ -1,0 +1,1 @@
+The PNGs in this folder are named 1836x1016 (the Editor GUI size at capture time) but are really 2400x1080 (lane worker 19 run). The S002 files named seed 104729 were captured with seed 130365. Correctly named "after" sets (2400x1080 and 1920x1080, S026 seed 104729 and S002 seed 130365) are in ../after.

@@ -1,0 +1,3376 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9943e2848a044c6b74e89f5dcdba4a0, type: 3}
+  m_Name: SkirmishMissionLogicalBinding_S024
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionLogicalBindingConfig
+  SchemaVersion: 1
+  ContentVersion: 1
+  DefinitionVersion: 2
+  ValueFormat: 0
+  CatalogId: S024
+  DefinitionId: skirmish.s024
+  SourceOperationMapId: opmap.skirmish.desert_base_01
+  SourceSceneGuid: dad0bd13fb20943dfb2f881cbe225f05
+  SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+  LayoutId: layout.skirmish.s024
+  ReviewedLayoutSemanticFingerprint: 7a9198b4ea977bd3dfbc5950ae971e7493f5160c76638b4c7104ad091e90af10
+  ObjectiveKind: 4
+  Variants:
+  - Size: 1
+    Difficulty: 1
+    Areas:
+      rid: 564157637991596200
+    ReviewedAreaLogicalFingerprint: 16f0b8b52da8575ebe6738d2a1064468eea8b7774c143023cc812c549fb3d7e7
+    ReviewedGeometryFingerprint: 67a7a4cd7a32fb0a5310d41f12909e0d9886170c4a65ef921cbed8aa77bd3862
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 1
+    Difficulty: 2
+    Areas:
+      rid: 564157637991596201
+    ReviewedAreaLogicalFingerprint: c28af7932d5a62c303a038c75b806caad40b4bf1ab67b2da2d62aa95055aa739
+    ReviewedGeometryFingerprint: 6623b3f9c99230e136fcc02ac2ba8d60acc8f328ad7a717a56834529703abe77
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 1
+    Difficulty: 3
+    Areas:
+      rid: 564157637991596202
+    ReviewedAreaLogicalFingerprint: 632119c9983a512d300577531530a4905dd2e352ff433a5ab8d49badd254d533
+    ReviewedGeometryFingerprint: cec6a99fef615523af754d9c0c2f94ad755d2c00c47d1184965405a6b77bea8b
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 1
+    Difficulty: 4
+    Areas:
+      rid: 564157637991596203
+    ReviewedAreaLogicalFingerprint: 94ee4d7910f30f462224fb4112156782b32d4daf9739d16b6b6f5ed7c13035fa
+    ReviewedGeometryFingerprint: 055ec2697cc659a417750a6ea6b94414d75c54c832d1cb58fddd3a12b28a41f2
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 2
+    Difficulty: 1
+    Areas:
+      rid: 564157637991596204
+    ReviewedAreaLogicalFingerprint: 02f48e14a9a622749c723df98074bc068f32808b1324f6d857d01e82724be1b5
+    ReviewedGeometryFingerprint: e949bc74297ead0b82e29ca0fc9db8f9625618c398743b956ec2d52619f71441
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 2
+    Difficulty: 2
+    Areas:
+      rid: 564157637991596205
+    ReviewedAreaLogicalFingerprint: b5ef70e09ad5b985b9727404f1660e026238c6afa83e95b5c84e2710a6620023
+    ReviewedGeometryFingerprint: 0bfd5dfb27b0495734056234d4978fc0875e7d045465424611a914fc9ddd8f1c
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 2
+    Difficulty: 3
+    Areas:
+      rid: 564157637991596206
+    ReviewedAreaLogicalFingerprint: 227ef8655beab75936688658daa990e9c28d12c7d40030c8af5418c0a4a550fa
+    ReviewedGeometryFingerprint: 1e944a6b2500e9f892c77647b08278806d495c9f5b4478ff7efd3b0825ff3934
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 2
+    Difficulty: 4
+    Areas:
+      rid: 564157637991596207
+    ReviewedAreaLogicalFingerprint: ef441962c3d18a93b6b4ecb11aa3ba3f4f1fd5f09b944b70d120801b59554734
+    ReviewedGeometryFingerprint: 4d16a5b9946315df0b6f6ff4c7bee3549a243dc3c01aa67e15da116a73fd4f91
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 3
+    Difficulty: 1
+    Areas:
+      rid: 564157637991596208
+    ReviewedAreaLogicalFingerprint: 5461fe7229260903a97536c3958202393dcb10bb3f6f4e3b75c70b07a7ca884d
+    ReviewedGeometryFingerprint: 1f25a98ba6e32ad77f3dbeaf021c64595ad79bb4be730b3e17aab21d72310ac5
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 3
+    Difficulty: 2
+    Areas:
+      rid: 564157637991596209
+    ReviewedAreaLogicalFingerprint: 2958f694182299b4945ac40c431cd7f6a4a3e1d9dc365e4ea928195aad425c51
+    ReviewedGeometryFingerprint: e4519c92b0dc15aecae24453b0a3a885c5a1bf13b41b23096817dea3eb818903
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 3
+    Difficulty: 3
+    Areas:
+      rid: 564157637991596210
+    ReviewedAreaLogicalFingerprint: ce9118315fdd8cce36f863c2a33ed8b8221fb60f4b68abfbbf39f4f8fa465128
+    ReviewedGeometryFingerprint: 40db504b017e3dcdfcea52e54dcff84cd047e28453729a3cb15da06ecc4267cc
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  - Size: 3
+    Difficulty: 4
+    Areas:
+      rid: 564157637991596211
+    ReviewedAreaLogicalFingerprint: 74a3221318919a934218b8925e3bc35c19c9b394ca80da8f776a7ee627032e5e
+    ReviewedGeometryFingerprint: defa4e792390d2ed11ee7c8189404ee99539804911d28d933992ca374ae9d316
+    View: {fileID: 5312876852363828098}
+    OpeningFocusRole: 1
+    OpeningFocusStableActorId: role.rifle.1.0.0
+    OpeningFocusSmoothSeconds: 2.25
+    SourceMinimumElevation: -5.31082
+    SourceMaximumElevation: 17.199179
+    Framing:
+    - Role: 1
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 2
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 3
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 4
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 5
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 6
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 7
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 8
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 9
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 10
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 11
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 12
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 13
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 14
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 15
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 16
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 17
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 18
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 19
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 20
+      Stages: 127
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.04
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 21
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 22
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 1
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    - Role: 23
+      Stages: 71
+      ObservePlayer: 1
+      ObserveEnemy: 0
+      MinimumViewportHeight: 0.025
+      MaximumViewportDimension: 0.75
+      SafeEdgeFraction: 0.025
+      MinimumSubjectElevation: -5.31082
+      MaximumSubjectElevation: 17.199179
+      Evidence: 15
+    ReviewedViewFingerprint: 4857715e4b1460c981bf07526356673b7cbb70e3f540a5444d74468176ddb0ea
+  references:
+    version: 2
+    RefIds:
+    - rid: 564157637991596200
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.standard.recruit
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 3d551caab65455eb158aec9ef2ac6bcf7e6c372124fb990b7f94947cdb915fd0
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 67a7a4cd7a32fb0a5310d41f12909e0d9886170c4a65ef921cbed8aa77bd3862
+    - rid: 564157637991596201
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.standard.regular
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 3d551caab65455eb158aec9ef2ac6bcf7e6c372124fb990b7f94947cdb915fd0
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 6623b3f9c99230e136fcc02ac2ba8d60acc8f328ad7a717a56834529703abe77
+    - rid: 564157637991596202
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.standard.veteran
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 3d551caab65455eb158aec9ef2ac6bcf7e6c372124fb990b7f94947cdb915fd0
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: cec6a99fef615523af754d9c0c2f94ad755d2c00c47d1184965405a6b77bea8b
+    - rid: 564157637991596203
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.standard.commander
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 3d551caab65455eb158aec9ef2ac6bcf7e6c372124fb990b7f94947cdb915fd0
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 055ec2697cc659a417750a6ea6b94414d75c54c832d1cb58fddd3a12b28a41f2
+    - rid: 564157637991596204
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.war.recruit
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: b9b68af4d649d7165ca4369464f4ec4db770474ffb3895036321f7f0841f0b37
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: e949bc74297ead0b82e29ca0fc9db8f9625618c398743b956ec2d52619f71441
+    - rid: 564157637991596205
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.war.regular
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: b9b68af4d649d7165ca4369464f4ec4db770474ffb3895036321f7f0841f0b37
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 0bfd5dfb27b0495734056234d4978fc0875e7d045465424611a914fc9ddd8f1c
+    - rid: 564157637991596206
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.war.veteran
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: b9b68af4d649d7165ca4369464f4ec4db770474ffb3895036321f7f0841f0b37
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 1e944a6b2500e9f892c77647b08278806d495c9f5b4478ff7efd3b0825ff3934
+    - rid: 564157637991596207
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.war.commander
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: b9b68af4d649d7165ca4369464f4ec4db770474ffb3895036321f7f0841f0b37
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 4d16a5b9946315df0b6f6ff4c7bee3549a243dc3c01aa67e15da116a73fd4f91
+    - rid: 564157637991596208
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.largewar.recruit
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 15112d54758f20b46791131799037630b77dd8ac99489b64d8c23e9b375d01f2
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 1f25a98ba6e32ad77f3dbeaf021c64595ad79bb4be730b3e17aab21d72310ac5
+    - rid: 564157637991596209
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.largewar.regular
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 15112d54758f20b46791131799037630b77dd8ac99489b64d8c23e9b375d01f2
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: e4519c92b0dc15aecae24453b0a3a885c5a1bf13b41b23096817dea3eb818903
+    - rid: 564157637991596210
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.largewar.veteran
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 15112d54758f20b46791131799037630b77dd8ac99489b64d8c23e9b375d01f2
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: 40db504b017e3dcdfcea52e54dcff84cd047e28453729a3cb15da06ecc4267cc
+    - rid: 564157637991596211
+      type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
+      data:
+        SchemaVersion: 1
+        AreaSetId: areas.skirmish.s024.largewar.commander
+        ObjectiveKind: 4
+        Binding:
+          DefinitionId: skirmish.s024
+          SourceConfigId: opmap.skirmish.desert_base_01
+          SourceAssetGuid: dad0bd13fb20943dfb2f881cbe225f05
+          SourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+          SourceSemanticFingerprint: 6495a20dbc46788d25d0a8239bcd4e0dc73abf90ea622d65fd084572943ff306
+          LayoutId: layout.skirmish.s024
+          LayoutBindingFingerprint: 15112d54758f20b46791131799037630b77dd8ac99489b64d8c23e9b375d01f2
+          SourceMinX: 0
+          SourceMinZ: 0
+          SourceMaxX: 2048
+          SourceMaxZ: 1024
+        Areas:
+        - StableAreaId: area.skirmish.s024.convoydestination
+          Role: 7
+          Shape: 1
+          Points:
+          - WorldX: 1308.36
+            WorldZ: 621.2
+          - WorldX: 1352.05
+            WorldZ: 650
+        Measurement:
+          ArtifactId: Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json
+          ArtifactSha256: 1a9f69f60ce8dd7b3a2e92be5318066cd09270d32093d704a39695c6ca70cef4
+          GeometryFingerprint: defa4e792390d2ed11ee7c8189404ee99539804911d28d933992ca374ae9d316
+--- !u!114 &5312876852363828098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
+  m_Name: SkirmishMissionViewProfile_S024
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
+  OpeningFocusPolicy: 0
+  OpeningFocusStableActorId: 
+  ActiveOperationMapId: 
+  ActiveMapContentHash: 
+  ActiveMapSourceIdentityHash: 
+  UseSeparateAircraftYaw: 0
+  AircraftYaw: 0
+  AuthoredNonBaseAssault: 1
+  AuthoredGenericBaseAssault: 0
+  ObjectiveKind: 4
+  SchemaVersion: 1
+  ContentVersion: 1
+  DefinitionVersion: 2
+  CatalogId: S024
+  DefinitionId: skirmish.s024
+  CampaignSourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  LayoutContentHash: authored.s024.2f67a445fd73da4b
+  MinHeight: 6.68918
+  MaxHeight: 14.68918
+  NormalHeight: 12.68918
+  BuildHeight: 14.68918
+  Pitch: 65
+  Yaw: 35
+  NormalFieldOfView: 46
+  BuildFieldOfView: 50
+  GroundReferenceY: -5.31082
+  MaximumGroundCenterSlantDistance: 32
+  InfantryMinimumViewportHeight: 0.03
+  PlaneMaximumViewportDimension: 0.45
+  AircraftPitch: 50
+  AircraftFieldOfView: 60
+  AircraftMinimumDistance: 1
+  AircraftMaximumDistance: 300

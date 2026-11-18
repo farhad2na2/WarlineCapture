@@ -24,7 +24,7 @@ write details to files; you read markers and diffs, never whole logs.
 | Tier | Use for |
 |---|---|
 | Haiku | Log and marker extraction, `STATUS.md`/CSV upkeep, diff listings, report formatting, pass-marker checks |
-| Codex (`Tools/Missions/run_codex_batch.sh`, up to 4 in parallel) | Mechanical and well-specified work: scripts and their tests, draft files, trace/log additions, read-only code and trace analysis, small additive C#. It finishes in minutes. **Not** behaviour fixes (it missed four of four) |
+| Codex — **default worker** (owner, 2026-11-18: it has the most limit). `Tools/Missions/run_codex_batch.sh` (up to 6 in parallel, patches from plain copies); `Tools/Missions/run_codex_lab.sh` (one at a time, compiles and runs Unity tests in the Codex lab checkout `WarlineCapture-wt/codexlab`, commits on `missions/<name>`) | Code fixes including ARIA/behaviour fixes (each one proven by a focused test in the lab before it reaches the main lane), scripts and tests, log and trace analysis, draft files, budget analysis. Earlier behaviour fixes failed without a Unity test loop; the lab closes that gap. Claude workers keep main-lane shifts and verification |
 | Sonnet | Unity-lane shifts (merge, compile, queue runs, authoring runs), mission authoring on existing maps, scoped bug fixes, tests |
 | Opus worker | ARIA skills, ECS and pathfinding bugs, pacing work, anything a Sonnet worker failed once |
 | You | Briefs, verification, merges, gate bookkeeping, decisions covered by the defaults |

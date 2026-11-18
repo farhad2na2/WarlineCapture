@@ -154,6 +154,7 @@ acceptance.
 - **Meanwhile:** nothing enabled; FC/BT/CE rows record "checkpoint: not offered".
 
 ## S004 (Desert Base, army A Airfield): Airport does not fit, and the air cap blocks drone/attack-heli coverage (program lead, 2026-11-18)
+- **DECIDED by the owner (Farhad, in chat, 2026-11-18): "do as you recommend for S004".** Airport: option (a). S004 offers no Airport and no fixed-wing aircraft (fighter, strike, transport_plane) on this source, and gate 3 lists only what the mission makes available. Air cap: unchanged for now; decide after the coverage-9 run shows the S004 pacing, for all army-A rows together. This decision covers S004 only; the City Crossroads / Mountain Pass Airport entry stays open.
 - **Evidence:** lane 24 S004 runs (`program-logs/2026-11-18/lane24/`): 3 wins at 16–17% of 1080 s, gate 3 unused = airport, aa, apc_fast, attack_heli, breacher, drone, fighter, marksman, radar, strike, transport_heli, transport_plane. Coverage worker analysis (missions/aria-coverage-9 8bb2ba21e): 6 types were policy gaps (now fixed in code, unverified). The remaining 6 have two causes:
   1. **Air cap.** InitialSetupMatrix S004 Standard `tactical_air_cap_each`=2. The starting transport heli plus the bought light attack heli fill it, so drone and attack_heli can never be fielded together with them.
   2. **Airport source fit.** The lane3 S004 layout dump has 0 Airport candidates (no clear 210×55 m site on the S004 playable area). Fighter, strike and transport_plane need the Airport (and Full Arsenal research, 440–520 materials each against 900 starting).

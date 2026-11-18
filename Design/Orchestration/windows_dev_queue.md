@@ -166,6 +166,12 @@ established roster spawn and get orders, why does the FC objective planner never
 tactics if that is the defect; otherwise tune only starting forces/resources/deadline per the map reuse policy budget guidance (owner
 direction 2026-11-06). No unit-stat or rule changes, no map changes. Windows proves with check_draft/quickcheck + the FC/ARIA EditMode
 tests it touches; Mac runs the counted queue. Branch `missions/win-w16-fc-established`. Per-task results file.
+Update 2026-11-19, Mac lanes 38/39 (130365 en, `program-logs/2026-11-18/lane38|lane39/q/unity.log`, extract.txt in each). This is not only
+established rows. City Crossroads S031-S036 won 6/6 with ARIA holding throughout, 2-10 Holds per row. Mountain Pass S055 (field!), S056, S058 and
+S060 lost on tickets at ~50%; S057/S059 won. On every MP row ARIA took both zones by ~45 s. On the losers it chose Hold only once (t=39-46 s,
+lane39 :4698 :42390 :66405) and then only Move ControlZone, losing both zones by 108-150 s and never retaking them. The winners chose Hold again
+after 90 s (S057 t=118-246, S059 t=93 :60264). Look at why the FC planner stops re-choosing Hold on owned zones under pressure, and at map-specific
+inputs (zone radius/threat range) that make City Crossroads hold and MP/DB not. Include S055/S056/S058/S060 in the proof rows.
 
 ## W17 — Burst BC1016: managed byte[] in AriaCoverageRecruitPolicy.TryStart (2026-11-18)
 status: READY

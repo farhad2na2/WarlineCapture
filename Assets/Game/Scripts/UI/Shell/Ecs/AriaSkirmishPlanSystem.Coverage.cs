@@ -43,7 +43,7 @@ namespace Game.UI.Shell.Ecs
         static int CoverageAfford(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p)
         {
             if (v.OwnAttackAirLive > 0 || v.AirRecruitPending) p.CoverageAirOpened = 1;
-            return Game.Simulation.AriaCoverageRecruitPolicy.AirOpeningAfford(v.CoverageAffordMask,
+            return Game.Simulation.AriaCoverageRecruitPolicy.AirOpeningAfford(ObjectiveCoverageEligible(v) ? v.CoverageObjectiveAffordMask : v.CoverageAffordMask,
                 v.AirProfile && !v.PublicObjective.Applicable, p.CoverageAirOpened != 0, v.AirQueueOffered);
         }
 
@@ -94,7 +94,8 @@ namespace Game.UI.Shell.Ecs
         {
             if (!CoverageEligible(v)) return false;
             var facts = new Game.Simulation.AriaBreacherView {
-                AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0,
+                // Objective sessions have no assault order; their first accepted objective order is the latch.
+                AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0 || ObjectiveCoverageEligible(v) && p.CoverageAssaultSeen != 0,
                 // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
                 Busy = CoverageOtherOwner(v, p, t) || p.CoverageCurrent != 0 || (p.BreacherStage == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
@@ -221,7 +222,8 @@ namespace Game.UI.Shell.Ecs
                 CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, CoverageAfford(v, ref p), v.CoveragePendingMask),
                 InProgress = v.ResearchInProgress, CanUpgrade = v.CanUpgradeReadiness, UpgradeAvailable = v.UpgradeReadiness.Available,
                 Stage = v.ReadinessStage, Cost = v.ResearchCost, Materials = v.OwnMaterials,
-                Reserve = Game.Simulation.AriaResearchPolicy.Reserve, NeedMask = v.ResearchNeedMask,
+                Reserve = ObjectiveCoverageEligible(v) ? Game.Simulation.AriaObjectiveSkillPolicy.CoverageReserve : Game.Simulation.AriaResearchPolicy.Reserve,
+                NeedMask = v.ResearchNeedMask,
                 CompletedContacts = t.Actions, Time = v.Time };
             var state = new Game.Simulation.AriaResearchState { Current = p.ResearchCurrent, Tried = p.ResearchTried, Done = p.ResearchDone,
                 Actions = p.ResearchActions, Deadline = p.ResearchDeadline };
@@ -261,7 +263,7 @@ namespace Game.UI.Shell.Ecs
                 CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(p.CoverageDone, p.CoverageCurrent, CoverageAfford(v, ref p), v.CoveragePendingMask),
                 ResearchIdle = p.ResearchCurrent == 0 && !v.ResearchInProgress, PlacementOpen = v.PlacementOpen,
                 PlacementGaveUp = placing && p.PadStage == 8,
-                NeedMask = v.BuildingNeedMask, AffordMask = v.BuildingAffordMask,
+                NeedMask = v.BuildingNeedMask, AffordMask = ObjectiveCoverageEligible(v) ? v.BuildingObjectiveAffordMask : v.BuildingAffordMask,
                 PresentMask = v.BuildingPresentMask | (placing && p.PadStage == BuildingPlaced ? Game.Simulation.AriaBuildingPolicy.Bit(p.BuildCurrent) : 0),
                 CardMask = cards, Time = v.Time };
             var state = new Game.Simulation.AriaBuildingState { Current = p.BuildCurrent, Tried = p.BuildTried, Done = p.BuildDone, Deadline = p.BuildDeadline };

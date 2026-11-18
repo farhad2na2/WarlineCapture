@@ -139,6 +139,10 @@ namespace Game.UI.Runtime
                 if(mapInformation!=null&&fullMap!=null&&fullMap.IsOpen)
                 {
                     if(lines==objectiveMapLines.Count)objectiveMapLines.Add(Label(mapInformation,"",HudIconButtonView.LabelSize,34));
+                    // The full map rebuilds its information panel; a line from an earlier panel is destroyed.
+                    // Lane 25 S019: reusing it threw every frame the map was open, so the objective frame went stale.
+                    if(objectiveMapLines[lines]==null||objectiveMapLines[lines].transform.parent!=mapInformation)
+                        objectiveMapLines[lines]=Label(mapInformation,"",HudIconButtonView.LabelSize,34);
                     var line=objectiveMapLines[lines++];line.gameObject.SetActive(true);UiLocalizedText.Set(line,name+" • "+PublicGoalProgress(node,fa));
                 }
                 if(!node.PositionKnown)continue;
@@ -149,6 +153,7 @@ namespace Game.UI.Runtime
                 if(map!=null)shown=map.TryGetPresentedMapPoint(position.World,null,out point);
                 else {var camera=Camera.main;var screen=camera!=null?camera.WorldToScreenPoint(position.World):new Vector3(0,0,-1);point=screen;shown=hud.activeInHierarchy&&screen.z>0&&Screen.safeArea.Contains(point);}
                 if(!shown)continue;
+                if(objectiveMarkers.TryGetValue(node.PublicId,out var stale)&&stale==null)objectiveMarkers.Remove(node.PublicId);
                 if(!objectiveMarkers.TryGetValue(node.PublicId,out var label)){label=Label(transform,"",HudIconButtonView.LabelSize);label.rectTransform.sizeDelta=new Vector2(240,64);objectiveMarkers.Add(node.PublicId,label);}
                 // World labels stay in the open play area, never over HUD controls; the full map places its own.
                 if(map!=null)label.rectTransform.position=point;else if(!PlaceWorldLabel(label.rectTransform,point))continue;
@@ -170,6 +175,7 @@ namespace Game.UI.Runtime
                     projected.Add(local);
                 }
                 if(projected.Count!=perimeter.WorldPoints.Length)continue;
+                if(objectiveOutlines.TryGetValue(perimeter.PublicId,out var staleOutline)&&staleOutline==null)objectiveOutlines.Remove(perimeter.PublicId);
                 if(!objectiveOutlines.TryGetValue(perimeter.PublicId,out var outline))
                 {var rect=Panel("ObjectivePerimeter",transform,false);Stretch(rect);outline=rect.gameObject.AddComponent<SkirmishPublicObjectiveOutlineGraphic>();outline.color=Cyan;objectiveOutlines.Add(perimeter.PublicId,outline);}
                 outline.gameObject.SetActive(true);outline.Present(projected.ToArray());inspectedPublicAreas.Add(perimeter.PublicId);

@@ -250,6 +250,8 @@ namespace Game.UI.Shell.Ecs
                     model.BuildingNeedMask = publicView.BuildingNeedMask;
                     model.BuildingPresentMask = publicView.BuildingPresentMask;
                     model.BuildingAffordMask = publicView.BuildingAffordMask;
+                    model.CoverageObjectiveAffordMask = publicView.CoverageObjectiveAffordMask;
+                    model.BuildingObjectiveAffordMask = publicView.BuildingObjectiveAffordMask;
                     model.OwnStructureAttackUnits = publicView.OwnStructureAttackUnits;
                     model.CanAffordAntiAir = publicView.CanAffordAntiAir;
                     model.CanAffordLogisticsTruck = publicView.CanAffordLogisticsTruck;

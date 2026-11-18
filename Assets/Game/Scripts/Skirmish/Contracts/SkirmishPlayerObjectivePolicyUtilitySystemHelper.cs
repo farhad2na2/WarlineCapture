@@ -162,10 +162,11 @@ namespace Game.Skirmish.Contracts
             else
             {
                 bool truck = HasLivingOriginal(goal, group, SkirmishPublicSubjectKind.ObjectiveConvoyTruck);
-                bool escort = !truck && group.CombatInfantry && node.Kind == SkirmishPublicGoalNodeKind.OwnDesignatedSubject &&
-                    node.RevealedSubjectKind == SkirmishPublicSubjectKind.ObjectiveConvoyTruck &&
-                    node.SubjectDisposition == SkirmishPublicSubjectDisposition.Live && node.HealthKnown && node.Health > 0;
-                if (!(truck && node.Kind == SkirmishPublicGoalNodeKind.DeliveryDestination) && !escort) return default;
+                // Only the trucks' own Move/Hold at the destination. Lane 25 S019: an infantry Move onto a moving
+                // truck can never be credited (the receipt needs every member's move goal on the truck's cell),
+                // so six retries stopped ARIA before any truck moved. Infantry escorts move to the destination
+                // through the objective skill's escort orders instead.
+                if (!(truck && node.Kind == SkirmishPublicGoalNodeKind.DeliveryDestination)) return default;
                 preserve = true; reason = SkirmishPlayerObjectiveReason.EscortOriginalTruck;
                 if (inside && group.CanHold) { action = SkirmishPublicPlayerAction.Hold; reason = SkirmishPlayerObjectiveReason.ProtectDwell; }
             }

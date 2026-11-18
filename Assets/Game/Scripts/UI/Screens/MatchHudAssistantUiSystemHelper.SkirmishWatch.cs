@@ -247,6 +247,8 @@ namespace Game.UI.Runtime
                 view.BuildingNeedMask = model.BuildingNeedMask;
                 view.BuildingPresentMask = model.BuildingPresentMask;
                 view.BuildingAffordMask = model.BuildingAffordMask;
+                view.CoverageObjectiveAffordMask = model.CoverageObjectiveAffordMask;
+                view.BuildingObjectiveAffordMask = model.BuildingObjectiveAffordMask;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;

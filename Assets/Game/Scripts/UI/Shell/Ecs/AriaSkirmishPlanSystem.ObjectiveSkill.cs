@@ -75,15 +75,31 @@ namespace Game.UI.Shell.Ecs
             bool wants = objective.GroupId != 0 && objective.PublicKey != 0 && objective.Action != AriaObjectiveAction.None &&
                 !(sameGoal && current.Stage == 4);
             bool ready = view.Time >= plan.ObjectiveRetryAt;
-            if (!pending && StepPublicObjectiveSupport(view, ref plan, ref touch, ref output)) return;
+            // Coverage of every offered unit type, readiness research and producer buildings after the first
+            // accepted objective order (the same pure policies as the base-assault planners).
+            if (plan.ObjectiveAccepted > 0) plan.CoverageAssaultSeen = 1;
+            // Gate 3 (lane 25: 12-15 offered types unused on S007/S013/S019): a purchase, research, placement or
+            // support order already started finishes before objective orders re-select squads. Their Busy rules
+            // otherwise abandoned it (and marked the kind done) whenever an objective order armed Move.
+            if (!pending && ObjectiveCoverageInFlight(plan) && StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
+            // Ordinary rifles refill to the type's strength until coverage starts, then only to the floor:
+            // FieldBase materials go to the other offered types (gunner/marksman/breacher add infantry too).
+            var supportView = view;
+            supportView.ObjectiveSupport.InfantryTarget = Game.Simulation.AriaObjectiveSkillPolicy.RifleTarget(
+                (Game.Simulation.AriaObjectiveType)view.ObjectiveType, plan.CoverageAssaultSeen != 0);
+            if (!pending && StepPublicObjectiveSupport(supportView, ref plan, ref touch, ref output)) return;
+            // One coverage turn after each accepted objective order: FC re-issues Holds every ~15 s, which
+            // otherwise left coverage no idle frame to start in.
+            if (!pending && plan.ObjectiveCoverageTurn != 0)
+            {
+                plan.ObjectiveCoverageTurn = 0;
+                if (StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
+            }
             if (pending || wants && ready)
             {
                 StepObjectiveOrder(view, objective, ref plan, ref touch, ref output);
                 return;
             }
-            // Coverage of every offered unit type, readiness research and producer buildings after the first
-            // accepted objective order (the same pure policies as the base-assault planners).
-            if (plan.ObjectiveAccepted > 0) plan.CoverageAssaultSeen = 1;
             if (StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
             plan.Intent = AriaSkirmishIntent.ObserveObjective;
@@ -107,6 +123,7 @@ namespace Game.UI.Shell.Ecs
                     var order = new Game.Simulation.AriaObjectiveOrderState { Failures = plan.ObjectiveFailures, Accepted = plan.ObjectiveAccepted, RetryAt = plan.ObjectiveRetryAt };
                     Game.Simulation.AriaObjectiveSkillPolicy.Accepted(ref order);
                     plan.ObjectiveFailures = order.Failures; plan.ObjectiveAccepted = order.Accepted;
+                    plan.ObjectiveCoverageTurn = 1;
                     touch.LastProgressAt = view.Time;
                 }
                 plan.Intent = AriaSkirmishIntent.ObserveObjective;
@@ -163,10 +180,35 @@ namespace Game.UI.Shell.Ecs
             if (plan.PadStage != 0 && plan.BuildCurrent == 0 && plan.ObjectiveSupport.Action != AriaObjectiveSupportAction.Helipad)
                 plan.PadStage = 0;
             if (StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return true;
+            if (StepObjectiveRocketeer(view, ref plan, ref touch, ref output)) return true;
             if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return true;
             if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return true;
             if (StepGenericResearch(view, ref plan, ref touch, ref output)) return true;
             if (StepGenericBuilding(view, ref plan, ref touch, ref output)) return true;
+            return false;
+        }
+
+        // A gate-3 action this skill started and has not finished (each owner bounds itself).
+        public static bool ObjectiveCoverageInFlight(in AriaSkirmishPlanComponent p) =>
+            p.CoverageCurrent != 0 || p.BreacherStage == 1 || p.ResearchCurrent != 0 || p.BuildCurrent != 0 ||
+            p.SupportStage != 0 || p.ObjectiveRocketeerStage == 1;
+
+        // The rocketeer is offered but not in the coverage list (S013/S019 start without one): one purchase.
+        static bool StepObjectiveRocketeer(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            if (!ObjectiveCoverageEligible(view)) return false;
+            bool busy = CoverageOtherOwner(view, plan, touch) || plan.CoverageCurrent != 0 || plan.BreacherStage == 1 ||
+                plan.ObjectiveRocketeerStage == 0 && view.DrawerOpen;
+            byte stage = plan.ObjectiveRocketeerStage; float deadline = plan.ObjectiveRocketeerDeadline;
+            var action = Game.Simulation.AriaObjectiveSkillPolicy.OneTimeBuy(ref stage, ref deadline, plan.CoverageAssaultSeen != 0, busy,
+                view.CanAffordRocketeer && view.OwnMaterials >= Game.Simulation.AriaObjectiveSkillPolicy.CoverageReserve,
+                view.RocketeerRecruitPending, view.RecruitRocketeer.Available, view.Time);
+            plan.ObjectiveRocketeerStage = stage; plan.ObjectiveRocketeerDeadline = deadline;
+            if (action == Game.Simulation.AriaObjectiveBuy.Recruit)
+            { plan.Intent = AriaSkirmishIntent.Recruit; Target(view.RecruitRocketeer, false, ref output); return true; }
+            if (action == Game.Simulation.AriaObjectiveBuy.Waiting)
+            { plan.Intent = AriaSkirmishIntent.Recruit; output.Kind = AriaPlayObservationKind.Waiting; return true; }
             return false;
         }
 
@@ -179,8 +221,7 @@ namespace Game.UI.Shell.Ecs
             ref var support = ref plan.ObjectiveSupport;
             if (!forceClose)
             {
-                if ((plan.BuildCurrent != 0 || plan.CoverageCurrent != 0 || plan.BreacherStage == 1 || plan.ResearchCurrent != 0) &&
-                    StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return true;
+                if (ObjectiveCoverageInFlight(plan) && StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return true;
                 if (support.Action == AriaObjectiveSupportAction.Helipad && plan.PadStage != 0)
                 {
                     if (view.PadPresent) { support.Action = AriaObjectiveSupportAction.None; plan.PadStage = 0; }
@@ -206,7 +247,7 @@ namespace Game.UI.Shell.Ecs
             // Nothing of ours is pending in this popup (or it overstayed): close it, cancelling an unconfirmed preview.
             if (support.Action != AriaObjectiveSupportAction.ReturnAircraft) support.Action = AriaObjectiveSupportAction.None;
             support.Closing = false;
-            if (forceClose) { plan.CoverageCurrent = 0; plan.ResearchCurrent = 0; plan.BuildCurrent = 0; plan.PadStage = 0; if (plan.BreacherStage == 1) plan.BreacherStage = 2; }
+            if (forceClose) { plan.CoverageCurrent = 0; plan.ResearchCurrent = 0; plan.BuildCurrent = 0; plan.PadStage = 0; if (plan.BreacherStage == 1) plan.BreacherStage = 2; if (plan.ObjectiveRocketeerStage == 1) plan.ObjectiveRocketeerStage = 2; }
             plan.Intent = AriaSkirmishIntent.Inspect;
             if (view.PlacementOpen && view.PlacementCancel.Available) { Target(view.PlacementCancel, false, ref output); return true; }
             if (view.DrawerOpen && view.CloseDrawer.Available) { Target(view.CloseDrawer, false, ref output); return true; }

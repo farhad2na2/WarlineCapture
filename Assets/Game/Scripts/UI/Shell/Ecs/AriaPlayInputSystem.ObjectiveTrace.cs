@@ -22,6 +22,7 @@ namespace Game.UI.Shell.Ecs
         private AriaObjectiveAction tracedObjectiveAction;
         private AriaObjectiveSupportAction tracedObjectiveSupport;
         private int tracedObjectiveScore;
+        private byte tracedRocketeerStage; private int tracedCoverageDone;
 
         private void TraceObjective()
         {
@@ -40,7 +41,7 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveActive = true; tracedObjectiveFinished = false; tracedObjectiveFrameAction = 0;
                 tracedObjectiveStage = tracedObjectiveFailures = tracedObjectiveAccepted = tracedEscortFailures = tracedEscortAccepted = 0;
                 tracedObjectiveGroup = tracedEscortGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
-                tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0;
+                tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0;
                 Debug.Log($"{head} event=start presented={o.Presented && o.Supported} frameReason={v.ObjectiveFrameReason} infantry={v.Infantry} groups={v.ExpandedTotalGroups} t={t:F2}");
             }
             if (p.ObjectiveFrameAction != tracedObjectiveFrameAction)
@@ -80,6 +81,16 @@ namespace Game.UI.Shell.Ecs
                     Debug.Log($"{head} event=recruit kind={p.ObjectiveSupport.Action} infantry={v.Infantry} target={v.ObjectiveSupport.InfantryTarget} materials={v.OwnMaterials} t={t:F2}");
                 tracedObjectiveSupport = p.ObjectiveSupport.Action;
             }
+            if (p.ObjectiveRocketeerStage != tracedRocketeerStage)
+            {
+                Debug.Log($"{head} event=rocketeer state={(p.ObjectiveRocketeerStage == 1 ? "buying" : v.RocketeerRecruitPending ? "queued" : "done")} materials={v.OwnMaterials} t={t:F2}");
+                tracedRocketeerStage = p.ObjectiveRocketeerStage;
+            }
+            if (p.CoverageDone != tracedCoverageDone || p.ObjectiveCoverageTurn != 0 && tracedCoverageDone < 0)
+            {
+                Debug.Log($"{head} event=coverage done={p.CoverageDone} current={p.CoverageCurrent} breacher={p.BreacherStage} research={p.ResearchCurrent} build={p.BuildCurrent} afford={v.CoverageObjectiveAffordMask} pending={v.CoveragePendingMask} fielded={v.CoverageFieldedMask} materials={v.OwnMaterials} t={t:F2}");
+                tracedCoverageDone = p.CoverageDone;
+            }
             if (s.Known)
             {
                 int key = unchecked(s.OwnZones * 7 + s.OpposingZones * 31 + s.Completed * 131 + s.Lost * 523 + (s.ExitOpen ? 4099 : 0) + (s.OwnTickets / 50) * 8191 + (s.OpposingTickets / 50) * 65537);
@@ -92,7 +103,7 @@ namespace Game.UI.Shell.Ecs
             if ((o.Finished || v.Finished) && !tracedObjectiveFinished)
             {
                 tracedObjectiveFinished = true;
-                Debug.Log($"{head} event=finished ownZones={s.OwnZones} tickets={s.OwnTickets}/{s.OpposingTickets} completed={s.Completed}/{s.Required} lost={s.Lost} orders={p.ObjectiveAccepted} escorts={p.EscortAccepted} coverageDone={p.CoverageDone} t={t:F2}");
+                Debug.Log($"{head} event=finished rocketeer={p.ObjectiveRocketeerStage} breacher={p.BreacherStage} research={p.ResearchDone} build={p.BuildDone} ownZones={s.OwnZones} tickets={s.OwnTickets}/{s.OpposingTickets} completed={s.Completed}/{s.Required} lost={s.Lost} orders={p.ObjectiveAccepted} escorts={p.EscortAccepted} coverageDone={p.CoverageDone} t={t:F2}");
             }
         }
     }

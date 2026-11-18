@@ -1,7 +1,7 @@
 {
   "catalog_id": "S056",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "candidate=1, unmeasured FC geometry. Standard/Regular placement baseline from S049 Mountain Pass BA via S050 salvage. The catalog labels this sector Armor Break; the S049 draft and S050 salvage pin CH05M01 Citywide Alert. S049 supplies base, staging, economy, service, supply-building, spawn, rally and other shared anchors and pads, plus MainHighway and FlankNorthRuins. FrontlineA (north, FlankNorthRuins) uses S049 s050.f1.satellite_dish and economy.enemy. FrontlineB (centre, MainHighway at the south edge) uses S049 basemove.route.1.waypoint.03 and s050.f2.fuel_bladder. FrontlineC (south) uses S049 s050.f1.fuel_bladder, spawn.vehicle.enemy and basemove.route.1.waypoint.04/.02. All three control-area perimeters, staging connections and FC navigation remain unmeasured. FlankSouthSweep is an unmeasured infantry-only candidate through existing S049 base, vehicle-spawn and MainHighway waypoint anchors; connectivity and width are unmeasured. No new staging pads are assumed. S007 supplies the footprint table and 12 m pad slack. Ground/Established (FC-G-E). S050 BA ground established supplies the same S049 field buildings plus approach watchtowers and satellite dishes. S050 supplies the helipad anchors and pads for both sides. War and LargeWar second refinery module positions are unmeasured for both sides and left to derived instance pads.",
+  "notes": "candidate=1, unmeasured FC geometry. Standard/Regular placements and the CH05M01 Citywide Alert binding come from S049/S050. S055 r1 found FrontlineA/B/C inside playable and reachable from both bases and stagings. All routes start at base.player and end at rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293) to avoid the code 7 goal at base.enemy. MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 (S050 dump candidate 292) to approach west of the enemy barracks. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 (S050 dump candidates 31, 1, 37, 95 in route order) along the south edge. Dump indices are zero-based. Both flanks use the S007 north flank's 6 m width. Native route connectivity and clearance need a fresh measurement. S007 supplies the footprint table and 12 m pad slack. Ground/Established (FC-G-E). S050 BA ground established supplies the same S049 field buildings plus approach watchtowers and satellite dishes. S050 supplies the helipad anchors and pads for both sides. War and LargeWar second refinery module positions are unmeasured for both sides and left to derived instance pads.",
   "anchors": {
     "base.player": [
       1002.0,
@@ -146,6 +146,26 @@
     "basemove.route.2.waypoint.02": [
       1202.0,
       398.0
+    ],
+    "basemove.route.2.waypoint.03": [
+      1183.5,
+      363.0
+    ],
+    "basemove.route.3.waypoint.00": [
+      996.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.01": [
+      1019.5,
+      322.0
+    ],
+    "basemove.route.3.waypoint.02": [
+      1164.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.03": [
+      1206.0,
+      339.5
     ]
   },
   "pads": {
@@ -619,7 +639,7 @@
         "basemove.route.1.waypoint.02",
         "basemove.route.1.waypoint.03",
         "basemove.route.1.waypoint.04",
-        "base.enemy"
+        "rally.enemy"
       ],
       "width": 3.0,
       "vehicles": true,
@@ -632,23 +652,25 @@
         "basemove.route.2.waypoint.00",
         "basemove.route.2.waypoint.01",
         "basemove.route.2.waypoint.02",
-        "base.enemy"
+        "basemove.route.2.waypoint.03",
+        "rally.enemy"
       ],
-      "width": 1.0,
-      "vehicles": false,
+      "width": 6,
+      "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankSouthSweep",
       "via": [
         "base.player",
-        "spawn.vehicle.player",
-        "basemove.route.1.waypoint.02",
-        "spawn.vehicle.enemy",
-        "base.enemy"
+        "basemove.route.3.waypoint.00",
+        "basemove.route.3.waypoint.01",
+        "basemove.route.3.waypoint.02",
+        "basemove.route.3.waypoint.03",
+        "rally.enemy"
       ],
-      "width": 1.0,
-      "vehicles": false,
+      "width": 6,
+      "vehicles": true,
       "aircraft": false
     }
   ],

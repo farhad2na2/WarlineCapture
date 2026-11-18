@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.UI.Runtime
 {
@@ -21,6 +22,16 @@ namespace Game.UI.Runtime
         /// or outlines, not controls the chip could avoid.</summary>
         public const float MaximumOccluderFraction = .4f;
 
+        /// <summary>
+        /// True when <paramref name="graphic"/> would take a tap at <paramref name="screenPoint"/>,
+        /// by the same rules GraphicRaycaster applies: active, raycast target, not culled, and
+        /// accepted by every raycast filter above it. Shell screens and popups stay active while
+        /// hidden (CanvasGroup alpha 0, blocksRaycasts false); they are not HUD.
+        /// </summary>
+        public static bool BlocksTaps(Graphic graphic, Vector2 screenPoint, Camera eventCamera) =>
+            graphic != null && graphic.isActiveAndEnabled && graphic.raycastTarget &&
+            !graphic.canvasRenderer.cull && graphic.Raycast(screenPoint, eventCamera);
+
         /// <summary>True when <paramref name="rect"/> is HUD chrome a chip must avoid.</summary>
         public static bool IsHudOccluder(Rect rect, Rect screen)
         {
@@ -32,26 +43,49 @@ namespace Game.UI.Runtime
             return Mathf.Min(horizontal, vertical) <= DockedFraction;
         }
 
+        /// <summary>Reference points tried after the requested one, as screen fractions.</summary>
+        private static readonly Vector2[] FallbackReferences =
+        {
+            new(.5f, .5f), new(.35f, .5f), new(.65f, .5f), new(.5f, .35f), new(.5f, .65f),
+            new(.25f, .4f), new(.75f, .4f), new(.25f, .6f), new(.75f, .6f), new(.5f, .25f), new(.5f, .75f),
+        };
+
         /// <summary>
-        /// The largest rectangle inside <paramref name="screen"/> that contains
-        /// <paramref name="reference"/> (normally the screen centre) and overlaps no HUD
-        /// occluder. Returns false when the reference point itself is covered.
+        /// The largest rectangle inside <paramref name="screen"/> that overlaps no HUD occluder,
+        /// grown around <paramref name="reference"/> (normally the screen centre) and, when that
+        /// point is covered or leaves less room, around a spread of other open points. Returns
+        /// false only when every reference point is under the HUD.
         /// </summary>
         public static bool TrySafePlayArea(Rect screen, IReadOnlyList<Rect> hud, Vector2 reference, out Rect area)
         {
             area = default;
-            if (screen.width <= 0 || screen.height <= 0 || !screen.Contains(reference)) return false;
+            if (screen.width <= 0 || screen.height <= 0) return false;
             var occluders = new List<Rect>();
             if (hud != null)
                 foreach (var rect in hud)
                     if (IsHudOccluder(rect, screen)) occluders.Add(rect);
+            float best = 0;
+            if (screen.Contains(reference) && TryAreaAround(screen, occluders, reference, out var around))
+            { area = around; best = around.width * around.height; }
+            foreach (var fraction in FallbackReferences)
+            {
+                var point = new Vector2(screen.xMin + screen.width * fraction.x, screen.yMin + screen.height * fraction.y);
+                if (!TryAreaAround(screen, occluders, point, out around)) continue;
+                float size = around.width * around.height;
+                if (size > best * 1.0001f) { best = size; area = around; }
+            }
+            return best > 0;
+        }
 
+        private static bool TryAreaAround(Rect screen, List<Rect> occluders, Vector2 reference, out Rect area)
+        {
+            area = default;
             var lows = new List<float> { screen.yMin };
             var highs = new List<float> { screen.yMax };
             foreach (var rect in occluders)
             {
                 if (rect.xMin < reference.x && rect.xMax > reference.x && rect.yMin < reference.y && rect.yMax > reference.y)
-                    return false; // The reference point is under the HUD.
+                    return false; // This reference point is under the HUD.
                 if (rect.yMax <= reference.y && rect.yMax > screen.yMin) lows.Add(rect.yMax);
                 if (rect.yMin >= reference.y && rect.yMin < screen.yMax) highs.Add(rect.yMin);
             }
@@ -75,6 +109,26 @@ namespace Game.UI.Runtime
                 if (size > best) { best = size; area = Rect.MinMaxRect(left, low, right, high); }
             }
             return best > 0;
+        }
+
+        /// <summary>
+        /// Like <see cref="TryPlace"/>, but never refuses: when the play area is unknown
+        /// (<paramref name="areaKnown"/> false) or too small for the chip and its cue, the chip is
+        /// clamped into the play area without the cue margin, then into <paramref name="screen"/>.
+        /// A world-anchored chip whose anchor is on screen is always shown.
+        /// </summary>
+        public static Vector2 PlaceVisible(Vector2 anchor, Vector2 size, Vector2 pivot, Rect area, bool areaKnown, Rect screen,
+            float cueMargin, out bool clamped)
+        {
+            if (areaKnown && TryPlace(anchor, size, pivot, area, cueMargin, out var position, out clamped)) return position;
+            if (areaKnown && TryPlace(anchor, size, pivot, area, 0, out position, out clamped)) return position;
+            float x = size.x <= screen.width
+                ? Mathf.Clamp(anchor.x, screen.xMin + size.x * pivot.x, screen.xMax - size.x * (1 - pivot.x)) : screen.center.x;
+            float y = size.y <= screen.height
+                ? Mathf.Clamp(anchor.y, screen.yMin + size.y * pivot.y, screen.yMax - size.y * (1 - pivot.y)) : screen.center.y;
+            position = new Vector2(x, y);
+            clamped = (position - anchor).sqrMagnitude > .01f;
+            return position;
         }
 
         /// <summary>

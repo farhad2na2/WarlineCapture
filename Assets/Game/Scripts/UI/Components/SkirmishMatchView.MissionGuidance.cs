@@ -67,7 +67,9 @@ namespace Game.UI.Runtime
         {
             var camera = Camera.main;
             Vector3 screen = live && model.RendezvousKnown && camera != null ? camera.WorldToScreenPoint(model.RendezvousWorld) : Vector3.back;
-            bool shown = SkirmishBaseThreatPolicy.OnScreen(screen, new Rect(0, 0, Screen.width, Screen.height));
+            // In front of the camera is enough: an anchor off screen or under the HUD is clamped into
+            // the play area with an arrow toward it. Behind the camera there is no direction to show.
+            bool shown = screen.z > 0 && float.IsFinite(screen.x) && float.IsFinite(screen.y);
             if (!shown) { if (rendezvousMarker != null) rendezvousMarker.gameObject.SetActive(false); HideCue(rendezvousCue); return; }
             if (rendezvousMarker == null)
             {

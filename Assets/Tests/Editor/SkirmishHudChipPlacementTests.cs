@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// World-anchored mission chips stay clear of the HUD (S026 2400x1080 EN and fa-IR captures,
@@ -140,11 +141,90 @@ public sealed class SkirmishHudChipPlacementTests
     }
 
     [Test]
-    public void NoPlayAreaWhenTheCentreIsCovered()
+    public void NoPlayAreaWhenEveryOpenPointIsCovered()
     {
-        var hud = new List<Rect> { Rect.MinMaxRect(0, 500, 1300, 580) }; // Docked, and over the centre.
+        var hud = new List<Rect> // three docked columns over the whole screen
+        { Rect.MinMaxRect(0, 0, 800, 1080), Rect.MinMaxRect(800, 0, 1600, 1080), Rect.MinMaxRect(1600, 0, 2400, 1080) };
         Assert.IsFalse(SkirmishHudChipPlacement.TrySafePlayArea(Screen2400, hud, Screen2400.center, out _));
         Assert.IsFalse(SkirmishHudChipPlacement.TryPlace(new Vector2(10, 10), ChipSize, StemPivot, default, CueMargin, out _, out _));
+    }
+
+    // S026 lane25 captures (2026-11-18, EN and fa-IR): the chip vanished. Shell screens and popups
+    // stay active while hidden (CanvasGroup alpha 0, blocksRaycasts false); their graphics were
+    // read as HUD, one covered the screen centre, no play area was found and the chip was hidden.
+
+    [Test]
+    public void HiddenShellPanelsAreNotHud()
+    {
+        var root = new GameObject("ChipPlacementCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup));
+        try
+        {
+            root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            var group = root.GetComponent<CanvasGroup>();
+            var panel = new GameObject("HiddenPopupPanel", typeof(RectTransform), typeof(Image));
+            panel.transform.SetParent(root.transform, false);
+            var image = panel.GetComponent<Image>();
+            image.raycastTarget = true;
+            group.alpha = 0f;
+            group.blocksRaycasts = false;
+            Assert.IsFalse(SkirmishHudChipPlacement.BlocksTaps(image, Vector2.zero, null), "a hidden shell panel takes no taps");
+            group.alpha = 1f;
+            group.blocksRaycasts = true;
+            Assert.IsTrue(SkirmishHudChipPlacement.BlocksTaps(image, Vector2.zero, null), "a visible panel is HUD");
+            image.raycastTarget = false;
+            Assert.IsFalse(SkirmishHudChipPlacement.BlocksTaps(image, Vector2.zero, null));
+        }
+        finally { Object.DestroyImmediate(root); }
+    }
+
+    [Test]
+    public void OccluderOverTheCentreStillLeavesAPlayAreaAndTheChipShows()
+    {
+        var hud = LeftToRightHud();
+        hud.Add(Rect.MinMaxRect(1100, 300, 1300, 780)); // docked panel over the screen centre
+        Assert.IsTrue(SkirmishHudChipPlacement.TrySafePlayArea(Screen2400, hud, Screen2400.center, out var area),
+            "another open point is used when the centre is covered");
+        AssertClearOfHud(area, hud, "the play area");
+        Vector2 anchor = Centre(hud[3]); // the S026 rendezvous under the settings and pause buttons
+        var position = SkirmishHudChipPlacement.PlaceVisible(anchor, ChipSize, StemPivot, area, true, Screen2400, CueMargin, out bool clamped);
+        Assert.IsTrue(clamped);
+        var chip = SkirmishHudChipPlacement.ChipRect(position, ChipSize, StemPivot);
+        AssertClearOfHud(chip, hud, "chip");
+        var cue = SkirmishHudChipPlacement.CuePoint(chip, anchor, CueMargin, out _);
+        AssertClearOfHud(new Rect(cue.x - 18, cue.y - 15, 36, 30), hud, "cue");
+    }
+
+    [Test]
+    public void OffScreenAnchorsInFrontOfTheCameraAreClampedWithACue()
+    {
+        foreach (var hud in new[] { LeftToRightHud(), RightToLeftHud() })
+        {
+            var area = Area(hud);
+            foreach (var anchor in new[] { new Vector2(3000, 540), new Vector2(-500, 900), new Vector2(1200, -400) })
+            {
+                var position = SkirmishHudChipPlacement.PlaceVisible(anchor, ChipSize, StemPivot, area, true, Screen2400, CueMargin, out bool clamped);
+                Assert.IsTrue(clamped);
+                var chip = SkirmishHudChipPlacement.ChipRect(position, ChipSize, StemPivot);
+                AssertClearOfHud(chip, hud, "off-screen anchor " + anchor);
+                var cue = SkirmishHudChipPlacement.CuePoint(chip, anchor, CueMargin, out float degrees);
+                AssertClearOfHud(new Rect(cue.x - 18, cue.y - 15, 36, 30), hud, "cue for " + anchor);
+                var toward = (anchor - chip.center).normalized;
+                Assert.Greater(Vector2.Dot(toward, new Vector2(Mathf.Cos(degrees * Mathf.Deg2Rad), Mathf.Sin(degrees * Mathf.Deg2Rad))), .99f);
+            }
+        }
+    }
+
+    [Test]
+    public void ChipIsNeverHiddenWhenNoPlayAreaIsKnown()
+    {
+        Vector2 anchor = Centre(LeftToRightHud()[3]);
+        var position = SkirmishHudChipPlacement.PlaceVisible(anchor, ChipSize, StemPivot, default, false, Screen2400, CueMargin, out _);
+        var chip = SkirmishHudChipPlacement.ChipRect(position, ChipSize, StemPivot);
+        Assert.IsTrue(chip.xMin >= 0 && chip.xMax <= 2400 && chip.yMin >= 0 && chip.yMax <= 1080, "on screen: " + chip);
+        var tiny = new Rect(1000, 500, 100, 40); // known but smaller than the chip
+        position = SkirmishHudChipPlacement.PlaceVisible(anchor, ChipSize, StemPivot, tiny, true, Screen2400, CueMargin, out _);
+        chip = SkirmishHudChipPlacement.ChipRect(position, ChipSize, StemPivot);
+        Assert.IsTrue(chip.xMin >= 0 && chip.xMax <= 2400 && chip.yMin >= 0 && chip.yMax <= 1080, "on screen: " + chip);
     }
 
     private static Vector2 Centre(Rect rect) => rect.center;
@@ -158,7 +238,11 @@ public sealed class SkirmishHudChipPlacementTests
         tests.AnchorInTheOpenFieldStaysOnItsPoint();
         tests.AnchorNearThePlayAreaEdgeIsNudgedNotHidden();
         tests.WorldTrackingOverlaysAndFullScreenCatchersAreNotHud();
-        tests.NoPlayAreaWhenTheCentreIsCovered();
+        tests.NoPlayAreaWhenEveryOpenPointIsCovered();
+        tests.HiddenShellPanelsAreNotHud();
+        tests.OccluderOverTheCentreStillLeavesAPlayAreaAndTheChipShows();
+        tests.OffScreenAnchorsInFrontOfTheCameraAreClampedWithACue();
+        tests.ChipIsNeverHiddenWhenNoPlayAreaIsKnown();
         Debug.Log("[SkirmishHudChipPlacement] result=Passed");
     }
 }

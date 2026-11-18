@@ -32,6 +32,9 @@ have airfields already (S004 uses one).
 template; no more ARIA intercept work. See `daily/2026-11-17-directive.md`.
 **RE-DECIDED 2026-11-17 late (orchestrator, owner-delegated):** legibility first, measured counterplay second, guard
 tower only if the measurement fails (directive updated). The tower is removed from the template for the measurement.
+**MEASURED 2026-11-18 (program lead, lane 20):** 155923 won 3 of 3 with the base alert only; the tank reached the base once
+(base survived at 44/800, defenders ordered 1.2 s after the first hit). Tower stays off. Thin evidence: no second or third
+tank-reaches-base seed among first-visit seeds; revisit if an owner/phone run loses the base to the lone tank.
 
 **Question.** On seed 155923 the enemy's lone tank (420 HP) crosses ARIA's advancing column at ~55 s; when the
 column does not kill it, it destroys the 800-HP player base in ~28 s (first hit ~67 s, base dead ~95 s). Is this

@@ -24,7 +24,7 @@ namespace Game.Configs
             public bool ResultScreen, ReturnToMenu, Expiry;
             public string Outcome, EndReason, Abort, FirstError;
             public float Elapsed;
-            public int Purchases, PurchaseFailures;
+            public int Purchases, PurchaseFailures, PurchaseRefusedByCap;
             public int Archetypes, QueryShapes, QueryBlocks, QueryBudgetBlocks;
         }
 
@@ -47,11 +47,11 @@ namespace Game.Configs
             return string.Format(CultureInfo.InvariantCulture,
                 "{0} catalog={1} seed={2} result={3} allocatorErrors={4} exceptions={5} errors={6} resultScreen={7} " +
                 "returnToMenu={8} expiry={9} outcome={10} endReason={11} elapsed={12:F1} purchases={13} purchaseFailures={14} " +
-                "archetypes={15} queryShapes={16} queryBlocks={17}/{18} abort={19} firstError={20}",
+                "archetypes={15} queryShapes={16} queryBlocks={17}/{18} abort={19} firstError={20} purchaseRefusedByCap={21}",
                 Marker, e.Catalog ?? "none", e.Seed, Verdict(e), e.AllocatorErrors, e.Exceptions, e.Errors,
                 e.ResultScreen ? 1 : 0, e.ReturnToMenu ? 1 : 0, e.Expiry ? 1 : 0, e.Outcome ?? "none", e.EndReason ?? "none",
                 e.Elapsed, e.Purchases, e.PurchaseFailures, e.Archetypes, e.QueryShapes, e.QueryBlocks, e.QueryBudgetBlocks,
-                string.IsNullOrEmpty(e.Abort) ? "none" : e.Abort.Replace(' ', '_'), Sanitize(e.FirstError));
+                string.IsNullOrEmpty(e.Abort) ? "none" : e.Abort.Replace(' ', '_'), Sanitize(e.FirstError), e.PurchaseRefusedByCap);
         }
 
         /// <summary>One token: the first 160 characters of the first runtime error, spaces as underscores.</summary>

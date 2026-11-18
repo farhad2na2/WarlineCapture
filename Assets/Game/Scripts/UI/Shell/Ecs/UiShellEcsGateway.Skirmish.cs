@@ -138,10 +138,12 @@ namespace Game.UI.Shell.Ecs
             int enemyHealth=VisibleBaseHealth(em,match.EnemyMainBase);
             string playerBase=BaseLabel(em,match.PlayerMainBase,"player_base","YOUR MAIN BASE");
             string enemyBase=BaseLabel(em,match.EnemyMainBase,"enemy_base","ENEMY MAIN BASE");
+            bool enemyKnowledgeKnown=false;SkirmishHealthReadout enemyKnowledge=default;
             if(SkirmishExpandedSessionControlService.IsExpanded(em,session))
             {
                 var playerReadout=SkirmishBaseAssaultHudProjection.ReadPlayerBase(em,session);
                 var enemyReadout=SkirmishBaseAssaultHudProjection.ReadEnemyBase(em,session);
+                enemyKnowledgeKnown=true;enemyKnowledge=enemyReadout;
                 playerHealth=playerReadout.DisplayedCurrent;
                 enemyHealth=enemyReadout.DisplayedCurrent;
                 playerBase=HiddenAwareBaseLabel(playerReadout,"player_base","YOUR MAIN BASE");
@@ -198,6 +200,9 @@ namespace Game.UI.Shell.Ecs
                 PlayerBuildingsLost=match.PlayerBuildingsLost,
                 EnemyBuildingsLost=match.EnemyBuildingsLost,
                 PlayerBaseHeld=playerAlive,
+                EnemyBaseKnowledgeKnown=enemyKnowledgeKnown,
+                EnemyBaseKnowledge=enemyKnowledge.Knowledge,
+                EnemyBaseLastSeenAgeSeconds=enemyKnowledge.AgeSeconds,
                 EnemyBaseDestroyed=!enemyAlive && match.Outcome==SkirmishOutcome.Victory,
                 MedalScenarioId=medalScenario,
                 MedalDifficulty=medalDifficulty,
@@ -206,6 +211,8 @@ namespace Game.UI.Shell.Ecs
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };
+            if (expanded) ReadBaseThreat(em, session, match, ref model);
+            if (expanded) ReadMissionGuidance(em, session, match, ref model);
             if (expanded && em.HasComponent<SkirmishResolvedSetupRecord>(session))
             {
                 var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
@@ -293,8 +300,12 @@ namespace Game.UI.Shell.Ecs
         }
         private static string HiddenAwareBaseLabel(SkirmishHealthReadout readout,string key,string fallback)
         {
+            // Say what is known instead of a bare dash; last-seen health is labelled as such.
             if (readout.Knowledge == SkirmishHealthReadout.Hidden)
-                return GameText.Get("ui.skirmish."+key,fallback)+"\n—";
+                return GameText.Get("ui.skirmish."+key,fallback)+"\n"+GameText.Get("ui.skirmish.base_not_in_sight","NOT IN SIGHT");
+            if (readout.Knowledge == SkirmishHealthReadout.LastSeen)
+                return GameText.Get("ui.skirmish."+key,fallback)+"\n"+GameText.Format("ui.skirmish.base_last_seen_health","SEEN {0}/{1}",
+                    Mathf.Max(0,readout.DisplayedCurrent),Mathf.Max(0,readout.Max));
             return GameText.Get("ui.skirmish."+key,fallback)+"\n"+
                    Mathf.Max(0,readout.DisplayedCurrent)+" / "+Mathf.Max(0,readout.Max);
         }

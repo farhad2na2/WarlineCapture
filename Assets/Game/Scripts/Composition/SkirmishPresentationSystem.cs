@@ -59,7 +59,8 @@ namespace Game.Composition
                 if(SkirmishMissionLogicalBindingProvider.OwnsOpeningIntroduction(EntityManager,session)||SkirmishS005OpeningViewPolicy.OwnsIntroduction(EntityManager,session))focusedSession=match.SessionId.ToString();
                 else if(Focus(match.PlayerMainBase,true,match.ScenarioIndex,false,s002Session))focusedSession=match.SessionId.ToString();
             }
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Player-facing enemy base marker (fog-aware chip): drawn in every build. The editor-only
+            // evidence recorders it feeds stay gated in SkirmishMatchView.Observation.cs (#if UNITY_EDITOR).
             var worldCamera = Camera.main;
             var publicObjectiveFacts = SkirmishPublicObjectiveProjection.Read(EntityManager, match);
             var knownEnemyPosition = new Vector3(publicObjectiveFacts.EnemyPosition.X, publicObjectiveFacts.EnemyPosition.Y, publicObjectiveFacts.EnemyPosition.Z);
@@ -67,7 +68,6 @@ namespace Game.Composition
             view.PresentEnemyBaseMarker(publicObjectiveFacts.EnemyObjectiveAlive && worldCamera != null
                 ? worldCamera.WorldToScreenPoint(knownEnemyPosition) : Vector3.back, publicObjectiveFacts.EnemyObjectiveAlive,
                 knownEnemyPosition, knownPlayerPosition, publicObjectiveFacts.EnemyTargetVisible);
-#endif
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)
             {

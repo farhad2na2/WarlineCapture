@@ -40,6 +40,33 @@ namespace Game.UI.Contracts
         public bool MedalIsFirstAward;
         // Expanded session catalog id, including repeats that earn no new medal.
         public string CatalogId;
+        // Fog-respecting knowledge of the enemy main base (0 hidden, 1 last seen, 2 visible),
+        // published only when the session supplies it. Age is seconds since it was last seen.
+        public bool EnemyBaseKnowledgeKnown;
+        public byte EnemyBaseKnowledge;
+        public float EnemyBaseLastSeenAgeSeconds;
+        // Base under fire (public only): own base position, the latest attacker only while it is
+        // fog-visible to the player, and the nearest own ground squad to the base.
+        public bool PlayerBaseWorldKnown;
+        public UnityEngine.Vector3 PlayerBaseWorld;
+        public bool PlayerBaseRecentlyHit;
+        public bool BaseAttackerVisible;
+        public UnityEngine.Vector3 BaseAttackerWorld;
+        public uint BaseDefenderGroupId;
+        public string BaseDefenderLabel;
+        public bool BaseDefenderIsHomeGuard;
+        // Raised by SkirmishBaseThreatAlertSystem: revision increments on perimeter entry (reason 1)
+        // and on the first damage of an attack (reason 2). The perimeter equals the base reveal radius.
+        public int BaseThreatRevision;
+        public byte BaseThreatReason;
+        public float BasePerimeterRadius;
+        public bool BaseIntruderInside;
+        // Per-mission guidance (SkirmishMissionHudGuidanceCatalog): first-order prompt during the
+        // opening seconds and a rendezvous marker on an existing layout anchor.
+        public string FirstOrderText;
+        public bool RendezvousKnown;
+        public UnityEngine.Vector3 RendezvousWorld;
+        public string RendezvousLabel;
     }
     public struct UiExpandedPrecisionAttackResult
     {

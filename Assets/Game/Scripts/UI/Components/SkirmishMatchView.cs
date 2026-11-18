@@ -102,6 +102,7 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)){hud.SetActive(false);modal.SetActive(false);return;}
             SelectedApproach = model.SelectedApproach;
+            ObserveEnemyBaseKnowledge(model);
             bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
             if(buildDrawer==null)buildDrawer=FindAnyObjectByType<BuildDrawerView>();
@@ -114,6 +115,8 @@ namespace Game.UI.Runtime
             SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
             RefreshPublicObjectiveHud(model);
+            RefreshMissionGuidance(model);
+            RefreshBaseUnderFire(model);
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
             if(!modal.activeSelf)return;
@@ -212,6 +215,10 @@ namespace Game.UI.Runtime
                 string difficulty = UiShellRuntimeGateway.Localization.Get(medal.DifficultyLocKey, "Medal");
                 medalText = first + " · " + model.MedalScenarioId + " · " + difficulty;
             }
+            // Each criterion is judged by its own condition (SkirmishStarCriteria), so a defeat
+            // with no squad lost shows the loss criterion as met, not failed.
+            var criteria = new SkirmishStarCriteria(victory, model.PlayerBuildingsLost, model.PlayerUnitsLost);
+            string needsVictory = Text("met_needs_victory", "MET · NEEDS A WIN");
             return new ModeResultContent
             {
                 Victory = victory,
@@ -225,20 +232,34 @@ namespace Game.UI.Runtime
                 Stars = model.ResultStars,
                 Objective1 = Text("destroy_base", "Destroy the enemy main base"),
                 Objective2 = Text("protect_base", "Protect your main base"),
-                Objective3 = Text("low_losses", "Keep squad losses low"),
+                Objective3 = UiShellRuntimeGateway.Localization.Format("ui.skirmish.result.low_losses_limit",
+                    "Keep squad losses low ({0} or fewer)", SkirmishStarCriteria.LowLossLimit),
                 Objective1State = model.EnemyBaseDestroyed ? complete : failed,
-                Objective2State = model.PlayerBaseHeld ? Text("held", "Held") : failed,
-                Objective3State = victory && model.PlayerUnitsLost <= 2 ? complete : failed,
+                Objective2State = CriterionText(criteria.ProtectBase, Text("held", "Held"), needsVictory,
+                    model.PlayerBaseHeld
+                        ? UiShellRuntimeGateway.Localization.Format("ui.skirmish.result.buildings_lost_count", "{0} BUILDINGS LOST", model.PlayerBuildingsLost)
+                        : failed),
+                Objective3State = CriterionText(criteria.LowLosses, complete, needsVictory,
+                    UiShellRuntimeGateway.Localization.Format("ui.skirmish.result.units_lost_over_limit", "{0} LOST · LIMIT {1}",
+                        model.PlayerUnitsLost, SkirmishStarCriteria.LowLossLimit)),
                 HasObjectiveFacts = true,
-                CompletedObjectives = (byte)((model.EnemyBaseDestroyed ? 1 : 0) | (model.PlayerBaseHeld ? 2 : 0) |
-                    (victory && model.PlayerUnitsLost <= 2 ? 4 : 0)),
+                CompletedObjectives = (byte)((model.EnemyBaseDestroyed ? 1 : 0) |
+                    (criteria.ProtectBase == SkirmishCriterionState.Earned ? 2 : 0) |
+                    (criteria.LowLosses == SkirmishCriterionState.Earned ? 4 : 0)),
+                MetNeedsVictoryObjectives = (byte)(
+                    (criteria.ProtectBase == SkirmishCriterionState.MetNeedsVictory ? 2 : 0) |
+                    (criteria.LowLosses == SkirmishCriterionState.MetNeedsVictory ? 4 : 0)),
                 Performance1 = Text("units_lost", "UNITS LOST"),
                 Performance1Value = model.PlayerUnitsLost.ToString(),
                 Performance2 = Text("units_defeated", "UNITS DEFEATED"),
                 Performance2Value = model.EnemyUnitsLost.ToString(),
                 Performance3 = Text("buildings", "BUILDINGS LOST / DESTROYED"),
                 Performance3Value = model.PlayerBuildingsLost + " / " + model.EnemyBuildingsLost,
-                Summary = string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail,
+                // Answers "why is a criterion I met not a star?": stars need a victory.
+                Summary = (string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail) +
+                          (!victory && (criteria.MetMask & 6) != 0
+                              ? "\n" + Text("star_rule", "Stars need a win. Gold criteria were met and count when you win.")
+                              : string.Empty),
                 LeaveLabel = "MAIN MENU",
                 ShowAdjust = true,
                 ActionsEnabled = true,
@@ -251,6 +272,10 @@ namespace Game.UI.Runtime
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode
             };
         }
+        private static string CriterionText(SkirmishCriterionState state, string earned, string metNeedsVictory, string failed) =>
+            state == SkirmishCriterionState.Earned ? earned
+            : state == SkirmishCriterionState.MetNeedsVictory ? metNeedsVictory
+            : failed;
         // Keep numeric health out of the RTL heading so current/maximum retains its order.
         private static TMP_Text HealthLabel(TMP_Text heading)
         {

@@ -225,6 +225,19 @@ namespace Game.Runtime
             // Reuse native acquisition/detector radii. No new vision radius,
             // stat boost, or invented terrain LOS is introduced here.
             observer.AcquisitionRadius = ReadOwnAcquisitionRadius(em, entity, cellSize);
+            // Designated main bases (both factions, symmetric) see out to the reach of a
+            // direct-fire attacker that can hit them. Same acquisition-radius test as units;
+            // no stat, weapon or targeting change. See SkirmishBaseVisionPolicy.
+            if (em.HasComponent<SkirmishObjectiveRoleComponent>(entity))
+            {
+                var role = em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role;
+                if (role == SkirmishObjectiveRoleKind.PlayerBase || role == SkirmishObjectiveRoleKind.EnemyBase)
+                {
+                    int2 footprint = em.HasComponent<UnitFootprint>(entity) ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+                    observer.AcquisitionRadius = math.max(observer.AcquisitionRadius,
+                        SkirmishBaseVisionPolicy.RevealRadius(footprint, cellSize));
+                }
+            }
             if (em.HasComponent<ThreatDetector>(entity))
             {
                 var detector = em.GetComponentData<ThreatDetector>(entity);

@@ -18,6 +18,8 @@ namespace Game.UI.Runtime
         private const float ChipCueMargin = 44f; // Canvas units; the cue arrow fits inside it.
         private const int HudOccluderRefreshFrames = 6, HudCanvasRescanFrames = 60;
         private readonly List<Rect> hudOccluders = new();
+        private readonly List<Graphic> hudOccluderGraphics = new();
+        private string safePlayAreaLogged;
         private readonly List<Canvas> hudCanvases = new();
         private readonly Vector3[] occluderCorners = new Vector3[4];
         private int hudOccluderFrame = -1000, hudCanvasFrame = -1000;
@@ -43,6 +45,7 @@ namespace Game.UI.Runtime
                     if (canvas.rootCanvas.renderMode != RenderMode.WorldSpace) hudCanvases.Add(canvas);
             }
             hudOccluders.Clear();
+            hudOccluderGraphics.Clear();
             foreach (var canvas in hudCanvases)
             {
                 if (canvas == null || !canvas.isActiveAndEnabled) continue;
@@ -52,7 +55,8 @@ namespace Game.UI.Runtime
                 for (int i = 0; i < graphics.Count; i++)
                 {
                     var graphic = graphics[i];
-                    if (graphic == null || !graphic.isActiveAndEnabled || !graphic.raycastTarget) continue;
+                    // GraphicRaycaster skips undrawn graphics (depth -1) as well.
+                    if (graphic == null || !graphic.isActiveAndEnabled || !graphic.raycastTarget || graphic.depth == -1) continue;
                     if (IsWorldAnchoredChip(graphic.transform)) continue;
                     graphic.rectTransform.GetWorldCorners(occluderCorners);
                     Vector2 min = new(float.MaxValue, float.MaxValue), max = new(float.MinValue, float.MinValue);
@@ -61,12 +65,36 @@ namespace Game.UI.Runtime
                         Vector2 point = RectTransformUtility.WorldToScreenPoint(eventCamera, occluderCorners[c]);
                         min = Vector2.Min(min, point); max = Vector2.Max(max, point);
                     }
-                    hudOccluders.Add(Rect.MinMaxRect(min.x, min.y, max.x, max.y));
+                    var rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+                    // Hidden shell screens/popups (CanvasGroup blocksRaycasts false) take no taps: not HUD.
+                    if (!SkirmishHudChipPlacement.BlocksTaps(graphic, rect.center, eventCamera)) continue;
+                    hudOccluders.Add(rect);
+                    hudOccluderGraphics.Add(graphic);
                 }
             }
             var screen = Screen.safeArea;
             safePlayAreaKnown = SkirmishHudChipPlacement.TrySafePlayArea(screen, hudOccluders, screen.center, out safePlayArea);
+            LogSafePlayArea(screen);
             return safePlayAreaKnown;
+        }
+
+        // Evidence for captures: one line whenever the play area changes, naming what covers the
+        // screen centre when it is covered.
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private void LogSafePlayArea(Rect screen)
+        {
+            string summary = safePlayAreaKnown
+                ? "playArea=" + Mathf.RoundToInt(safePlayArea.xMin) + "," + Mathf.RoundToInt(safePlayArea.yMin) + "," +
+                  Mathf.RoundToInt(safePlayArea.xMax) + "," + Mathf.RoundToInt(safePlayArea.yMax)
+                : "playArea=None";
+            string signature = summary + " screen=" + Mathf.RoundToInt(screen.width) + "x" + Mathf.RoundToInt(screen.height);
+            if (signature == safePlayAreaLogged) return;
+            safePlayAreaLogged = signature;
+            string centre = "";
+            for (int i = 0; i < hudOccluders.Count; i++)
+                if (hudOccluders[i].Contains(screen.center) && SkirmishHudChipPlacement.IsHudOccluder(hudOccluders[i], screen))
+                    centre += " centreCoveredBy=" + hudOccluderGraphics[i].name + "@" + hudOccluders[i];
+            Debug.Log("[SkirmishHudChipPlacement] " + signature + " occluders=" + hudOccluders.Count + centre);
         }
 
         private bool IsWorldAnchoredChip(Transform candidate)
@@ -81,20 +109,15 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Puts a stemmed marker's foot on <paramref name="anchor"/> when it fits in the play
         /// area; otherwise clamps it there, hides the stem and points the cue at the anchor.
-        /// Returns false (marker hidden) when no play area can hold it.
+        /// Never hides the marker: with no usable play area it is clamped onto the screen.
         /// </summary>
         private bool PlaceWorldChip(RectTransform marker, GameObject stem, ref HudDirectionArrowGraphic cue, Color tone, Vector2 anchor)
         {
             float scale = ((RectTransform)transform).lossyScale.x;
             Vector2 size = marker.rect.size * scale;
             float margin = ChipCueMargin * scale;
-            if (!RefreshSafePlayArea() ||
-                !SkirmishHudChipPlacement.TryPlace(anchor, size, marker.pivot, safePlayArea, margin, out var position, out bool clamped))
-            {
-                marker.gameObject.SetActive(false);
-                if (cue != null) cue.gameObject.SetActive(false);
-                return false;
-            }
+            bool known = RefreshSafePlayArea();
+            var position = SkirmishHudChipPlacement.PlaceVisible(anchor, size, marker.pivot, safePlayArea, known, Screen.safeArea, margin, out bool clamped);
             marker.gameObject.SetActive(true);
             marker.position = position;
             if (stem != null && stem.activeSelf == clamped) stem.SetActive(!clamped);

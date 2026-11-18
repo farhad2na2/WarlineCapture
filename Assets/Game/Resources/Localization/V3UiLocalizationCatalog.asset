@@ -7099,6 +7099,10 @@ MonoBehaviour:
       value: BASE ASSAULT
     - key: ui.skirmish.base_assault_map
       value: DESERT BASE
+    - key: ui.skirmish.base_last_seen_health
+      value: "SEEN {0}/{1}"
+    - key: ui.skirmish.base_not_in_sight
+      value: "NOT IN SIGHT"
     - key: ui.skirmish.base_objective
       value: DESTROY THE ENEMY MAIN BASE
     - key: ui.skirmish.cancel
@@ -7200,6 +7204,16 @@ MonoBehaviour:
       value: Supply vehicle limit reached.
     - key: ui.skirmish.main_menu
       value: MAIN MENU
+    - key: ui.skirmish.marker.distance_from_base
+      value: "{0} m from your base"
+    - key: ui.skirmish.marker.enemy_base
+      value: "ENEMY BASE"
+    - key: ui.skirmish.marker.in_sight
+      value: "IN SIGHT"
+    - key: ui.skirmish.marker.last_seen_ago
+      value: "LAST SEEN {0} AGO"
+    - key: ui.skirmish.marker.reported
+      value: "REPORTED POSITION"
     - key: ui.skirmish.match_help
       value: Destroy the enemy base. Defend yours with Watchtowers and rifle squads.
         Tap a squad card, then Move or Attack.
@@ -22196,6 +22210,10 @@ MonoBehaviour:
       value: "\u062D\u0645\u0644\u0647 \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647"
     - key: ui.skirmish.base_assault_map
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.base_last_seen_health
+      value: "\u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647 {0}/{1}"
+    - key: ui.skirmish.base_not_in_sight
+      value: "\u062E\u0627\u0631\u062C \u0627\u0632 \u062F\u06CC\u062F"
     - key: ui.skirmish.base_objective
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646
         \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646"
@@ -22382,6 +22400,16 @@ MonoBehaviour:
         \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u067E\u0631\u0647."
     - key: ui.skirmish.main_menu
       value: "\u0645\u0646\u0648\u06CC \u0627\u0635\u0644\u06CC"
+    - key: ui.skirmish.marker.distance_from_base
+      value: "{0} \u0645\u062A\u0631 \u062A\u0627 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0634\u0645\u0627"
+    - key: ui.skirmish.marker.enemy_base
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646"
+    - key: ui.skirmish.marker.in_sight
+      value: "\u062F\u0631 \u062F\u06CC\u062F"
+    - key: ui.skirmish.marker.last_seen_ago
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u062F\u06CC\u062F\u0627\u0631 {0} \u067E\u06CC\u0634"
+    - key: ui.skirmish.marker.reported
+      value: "\u0645\u0648\u0642\u0639\u06CC\u062A \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647"
     - key: ui.skirmish.match_help
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646 \u0631\u0648
         \u0646\u0627\u0628\u0648\u062F \u06A9\u0646. \u0628\u0627 \u0628\u0631\u062C

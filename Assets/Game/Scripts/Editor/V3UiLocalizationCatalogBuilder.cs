@@ -1057,6 +1057,14 @@ namespace Game.Editor
             AddRuntimeText("ui.exchange.cancel_unavailable", "Cancel unavailable", "لغو در دسترس نیست");
             AddRuntimeText("ui.exchange.mission_ending", "Mission ending", "مأموریت در حال پایان است");
 
+            AddRuntimeText("ui.skirmish.base_not_in_sight", "NOT IN SIGHT", "خارج از دید");
+            AddRuntimeText("ui.skirmish.base_last_seen_health", "SEEN {0}/{1}", "دیده‌شده {0}/{1}");
+            AddRuntimeText("ui.skirmish.marker.enemy_base", "ENEMY BASE", "پایگاه دشمن");
+            AddRuntimeText("ui.skirmish.marker.in_sight", "IN SIGHT", "در دید");
+            AddRuntimeText("ui.skirmish.marker.last_seen_ago", "LAST SEEN {0} AGO", "آخرین دیدار {0} پیش");
+            AddRuntimeText("ui.skirmish.marker.reported", "REPORTED POSITION", "موقعیت گزارش‌شده");
+            AddRuntimeText("ui.skirmish.marker.distance_from_base", "{0} m from your base", "{0} متر تا پایگاه شما");
+
             AddRuntimeText("ui.briefing.location", "LOCATION: {0}", "موقعیت: {0}");
             AddRuntimeText("ui.briefing.hostiles_delayed", "{0} HOSTILES | DELAYED PATROL", "{0} دشمن | گشت با تأخیر");
             AddRuntimeText("ui.briefing.hostiles_confirmed", "{0} CONFIRMED", "{0} تأییدشده");

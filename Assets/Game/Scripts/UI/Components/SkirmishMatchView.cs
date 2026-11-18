@@ -94,6 +94,7 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)){hud.SetActive(false);modal.SetActive(false);return;}
             SelectedApproach = model.SelectedApproach;
+            ObserveEnemyBaseKnowledge(model);
             bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
             if(buildDrawer==null)buildDrawer=FindAnyObjectByType<BuildDrawerView>();

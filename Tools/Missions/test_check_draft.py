@@ -224,6 +224,11 @@ class ObjectiveDrafts(unittest.TestCase):
             with self.subTest(draft=name):
                 path = checker.ROOT / 'Tools/Missions/drafts' / (name + '-ground-field-candidate.json')
                 d = json.loads(path.read_text())
+                if 'candidate=1, measured' in d['notes']:
+                    # Lane 18 (2026-11-18) attached a Unity area measurement: the draft must now pass as is.
+                    self.assertIn('area_measurement', d)
+                    self.assertEqual([], self.run_check(d, (0.0, 0.0, 2048.0, 1024.0)))
+                    continue
                 self.assertIn('candidate=1, unmeasured', d['notes'])
                 self.assertEqual(['area.measurement'], self.run_check(d, (0.0, 0.0, 2048.0, 1024.0)))
                 d['area_measurement'] = {'artifact': 'Design/AgentReports/SkirmishExpansion/test/area-measurement.json'}

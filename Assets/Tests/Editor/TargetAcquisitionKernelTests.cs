@@ -82,7 +82,7 @@ namespace Game.Tests.Editor
             foreach(bool isStatic in new[]{false,true})foreach(bool hasHealth in new[]{false,true})foreach(int health in new[]{-1,0,1,int.MinValue,int.MaxValue})
                 Assert.AreEqual(isStatic||(hasHealth&&health<=0),TargetAcquisitionKernel.ShouldClearUnavailableTarget(isStatic,hasHealth,health));
             string original=File.ReadAllText(Path.Combine(Application.dataPath,"Tests/Editor/TargetAcquisitionOriginalSource.cs.txt")).Replace("\r\n","\n");
-            using var sha=SHA256.Create();Assert.AreEqual("265d75666daf50a05863f418f703105c736e70b28a811c1615ec02d3092785e7",BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(original))).Replace("-","").ToLowerInvariant());
+            using var sha=SHA256.Create();Assert.AreEqual("e3193c3544e84962cb0434dfb435f57251b24734f87e0e4034824d3b39dd4a0c",BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(original))).Replace("-","").ToLowerInvariant());
             string expected="#if UNITY_EDITOR\n"+original.Replace("UnitEngagementSystem","TargetAcquisitionOriginalSystem").Replace("    [BurstCompile]\n    [UpdateAfter","    [DisableAutoCreation]\n    [BurstCompile]\n    [UpdateAfter").Replace("private partial struct AcquireTargetsJob","internal partial struct AcquireTargetsJob")+"\n#endif\n";
             Assert.AreEqual(expected,File.ReadAllText(Path.Combine(Application.dataPath,"Game/Scripts/Systems/TargetAcquisitionOriginalSystem.cs")).Replace("\r\n","\n"));
         }

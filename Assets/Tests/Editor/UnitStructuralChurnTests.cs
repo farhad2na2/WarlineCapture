@@ -36,6 +36,7 @@ namespace Game.Tests.Editor
             em.SetComponentData(unit, LocalTransform.Identity);
             SystemHandle ecbSystem = world.CreateSystem<EndSimulationEntityCommandBufferSystem>();
             SystemHandle healthBars = world.CreateSystem<UnitHealthBarSystem>();
+            em.CreateEntity(typeof(HealthBarFill)); // UnitHealthBarSystem requires a health-bar fill entity to update
 
             // First occurrence adds each component once (the only structural changes).
             em.AddComponentData(unit, new RecentAttacker { Attacker = Entity.Null });

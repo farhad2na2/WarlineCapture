@@ -4,27 +4,8 @@ namespace Game.UI.Runtime
 {
     public sealed partial class QuickCustomScreenView
     {
-        private string AtlasMissionName(string objective,int slot)
-        {
-            string[] en,fa;
-            switch(objective)
-            {
-                case "FC":
-                    en=new[]{"FORWARD LINE","HOLD THE LINE","SKYWATCH","AIR CONTROL","COMBINED FRONT","STRONGPOINT"};
-                    fa=new[]{"خط مقدم","حفظ خط","نگهبان آسمان","کنترل هوایی","جبهه ترکیبی","نقطه استوار"};break;
-                case "BT":
-                    en=new[]{"BREAK THE LINE","BASE BREAKER","AIR BREAKTHROUGH","AIRBASE BREACH","COMBINED PUSH","FULL ASSAULT"};
-                    fa=new[]{"شکستن خط","شکننده پایگاه","پیشروی هوایی","نفوذ هوایی","پیشروی ترکیبی","یورش کامل"};break;
-                case "CE":
-                    en=new[]{"ROAD ESCORT","SUPPLY CONVOY","AIR COVER","BASE RESUPPLY","COMBINED ESCORT","RELIEF COLUMN"};
-                    fa=new[]{"اسکورت جاده","کاروان تدارکات","پوشش هوایی","تدارک پایگاه","اسکورت ترکیبی","ستون پشتیبانی"};break;
-                default:
-                    en=new[]{"OUTPOST STRIKE","COMMAND SIEGE","AIR RAID","AIRBASE STRIKE","COMBINED ADVANCE","COMBINED SIEGE"};
-                    fa=new[]{"یورش به پاسگاه","محاصره ستاد","یورش هوایی","حمله به پایگاه هوایی","پیشروی ترکیبی","محاصره ترکیبی"};break;
-            }
-            int index=Mathf.Clamp(slot,0,5);
-            return UiShellRuntimeGateway.Localization.Get("ui.atlas.mission."+objective?.ToLowerInvariant()+"."+index,UiShellRuntimeGateway.Localization.IsRightToLeft?fa[index]:en[index]);
-        }
+        // Shared with the Skirmish result screen (SkirmishLibraryMissionNames).
+        private string AtlasMissionName(string objective,int slot)=>SkirmishLibraryMissionNames.Name(objective,slot);
         private static string AtlasObjectivePurpose(string objective)
         {
             switch(objective)

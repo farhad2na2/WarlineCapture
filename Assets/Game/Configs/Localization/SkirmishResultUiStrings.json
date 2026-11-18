@@ -60,6 +60,8 @@
     { "key": "ui.skirmish.base_alert.show_home_guard", "source": "SHOW HOME GUARD", "translations": [{ "locale": "fa-IR", "value": "نمایش نگهبان پایگاه" }] },
     { "key": "ui.skirmish.base_alert.show_nearest", "source": "SHOW NEAREST SQUAD", "translations": [{ "locale": "fa-IR", "value": "نمایش نزدیک‌ترین جوخه" }] },
     { "key": "ui.skirmish.defense_held.title", "source": "BASE HELD", "translations": [{ "locale": "fa-IR", "value": "پایگاه حفظ شد" }] },
-    { "key": "ui.skirmish.defense_held.choice", "source": "Keep a guard at your base. Scout the reported enemy base.", "translations": [{ "locale": "fa-IR", "value": "نگهبانی در پایگاهت بگذار. پایگاه گزارش‌شدهٔ دشمن را شناسایی کن." }] }
+    { "key": "ui.skirmish.defense_held.choice", "source": "Keep a guard at your base. Scout the reported enemy base.", "translations": [{ "locale": "fa-IR", "value": "نگهبانی در پایگاهت بگذار. پایگاه گزارش‌شدهٔ دشمن را شناسایی کن." }] },
+    { "key": "ui.skirmish.result.base_lost_to_squad", "source": "Your main base was destroyed by an enemy {0} squad.", "translations": [{ "locale": "fa-IR", "value": "یک جوخهٔ {0} دشمن پایگاه اصلی تو را نابود کرد." }] },
+    { "key": "ui.skirmish.result.base_lost_to_unit", "source": "Your main base was destroyed by an enemy {0}.", "translations": [{ "locale": "fa-IR", "value": "یک {0} دشمن پایگاه اصلی تو را نابود کرد." }] }
   ]
 }

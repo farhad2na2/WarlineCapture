@@ -1,3 +1,4 @@
+using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -41,6 +42,11 @@ namespace Game.UI.Runtime
         private V3GradientGraphic baseHitRingGraphic;
         private Image baseHitShotImage;
 
+        // Result recap: the last attacker the player saw hitting the base.
+        private SkirmishBaseLossRecap baseLossRecap;
+        private bool baseLossLatched;
+        private SkirmishRoleKind baseLossRole;
+
         // ISkirmishBaseAlertPresentation: exactly what the player is shown (ARIA reads only this).
         private int baseAlertSequence, baseAlertSeenRevision = -1;
         private byte baseAlertReason;
@@ -58,9 +64,12 @@ namespace Game.UI.Runtime
         public bool BaseUnderFirePresented => baseFireRow != null && baseFireRow.gameObject.activeSelf;
         public Button BaseUnderFireFocusButton => baseFireFocus;
         public Button BaseUnderFireDefenderButton => baseFireDefender;
+        /// <summary>Role of the attacker that destroyed the base, when the player saw it (None otherwise).</summary>
+        public SkirmishRoleKind BaseLostToRole => baseLossLatched ? baseLossRole : SkirmishRoleKind.None;
 
         private void RefreshBaseUnderFire(in UiSkirmishModel model)
         {
+            ObserveBaseLoss(model);
             bool live = hud != null && hud.activeSelf && !model.Finished && !model.StartupFailed && model.Expanded;
             if (!live)
             {
@@ -135,6 +144,19 @@ namespace Game.UI.Runtime
 
             PresentBaseFireArrow(model);
             PresentBaseFirePing(model);
+        }
+
+        private void ObserveBaseLoss(in UiSkirmishModel model)
+        {
+            if (!model.Finished && !model.StartupFailed)
+            {
+                if (baseLossLatched) { baseLossLatched = false; baseLossRole = SkirmishRoleKind.None; baseLossRecap.Reset(); }
+                baseLossRecap.Observe(model.BaseAttackerRole, model.BaseAttackerVisible, model.PlayerBaseRecentlyHit, Time.time);
+                return;
+            }
+            if (baseLossLatched) return;
+            baseLossLatched = true;
+            baseLossRole = model.StartupFailed ? SkirmishRoleKind.None : baseLossRecap.Resolve(!model.PlayerBaseHeld, Time.time);
         }
 
         // Size each control to its widest line so neither clips its own text (EN and FA, any width).

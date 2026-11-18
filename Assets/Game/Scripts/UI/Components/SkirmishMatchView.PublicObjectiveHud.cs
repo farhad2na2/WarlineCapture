@@ -289,9 +289,9 @@ namespace Game.UI.Runtime
                 return value;
             }
         }
-        private ModeResultContent BuildPresentedSkirmishResult(UiSkirmishModel match)
+        private ModeResultContent BuildPresentedSkirmishResult(UiSkirmishModel match,SkirmishRoleKind baseLostTo=SkirmishRoleKind.None)
         {
-            var content=BuildResult(match);
+            var content=BuildResult(match,baseLostTo);
             if(objectiveModel?.Applicable!=true)return content;
             content.HasObjectiveFacts=false;content.CompletedObjectives=0;content.MetNeedsVictoryObjectives=0;
             content.ObjectiveTitle=match.Objective;content.Objective1=content.Objective2=content.Objective3="";

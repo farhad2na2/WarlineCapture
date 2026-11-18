@@ -7419,6 +7419,10 @@ MonoBehaviour:
       value: RESTART MATCH
     - key: ui.skirmish.result.base_lost
       value: Your main base was lost.
+    - key: ui.skirmish.result.base_lost_to_squad
+      value: "Your main base was destroyed by an enemy {0} squad."
+    - key: ui.skirmish.result.base_lost_to_unit
+      value: "Your main base was destroyed by an enemy {0}."
     - key: ui.skirmish.result.base_standing
       value: Your main base is still standing.
     - key: ui.skirmish.result.battlefield
@@ -24318,6 +24322,10 @@ MonoBehaviour:
     - key: ui.skirmish.result.base_lost
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
         \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: ui.skirmish.result.base_lost_to_squad
+      value: "\u06CC\u06A9 \u062C\u0648\u062E\u0647\u0654 {0} \u062F\u0634\u0645\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062A\u0648 \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F."
+    - key: ui.skirmish.result.base_lost_to_unit
+      value: "\u06CC\u06A9 {0} \u062F\u0634\u0645\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062A\u0648 \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F."
     - key: ui.skirmish.result.base_standing
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
         \u0647\u0645\u0686\u0646\u0627\u0646 \u0633\u0627\u0644\u0645 \u0627\u0633\u062A."

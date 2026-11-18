@@ -74,8 +74,21 @@ namespace Game.UI.Shell.Ecs
                 model.BaseAttackerVisible = true;
                 model.BaseAttackerWorld = em.GetComponentData<LocalTransform>(source).Position;
             }
+            // The role of the unit that hit the base, only while the player can see that unit.
+            if (sourceVisible) model.BaseAttackerRole = ReadGroupRole(em, session, source);
 
             ReadNearestDefender(em, session, homePosition, model.BasePerimeterRadius, ref model);
+        }
+
+        private static SkirmishRoleKind ReadGroupRole(EntityManager em, Entity session, Entity actor)
+        {
+            if (!em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor) || !em.HasBuffer<SkirmishArmyGroupRecord>(session))
+                return SkirmishRoleKind.None;
+            uint id = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId;
+            if (id == 0) return SkirmishRoleKind.None;
+            foreach (var group in em.GetBuffer<SkirmishArmyGroupRecord>(session, true))
+                if (group.GroupId == id && group.FactionId != 1) return group.Role;
+            return SkirmishRoleKind.None;
         }
 
         private static void ReadNearestDefender(EntityManager em, Entity session, Vector3 home, float perimeterRadius, ref UiSkirmishModel model)

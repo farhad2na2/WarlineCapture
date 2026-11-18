@@ -228,9 +228,17 @@ namespace Game.Simulation {
                 output.Action = AriaHomeDefenseAction.Waiting;
                 return true;
             }
-            if (plan.HomeDefenseStage == 4)
+            bool aimingDefense = plan.HomeDefenseStage == 5 && view.CompletedContacts <= plan.HomeDefenseAction;
+            if (plan.HomeDefenseStage == 4 || aimingDefense)
             {
                 var threat = DefenseTarget(view, plan.HomeDefenseRounds);
+                if (aimingDefense && (!view.AttackMode || !threat.Available))
+                {
+                    // The world tap has not landed. Reuse the recovery path with the current HUD.
+                    // A disarm from before this aim does not clear the current Attack mode.
+                    plan.HomeDefenseStage = 4;
+                    plan.HomeDefenseRecovery &= ~RecoveryDisarmed;
+                }
                 if (!threat.Available)
                 {
                     // A focus control pressed with Attack armed does not move the camera
@@ -261,7 +269,12 @@ namespace Game.Simulation {
                     }
                     return GiveUpRound(view, ref plan, ref output);
                 }
-                if (!view.AttackMode) { Target(view.Attack, false, ref output); return true; }
+                if (!view.AttackMode)
+                {
+                    if (view.Attack.Available) Target(view.Attack, false, ref output);
+                    else output.Action = AriaHomeDefenseAction.Waiting;
+                    return true;
+                }
                 plan.HomeDefenseAction = view.CompletedContacts;
                 plan.HomeDefenseStage = 5;
                 Target(threat, true, ref output);
@@ -269,8 +282,6 @@ namespace Game.Simulation {
             }
             if (plan.HomeDefenseStage == 5)
             {
-                if (view.CompletedContacts <= plan.HomeDefenseAction)
-                { Target(DefenseTarget(view, plan.HomeDefenseRounds), true, ref output); return true; }
                 if (view.AttackMode)
                 {
                     // The ground tap completed but Attack stayed armed: repeat it once, then

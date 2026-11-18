@@ -105,8 +105,39 @@ namespace Game.Tests.Editor
             var shared = new[] { M("a", SkirmishLegalPadKind.Supply, 1, 1, 1, "same"), M("b", SkirmishLegalPadKind.Supply, 1, 1, 1, "same") };
             var variant = V(SkirmishSizeId.Standard, S(1, SkirmishStructureIds.OilPump, 1, 1), S(1, SkirmishStructureIds.Refinery, 1, 1));
             Assert.Throws<InstancePadPlanException>(() => SkirmishInstancePadPlanner.Plan(new[] { variant }, shared, Footprint));
-            var approach = V(SkirmishSizeId.Standard, S(2, SkirmishStructureIds.DefenseApproachA, 1, 1));
-            Assert.Throws<InstancePadPlanException>(() => SkirmishInstancePadPlanner.Plan(new[] { approach }, null, Footprint));
+            // A defender tower exists only for the enemy (faction 2); a player one has no typed role pad.
+            var playerApproach = V(SkirmishSizeId.Standard, S(1, SkirmishStructureIds.DefenseApproachA, 1, 1));
+            Assert.Throws<InstancePadPlanException>(() => SkirmishInstancePadPlanner.Plan(new[] { playerApproach }, null, Footprint));
+        }
+
+        // S013 lane20: "building.watchtower.defense_approach_a needs a DefenseApproach pad, which per-building authoring
+        // does not support". BT/CE defender towers reuse their typed defense.approach.a/b role pad and anchor in every
+        // variant (TryPadForStructure places them only there); no footprint, measured pad or new anchor is needed.
+        [Test] public void BreakthroughDefenderTowersReuseTheirTypedRolePadsInEveryVariant()
+        {
+            var measured = new[] { M("e.barracks", SkirmishLegalPadKind.BaseBarracks, 2, 90, 90) };
+            var standard = V(SkirmishSizeId.Standard, S(2, SkirmishStructureIds.Barracks, 90, 90),
+                S(2, SkirmishStructureIds.DefenseApproachA, 40, 60), S(2, SkirmishStructureIds.DefenseApproachB, 45, 20));
+            var war = V(SkirmishSizeId.War, S(2, SkirmishStructureIds.Barracks, 90, 90),
+                S(2, SkirmishStructureIds.DefenseApproachA, 40, 60), S(2, SkirmishStructureIds.DefenseApproachB, 45, 20));
+            var plan = SkirmishInstancePadPlanner.Plan(new[] { standard, war }, measured, NoFootprint);
+            Assert.AreEqual(6, plan.Rows.Count);
+            Assert.AreEqual(2, plan.RolePads);
+            Assert.AreEqual(0, plan.DerivedPads);
+            Assert.AreEqual(1, plan.MeasuredPads);
+            foreach (var (id, role) in new[] { (SkirmishStructureIds.DefenseApproachA, "defense.approach.a"), (SkirmishStructureIds.DefenseApproachB, "defense.approach.b") })
+            {
+                var rows = plan.Rows.Where(r => r.StructureId == id).ToArray();
+                Assert.AreEqual(2, rows.Length);
+                Assert.IsTrue(rows.All(r => r.Faction == 2 && r.Ordinal == 0 && r.PadKey == "r:" + role));
+                var pad = plan.Pads.Single(p => p.Key == "r:" + role);
+                Assert.AreEqual(role, pad.ExistingRole);
+                Assert.AreEqual(role, pad.AnchorRole);
+                Assert.AreEqual(SkirmishLegalPadKind.DefenseApproach, pad.Kind);
+                Assert.IsFalse(pad.Measured);
+                Assert.AreEqual(role, SkirmishInstancePadPlanner.DefenseApproachRole(id));
+            }
+            Assert.IsNull(SkirmishInstancePadPlanner.DefenseApproachRole(SkirmishStructureIds.Watchtower));
         }
 
         [Test] public void MeasuredPadKindAndFactionMustMatchTheStructure()
@@ -121,6 +152,21 @@ namespace Game.Tests.Editor
         [Test] public void DerivedSlugIsStableAndShort()
         {
             Assert.AreEqual("d_1_refinery_module_0", SkirmishInstancePadPlanner.DerivedSlug(1, SkirmishStructureIds.RefineryModule, 0));
+        }
+
+        public static void RunFocusedValidation()
+        {
+            var t = new SkirmishInstancePadPlannerTests();
+            t.OrdinalsCountPerFactionAndStructureInSetupOrder();
+            t.MeasuredPadsAreAssignedInDraftOrderPerFactionAndKindAndStayStableAcrossVariants();
+            t.MeasuredPadsComeBeforeDerivedAndDerivedUsesTheCompilerPositionAndFootprint();
+            t.DerivedPadWithoutProvableFootprintFailsWithExplicitMessage();
+            t.EveryVariantGetsExactlyOneRowPerStructureInstanceWithUniquePadsAndAnchors();
+            t.TwoUsedMeasuredPadsOnOneAnchorOrAnUnsupportedKindFail();
+            t.BreakthroughDefenderTowersReuseTheirTypedRolePadsInEveryVariant();
+            t.MeasuredPadKindAndFactionMustMatchTheStructure();
+            t.DerivedSlugIsStableAndShort();
+            UnityEngine.Debug.Log("[SkirmishInstancePadPlannerTests] result=Passed controls=9");
         }
     }
 }

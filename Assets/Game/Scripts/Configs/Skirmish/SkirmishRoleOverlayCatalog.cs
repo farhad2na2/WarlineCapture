@@ -82,6 +82,20 @@ namespace Game.Configs
             return CreateS002GroundSlice();
         }
 
+        // Mission-level exclusion on top of the army slice. Returns the same array
+        // instance when nothing is excluded, so missions without an entry keep their
+        // exact compiled overlays; the army profile itself is never changed.
+        public static SkirmishRoleOverlay[] WithoutRoles(SkirmishRoleOverlay[] overlays, string[] unavailableRoleIds)
+        {
+            if (overlays == null || unavailableRoleIds == null || unavailableRoleIds.Length == 0)
+                return overlays;
+            var kept = new System.Collections.Generic.List<SkirmishRoleOverlay>(overlays.Length);
+            for (int i = 0; i < overlays.Length; i++)
+                if (System.Array.IndexOf(unavailableRoleIds, overlays[i].RoleId) < 0)
+                    kept.Add(overlays[i]);
+            return kept.Count == overlays.Length ? overlays : kept.ToArray();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]

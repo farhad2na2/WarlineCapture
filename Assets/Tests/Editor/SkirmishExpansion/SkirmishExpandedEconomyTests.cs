@@ -1484,8 +1484,9 @@ namespace Game.Tests.Editor
             em.SetComponentData(session, research);
             Assert.IsFalse(SkirmishProductionService.TryProduce(
                 em, session, SkirmishRoleIds.Fighter, 1, authored.ArmyAir, out SkirmishProductionDecision jet));
-            Assert.AreEqual(SkirmishReasonCode.MissingProducer, jet.Reason);
-            Assert.AreEqual("producer.airport", jet.Field);
+            // Owner decision 2026-11-18: S004 offers no fixed-wing (no Airport site on this source).
+            Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, jet.Reason);
+            Assert.AreEqual("overlay", jet.Field);
             research.Readiness = SkirmishReadinessStage.Established;
             em.SetComponentData(session, research);
             Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);

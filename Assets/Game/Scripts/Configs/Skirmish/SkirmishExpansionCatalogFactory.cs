@@ -61,6 +61,29 @@ namespace Game.Configs
         {
             "ground", "intel", "transport", "offensive_air", "advanced_air", "objective_ba"
         };
+
+    }
+
+    /// <summary>
+    /// Per-mission source-fit exclusions: roles a mission does not offer to either faction even
+    /// though its army profile allows them. The default for every catalog id is "none", so the
+    /// profile's overlay slice is used unchanged. Kept in code, not on the definition asset, so the
+    /// protected coded definition bytes stay exact. A producer structure (the Airport) leaves the
+    /// mission catalog with its last role.
+    /// </summary>
+    public static class SkirmishMissionRoleExclusions
+    {
+        // Owner decision 2026-11-18 (Design/Orchestration/decisions_pending.md, S004): the S004
+        // source has no legal Airport site (lane3 layout dump: 0 candidates), so S004 offers no
+        // fixed-wing aircraft and neither faction gets an Airport. Helicopters, the Helipad and
+        // drones stay; the air cap and army profile A are unchanged.
+        private static readonly string[] S004 =
+        {
+            SkirmishRoleIds.Fighter, SkirmishRoleIds.Strike, SkirmishRoleIds.TransportPlane
+        };
+
+        public static string[] UnavailableRoleIds(string catalogId) =>
+            catalogId == "S004" ? (string[])S004.Clone() : System.Array.Empty<string>();
     }
 
     public static class SkirmishS005FirstVisit

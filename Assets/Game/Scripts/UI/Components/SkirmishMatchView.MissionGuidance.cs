@@ -12,6 +12,8 @@ namespace Game.UI.Runtime
     public sealed partial class SkirmishMatchView
     {
         private RectTransform firstOrderRow, rendezvousMarker;
+        private GameObject rendezvousStem;
+        private HudDirectionArrowGraphic rendezvousCue;
         private Button firstOrderButton;
         private TMPro.TMP_Text rendezvousTitle;
         private string firstOrderShown, rendezvousShown;
@@ -66,7 +68,7 @@ namespace Game.UI.Runtime
             var camera = Camera.main;
             Vector3 screen = live && model.RendezvousKnown && camera != null ? camera.WorldToScreenPoint(model.RendezvousWorld) : Vector3.back;
             bool shown = SkirmishBaseThreatPolicy.OnScreen(screen, new Rect(0, 0, Screen.width, Screen.height));
-            if (!shown) { if (rendezvousMarker != null) rendezvousMarker.gameObject.SetActive(false); return; }
+            if (!shown) { if (rendezvousMarker != null) rendezvousMarker.gameObject.SetActive(false); HideCue(rendezvousCue); return; }
             if (rendezvousMarker == null)
             {
                 rendezvousMarker = Panel("RendezvousMarker", transform, false);
@@ -75,6 +77,7 @@ namespace Game.UI.Runtime
                 var stem = Panel("Stem", rendezvousMarker, false);
                 stem.anchorMin = stem.anchorMax = new Vector2(.5f, 0); stem.pivot = new Vector2(.5f, 0);
                 stem.sizeDelta = new Vector2(4, 26);
+                rendezvousStem = stem.gameObject;
                 var stemImage = stem.gameObject.AddComponent<Image>(); stemImage.color = RendezvousCyan; stemImage.raycastTarget = false;
                 var chip = Panel("Chip", rendezvousMarker, false);
                 chip.anchorMin = Vector2.zero; chip.anchorMax = Vector2.one;
@@ -86,8 +89,9 @@ namespace Game.UI.Runtime
                 Stretch(rendezvousTitle.rectTransform);
                 rendezvousTitle.color = RendezvousCyan;
             }
-            rendezvousMarker.gameObject.SetActive(true);
-            rendezvousMarker.position = screen;
+            // Never over the HUD: an anchor under the top bar or a side panel is clamped into
+            // the open play area with an arrow toward it (SkirmishHudChipPlacement).
+            if (!PlaceWorldChip(rendezvousMarker, rendezvousStem, ref rendezvousCue, RendezvousCyan, screen)) return;
             string signature = model.RendezvousLabel + UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             if (rendezvousShown != signature) { rendezvousShown = signature; UiLocalizedText.Set(rendezvousTitle, model.RendezvousLabel); }
         }

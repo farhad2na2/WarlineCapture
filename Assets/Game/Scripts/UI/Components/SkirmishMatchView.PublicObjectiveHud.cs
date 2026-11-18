@@ -150,7 +150,9 @@ namespace Game.UI.Runtime
                 else {var camera=Camera.main;var screen=camera!=null?camera.WorldToScreenPoint(position.World):new Vector3(0,0,-1);point=screen;shown=hud.activeInHierarchy&&screen.z>0&&Screen.safeArea.Contains(point);}
                 if(!shown)continue;
                 if(!objectiveMarkers.TryGetValue(node.PublicId,out var label)){label=Label(transform,"",HudIconButtonView.LabelSize);label.rectTransform.sizeDelta=new Vector2(240,64);objectiveMarkers.Add(node.PublicId,label);}
-                label.gameObject.SetActive(true);label.rectTransform.position=point;UiLocalizedText.Set(label,name+"\n"+PublicGoalProgress(node,fa));
+                // World labels stay in the open play area, never over HUD controls; the full map places its own.
+                if(map!=null)label.rectTransform.position=point;else if(!PlaceWorldLabel(label.rectTransform,point))continue;
+                label.gameObject.SetActive(true);UiLocalizedText.Set(label,name+"\n"+PublicGoalProgress(node,fa));
             }
             if(mapInformation!=null&&fullMap!=null&&fullMap.IsOpen)
             {UiLocalizedText.Set(mapPlayer,goal.Score.TicketsKnown?(fa?"بلیت‌های ما":"OUR TICKETS"):(fa?"پیشرفت هدف":"OBJECTIVE PROGRESS"));UiLocalizedText.Set(mapPlayerHealth,goal.Score.TicketsKnown?goal.Score.OwnTickets.ToString():goal.Score.Completed+" / "+goal.Score.Required);UiLocalizedText.Set(mapEnemy,goal.Score.TicketsKnown?(fa?"بلیت‌های حریف":"OPPONENT TICKETS"):"");UiLocalizedText.Set(mapEnemyHealth,goal.Score.TicketsKnown?goal.Score.OpposingTickets.ToString():"");}

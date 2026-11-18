@@ -57,6 +57,7 @@ namespace Game.UI.Runtime
         private TMPro.TMP_Text baseMarkerTitle, baseMarkerDetail;
         private V3GradientGraphic baseMarkerChip;
         private Image baseMarkerStem;
+        private HudDirectionArrowGraphic baseMarkerCue;
         private string baseMarkerShown;
         // Latest fog-respecting knowledge from the public Skirmish model (set in Update).
         private bool enemyBaseKnowledgeKnown;
@@ -83,10 +84,11 @@ namespace Game.UI.Runtime
             EnemyBaseObjectivePosition = worldPosition;
             PlayerBaseObjectivePosition = playerPosition;
             VisibleEnemyBasePoint = screen;
-            if (!shown) return;
+            if (!shown) { HideCue(baseMarkerCue); return; }
             // The stem's foot sits on the base point; the chip rides above it so the
             // ground under the point stays visible and tappable (nothing here raycasts).
-            baseMarker.position = screen;
+            // The visibility facts above describe the projected base point; only the chip
+            // moves: under the HUD it is clamped into the play area with an arrow.
             var knowledge = SkirmishEnemyBaseMarkerState.Resolve(enemyBaseKnowledgeKnown, enemyBaseKnowledge, targetVisible);
             var text = UiShellRuntimeGateway.Localization;
             int distance = SkirmishEnemyBaseMarkerState.RoundedGroundDistance(playerPosition, worldPosition);
@@ -100,6 +102,7 @@ namespace Game.UI.Runtime
                     : text.Get("ui.skirmish.marker.reported", "REPORTED POSITION");
             Color tone = knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? MarkerAmber
                 : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen ? MarkerMuted : MarkerSlate;
+            if (!PlaceWorldChip(baseMarker, baseMarkerStem.gameObject, ref baseMarkerCue, tone, screen)) return;
             string detail = string.IsNullOrEmpty(range) ? state : state + "\n" + range;
             string signature = text.CurrentLocaleCode + "|" + (int)knowledge + "|" + detail;
             if (baseMarkerShown == signature) return;

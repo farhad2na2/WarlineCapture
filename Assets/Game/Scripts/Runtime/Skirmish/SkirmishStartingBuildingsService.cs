@@ -129,6 +129,9 @@ namespace Game.Runtime
                         item.BoundEntity = building;
                         var bindings = em.GetBuffer<SkirmishStartingBuildingRequest>(session);
                         bindings[i] = item;
+                        UnityEngine.Debug.Log($"[SkirmishStartingBuilding] placed catalog={setup.CatalogId} faction={result.FactionId} " +
+                            $"structure={setup.Structures[item.StructureIndex].StructureId} preferred=({result.PreferredOrigin.x},{result.PreferredOrigin.y}) " +
+                            $"actual=({result.ActualOrigin.x},{result.ActualOrigin.y})");
                     }
                 }
                 finally { shared.Dispose(); }

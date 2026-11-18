@@ -6,6 +6,12 @@ relocation slack and playable bounds. Check same-faction construction and spawn
 footprints for overlap at their authored positions. Rally destinations reserve
 no space. Warn about HQ apron obstructions. A spawn needs a passable bitmap block
 centred inside its footprint. Edge contact alone is OK for overlap.
+
+The layout bitmap does not record BuildingPlacement permission. Pass --surface
+with decoded primary-surface JSON for the same map. Include gridOrigin {x,z},
+cellSize, width, height, and movementMaskRuns [mask, count, ...] in row-major
+(X first) order. The BuildingPlacement bit is 16. Areas beyond the surface
+keep the bitmap checks.
 """
 import argparse
 from collections import Counter
@@ -38,6 +44,7 @@ TRAVEL_SIZES = {'spawn.infantry.': (12, 10), 'spawn.vehicle.': (14, 12), 'rally.
 # S006's failed infantry pad has zero passable block centres; S026 starts with two.
 MIN_SPAWN_BLOCKS = 1
 OUTSIDE = -1
+BUILDING_PLACEMENT = 1 << 4  # MapSurfaceMovementMask.BuildingPlacement
 
 
 class Rect(NamedTuple):
@@ -237,27 +244,57 @@ class Bitmap:
             for x in range(x0, x1 + 1):
                 yield rect.at_origin(self.grid_x + x * self.cell, self.grid_z + z * self.cell)
 
-    def best_construction(self, pad):
-        def count_blocked(counts):
+    def best_construction(self, pad, surface):
+        def measure(rect):
+            counts = self.counts(self.blocks(rect))
             # Unity applies the level-ground placement rule once the match is Playing.
-            return sum(n for mask, n in counts.items() if mask not in (0, layout.FLAG_NOT_LEVEL))
+            blocked = sum(n for mask, n in counts.items() if mask not in (0, layout.FLAG_NOT_LEVEL))
+            surface_blocked = surface.blocked_cells(rect) if surface is not None else 0
+            return counts, blocked, surface_blocked
 
         rect = pad.footprint
-        counts = self.counts(self.blocks(rect))
-        blocked = count_blocked(counts)
+        counts, blocked, preferred_surface_blocked = measure(rect)
         inside = self.bounds.contains(rect)
-        best = (rect, counts, blocked, inside)
-        if not pad.slack or (inside and blocked == 0):
-            return best
-        rank = (blocked, 0) if inside else (math.inf, math.inf)
-        for candidate in self.construction_origins(rect, pad.slack):
-            candidate_counts = self.counts(self.blocks(candidate))
-            candidate_blocked = count_blocked(candidate_counts)
-            distance = (candidate.x0 - rect.x0) ** 2 + (candidate.z0 - rect.z0) ** 2
-            if (candidate_blocked, distance) < rank:
-                rank = (candidate_blocked, distance)
-                best = (candidate, candidate_counts, candidate_blocked, True)
+        best = Result(pad, rect, counts, blocked, inside, surface_blocked=preferred_surface_blocked,
+                      preferred_surface_blocked=preferred_surface_blocked)
+        if pad.slack and not best.passed:
+            rank = (blocked, preferred_surface_blocked, 0) if inside else (math.inf, math.inf, math.inf)
+            for candidate in self.construction_origins(rect, pad.slack):
+                counts, blocked, surface_blocked = measure(candidate)
+                distance = (candidate.x0 - rect.x0) ** 2 + (candidate.z0 - rect.z0) ** 2
+                if (blocked, surface_blocked, distance) < rank:
+                    rank = (blocked, surface_blocked, distance)
+                    best = Result(pad, candidate, counts, blocked, True, surface_blocked=surface_blocked,
+                                  preferred_surface_blocked=preferred_surface_blocked)
         return best
+
+
+class SurfaceMask:
+    def __init__(self, data):
+        self.x, self.z = data['gridOrigin']['x'], data['gridOrigin']['z']
+        self.cell = data['cellSize']
+        self.width, self.height = data['width'], data['height']
+        if (not all(map(number, (self.x, self.z, self.cell))) or self.cell <= 0
+                or any(type(n) != int or n <= 0 for n in (self.width, self.height))):
+            raise ValueError('invalid decoded surface grid')
+        runs = data['movementMaskRuns']
+        masks, counts = runs[::2], runs[1::2]
+        if (len(masks) != len(counts) or any(type(n) != int or n <= 0 for n in counts)
+                or any(type(mask) != int or not 0 <= mask <= 65535 for mask in masks)
+                or sum(counts) != self.width * self.height):
+            raise ValueError('invalid decoded surface movementMaskRuns')
+        self.blocked = b''.join(bytes([int(not (mask & BUILDING_PLACEMENT))]) * count
+                                for mask, count in zip(masks, counts))
+
+    def blocked_cells(self, rect):
+        x0 = max(0, math.floor((rect.x0 - self.x) / self.cell))
+        z0 = max(0, math.floor((rect.z0 - self.z) / self.cell))
+        x1 = min(self.width, math.ceil((rect.x1 - self.x) / self.cell))
+        z1 = min(self.height, math.ceil((rect.z1 - self.z) / self.cell))
+        if x0 >= x1:
+            return 0
+        return sum(self.blocked.count(b'\x01', z * self.width + x0, z * self.width + x1)
+                   for z in range(z0, z1))
 
 
 @dataclass
@@ -273,6 +310,8 @@ class Result:
     ring_inside: bool = True
     ring_neighbors: list = field(default_factory=list)
     ring_failure: Optional[str] = None
+    surface_blocked: int = 0
+    preferred_surface_blocked: int = 0
 
     @property
     def ring_clear(self):
@@ -285,11 +324,11 @@ class Result:
         if self.passable is not None:
             terrain_ok = self.passable >= (MIN_SPAWN_BLOCKS if self.pad.kind == 'spawn' else 1)
         else:
-            terrain_ok = self.blocked == 0
+            terrain_ok = self.blocked == 0 and self.surface_blocked == 0
         return terrain_ok and self.inside and not self.overlaps and not self.ring_failure
 
 
-def preflight(draft, data, slack='auto'):
+def preflight(draft, data, slack='auto', surface=None):
     source = SOURCES.get(draft.get('campaign_source'))
     if source and data.get('sourceOperationMapId') != source[1]:
         raise ValueError(f"expected dump for {source[1]}, got {data.get('sourceOperationMapId')}")
@@ -300,6 +339,7 @@ def preflight(draft, data, slack='auto'):
     if not number(slack) or not 0 <= slack <= 64:
         raise ValueError('pad slack must be finite and between 0 and 64 metres')
     bitmap = Bitmap(data)
+    surface = SurfaceMask(surface) if surface is not None else None
     pads = list(draft_pads(draft, slack))
     if not pads:
         raise ValueError('no authored instance, spawn or rally pads')
@@ -314,7 +354,7 @@ def preflight(draft, data, slack='auto'):
                         else sum(counts.values()) - blocked)
             result = Result(pad, pad.footprint, counts, blocked, bitmap.bounds.contains(shape.envelope()), passable)
         else:
-            result = Result(pad, *bitmap.best_construction(pad))
+            result = bitmap.best_construction(pad, surface)
         if pad.kind == 'BaseBarracks':
             outer = blocks.grow(1)
             result.ring_counts = bitmap.counts(outer) - bitmap.counts(blocks)
@@ -348,8 +388,8 @@ def flags_text(counts):
     return ','.join(parts) or '-'
 
 
-def print_table(results):
-    print('pad | kind | best origin (x,z) | blocked/blocks | footprint flags | bounds | overlaps | HQ ring | passable blocks | result')
+def print_table(results, has_surface=False):
+    print('pad | kind | best origin (x,z) | blocked/blocks | footprint flags | bounds | overlaps | HQ ring | passable blocks | no BuildingPlacement cells (preferred/best) | result')
     for row in results:
         ring = '-'
         if row.ring_counts is not None:
@@ -363,15 +403,17 @@ def print_table(results):
             ring = 'clear' if row.ring_clear else status + ' ' + ' '.join(d for d in details if d != '-')
         passable = str(row.passable) if row.passable is not None else '-'
         origin = f'({row.footprint.x0:g},{row.footprint.z0:g})' if not row.pad.travel else '-'
+        surface = f'{row.preferred_surface_blocked}/{row.surface_blocked}' if has_surface and not row.pad.travel else '-'
         print(' | '.join((row.pad.name, row.pad.kind, origin, f'{row.blocked}/{sum(row.counts.values())}',
                           flags_text(row.counts), 'inside' if row.inside else 'outside',
-                          ','.join(row.overlaps) or '-', ring, passable, 'PASS' if row.passed else 'FAIL')))
+                          ','.join(row.overlaps) or '-', ring, passable, surface, 'PASS' if row.passed else 'FAIL')))
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--draft', required=True, type=Path)
     parser.add_argument('--dump', type=Path, help='defaults to the saved dump for campaign_source')
+    parser.add_argument('--surface', type=Path, help='decoded primary-surface JSON with BuildingPlacement masks')
     parser.add_argument('--pad-slack', default='auto', help='auto uses draft pad_slack_m (default 12 m), or supply 0..64')
     args = parser.parse_args(argv)
     try:
@@ -383,13 +425,20 @@ def main(argv=None):
                 raise ValueError(f"no saved dump mapped for {draft['campaign_source']}; supply --dump")
             path = DUMP_ROOT / ('lane4-dump-' + source[0]) / 'dump.json'
         data = json.loads(path.read_text(encoding='utf-8'))
+        surface = json.loads(args.surface.read_text(encoding='utf-8')) if args.surface is not None else None
+        if args.surface is not None and not isinstance(surface, dict):
+            raise ValueError('decoded surface must be a JSON object')
         slack = args.pad_slack if args.pad_slack == 'auto' else float(args.pad_slack)
-        results = preflight(draft, data, slack)
+        results = preflight(draft, data, slack, surface)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, OverflowError, layout.DumpError) as exc:
         print(f'PREFLIGHT ERROR {args.draft.name}: {exc}', file=sys.stderr)
         return 1
     print(f"{draft.get('catalog_id', args.draft.name)} | dump={path} | instance slack={max(r.pad.slack for r in results):g} m")
-    print_table(results)
+    if args.surface is None:
+        print('BuildingPlacement bit unchecked. Supply --surface to check runway and other baked placement exclusions.')
+    else:
+        print(f'BuildingPlacement masks | surface={args.surface}')
+    print_table(results, args.surface is not None)
     failed = sum(not r.passed for r in results)
     print(f'PREFLIGHT FAIL {failed}/{len(results)} pads' if failed else 'PREFLIGHT PASS')
     return int(bool(failed))

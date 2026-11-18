@@ -17,6 +17,12 @@ def dump(flags=0):
                 bitmapRuns=[flags, 96])
 
 
+def runway_surface():
+    # Finer than the layout grid. One runway cell allows ground and air movement.
+    return dict(gridOrigin={'x': 116, 'z': -8}, cellSize=1, width=4, height=4,
+                movementMaskRuns=[31, 1, 15, 1, 31, 14])
+
+
 def instance(kind='Supply', at=(118, -6), size=(4, 4), name='a', faction=1):
     return dict(id=name, kind=kind, at=at, size=size, faction=faction)
 
@@ -126,6 +132,30 @@ class PadPreflightTests(unittest.TestCase):
         self.assertEqual((moved.footprint, moved.blocked), (tool.Rect(116, -12, 120, -8), 0))
         self.assertTrue(moved.passed)
 
+    def test_building_mask_rejects_preferred_footprint_and_searches_within_slack(self):
+        data, surface = dump(), runway_surface()
+        d = draft(instance())
+        preferred, = tool.preflight(d, data, surface=surface)
+        self.assertEqual((preferred.blocked, preferred.surface_blocked), (0, 1))
+        self.assertFalse(preferred.passed)
+
+        moved, = tool.preflight(d, data, 2, surface)
+        self.assertEqual(moved.footprint, tool.Rect(118, -8, 122, -4))
+        self.assertEqual((moved.preferred_surface_blocked, moved.surface_blocked), (1, 0))
+        self.assertTrue(moved.passed)
+
+        surface['movementMaskRuns'] = [31, 16]
+        clear, = tool.preflight(d, data, 2, surface)
+        self.assertEqual(clear.footprint, clear.pad.footprint)
+        self.assertTrue(clear.passed)
+
+    def test_building_mask_does_not_block_travel_or_footprints_outside_surface(self):
+        d = draft(instance(at=(122, -6)), pads={'spawn.infantry.enemy': {'at': [118, -6], 'size': [4, 4]}})
+        construction, spawn = tool.preflight(d, dump(), surface=runway_surface())
+        self.assertTrue(construction.passed)
+        self.assertEqual(construction.surface_blocked, 0)
+        self.assertTrue(spawn.passed)
+
     def test_construction_ignores_level_flag_during_startup(self):
         level, = tool.preflight(draft(instance()), dump(tool.layout.FLAG_NOT_LEVEL))
         self.assertEqual(level.blocked, 0)
@@ -160,6 +190,7 @@ class PadPreflightTests(unittest.TestCase):
             args = ('--draft', p, '--dump', m)
             status, out, _ = cli(*args, '--pad-slack', 'auto')
             self.assertEqual(status, 0)
+            self.assertIn('BuildingPlacement bit unchecked', out)
             self.assertIn('PREFLIGHT PASS', out.splitlines())
             data = dump()
             data['bitmapRuns'] = [0, 27, 4, 1, 0, 68]
@@ -178,6 +209,31 @@ class PadPreflightTests(unittest.TestCase):
             data['bitmapRuns'] = [0, 95]
             m.write_text(json.dumps(data))
             self.assertIn('bitmap', cli(*args)[2])
+
+    def test_cli_reports_surface_exclusions_and_rejects_invalid_coverage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p, m, s = (Path(tmp) / name for name in ('draft.json', 'dump.json', 'surface.json'))
+            p.write_text(json.dumps(draft(instance())))
+            m.write_text(json.dumps(dump()))
+            surface = runway_surface()
+            s.write_text(json.dumps(surface))
+            args = ('--draft', p, '--dump', m, '--surface', s)
+            status, out, _ = cli(*args)
+            self.assertEqual(status, 1)
+            self.assertIn('no BuildingPlacement cells (preferred/best)', out)
+            self.assertIn('| 1/1 | FAIL', out)
+            self.assertIn('PREFLIGHT FAIL 1/1 pads', out)
+
+            status, out, _ = cli(*args, '--pad-slack', 2)
+            self.assertEqual(status, 0)
+            self.assertIn('| 1/0 | PASS', out)
+            self.assertIn('PREFLIGHT PASS', out.splitlines())
+
+            surface['movementMaskRuns'] = [31, 15]
+            s.write_text(json.dumps(surface))
+            status, _, error = cli(*args)
+            self.assertEqual(status, 1)
+            self.assertIn('invalid decoded surface movementMaskRuns', error)
 
     def test_missing_pads_and_wrong_map_cannot_pass(self):
         with self.assertRaisesRegex(ValueError, 'no authored'):

@@ -1,0 +1,1 @@
+Saved Unity layout dumps (Mac lane 4, 2026-11-17) for pad_preflight.py --dump: S002 = Desert Base, S026 = City Crossroads, S050 = Citywide Alert (Mountain Pass). Same files as the tool's default Mac path.

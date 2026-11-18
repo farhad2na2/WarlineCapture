@@ -28,6 +28,11 @@ namespace Game.UI.Contracts
         public string ResultElapsed;
         public int PlayerUnitsLost, EnemyUnitsLost, PlayerBuildingsLost, EnemyBuildingsLost;
         public bool PlayerBaseHeld, EnemyBaseDestroyed;
+        // Fog-respecting knowledge of the enemy main base (0 hidden, 1 last seen, 2 visible),
+        // published only when the session supplies it. Age is seconds since it was last seen.
+        public bool EnemyBaseKnowledgeKnown;
+        public byte EnemyBaseKnowledge;
+        public float EnemyBaseLastSeenAgeSeconds;
         // First medal earned by the settlement that produced this result. Empty unless IsFirstAward.
         public string MedalScenarioId;
         public byte MedalDifficulty;

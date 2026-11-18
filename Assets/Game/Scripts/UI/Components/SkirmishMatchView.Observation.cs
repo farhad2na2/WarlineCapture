@@ -1,3 +1,4 @@
+using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
 namespace Game.UI.Runtime
@@ -53,17 +54,27 @@ namespace Game.UI.Runtime
         public bool EnemyBaseTargetVisible { get; private set; }
         public bool EnemyBaseObjectiveAlive { get; private set; }
         private RectTransform baseMarker;
-        private string baseMarkerLocale;
+        private TMPro.TMP_Text baseMarkerTitle, baseMarkerDetail;
+        private V3GradientGraphic baseMarkerChip;
+        private Image baseMarkerStem;
+        private HudDirectionArrowGraphic baseMarkerCue;
+        private string baseMarkerShown;
+        // Latest fog-respecting knowledge from the public Skirmish model (set in Update).
+        private bool enemyBaseKnowledgeKnown;
+        private byte enemyBaseKnowledge;
+        private float enemyBaseLastSeenAge;
+        private static readonly Color MarkerAmber = new(1, .65f, .1f);
+        private static readonly Color MarkerMuted = new(.80f, .62f, .30f);
+        private static readonly Color MarkerSlate = new(.62f, .70f, .74f);
+        private void ObserveEnemyBaseKnowledge(in UiSkirmishModel model)
+        {
+            enemyBaseKnowledgeKnown = model.EnemyBaseKnowledgeKnown;
+            enemyBaseKnowledge = model.EnemyBaseKnowledge;
+            enemyBaseLastSeenAge = model.EnemyBaseLastSeenAgeSeconds;
+        }
         public void PresentEnemyBaseMarker(Vector3 screen, bool alive, Vector3 worldPosition, Vector3 playerPosition, bool targetVisible = true)
         {
-            if (baseMarker == null)
-            {
-                baseMarker = Panel("EnemyBaseObjectiveMarker", transform, false);
-                var label = Label(baseMarker, "", 22);
-                label.color = new Color(1, .65f, .1f);
-                Stretch(label.rectTransform);
-                baseMarker.sizeDelta = new Vector2(190, 36);
-            }
+            if (baseMarker == null) BuildEnemyBaseMarker();
             bool shown = alive && hud != null && hud.activeInHierarchy && screen.z > 0 &&
                 screen.x > 0 && screen.y > 0 && screen.x < Screen.width && screen.y < Screen.height;
             baseMarker.gameObject.SetActive(shown);
@@ -73,14 +84,60 @@ namespace Game.UI.Runtime
             EnemyBaseObjectivePosition = worldPosition;
             PlayerBaseObjectivePosition = playerPosition;
             VisibleEnemyBasePoint = screen;
-            if (!shown) return;
-            baseMarker.position = screen;
-            string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
-            if (baseMarkerLocale != locale)
-            {
-                baseMarkerLocale = locale;
-                UiLocalizedText.Set(baseMarker.GetComponentInChildren<TMPro.TMP_Text>(), UiShellRuntimeGateway.Localization.IsRightToLeft ? "پایگاه دشمن" : "ENEMY BASE");
-            }
+            if (!shown) { HideCue(baseMarkerCue); return; }
+            // The stem's foot sits on the base point; the chip rides above it so the
+            // ground under the point stays visible and tappable (nothing here raycasts).
+            // The visibility facts above describe the projected base point; only the chip
+            // moves: under the HUD it is clamped into the play area with an arrow.
+            var knowledge = SkirmishEnemyBaseMarkerState.Resolve(enemyBaseKnowledgeKnown, enemyBaseKnowledge, targetVisible);
+            var text = UiShellRuntimeGateway.Localization;
+            int distance = SkirmishEnemyBaseMarkerState.RoundedGroundDistance(playerPosition, worldPosition);
+            // The player base position is public; a zero vector means it was not supplied.
+            string range = playerPosition == Vector3.zero ? string.Empty
+                : text.Format("ui.skirmish.marker.distance_from_base", "{0} m from your base", distance);
+            string state = knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight
+                ? text.Get("ui.skirmish.marker.in_sight", "IN SIGHT")
+                : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen
+                    ? text.Format("ui.skirmish.marker.last_seen_ago", "LAST SEEN {0} AGO", SkirmishEnemyBaseMarkerState.FormatAge(enemyBaseLastSeenAge))
+                    : text.Get("ui.skirmish.marker.reported", "REPORTED POSITION");
+            Color tone = knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? MarkerAmber
+                : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen ? MarkerMuted : MarkerSlate;
+            if (!PlaceWorldChip(baseMarker, baseMarkerStem.gameObject, ref baseMarkerCue, tone, screen)) return;
+            string detail = string.IsNullOrEmpty(range) ? state : state + "\n" + range;
+            string signature = text.CurrentLocaleCode + "|" + (int)knowledge + "|" + detail;
+            if (baseMarkerShown == signature) return;
+            baseMarkerShown = signature;
+            UiLocalizedText.Set(baseMarkerTitle, text.Get("ui.skirmish.marker.enemy_base", text.IsRightToLeft ? "پایگاه دشمن" : "ENEMY BASE"));
+            UiLocalizedText.Set(baseMarkerDetail, detail);
+            baseMarkerChip.Configure(new Color32(25, 34, 38, 247), new Color32(3, 8, 10, 252), tone, 3f);
+            baseMarkerStem.color = new Color(tone.r, tone.g, tone.b, knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? 1f : .6f);
+        }
+        private void BuildEnemyBaseMarker()
+        {
+            baseMarker = Panel("EnemyBaseObjectiveMarker", transform, false);
+            const float stemHeight = 22f;
+            baseMarker.sizeDelta = new Vector2(350f, 184f);
+            baseMarker.pivot = new Vector2(.5f, 0);
+            var stem = Panel("Stem", baseMarker, false);
+            stem.anchorMin = stem.anchorMax = new Vector2(.5f, 0); stem.pivot = new Vector2(.5f, 0);
+            stem.sizeDelta = new Vector2(4f, stemHeight); stem.anchoredPosition = Vector2.zero;
+            baseMarkerStem = stem.gameObject.AddComponent<Image>(); baseMarkerStem.raycastTarget = false;
+            var chip = Panel("Chip", baseMarker, false);
+            chip.anchorMin = new Vector2(0, 0); chip.anchorMax = new Vector2(1, 1);
+            chip.offsetMin = new Vector2(0f, stemHeight); chip.offsetMax = Vector2.zero;
+            baseMarkerChip = chip.gameObject.AddComponent<V3GradientGraphic>(); baseMarkerChip.raycastTarget = false;
+            baseMarkerTitle = Label(chip, "", 30f);
+            baseMarkerTitle.rectTransform.anchorMin = new Vector2(0f, 1f);
+            baseMarkerTitle.rectTransform.anchorMax = Vector2.one;
+            baseMarkerTitle.rectTransform.offsetMin = new Vector2(14f, -64f);
+            baseMarkerTitle.rectTransform.offsetMax = new Vector2(-14f, -4f);
+
+            baseMarkerDetail = Label(chip, "", 24f);
+            baseMarkerDetail.color = new Color32(222, 233, 237, 255);
+            baseMarkerDetail.rectTransform.anchorMin = Vector2.zero;
+            baseMarkerDetail.rectTransform.anchorMax = Vector2.one;
+            baseMarkerDetail.rectTransform.offsetMin = new Vector2(14f, 5f);
+            baseMarkerDetail.rectTransform.offsetMax = new Vector2(-14f, -64f);
         }
     }
 }

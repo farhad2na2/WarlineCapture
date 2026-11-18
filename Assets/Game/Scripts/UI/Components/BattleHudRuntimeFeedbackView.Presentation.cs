@@ -11,12 +11,11 @@ namespace Game.UI.Runtime
         private AriaTutorialBriefingView _feedbackAria;
         private readonly Vector3[] _feedbackCorners = new Vector3[4];
         private readonly Vector3[] _ariaCorners = new Vector3[4];
-        private bool _feedbackExpandedError;
 
         private void LateUpdate()
         {
             if (feedbackPanel != null && feedbackPanel.activeInHierarchy)
-                ApplyV3FeedbackLayout(_feedbackExpandedError);
+                ApplyV3FeedbackLayout();
         }
 
         private static void SetText(TMP_Text label, string text)
@@ -56,60 +55,20 @@ namespace Game.UI.Runtime
             };
             V3GradientGraphic gradient = feedbackPanel.GetComponentInChildren<V3GradientGraphic>(true);
             gradient?.SetBorder(accent, 3f);
-            if (feedbackText != null)
-                feedbackText.color = new Color32(244, 246, 242, 255);
             if (feedbackIcon != null)
                 feedbackIcon.color = accent;
-            _feedbackExpandedError = severity == CommandFeedbackSeverity.Error;
-            ApplyV3FeedbackLayout(_feedbackExpandedError);
+            ApplyV3FeedbackLayout();
         }
 
-        private void ApplyV3FeedbackLayout(bool expandedError)
+        private void ApplyV3FeedbackLayout()
         {
-            RectTransform panelRect = feedbackPanel != null ? feedbackPanel.transform as RectTransform : null;
-            if (panelRect == null)
+            if (feedbackPanel.transform is not RectTransform panelRect)
                 return;
 
             MainMenuV3SectionLayoutView responsiveLayout = panelRect.GetComponentInParent<MainMenuV3SectionLayoutView>();
             float extraWidth = responsiveLayout != null ? responsiveLayout.LastAppliedExtraWidth : 0f;
-            panelRect.anchorMin = panelRect.anchorMax = new Vector2(0f, 1f);
-            panelRect.pivot = new Vector2(0f, 1f);
-            panelRect.anchoredPosition = expandedError
-                ? new Vector2(719f, -659f)
-                : new Vector2(719f, -683f);
-            panelRect.sizeDelta = expandedError
-                ? new Vector2(943f + extraWidth, 94f)
-                : new Vector2(943f + extraWidth, 70f);
-
+            panelRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 943f + extraWidth);
             KeepAriaControlsClear(panelRect);
-
-            if (feedbackIcon != null)
-            {
-                RectTransform iconRect = feedbackIcon.rectTransform;
-                iconRect.anchorMin = iconRect.anchorMax = new Vector2(0f, 1f);
-                iconRect.pivot = new Vector2(0f, 1f);
-                iconRect.anchoredPosition = expandedError
-                    ? new Vector2(16f, -25f)
-                    : new Vector2(16f, -15f);
-                iconRect.sizeDelta = expandedError ? new Vector2(44f, 44f) : new Vector2(40f, 40f);
-            }
-
-            if (feedbackText != null)
-            {
-                RectTransform textRect = feedbackText.rectTransform;
-                textRect.anchorMin = textRect.anchorMax = new Vector2(0f, 1f);
-                textRect.pivot = new Vector2(0f, 1f);
-                textRect.anchoredPosition = expandedError
-                    ? new Vector2(76f, -9f)
-                    : new Vector2(76f, -7f);
-                textRect.sizeDelta = expandedError
-                    ? new Vector2(panelRect.sizeDelta.x - 96f, 76f)
-                    : new Vector2(panelRect.sizeDelta.x - 96f, 56f);
-                feedbackText.enableAutoSizing = false;
-                feedbackText.fontSize = 26f;
-                feedbackText.textWrappingMode = TMPro.TextWrappingModes.Normal;
-                feedbackText.margin = UnityEngine.Vector4.zero;
-            }
         }
 
         private void KeepAriaControlsClear(RectTransform feedback)

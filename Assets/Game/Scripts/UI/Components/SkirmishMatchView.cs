@@ -100,6 +100,7 @@ namespace Game.UI.Runtime
         private void Update()
         {
             if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)){hud.SetActive(false);modal.SetActive(false);return;}
+            ObserveEnemyBaseKnowledge(model);
             bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
             if(buildDrawer==null)buildDrawer=FindAnyObjectByType<BuildDrawerView>();

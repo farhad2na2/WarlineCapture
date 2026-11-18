@@ -41,6 +41,8 @@ namespace Game.Editor
             "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Transport_Action_512.png";
 
         private static readonly Vector2 Reference = new(1672f, 941f);
+        private const float CommandFeedbackTop = 650f;
+        private const float CommandFeedbackHeight = 108f;
         private static readonly Color DarkTop = new Color32(25, 34, 38, 247);
         private static readonly Color DarkBottom = new Color32(3, 8, 10, 252);
         private static readonly Color RaisedTop = new Color32(38, 50, 55, 250);
@@ -1227,17 +1229,15 @@ namespace Game.Editor
             }
 
             RectTransform feedback = RequireRect(footer, "FeedbackPanel");
-            // Leave enough width for the longer Persian command rejection copy at 16:9.
-            // The rail still ends before ARIA's right-side column, while the ultrawide
-            // responsive layout can continue expanding it with the available safe width.
-            SetTopLeft(feedback, 591f, 710f, 780f, 48f);
+            // Two lines of feedback fit above the command rail and left of ARIA.
+            SetTopLeft(feedback, 591f, CommandFeedbackTop, 660f, CommandFeedbackHeight);
             RectTransform feedbackFrame = RequireRect(feedback, "Frame");
             Stretch(feedbackFrame);
             SetImageTransparent(feedbackFrame.GetComponent<Image>());
             EnsureGradient(feedbackFrame, DarkTop, DarkBottom, theme.OrangeRed, 3f);
             Image feedbackIcon = FindDeepChild(feedbackFrame, "Icon")?.GetComponent<Image>();
             SetSprite(feedbackIcon, RequireSprite(V3UiFoundationBuilder.MatchInfoIconPath), theme.TextPrimary);
-            SetTopLeft(feedbackIcon.rectTransform, 12f, 9f, 30f, 30f);
+            SetTopLeft(feedbackIcon.rectTransform, 14f, 36f, 36f, 36f);
             BattleHudRuntimeFeedbackView feedbackView = footer.GetComponent<BattleHudRuntimeFeedbackView>();
             if (feedbackView != null)
             {
@@ -1254,14 +1254,10 @@ namespace Game.Editor
                 feedbackSerialized.ApplyModifiedPropertiesWithoutUndo();
             }
             TMP_Text feedbackText = FindDeepChild(feedbackFrame, "Feedback")?.GetComponent<TMP_Text>();
-            ConfigureText(feedbackText, "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET", 18f, boldFont, theme.OrangeRed, TextAlignmentOptions.MidlineLeft);
-            // Keep an explicit right inset as well: shaped RTL glyph geometry can extend a few
-            // pixels beyond TMP's measured advance even when autosizing reports a fit.
-            SetTopLeft(feedbackText.rectTransform, 53f, 4f, 680f, 40f);
-            feedbackText.enableAutoSizing = true;
-            feedbackText.fontSizeMin = 8f;
-            feedbackText.fontSizeMax = 18f;
-            feedbackText.margin = new Vector4(0f, 0f, 80f, 0f);
+            ConfigureCommandFeedbackText(feedbackText, "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET");
+            Stretch(feedbackText.rectTransform);
+            feedbackText.rectTransform.offsetMin = new Vector2(64f, 5f);
+            feedbackText.rectTransform.offsetMax = new Vector2(-16f, -5f);
             SetActive(FindDeepChild(feedbackFrame, "Actions"), false);
 
             RectTransform commandRail = RequireRect(footer, "CommandRail");
@@ -2018,19 +2014,11 @@ namespace Game.Editor
             {
                 feedback.FeedbackPanel.SetActive(true);
                 feedback.FeedbackText.gameObject.SetActive(true);
-                ConfigureText(
+                ConfigureCommandFeedbackText(
                     feedback.FeedbackText,
                     showTransportPassengers
                         ? "TRANSPORT READY — SELECT PASSENGER OR EXIT ALL"
-                        : "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET",
-                    18f,
-                    boldFont,
-                    showTransportPassengers ? theme.Cyan : theme.OrangeRed,
-                    TextAlignmentOptions.MidlineLeft);
-                feedback.FeedbackText.enableAutoSizing = true;
-                feedback.FeedbackText.fontSizeMin = 8f;
-                feedback.FeedbackText.fontSizeMax = 18f;
-                feedback.FeedbackText.margin = new Vector4(0f, 0f, 80f, 0f);
+                        : "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET");
                 RectTransform feedbackFrame = feedback.FeedbackPanel.transform.Find("Frame") as RectTransform;
                 if (showTransportPassengers && feedbackFrame != null)
                     EnsureGradient(feedbackFrame, DarkTop, DarkBottom, theme.Cyan, 3f);
@@ -2435,6 +2423,15 @@ namespace Game.Editor
             text.overflowMode = TextOverflowModes.Ellipsis;
             text.margin = Vector4.zero;
             text.raycastTarget = false;
+        }
+
+        private static void ConfigureCommandFeedbackText(TMP_Text text, string value)
+        {
+            ConfigureText(text, value, 26f, boldFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
+            text.textWrappingMode = TextWrappingModes.Normal;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 23f;
+            text.fontSizeMax = 26f;
         }
 
         private static void SetSprite(Image image, Sprite sprite, Color color)

@@ -1,7 +1,7 @@
 {
   "catalog_id": "S007",
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
-  "notes": "candidate=1, unmeasured (re-measure required, 2026-11-18): bases, side pads, routes and per-building pads moved to the S006 example's Unity-measured legal positions, so the first measurement (Design/AgentReports/SkirmishExpansion/S007/area-measurement.json, old enemy base [1387.8,650]) no longer describes this draft and area_measurement is removed until a new one is attached. Lane20 menu launch aborted BlockedSpawn because this draft was copied (a70de70f9, 2026-11-17 09:37) from the S006 example before its spawn fixes (5e1eb1b9c..29dc2818b): enemy HQ/staging on map buildings and road, and no instance_pads, so every building pad was derived from those positions. Desert Base host geometry only (air.* dropped: Ground Maneuver). Side anchors/pads, basemove routes and instance pads: Tools/Missions/examples/s006-desert-base-ba-combined-established.json (legal candidates from lane4-dump-S002); instance pads ordered like SkirmishSetupCompiler.BuildStructures so each building takes the pad measured for its own footprint. S007 Frontline Control areas unchanged: A = north-flank strip (ruins.west..ruins.east x, ruins.own..ruins.north z); B = centre block (highway.near..far x, z 621.2..678.8); C = south-flank strip (sweep.west..east x, sweep.south..sweep.own z). structure_footprints copied from the S006 example (map-independent native footprints).",
+  "notes": "candidate=1, measured 2026-11-18 (lane22 r2 on S002 seed 130365: A/B/C inside playable, infantry reachable from both bases and stagings, three vehicle routes flood-measured 720/798/701 m; Design/AgentReports/SkirmishExpansion/S007/area-measurement-r2.json; geometry still a candidate). Earlier history: bases, side pads, routes and per-building pads moved to the S006 example's Unity-measured legal positions, so the first measurement (Design/AgentReports/SkirmishExpansion/S007/area-measurement.json, old enemy base [1387.8,650]) no longer describes this draft and area_measurement is removed until a new one is attached. Lane20 menu launch aborted BlockedSpawn because this draft was copied (a70de70f9, 2026-11-17 09:37) from the S006 example before its spawn fixes (5e1eb1b9c..29dc2818b): enemy HQ/staging on map buildings and road, and no instance_pads, so every building pad was derived from those positions. Desert Base host geometry only (air.* dropped: Ground Maneuver). Side anchors/pads, basemove routes and instance pads: Tools/Missions/examples/s006-desert-base-ba-combined-established.json (legal candidates from lane4-dump-S002); instance pads ordered like SkirmishSetupCompiler.BuildStructures so each building takes the pad measured for its own footprint. S007 Frontline Control areas unchanged: A = north-flank strip (ruins.west..ruins.east x, ruins.own..ruins.north z); B = centre block (highway.near..far x, z 621.2..678.8); C = south-flank strip (sweep.west..east x, sweep.south..sweep.own z). structure_footprints copied from the S006 example (map-independent native footprints).",
   "anchors": {
     "base.player": [
       935.0,
@@ -686,5 +686,8 @@
       3.0,
       4.0
     ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S007/area-measurement-r2.json"
   }
 }

@@ -135,9 +135,11 @@ namespace Game.Runtime
                     em, entity, selectedPlacementGrid, "PreCommit");
 #endif
             CommitLogicalSpawn(em, entity, setup, ref session, visualPending);
+            // EditMode ledger worlds can spawn bare actors without a loaded map.
+            // Only live startup can require the map and actors for the opening camera.
             if ((Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup) &&
                 !SkirmishMissionLogicalBindingProvider.TryAttachAfterActualSpawn(em,entity,out _)) ||
-                !SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(em,entity,out _))
+                (Application.isPlaying && !SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(em,entity,out _)))
             {
                 session.Phase=SkirmishSessionPhase.Failed;session.FailureCode=SkirmishReasonCode.MissingReference;
                 em.SetComponentData(entity,session);

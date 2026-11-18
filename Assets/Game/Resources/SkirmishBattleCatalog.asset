@@ -231,11 +231,11 @@ MonoBehaviour:
       Base"
     DescriptionEnglish: 
     DescriptionFarsi: 
-    Status: 0
-    PlayableScenarioIndex: -1
-    DefinitionId: 
-    ContentVersion: 0
-    ReadinessManifestId: 
+    Status: 1
+    PlayableScenarioIndex: 1013
+    DefinitionId: skirmish.s013
+    ContentVersion: 2
+    ReadinessManifestId: validation.visible.skirmish.s013
   - ScenarioId: S014
     MapId: DB
     ObjectiveId: BT

@@ -1977,7 +1977,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s046
   operationMapId: opmap.skirmish.city_crossroads
   contentVersion: 1
-  contentHash: authored.s046.521ebe500adca220
+  contentHash: authored.s046.baa33489e6381b6f
   worldWidthMetres: 491.54507
   worldDepthMetres: 383.64218
   originX: -538.0491
@@ -2340,16 +2340,16 @@ MonoBehaviour:
     WorldZ: 1130.237
   - AnchorId: anchor.skirmish.s046.defense_approach_a
     RoleId: defense.approach.a
-    NormalizedU: 0.89446914
-    NormalizedV: 0.40728772
-    WorldX: -98.37716
-    WorldZ: 1149.3164
+    NormalizedU: 0.8667036
+    NormalizedV: 0.415419
+    WorldX: -112.02518
+    WorldZ: 1152.4359
   - AnchorId: anchor.skirmish.s046.defense_approach_b
     RoleId: defense.approach.b
-    NormalizedU: 0.8673552
-    NormalizedV: 0.34303507
-    WorldX: -111.70487
-    WorldZ: 1124.6664
+    NormalizedU: 0.8439245
+    NormalizedV: 0.31112656
+    WorldX: -123.22212
+    WorldZ: 1112.4249
   - AnchorId: anchor.skirmish.s046.economy_enemy
     RoleId: economy.enemy
     NormalizedU: 0.7660677
@@ -2532,8 +2532,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s046.defense_approach_a
     RoleId: defense.approach.a
     Kind: 11
-    CenterX: -98.37716
-    CenterZ: 1149.3164
+    CenterX: -112.02518
+    CenterZ: 1152.4359
     WidthMetres: 10
     DepthMetres: 10
     FactionId: 2
@@ -2541,8 +2541,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s046.defense_approach_b
     RoleId: defense.approach.b
     Kind: 11
-    CenterX: -111.70487
-    CenterZ: 1124.6664
+    CenterX: -123.22212
+    CenterZ: 1112.4249
     WidthMetres: 10
     DepthMetres: 10
     FactionId: 2

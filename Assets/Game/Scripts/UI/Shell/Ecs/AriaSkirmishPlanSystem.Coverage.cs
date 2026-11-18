@@ -47,6 +47,17 @@ namespace Game.UI.Shell.Ecs
                 v.AirProfile && !v.PublicObjective.Applicable, p.CoverageAirOpened != 0, v.AirQueueOffered);
         }
 
+        // Air-capable base assault (army A; lane 26 S004). The opening (supply trucks, light attack heli, rifles) runs
+        // to ~80 s and a base alert arrives at ~100 s on every seed, so coverage that waits for the first assault got at
+        // most the breacher. Here coverage starts once the air opening has queued its light attack heli; a purchase or
+        // support order interrupted by another owner is retried once; support orders are tidy (AriaSupportView.Tidy).
+        static bool AirAssault(in AriaSkirmishObservation v) => v.AirProfile && !v.PublicObjective.Applicable && !v.CombinedArmsField;
+        static bool AirCoverageOpen(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p)
+        {
+            if (v.OwnAttackAirLive > 0 || v.AirRecruitPending) p.CoverageAirOpened = 1;
+            return AirAssault(v) && p.CoverageAirOpened != 0;
+        }
+
         // FC/BT/CE objective skill: the same one-at-a-time coverage, research, building and support orders
         // (AriaSkirmishPlanSystem.ObjectiveSkill latches CoverageAssaultSeen after the first accepted order).
         static bool ObjectiveCoverageEligible(in AriaSkirmishObservation v) =>
@@ -95,7 +106,9 @@ namespace Game.UI.Shell.Ecs
             if (!CoverageEligible(v)) return false;
             var facts = new Game.Simulation.AriaBreacherView {
                 // Objective sessions have no assault order; their first accepted objective order is the latch.
-                AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0 || ObjectiveCoverageEligible(v) && p.CoverageAssaultSeen != 0,
+                AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0 || ObjectiveCoverageEligible(v) && p.CoverageAssaultSeen != 0 ||
+                    AirCoverageOpen(v, ref p),
+                RetryInterrupted = AirAssault(v),
                 // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
                 Busy = CoverageOtherOwner(v, p, t) || p.CoverageCurrent != 0 || (p.BreacherStage == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
@@ -103,10 +116,11 @@ namespace Game.UI.Shell.Ecs
                 BreacherFielded = v.BreacherFielded, RecruitAvailable = v.RecruitBreacher.Available,
                 RifleRecruitPending = v.RifleRecruitPending, RocketeerRecruitPending = v.RocketeerRecruitPending,
                 CompletedContacts = t.Actions, Time = v.Time };
-            var state = new Game.Simulation.AriaBreacherState { Stage = p.BreacherStage, Actions = p.BreacherActions, Deadline = p.BreacherDeadline };
+            var state = new Game.Simulation.AriaBreacherState { Stage = p.BreacherStage, Retried = p.BreacherRetried, Actions = p.BreacherActions, Deadline = p.BreacherDeadline };
             byte before = p.BreacherStage;
             var action = Game.Simulation.AriaBreacherPolicy.Step(facts, ref state);
-            p.BreacherStage = state.Stage; p.BreacherActions = state.Actions; p.BreacherDeadline = state.Deadline;
+            p.BreacherStage = state.Stage; p.BreacherRetried = state.Retried; p.BreacherActions = state.Actions; p.BreacherDeadline = state.Deadline;
+            if (before == 1 && state.Stage == 0) p.Intent = AriaSkirmishIntent.Inspect; // interrupted: released for one retry
             // Done buying: hand the open drawer to the ordinary close step, not to a rifle burst.
             if (before == 1 && state.Stage == 2) p.Intent = AriaSkirmishIntent.Inspect;
             if (action == Game.Simulation.AriaBreacherAction.Recruit)
@@ -127,19 +141,19 @@ namespace Game.UI.Shell.Ecs
             // The first accepted assault is latched (see the S002 adapter).
             if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
-                AssaultIssued = p.CoverageAssaultSeen != 0,
-                BreacherSettled = p.BreacherStage == 2,
+                AssaultIssued = p.CoverageAssaultSeen != 0 || AirCoverageOpen(v, ref p),
+                BreacherSettled = p.BreacherStage == 2, RetryInterrupted = AirAssault(v),
                 Busy = CoverageOtherOwner(v, p, t) || p.BreacherStage == 1 || (p.CoverageCurrent == 0 && v.DrawerOpen),
                 EnemyAlive = CoverageEnemyAlive(v),
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
                 AffordMask = CoverageAfford(v, ref p), PendingMask = v.CoveragePendingMask,
                 FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions,
                 DrawerOpen = v.DrawerOpen, Time = v.Time };
-            var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline,
+            var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Interrupted = p.CoverageInterrupted, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline,
                 Started = p.CoverageStarted, Actions = p.CoverageActions, Batch = p.CoverageBatch };
             byte before = p.CoverageCurrent;
             var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
-            p.CoverageDone = state.Done; p.CoverageCurrent = state.Current; p.CoverageDeadline = state.Deadline;
+            p.CoverageDone = state.Done; p.CoverageInterrupted = state.Interrupted; p.CoverageCurrent = state.Current; p.CoverageDeadline = state.Deadline;
             p.CoverageStarted = state.Started; p.CoverageActions = state.Actions; p.CoverageBatch = state.Batch;
             if (before != 0 && state.Current == 0) p.Intent = AriaSkirmishIntent.Inspect;
             if (action == Game.Simulation.AriaCoverageAction.Recruit)
@@ -179,7 +193,8 @@ namespace Game.UI.Shell.Ecs
                 Busy = t.Phase == AriaPlayPhase.Manual || v.DrawerOpen || v.PlacementOpen || v.MapOpen || v.PresentedHomeThreat ||
                     p.HomeDefenseStage != 0 || p.PrecisionStage != 0 || p.AdvanceNavigation != 0 || p.AssaultInspectStage != 0 ||
                     p.PadStage != 0 || p.InterceptStage != 0 || p.AssaultFocusStage == 1 || p.BreacherStage == 1 || p.CoverageCurrent != 0,
-                ArmyMoving = p.AssaultIssued != 0 || p.ObjectiveAccepted > 0, EnemyAlive = CoverageEnemyAlive(v),
+                ArmyMoving = p.AssaultIssued != 0 || p.ObjectiveAccepted > 0 || AirCoverageOpen(v, ref p), EnemyAlive = CoverageEnemyAlive(v),
+                Tidy = AirAssault(v), HomeAvailable = v.SupportHomeGround.Available, FocusAvailable = v.FocusPlayer.Available,
                 Mode = v.AttackMode ? Game.Simulation.AriaSupportMode.Attack : v.MoveMode ? Game.Simulation.AriaSupportMode.Move :
                     v.ScanMode ? Game.Simulation.AriaSupportMode.Scan : Game.Simulation.AriaSupportMode.None,
                 ToggleAvailable = v.SelectedSquadToToggle.Available, MoveAvailable = v.Move.Available, AttackAvailable = v.Attack.Available,
@@ -189,9 +204,11 @@ namespace Game.UI.Shell.Ecs
                 CompletedContacts = t.Actions, Time = v.Time };
             for (int slot = 0; slot < 5; slot++) if (v.Squad(slot).Available) facts.AvailableSquadMask |= 1 << slot;
             var state = new Game.Simulation.AriaSupportState { Stage = p.SupportStage, Kind = p.SupportKind, Tried = p.SupportTried, Done = p.SupportDone,
+                Focused = p.SupportFocused, Presses = p.SupportPresses,
                 Slot = p.SupportSlot, Actions = p.SupportActions, Deadline = p.SupportDeadline, ReadyAt = p.SupportReadyAt };
             bool handled = Game.Simulation.AriaSupportOrderPolicy.Step(facts, ref state, out var decision);
             p.SupportStage = state.Stage; p.SupportKind = state.Kind; p.SupportTried = state.Tried; p.SupportDone = state.Done;
+            p.SupportFocused = state.Focused; p.SupportPresses = state.Presses;
             p.SupportSlot = state.Slot; p.SupportActions = state.Actions; p.SupportDeadline = state.Deadline; p.SupportReadyAt = state.ReadyAt;
             if (!handled) return false;
             switch (decision.Action)
@@ -203,6 +220,8 @@ namespace Game.UI.Shell.Ecs
                 case Game.Simulation.AriaSupportAction.ArmScan: p.Intent = AriaSkirmishIntent.Scout; Target(v.Scan, false, ref o); break;
                 case Game.Simulation.AriaSupportAction.TargetRear: p.Intent = AriaSkirmishIntent.Advance; Target(v.RearGround, true, ref o); break;
                 case Game.Simulation.AriaSupportAction.TargetFront: p.Intent = AriaSkirmishIntent.Scout; Target(v.FrontGround, true, ref o); break;
+                case Game.Simulation.AriaSupportAction.TargetHome: p.Intent = AriaSkirmishIntent.Advance; Target(v.SupportHomeGround, true, ref o); break;
+                case Game.Simulation.AriaSupportAction.Focus: p.Intent = AriaSkirmishIntent.Inspect; Target(v.FocusPlayer, false, ref o); break;
                 default: p.Intent = AriaSkirmishIntent.Advance; o.Kind = AriaPlayObservationKind.Waiting; break;
             }
             return true;

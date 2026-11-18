@@ -907,7 +907,9 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
-            if (StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
+            // Air-capable base assault (lane 26 S004): a support order in progress keeps its place here, but a new one
+            // starts only after the coverage purchases (below), which it otherwise starved for 12 s per order.
+            if ((!AirAssault(view) || plan.SupportStage != 0) && StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
@@ -948,6 +950,7 @@ namespace Game.UI.Shell.Ecs
             if (StepGenericStructureReplacement(view, ref plan, ref output)) return;
             if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return;
+            if (AirAssault(view) && StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepGenericResearch(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;

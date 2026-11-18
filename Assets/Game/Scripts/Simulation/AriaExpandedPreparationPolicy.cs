@@ -50,10 +50,13 @@ namespace Game.Simulation {
   public bool AssaultIssued,Busy,EnemyAlive;
   public bool CanAffordBreacher,BreacherPending,BreacherFielded,RecruitAvailable;
   public bool RifleRecruitPending,RocketeerRecruitPending;
+  // Air-capable base assault (lane 26 S004): a purchase interrupted by another owner (the base alert's home
+  // defence) is retried once instead of being given up for the match.
+  public bool RetryInterrupted;
   public int CompletedContacts;public float Time;
  }
- // Stage: 0 idle, 1 buying (drawer taps in flight), 2 done for the match.
- public struct AriaBreacherState {public byte Stage;public int Actions;public float Deadline;}
+ // Stage: 0 idle, 1 buying (drawer taps in flight), 2 done for the match. Retried: an interrupted purchase was released once.
+ public struct AriaBreacherState {public byte Stage,Retried;public int Actions;public float Deadline;}
  public static class AriaBreacherPolicy {
   public const float BuySeconds=10f;
   public static AriaBreacherAction Step(in AriaBreacherView view,ref AriaBreacherState plan){
@@ -61,6 +64,8 @@ namespace Game.Simulation {
    if(view.BreacherPending||view.BreacherFielded){plan.Stage=2;return AriaBreacherAction.None;}
    if(plan.Stage==1){
     // Bounded: a purchase that does not appear in time is not retried this match.
+    if(view.RetryInterrupted&&view.Busy&&view.EnemyAlive&&view.Time<=plan.Deadline&&plan.Retried==0)
+    {plan.Retried=1;plan.Stage=0;return AriaBreacherAction.None;}
     if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Stage=2;return AriaBreacherAction.None;}
     return view.RecruitAvailable?AriaBreacherAction.Recruit:AriaBreacherAction.Waiting;
    }
@@ -103,6 +108,9 @@ namespace Game.Simulation {
   public bool AssaultIssued,BreacherSettled,Busy,EnemyAlive,OtherRecruitPending;
   // The build drawer is open (this purchase's visit): a second kind may be bought in the same visit.
   public bool DrawerOpen;
+  // Air-capable base assault (lane 26 S004): a kind whose purchase another owner interrupted (home defence
+  // for a base alert) is released for one more visit instead of being given up for the match.
+  public bool RetryInterrupted;
   // Per kind bit: affordable now (above the materials reserve), queued, alive, catalog target offered.
   public int AffordMask,PendingMask,FieldedMask,CardMask;
   // Completed touches: a purchase that keeps landing taps (Build, category, scroll, card,
@@ -112,7 +120,8 @@ namespace Game.Simulation {
  }
  // Done: kinds covered or given up for this match. Current: kind being bought (0 none).
  // Batch: purchases already made in this drawer visit beyond the first (0 = first purchase).
- public struct AriaCoverageState {public int Done;public byte Current,Batch;public float Deadline,Started;public int Actions;}
+ // Interrupted: kinds released once after an interruption (RetryInterrupted).
+ public struct AriaCoverageState {public int Done,Interrupted;public byte Current,Batch;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
   // GapSeconds: between drawer visits, so new groups join the column before the next purchase (lane 8 S050).
@@ -146,6 +155,8 @@ namespace Game.Simulation {
      plan.Deadline=System.Math.Min(plan.Started+MaxBuySeconds,System.Math.Max(plan.Deadline,view.Time+StepSeconds));
     }
     // Bounded: a purchase that does not appear in time is not retried this match.
+    if(view.RetryInterrupted&&view.Busy&&view.EnemyAlive&&view.Time<=plan.Deadline&&(plan.Interrupted&bit)==0)
+    {plan.Interrupted|=bit;plan.Current=0;EndVisit(ref plan,view.Time);return AriaCoverageAction.None;}
     if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=bit;plan.Current=0;EndVisit(ref plan,view.Time);return AriaCoverageAction.None;}
     return (view.CardMask&bit)!=0?AriaCoverageAction.Recruit:AriaCoverageAction.Waiting;
    }
@@ -285,19 +296,27 @@ namespace Game.Simulation {
  // behind the column like the radar and covers it from the enemy air.
  public enum AriaSupportKind:byte {None,Radar,Drone,TransportHeli,AntiAir}
  public enum AriaSupportMode:byte {None,Move,Attack,Scan}
- public enum AriaSupportAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmMove,ArmAttack,ArmScan,TargetRear,TargetFront}
+ public enum AriaSupportAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmMove,ArmAttack,ArmScan,TargetRear,TargetFront,TargetHome,Focus}
  public struct AriaSupportView {
   // FieldedMask: support kinds alive (bits 1 radar, 2 drone, 4 transport heli, 8 AA).
   public int FieldedMask;
   public bool Busy,ArmyMoving,EnemyAlive,ToggleAvailable,MoveAvailable,AttackAvailable,ScanAvailable,RearAvailable,FrontAvailable;
+  // Tidy (air-capable base assault, lane 26 S004): the AA and transport heli start at home, and after their roster
+  // card is tapped the column's rear ground was never on screen (rear=False in every job), so the Move tap never
+  // happened and the base alert released the order with the AA still selected and Move still armed.
+  // In this mode: untried kinds go first; a Move falls back to clear home-side ground (HomeAvailable; the AA
+  // prefers it) after at most one Home focus (FocusAvailable) pressed before arming; an armed mode is toggled
+  // until it is really off (two presses at most); and the policy deselects its own unit when it is done.
+  public bool Tidy,HomeAvailable,FocusAvailable;
   public AriaSupportMode Mode;
   public int SupportSlots,SelectedMask,SelectedGroups,SelectedOffPage,AvailableSquadMask,CompletedContacts;
   public float Time;
  }
  // Stage: 0 idle, 1 select, 2 arm the command, 3 tap the ground, 5 toggle the armed mode off before
- // a release (lane 8 S050: the radar order released with Move still armed). Done: kinds ordered or given up.
- // Tried: kinds released once; a second release gives the kind up (MaxAttempts=2 per kind).
- public struct AriaSupportState {public byte Stage,Kind,Tried,Done;public int Slot,Actions;public float Deadline,ReadyAt;}
+ // a release (lane 8 S050: the radar order released with Move still armed), 6 deselect the own unit (Tidy).
+ // Done: kinds ordered or given up. Tried: kinds released once; a second release gives the kind up.
+ // Focused: the one Home focus of this order was pressed (Tidy). Presses: disarm toggles pressed (Tidy).
+ public struct AriaSupportState {public byte Stage,Kind,Tried,Done,Focused,Presses;public int Slot,Actions;public float Deadline,ReadyAt;}
  // Trace: 0 none, 1 triggered, 2 ordered, 3 released, 4 given up.
  public struct AriaSupportDecision {public AriaSupportAction Action;public int Slot;public byte Trace;public AriaSupportKind Kind;}
  public static class AriaSupportOrderPolicy {
@@ -307,39 +326,61 @@ namespace Game.Simulation {
   public static int KindBit(AriaSupportKind kind)=>kind==AriaSupportKind.None?0:1<<((int)kind-1);
   public static int Slots(AriaSupportKind slot0,AriaSupportKind slot1,AriaSupportKind slot2,AriaSupportKind slot3,AriaSupportKind slot4)=>
    (int)slot0|((int)slot1<<SlotBits)|((int)slot2<<(2*SlotBits))|((int)slot3<<(3*SlotBits))|((int)slot4<<(4*SlotBits));
+  public const byte StageDisarm=5,StageDeselect=6,MaxDisarmPresses=2;public const float DisarmSeconds=3f,DeselectSeconds=3f,SettleSeconds=.5f;
   public static bool Step(in AriaSupportView view,ref AriaSupportState plan,out AriaSupportDecision output){
    output=default;
    if(plan.Stage==0){
     if((view.FieldedMask&~plan.Done&AllKinds)==0||view.Busy||!view.ArmyMoving||!view.EnemyAlive||view.Mode!=AriaSupportMode.None||
        view.SelectedGroups>0||view.Time<plan.ReadyAt)return false;
     int slot=-1;
-    for(int i=0;i<5&&slot<0;i++){
-     var k=SlotKind(view.SupportSlots,i);
-     if(k!=AriaSupportKind.None&&(plan.Done&KindBit(k))==0&&(view.AvailableSquadMask&(1<<i))!=0)slot=i;
-    }
+    // Tidy: a kind never tried goes before one already released once (lane 26: the AA was retried while the
+    // transport heli on the next card never got its turn).
+    for(int pass=view.Tidy?0:1;pass<2&&slot<0;pass++)
+     for(int i=0;i<5&&slot<0;i++){
+      var k=SlotKind(view.SupportSlots,i);int bit=KindBit(k);
+      if(k!=AriaSupportKind.None&&(plan.Done&bit)==0&&(pass==1||(plan.Tried&bit)==0)&&(view.AvailableSquadMask&(1<<i))!=0)slot=i;
+     }
     if(slot<0)return false;
     plan.Kind=(byte)SlotKind(view.SupportSlots,slot);
-    plan.Stage=1;plan.Slot=slot;plan.Deadline=view.Time+OrderSeconds;plan.Actions=view.CompletedContacts;
+    plan.Stage=1;plan.Slot=slot;plan.Deadline=view.Time+OrderSeconds;plan.Actions=view.CompletedContacts;plan.Focused=0;plan.Presses=0;
     output.Trace=1;
    }
    output.Kind=(AriaSupportKind)plan.Kind;
+   if(plan.Stage==StageDeselect){
+    // Cleanup only: never touch a selection that is not exactly this order's unit, and never another owner's turn.
+    if(view.Busy||view.Time>plan.Deadline||view.CompletedContacts>plan.Actions||!OwnSelection(view,plan.Slot)||!view.ToggleAvailable)
+    {plan.Stage=0;return false;}
+    output.Action=AriaSupportAction.ToggleSelected;return true;
+   }
    if(plan.Stage==StageDisarm){
+    if(view.Tidy){
+     // Toggle until the mode is really off (lane 26: one press left Move armed for the home defence).
+     if(view.Mode==AriaSupportMode.None||view.Time>plan.Deadline){Release(view,ref plan,ref output);return false;}
+     if(view.CompletedContacts>plan.Actions){
+      if(plan.Presses>=MaxDisarmPresses){Release(view,ref plan,ref output);return false;}
+      if(view.Time<plan.ReadyAt){output.Action=AriaSupportAction.Waiting;return true;}
+      plan.Presses++;plan.Actions=view.CompletedContacts;plan.ReadyAt=view.Time+SettleSeconds;
+     }
+     output.Action=ToggleFor(view.Mode,view);
+     if(output.Action==AriaSupportAction.Waiting){Release(view,ref plan,ref output);return false;}
+     return true;
+    }
     // One toggle of the armed mode; then the release completes.
     if(view.Mode==AriaSupportMode.None||view.CompletedContacts>plan.Actions||view.Time>plan.Deadline)
-    {Release(ref plan,view.Time,ref output);return false;}
+    {Release(view,ref plan,ref output);return false;}
     output.Action=ToggleFor(view.Mode,view);
-    if(output.Action==AriaSupportAction.Waiting){Release(ref plan,view.Time,ref output);return false;}
+    if(output.Action==AriaSupportAction.Waiting){Release(view,ref plan,ref output);return false;}
     return true;
    }
    if(view.Busy||view.Time>plan.Deadline||!view.EnemyAlive)return ReleaseArmed(view,ref plan,ref output);
    int desired=1<<plan.Slot;bool drone=plan.Kind==(byte)AriaSupportKind.Drone;
    if(plan.Stage==1){
     // The page moved under us: the slot no longer shows this support unit.
-    if(SlotKind(view.SupportSlots,plan.Slot)!=(AriaSupportKind)plan.Kind){Release(ref plan,view.Time,ref output);return false;}
+    if(SlotKind(view.SupportSlots,plan.Slot)!=(AriaSupportKind)plan.Kind){Release(view,ref plan,ref output);return false;}
     bool exact=view.SelectedGroups==1&&view.SelectedOffPage==0&&view.SelectedMask==desired;
     if(!exact){
      if(view.SelectedGroups>0){output.Action=view.ToggleAvailable?AriaSupportAction.ToggleSelected:AriaSupportAction.Waiting;return true;}
-     if((view.AvailableSquadMask&desired)==0){Release(ref plan,view.Time,ref output);return false;}
+     if((view.AvailableSquadMask&desired)==0){Release(view,ref plan,ref output);return false;}
      output.Action=AriaSupportAction.SelectSlot;output.Slot=plan.Slot;return true;
     }
     plan.Stage=2;
@@ -347,6 +388,12 @@ namespace Game.Simulation {
    if(plan.Stage==2){
     bool armed=drone?view.Mode==AriaSupportMode.Scan:view.Mode is AriaSupportMode.Move or AriaSupportMode.Attack;
     if(!armed){
+     // Tidy: no ground for the Move on screen: one Home focus (camera only) before arming, never with a mode armed.
+     if(view.Tidy&&!drone&&view.Mode==AriaSupportMode.None&&!GroundFor(view,plan.Kind)){
+      if(plan.Focused==0&&view.FocusAvailable)
+      {plan.Focused=1;plan.Actions=view.CompletedContacts;output.Action=AriaSupportAction.Focus;return true;}
+      if(plan.Focused==1&&view.CompletedContacts<=plan.Actions){output.Action=AriaSupportAction.Waiting;return true;}
+     }
      output.Action=drone?(view.ScanAvailable?AriaSupportAction.ArmScan:AriaSupportAction.Waiting)
       :view.MoveAvailable?AriaSupportAction.ArmMove:view.AttackAvailable?AriaSupportAction.ArmAttack:AriaSupportAction.Waiting;
      return true;
@@ -354,31 +401,48 @@ namespace Game.Simulation {
     plan.Stage=3;plan.Actions=view.CompletedContacts;
    }
    if(view.CompletedContacts<=plan.Actions){
-    bool ground=drone?view.FrontAvailable:view.RearAvailable;
-    output.Action=ground?(drone?AriaSupportAction.TargetFront:AriaSupportAction.TargetRear):AriaSupportAction.Waiting;return true;
+    output.Action=drone?(view.FrontAvailable?AriaSupportAction.TargetFront:AriaSupportAction.Waiting):GroundAction(view,plan.Kind);
+    return true;
    }
    plan.Done|=(byte)KindBit((AriaSupportKind)plan.Kind);plan.Stage=0;plan.ReadyAt=view.Time+CooldownSeconds;
-   output.Trace=2;output.Action=AriaSupportAction.None;return false;
+   output.Trace=2;output.Action=AriaSupportAction.None;
+   BeginDeselect(view,ref plan);
+   return false;
   }
-  public const byte StageDisarm=5;public const float DisarmSeconds=3f;
-  // Never hand back a mode this policy armed: toggle it off first (one press, bounded).
+  // Move ground for a support kind: column rear, or (Tidy) home-side ground; the AA prefers home.
+  static bool GroundFor(in AriaSupportView view,byte kind)=>view.RearAvailable||view.Tidy&&view.HomeAvailable;
+  static AriaSupportAction GroundAction(in AriaSupportView view,byte kind){
+   if(view.Tidy&&view.HomeAvailable&&(kind==(byte)AriaSupportKind.AntiAir||!view.RearAvailable))return AriaSupportAction.TargetHome;
+   return view.RearAvailable?AriaSupportAction.TargetRear:AriaSupportAction.Waiting;
+  }
+  static bool OwnSelection(in AriaSupportView view,int slot)=>
+   view.SelectedGroups==1&&view.SelectedOffPage==0&&view.SelectedMask==1<<slot;
+  // Tidy: the order is over (ordered or released); deselect this unit so the next owner starts clean.
+  static void BeginDeselect(in AriaSupportView view,ref AriaSupportState plan){
+   if(!view.Tidy||!OwnSelection(view,plan.Slot)||!view.ToggleAvailable)return;
+   plan.Stage=StageDeselect;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+DeselectSeconds;
+  }
+  // Never hand back a mode this policy armed: toggle it off first (one press, bounded; Tidy: until off, two at most).
   static bool ReleaseArmed(in AriaSupportView view,ref AriaSupportState plan,ref AriaSupportDecision output){
    if(plan.Stage>=2&&view.Mode!=AriaSupportMode.None&&ToggleFor(view.Mode,view)!=AriaSupportAction.Waiting){
     plan.Stage=StageDisarm;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+DisarmSeconds;
+    plan.Presses=1;plan.ReadyAt=view.Time+SettleSeconds;
     output.Action=ToggleFor(view.Mode,view);return true;
    }
-   Release(ref plan,view.Time,ref output);return false;
+   Release(view,ref plan,ref output);return false;
   }
   static AriaSupportAction ToggleFor(AriaSupportMode mode,in AriaSupportView view)=>mode switch{
    AriaSupportMode.Move=>view.MoveAvailable?AriaSupportAction.ArmMove:AriaSupportAction.Waiting,
    AriaSupportMode.Attack=>view.AttackAvailable?AriaSupportAction.ArmAttack:AriaSupportAction.Waiting,
    AriaSupportMode.Scan=>view.ScanAvailable?AriaSupportAction.ArmScan:AriaSupportAction.Waiting,
    _=>AriaSupportAction.Waiting};
-  static void Release(ref AriaSupportState plan,float time,ref AriaSupportDecision output){
+  static void Release(in AriaSupportView view,ref AriaSupportState plan,ref AriaSupportDecision output){
    int bit=KindBit((AriaSupportKind)plan.Kind);bool giveUp=(plan.Tried&bit)!=0;
    if(giveUp)plan.Done|=(byte)bit;else plan.Tried|=(byte)bit;
-   plan.Stage=0;plan.ReadyAt=time+CooldownSeconds;
+   plan.Stage=0;plan.ReadyAt=view.Time+CooldownSeconds;
    output.Trace=(byte)(giveUp?4:3);output.Action=AriaSupportAction.None;
+   // A busy release leaves the cleanup to the owner that took over (home defence deselects for itself).
+   if(!view.Busy)BeginDeselect(view,ref plan);
   }
  }
 }

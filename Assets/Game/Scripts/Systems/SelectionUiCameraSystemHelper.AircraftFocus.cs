@@ -15,7 +15,14 @@ namespace Game.Runtime
         }
         bool UpdateAircraftFocus()
         {
-            if(_cameraSystem==null||!_cameraSystem.HasAircraftFocusContext||_cameraRequestSystem==null||_worldCamera==null||!TryGetDefaultEntityManager(out var em))return false;
+            if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null ||
+                !TryGetDefaultEntityManager(out var em))
+                return false;
+
+            // Selection queues focus before the camera has a lens to update.
+            if (!_cameraSystem.HasAircraftFocusContext && !_cameraRequestSystem.HasPendingAircraftFocusRequest(em))
+                return false;
+
             ProcessCameraRequests(em);
             return _cameraSystem.HasAircraftFocusContext;
         }

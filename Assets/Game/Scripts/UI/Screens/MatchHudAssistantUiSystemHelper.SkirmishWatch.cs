@@ -20,6 +20,7 @@ namespace Game.UI.Runtime
         private MatchHudMinimapView watchMap;
         private MatchHudFullMapPopupView watchFullMap;
         private MatchHudSelectionPanelView watchSelection;
+        private BattleHudRuntimeFeedbackView watchFeedback;
         private AriaTouchTarget ObserveWatchButton(Button button)
         {
             if (button == null || !button.IsActive() || !button.IsInteractable()) return default;
@@ -212,6 +213,15 @@ namespace Game.UI.Runtime
                 view.TankersCommitted = model.TankersCommitted;
                 view.RifleRecruitPending = model.RifleRecruitPending;
                 view.AirProfile = model.AirProfile;
+                if (view.AirProfile && view.ExpandedBaseAssault)
+                {
+                    if (watchFeedback == null) watchFeedback = Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>();
+                    if (watchFeedback != null && watchFeedback.HasLastCommandResult)
+                    {
+                        view.SupportCommandResultFrame = watchFeedback.LastCommandResultFrame;
+                        view.SupportCommandAccepted = watchFeedback.LastCommandResult.Accepted;
+                    }
+                }
                 view.OwnDefenseTowers = model.OwnDefenseTowers;
                 view.AntiAirCommitted = model.AntiAirCommitted;
                 view.PadPresent = model.PadPresent;
@@ -840,12 +850,18 @@ namespace Game.UI.Runtime
                 // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:
                 // clear public ground 40 units behind the presented front toward home (radar and
                 // transport heli Move), and 60 units ahead of it toward the enemy objective (drone Scan).
-                if ((view.CoverageFieldedMask & (4 | 16 | 32 | 512)) != 0 && !view.MapOpen && !view.DrawerOpen)
+                if (!view.MapOpen && !view.DrawerOpen &&
+                    ((view.CoverageFieldedMask & (4 | 16 | 32 | 512)) != 0 || view.AirProfile && view.ExpandedBaseAssault))
                 {
-                    // Air-capable base assault (lane 26 S004): the AA and transport heli start at home and the column's
-                    // rear was off screen after their card was tapped; offer clear home-side ground as well.
-                    if (view.AirProfile && (view.CoverageFieldedMask & (32 | 512)) != 0)
+                    if (view.AirProfile && view.ExpandedBaseAssault)
+                    {
                         view.SupportHomeGround = ObserveClearAttackGround(home, homeApproach, -20018, 30f);
+                        if (!view.SupportHomeGround.Available && view.HomeGround.Available)
+                        {
+                            view.SupportHomeGround = view.HomeGround;
+                            view.SupportHomeGround.Id = -20018;
+                        }
+                    }
                     view.RearGround = ObserveClearAttackGround(armyCenter, home - armyCenter, -20016, 40f);
                     if ((view.CoverageFieldedMask & 16) != 0 && (objective - armyCenter).sqrMagnitude > 1)
                         view.FrontGround = ObserveClearAttackGround(armyCenter, objective - armyCenter, -20017, 60f);

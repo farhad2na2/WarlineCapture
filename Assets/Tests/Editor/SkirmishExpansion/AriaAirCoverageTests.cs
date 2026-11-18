@@ -1,4 +1,6 @@
 using Game.Simulation;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 
@@ -30,7 +32,10 @@ namespace Game.Tests.Editor
             t.TidyPrefersTheUntriedTransportHeliOverTheReleasedAa();
             t.TidyDisarmTogglesUntilTheModeIsOff();
             t.GroundArmySupportOrderIsUnchanged();
-            UnityEngine.Debug.Log("[AriaAirCoverage] result=Passed controls=15 normalMissionAcceptance=Pending");
+            t.TidyTransportFocusSurvivesAimAndRequiresAcceptedGroundOrder();
+            t.AirOpeningPrioritizesRadarAndKeepsFreedAirSlotsForCoverage();
+            t.AirOpeningPagesToTransportAndCoversTheStartingArmoredApc();
+            UnityEngine.Debug.Log("[AriaAirCoverage] result=Passed controls=18 normalMissionAcceptance=Pending");
         }
 
         static AriaCoverageView Ready(float time, int afford, int fielded) => new AriaCoverageView
@@ -227,7 +232,7 @@ namespace Game.Tests.Editor
             Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
             Assert.AreEqual(AriaSupportAction.Focus, d.Action, "no Move ground on screen: one Home focus before arming");
             Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
-            Assert.AreEqual(AriaSupportAction.Waiting, d.Action, "until the focus tap completes");
+            Assert.AreEqual(AriaSupportAction.Focus, d.Action, "through the focus tap's aim delay");
             view.CompletedContacts = 2; view.Time = 92f;
             Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
             Assert.AreEqual(AriaSupportAction.ArmMove, d.Action, "never a second focus");
@@ -302,6 +307,94 @@ namespace Game.Tests.Editor
         {
             Assert.AreEqual(1 | 4 | 8, AriaSkirmishPlanSystem.SupportFielded(Radar | TransportHeli | AntiAir | Gunner));
             Assert.AreEqual(2, AriaSkirmishPlanSystem.SupportFielded(Drone | AttackHeli), "the attack heli is an assault role, ordered by the sweep");
+        }
+
+        [Test]
+        public void TidyTransportFocusSurvivesAimAndRequiresAcceptedGroundOrder()
+        {
+            var plan = default(AriaSupportState);
+            var view = Tidy(80f, AriaSupportKind.AntiAir, AriaSupportKind.TransportHeli);
+            view.RequireOrderResult = true;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
+            Assert.AreEqual(AriaSupportKind.TransportHeli, d.Kind);
+            Assert.AreEqual(AriaSupportAction.SelectSlot, d.Action);
+            view.SelectedMask = 4; view.SelectedGroups = 1; view.CompletedContacts = 1; view.Time = 81f;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.Focus, d.Action);
+            view.Time = 81.9f;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.Focus, d.Action, "the finger still needs the same control after aiming");
+            view.CompletedContacts = 2; view.Time = 83f; view.HomeAvailable = true;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.ArmMove, d.Action);
+            view.CompletedContacts = 3; view.Time = 85f; view.Mode = AriaSupportMode.Move;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.TargetHome, d.Action);
+            view.CompletedContacts = 4; view.Time = 87f; view.Mode = AriaSupportMode.None;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.Waiting, d.Action);
+            Assert.AreEqual(0, plan.Done);
+            var rejected = plan;
+            view.OrderResultAvailable = true;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref rejected, out d));
+            Assert.AreEqual(3, d.Trace, "a rejected ground tap releases for a retry");
+            Assert.AreEqual(0, rejected.Done);
+            view.OrderAccepted = true;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(2, d.Trace);
+            Assert.AreEqual(4, plan.Done);
+        }
+
+        [Test]
+        public void AirOpeningPrioritizesRadarAndKeepsFreedAirSlotsForCoverage()
+        {
+            var plan = default(AriaCoverageState);
+            var view = Ready(55f, Radar | Marksman | ApcFast, TransportHeli);
+            view.PrioritizeAirCoverage = true;
+            Assert.IsFalse(AriaCoverageRecruitPolicy.CanBuyOpeningTanker(true, plan.Done));
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out var kind));
+            Assert.AreEqual(AriaCoverageKind.Radar, kind, "buy radar before cheaper kinds consume the budget");
+            Assert.IsTrue(AriaCoverageRecruitPolicy.CanBuyOpeningTanker(true, Radar | Marksman | ApcFast));
+
+            Assert.IsTrue(AriaCoverageRecruitPolicy.CanBuyLightAttackHeli(true, false, 0), "keep the first light heli");
+            Assert.IsFalse(AriaCoverageRecruitPolicy.CanBuyLightAttackHeli(true, true, AttackHeli));
+            Assert.IsTrue(AriaCoverageRecruitPolicy.CanBuyLightAttackHeli(true, true, AttackHeli | Drone));
+            plan = default;
+            view.AffordMask = Radar | AttackHeli | Drone;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
+            Assert.AreEqual(AriaCoverageKind.AttackHeli, kind, "use a newly free and affordable slot");
+            view.AffordMask = Radar | Drone; plan = default;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
+            Assert.AreEqual(AriaCoverageKind.Drone, kind, "the heavy gunship quote may still be too expensive");
+        }
+
+        [Test]
+        public void AirOpeningPagesToTransportAndCoversTheStartingArmoredApc()
+        {
+            var plan = new AriaSkirmishPlanComponent { CoverageAirOpened = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = default(AriaPlayObservationComponent);
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, ExpandedBaseAssault = true, AirProfile = true,
+                EnemyDesignatedAlive = true, CoverageFieldedMask = TransportHeli, Time = 40f,
+                ExpandedPageCount = 3, NextSquadPage = new AriaTouchTarget { Id = 10, Available = true }
+            };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(10, output.TargetId, "use the visible page control to reach the starting transport");
+            view.ExpandedPageIndex = 1;
+            view.ExpandedSupportSlots = AriaSupportOrderPolicy.Slots(AriaSupportKind.ApcArmored, AriaSupportKind.TransportHeli,
+                AriaSupportKind.None, AriaSupportKind.None, AriaSupportKind.None);
+            view.Squad0 = new AriaTouchTarget { Id = 11, Available = true };
+            view.Squad1 = new AriaTouchTarget { Id = 12, Available = true };
+            view.Time = 42f;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(12, output.TargetId);
+            plan.SupportStage = 0; plan.SupportDone = 4;
+            view.Time = 49f;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(11, output.TargetId, "the starting APC has a normal roster order path");
+            Assert.AreEqual((byte)AriaSupportKind.ApcArmored, plan.SupportKind);
         }
     }
 }

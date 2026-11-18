@@ -113,6 +113,7 @@ namespace Game.UI.Shell.Ecs
                 Game.Skirmish.Contracts.SkirmishRoleKind.Drone => Game.Simulation.AriaSupportKind.Drone,
                 Game.Skirmish.Contracts.SkirmishRoleKind.TransportHeli => Game.Simulation.AriaSupportKind.TransportHeli,
                 Game.Skirmish.Contracts.SkirmishRoleKind.AntiAir => Game.Simulation.AriaSupportKind.AntiAir,
+                Game.Skirmish.Contracts.SkirmishRoleKind.ApcArmored => Game.Simulation.AriaSupportKind.ApcArmored,
                 _ => Game.Simulation.AriaSupportKind.None
             };
         }

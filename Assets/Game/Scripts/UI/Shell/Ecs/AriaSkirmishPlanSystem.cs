@@ -907,8 +907,7 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
-            // Air-capable base assault (lane 26 S004): a support order in progress keeps its place here, but a new one
-            // starts only after the coverage purchases (below), which it otherwise starved for 12 s per order.
+            // Keep an in-flight support order together while it owns the selection or command mode.
             if ((!AirAssault(view) || plan.SupportStage != 0) && StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
@@ -939,18 +938,21 @@ namespace Game.UI.Shell.Ecs
             var preparationView=new Game.Simulation.AriaPreparationView {
                 AirProfile=view.AirProfile,CombinedArmsField=view.CombinedArmsField,Infantry=view.Infantry,Time=view.Time,OwnStructureAttackUnits=view.OwnStructureAttackUnits,
                 LogisticsTruckCommitted=view.LogisticsTruckCommitted,CanAffordLogisticsTruck=view.CanAffordLogisticsTruck,LogisticsTargetAvailable=view.RecruitLogisticsTruck.Available,
-                TankersCommitted=view.TankersCommitted,CanAffordTanker=view.CanAffordTanker,TankerTargetAvailable=view.RecruitTanker.Available };
+                TankersCommitted=view.TankersCommitted,CanAffordTanker=view.CanAffordTanker &&
+                    Game.Simulation.AriaCoverageRecruitPolicy.CanBuyOpeningTanker(AirAssault(view) && view.TankersCommitted > 0, plan.CoverageDone),
+                TankerTargetAvailable=view.RecruitTanker.Available };
             var preparationState=new Game.Simulation.AriaPreparationState{AssaultStarted=plan.AssaultStarted,OpeningUntil=plan.OpeningUntil};
             var preparationAction=Game.Simulation.AriaExpandedPreparationPolicy.Supply(preparationView,ref preparationState);
             plan.AssaultStarted=preparationState.AssaultStarted;
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitLogisticsTruck){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitLogisticsTruck,false,ref output);return;}
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
-            if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
+            if ((!AirAssault(view) || plan.AirCycleStage != 0) && StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             // Gate-3 coverage: one breacher, then one of each other available kind, after the first assault.
             if (StepGenericStructureReplacement(view, ref plan, ref output)) return;
+            if (AirAssault(view) && StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return;
-            if (AirAssault(view) && StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
+            if (AirAssault(view) && StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             if (StepGenericResearch(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
@@ -1082,7 +1084,8 @@ namespace Game.UI.Shell.Ecs
                 StepHomePadPlacement(view, ref plan, ref touch, ref output);
                 return;
             }
-            if (view.AirQueueOffered && !view.AirRecruitPending && view.OwnAttackAirLive == 0 && view.RecruitAir.Available)
+            if (view.AirQueueOffered && !view.AirRecruitPending && view.OwnAttackAirLive == 0 && view.RecruitAir.Available &&
+                Game.Simulation.AriaCoverageRecruitPolicy.CanBuyLightAttackHeli(AirAssault(view), plan.CoverageAirOpened != 0, plan.CoverageDone))
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.RecruitAir, false, ref output);

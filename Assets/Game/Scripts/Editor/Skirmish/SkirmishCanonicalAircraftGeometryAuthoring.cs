@@ -86,7 +86,14 @@ namespace Game.Editor
                     var expected=measured.Roles[i];var actual=installed.Roles[i];
                     if(actual==null||actual.Role!=expected.Role||actual.PrefabKey!=expected.PrefabKey||!actual.Prepare()||actual.Sources.Length!=expected.Sources.Length||actual.Draws.Length!=expected.Draws.Length)throw new InvalidOperationException("Canonical role/source metadata drift");
                     for(int j=0;j<expected.Sources.Length;j++)
-                    {var a=actual.Sources[j];var b=expected.Sources[j];if(a.VisualKind!=b.VisualKind||a.Prefab!=b.Prefab||a.Path!=b.Path||a.DependencyHash!=b.DependencyHash)throw new InvalidOperationException("Actual source dependency changed");}
+                    {
+                        var installedSource=actual.Sources[j];
+                        var measuredSource=expected.Sources[j];
+                        if(installedSource.VisualKind!=measuredSource.VisualKind||installedSource.Prefab!=measuredSource.Prefab||installedSource.Path!=measuredSource.Path)
+                            throw new InvalidOperationException($"Actual source identity changed for {expected.Role}: installed={installedSource.Path} (visual={installedSource.VisualKind}) measured={measuredSource.Path} (visual={measuredSource.VisualKind})");
+                        if(installedSource.DependencyHash!=measuredSource.DependencyHash)
+                            throw new InvalidOperationException($"Actual source dependency changed for {expected.Role}: path={measuredSource.Path} installed={installedSource.DependencyHash} measured={measuredSource.DependencyHash}");
+                    }
                     foreach(var b in expected.Draws)if(!actual.TryRead(b.Mesh,b.SubMesh,out var a)||a.GeometrySha256!=b.GeometrySha256||a.VertexCount!=b.VertexCount||a.DrawnIndexCount!=b.DrawnIndexCount||a.LocalBounds.center!=b.LocalBounds.center||a.LocalBounds.size!=b.LocalBounds.size)throw new InvalidOperationException("Actual indexed draw geometry changed");
                 }
             }

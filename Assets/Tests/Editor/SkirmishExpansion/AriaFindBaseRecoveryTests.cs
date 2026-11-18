@@ -110,6 +110,70 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaStartPolicy.StartRefused, AriaStartPolicy.Decide(AriaStartPolicy.GraceSeconds + .1f, false));
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void S002MapWithoutApproachFallsBackToReportedPositionThenOrders(bool baseVisible)
+        {
+            var openMap = new AriaS002ActionTarget { Id = -20010, Admitted = true, Action = AriaS002Action.InspectObjective };
+            var closeMap = new AriaS002ActionTarget { Id = -414482, Admitted = true, Action = AriaS002Action.CloseInspection };
+            var reportedPosition = new AriaS002ActionTarget { Id = -343866, Admitted = true, Action = AriaS002Action.InspectObjective };
+            var view = new AriaS002Observation
+            {
+                Scope = AriaS002Scope.NativeRendered, SourceScenarioIndex = 4, Active = true,
+                ExpandedSession = true, ExpandedBaseAssault = true, EnemyDesignatedAlive = true,
+                Time = 309f, PlayerHealth = 520, Infantry = 24, AttackMode = true, SelectionVisible = true,
+                SelectedCount = 5, ExpandedSelectedMask = 24, ExpandedAssaultMask = 28, ExpandedAttackOrderMask = 4,
+                FocusAdvance = openMap, FocusEnemy = reportedPosition
+            };
+            var plan = new AriaS002PlanState { LastProgressAt = 226f, PlayerHealth = 520, Infantry = 24 };
+            var touch = new AriaS002ContactState { Phase = AriaS002ContactPhase.Observing, Actions = 114, LastObjectiveProgressAt = 226f };
+            AriaS002Decision Step()
+            {
+                AriaS002Policy.Step(view, ref plan, ref touch, out var decision);
+                return decision;
+            }
+            void Complete(AriaS002ActionTarget target)
+            {
+                touch.Actions++;
+                touch.LastCompletedTargetId = target.Id;
+            }
+
+            Assert.AreEqual(openMap.Id, Step().TargetId);
+            Complete(openMap);
+            view.Time = 310f;
+            view.InspectionOpen = true;
+            view.FocusAdvance = view.FocusEnemy = default;
+            view.CloseMap = closeMap;
+            Assert.AreEqual(AriaS002DecisionKind.Waiting, Step().Kind);
+            view.Time = 315f;
+            Assert.AreEqual(closeMap.Id, Step().TargetId);
+
+            Complete(closeMap);
+            view.Time = 316f;
+            view.InspectionOpen = false;
+            view.FocusAdvance = openMap;
+            view.FocusEnemy = reportedPosition;
+            var focus = Step();
+            Assert.AreEqual(reportedPosition.Id, focus.TargetId);
+            Assert.AreEqual(AriaS002DecisionKind.Control, focus.Kind);
+            Assert.AreEqual(AriaS002Action.InspectObjective, focus.Action);
+
+            Complete(reportedPosition);
+            view.Time = 318f;
+            Assert.AreEqual(AriaS002DecisionKind.Waiting, Step().Kind, "Do not repeat a completed camera tap while its view settles.");
+            Assert.AreEqual(226f, touch.LastObjectiveProgressAt);
+
+            view.Time = 320f;
+            var order = new AriaS002ActionTarget { Id = baseVisible ? -20001 : -20006, Admitted = true,
+                Action = baseVisible ? AriaS002Action.AttackVisibleObjective : AriaS002Action.AttackPublicTerrain };
+            if (baseVisible) view.EnemyBase = order;
+            else view.AdvanceGround = order;
+            var attack = Step();
+            Assert.AreEqual(AriaS002DecisionKind.WorldTarget, attack.Kind);
+            Assert.AreEqual(order.Id, attack.TargetId);
+            Assert.AreEqual(order.Action, attack.Action);
+        }
+
         [Test]
         public void BothPlannersRecoverAndTheTouchDriverIgnoresItsOwnDevices()
         {

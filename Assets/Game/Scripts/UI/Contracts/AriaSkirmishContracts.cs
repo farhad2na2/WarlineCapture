@@ -110,6 +110,8 @@ namespace Game.UI.Contracts
         // Air-capable base assault: clear ground 30 units from home toward the column (-20018), the Move target for the
         // AA (and the transport heli when the column's rear ground is not on screen).
         public AriaTouchTarget SupportHomeGround;
+        public int SupportCommandResultFrame;
+        public bool SupportCommandAccepted;
         // The open full map's "center on HQ" control (an ordinary popup button).
         public AriaTouchTarget MapCenterHome;
         // Ordinary Move and Scan command buttons and their armed modes.

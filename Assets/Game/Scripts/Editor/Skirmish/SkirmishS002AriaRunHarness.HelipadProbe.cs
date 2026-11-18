@@ -71,6 +71,7 @@ namespace Game.Editor
 
         private static void StartNativeHelipadProbe(Entity session)
         {
+            if (Environment.GetEnvironmentVariable(S026HelicopterFramingEnv) == "1") { StartS026HelicopterFraming(session); return; }
             helipadProbeAircraftCycle = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE") == "1";
             airProbeCameraCommandsBefore = -1;
             airProbeCameraAttackMaskBefore = -1;
@@ -130,6 +131,8 @@ namespace Game.Editor
             var placement = UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             var controls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
             if (skirmish == null) return;
+            if (helipadProbeStage >= S026HeliStageBase)
+            { TickS026HelicopterFraming(now, skirmish, drawer, catalog, controls); return; }
 
             if (helipadProbeStage == 1)
             {

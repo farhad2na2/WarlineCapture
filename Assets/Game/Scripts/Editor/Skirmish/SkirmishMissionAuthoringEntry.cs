@@ -61,7 +61,9 @@
 // pin (ContentHash / SourceBinding hash), layout content hash, every source/layout/view
 // fingerprint, the engineering camera view (SkirmishEngineeringViewProfileFactory), role
 // framing rows and opening focus actor, and one logical variant per compiling
-// size x difficulty. Nothing here certifies native source fit, camera pictures, normal-input
+// size x difficulty. FC/BT/CE cannot compile before their logical binding exists: their unbound pass
+// accepts only the missing-binding rejection (TryCompileUnbound), then every variant is recompiled with
+// the written binding (VerifyBoundVariants). Nothing here certifies native source fit, camera pictures, normal-input
 // play or publication; the publication row stays InProgress and the library row Planned.
 // =============================================================================
 using System;
@@ -94,15 +96,22 @@ namespace Game.Editor
         private static readonly SkirmishDifficultyId[] Difficulties =
             { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
 
-        private sealed class AuthoringFailure : Exception
+        internal sealed class AuthoringFailure : Exception
         { public AuthoringFailure(string check, string detail) : base(check + ": " + detail) { } }
 
         private sealed class Outcome { public string CatalogId = "unknown", DefinitionId, LayoutId, SourceId; public int Variants; }
 
-        private sealed class Compiled
+        // The compiler's reason field for a missing/invalid definition-referenced logical binding (SkirmishSetupCompiler).
+        internal const string MissionLogicalBindingField = "missionLogicalBinding";
+
+        // One size x difficulty of the unbound authoring pass. Setup is the accepted normal compile (Base Assault only);
+        // FC/BT/CE cannot compile before their binding exists, so they carry Setup == null and take the measured logical
+        // inputs and the actual typed roster from the compiler's own read-only authoring APIs instead.
+        internal sealed class Compiled
         {
             public SkirmishSizeId Size; public SkirmishDifficultyId Difficulty;
             public SkirmishResolvedSetup Setup; public SkirmishMissionLogicalAuthoringInputs Inputs;
+            public SkirmishResolvedForceEntry[] Forces; public SkirmishResolvedStructureEntry[] Structures;
         }
 
         public static void AuthorFromDraft()
@@ -271,8 +280,8 @@ namespace Game.Editor
                     var sizeRows = new List<InstancePadVariant>();
                     foreach (var difficulty in Difficulties)
                     {
-                        if (!SkirmishSetupCompiler.TryCompile(definition, difficulty, size, AuthoringSeed, manifest, matrix, out var plain, out _) ||
-                            plain?.Structures == null) { sizeRows = null; break; }
+                        if (!TryCompileUnbound(definition, difficulty, size, manifest, matrix, out var plain, out _) ||
+                            plain.Structures == null) { sizeRows = null; break; }
                         sizeRows.Add(new InstancePadVariant { Size = size, Difficulty = difficulty, Structures = (SkirmishResolvedStructureEntry[])plain.Structures.Clone() });
                     }
                     if (sizeRows == null) continue;   // the compile loop below reports or skips this size
@@ -297,6 +306,7 @@ namespace Game.Editor
             }
 
             // --- compile every size x difficulty without a binding; capture logical inputs ----
+            // FC/BT/CE: the only accepted rejection is the not-yet-written binding (see TryCompileUnbound).
             var compiled = new List<Compiled>();
             var skippedSizes = new Dictionary<SkirmishSizeId, string>();
             foreach (var size in Sizes)
@@ -305,12 +315,8 @@ namespace Game.Editor
                 string sizeFailure = null;
                 foreach (var difficulty in Difficulties)
                 {
-                    if (!SkirmishSetupCompiler.TryCompile(definition, difficulty, size, AuthoringSeed, manifest, matrix, out var setup, out var reasons))
-                    { sizeFailure = "compile." + size + "." + difficulty + ": " + Describe(reasons); break; }
-                    if (!SkirmishSetupCompiler.TryCaptureMissionLogicalAuthoringInputs(definition, difficulty, size, AuthoringSeed, manifest, matrix,
-                        out var inputs, out var captureReasons) || inputs == null)
-                    { sizeFailure = "inputs." + size + "." + difficulty + ": " + Describe(captureReasons); break; }
-                    rows.Add(new Compiled { Size = size, Difficulty = difficulty, Setup = setup, Inputs = inputs });
+                    if (!TryCompileUnbound(definition, difficulty, size, manifest, matrix, out var unbound, out sizeFailure)) break;
+                    rows.Add(unbound);
                 }
                 if (sizeFailure == null) { compiled.AddRange(rows); continue; }
                 if (size == SkirmishSizeId.Standard) throw new AuthoringFailure(sizeFailure.Substring(0, sizeFailure.IndexOf(':')), sizeFailure.Substring(sizeFailure.IndexOf(':') + 2));
@@ -326,33 +332,9 @@ namespace Game.Editor
                 definition.Configure(catalogId, objective, army, start, economy, upgrades, intel, roles, layout, SkirmishSizeId.Standard, features);
                 EditorUtility.SetDirty(definition);
             }
-            var primary = compiled.First(x => x.Size == SkirmishSizeId.Standard && x.Difficulty == SkirmishDifficultyId.Regular);
-
             // --- view + variants (Tools/CI/SkirmishMissionLogicalBindingAuthor.cs rules) -----
-            var view = SkirmishEngineeringViewProfileFactory.Create(definition, primary.Inputs);
-            view.name = "SkirmishMissionViewProfile_" + catalogId;
-            if (!view.IsValid || !view.Matches(primary.Setup, definition))
-                throw new AuthoringFailure("view", "Engineering view profile is invalid or does not match the compiled setup.");
-            var variants = compiled.Select(x => BuildVariant(x, view, areaDraft)).ToArray();
-
-            var binding = ScriptableObject.CreateInstance<SkirmishMissionLogicalBindingConfig>();
-            binding.name = "SkirmishMissionLogicalBinding_" + catalogId;
-            binding.SchemaVersion = 1; binding.ContentVersion = 1;
-            binding.DefinitionVersion = definition.ContentVersion;
-            binding.ValueFormat = primary.Inputs.ValueFormat;
-            binding.CatalogId = definition.CatalogId; binding.DefinitionId = definition.DefinitionId;
-            binding.SourceOperationMapId = source.OperationMapId;
-            binding.SourceSceneGuid = source.SourceSceneReference.AssetGUID;
-            binding.SourceContentHash = source.ContentHash;
-            binding.SourceSemanticFingerprint = primary.Inputs.SourceSemanticFingerprint;
-            binding.LayoutId = layout.LayoutId;
-            binding.ReviewedLayoutSemanticFingerprint = primary.Inputs.LayoutSemanticFingerprint;
-            binding.ObjectiveKind = primary.Setup.ObjectiveKind;
-            binding.Variants = variants;
-            foreach (var row in compiled)
-                if (row.Inputs.SourceSemanticFingerprint != binding.SourceSemanticFingerprint ||
-                    row.Inputs.LayoutSemanticFingerprint != binding.ReviewedLayoutSemanticFingerprint || row.Inputs.ValueFormat != binding.ValueFormat)
-                    throw new AuthoringFailure("fingerprints", "Source/layout fingerprints differ across " + row.Size + "/" + row.Difficulty + ".");
+            var binding = BuildBinding(definition, compiled, areaDraft, out var view);
+            var variants = binding.Variants;
 
             string logicalFolder = folder + "/Logical";
             EnsureFolder(logicalFolder);
@@ -370,7 +352,8 @@ namespace Game.Editor
             Register(catalogObject, definition);
             KeepPublicationInProgress(catalogId, definition.DefinitionId);
 
-            // --- final fail-closed validation (Standard/Regular, with binding) ----------------
+            // --- final fail-closed validation (every authored variant, with binding) ----------
+            VerifyBoundVariants(definition, compiled, manifest, matrix);
             if (!SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, AuthoringSeed, manifest, matrix,
                 out var final, out var finalReasons))
                 throw new AuthoringFailure("final-compile", Describe(finalReasons));
@@ -388,15 +371,111 @@ namespace Game.Editor
                 " sourceFingerprint=" + binding.SourceSemanticFingerprint + " binding=" + bindingPath);
         }
 
+        // Unbound authoring pass for one size x difficulty. Base Assault compiles without a logical binding and keeps
+        // its accepted setup. FC/BT/CE cannot: SkirmishSetupCompiler requires the definition-referenced binding for
+        // every non-Base-Assault objective, and that binding is what this entry is about to write. For them a rejection
+        // is accepted ONLY when every reason is the missing binding; the measured logical inputs and the actual typed
+        // roster then come from the compiler's own read-only authoring APIs (TryCaptureMissionLogicalAuthoringInputs,
+        // TryInspectStaticAuthoringBudget), never from a rejected setup. VerifyBoundVariants recompiles every variant
+        // with the written binding, fail-closed. failure uses the "<check>.<size>.<difficulty>: <detail>" form.
+        internal static bool TryCompileUnbound(SkirmishScenarioDefinitionConfig definition, SkirmishDifficultyId difficulty, SkirmishSizeId size,
+            SkirmishContentManifest manifest, List<SkirmishSetupMatrixRow> matrix, out Compiled row, out string failure)
+        {
+            row = null; failure = null;
+            string tuple = "." + size + "." + difficulty;
+            if (definition == null) { failure = "compile" + tuple + ": definition is null"; return false; }
+            if (definition.MissionLogicalBinding != null) { failure = "compile" + tuple + ": unbound pass needs the logical binding cleared first"; return false; }
+            if (SkirmishSetupCompiler.TryCompile(definition, difficulty, size, AuthoringSeed, manifest, matrix, out var setup, out var reasons))
+            {
+                if (!SkirmishSetupCompiler.TryCaptureMissionLogicalAuthoringInputs(definition, difficulty, size, AuthoringSeed, manifest, matrix,
+                    out var captured, out var capturedReasons) || captured == null)
+                { failure = "inputs" + tuple + ": " + Describe(capturedReasons); return false; }
+                row = new Compiled { Size = size, Difficulty = difficulty, Setup = setup, Inputs = captured, Forces = setup.Forces, Structures = setup.Structures };
+                return true;
+            }
+            bool bindingOnly = definition.ObjectiveConfig != null && definition.ObjectiveConfig.Kind != SkirmishObjectiveKind.BaseAssault &&
+                reasons != null && reasons.Count > 0 && reasons.All(reason => reason.Field == MissionLogicalBindingField);
+            if (!bindingOnly) { failure = "compile" + tuple + ": " + Describe(reasons); return false; }
+            if (!SkirmishSetupCompiler.TryCaptureMissionLogicalAuthoringInputs(definition, difficulty, size, AuthoringSeed, manifest, matrix,
+                out var inputs, out var captureReasons) || inputs == null)
+            { failure = "inputs" + tuple + ": " + Describe(captureReasons); return false; }
+            if (!SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(definition, difficulty, size, AuthoringSeed, manifest, matrix,
+                out var roster, out var rosterReasons) || roster == null || rosterReasons.Any(reason => reason.Field != MissionLogicalBindingField))
+            { failure = "roster" + tuple + ": " + Describe(rosterReasons?.Where(reason => reason.Field != MissionLogicalBindingField).ToList()); return false; }
+            var forces = roster.Forces; var structures = roster.Structures;
+            if (forces == null || forces.Length == 0 || structures == null) { failure = "roster" + tuple + ": actual typed roster is empty"; return false; }
+            if (!roster.ExactCanonicalQuantities)
+                Debug.LogWarning(Tag + " roster" + tuple + " canonicalBudget=" + string.Join(" | ", roster.CanonicalBudgetErrors));
+            row = new Compiled { Size = size, Difficulty = difficulty, Setup = null, Inputs = inputs, Forces = forces, Structures = structures };
+            return true;
+        }
+
+        // Builds the explicit binding (not yet an asset) for every compiled row; the caller persists and binds it.
+        internal static SkirmishMissionLogicalBindingConfig BuildBinding(SkirmishScenarioDefinitionConfig definition, IReadOnlyList<Compiled> compiled,
+            AreaDraft areaDraft, out SkirmishMissionViewProfile view)
+        {
+            var source = definition.CampaignMap; var layout = definition.MapLayout;
+            if (source == null || source.SourceSceneReference == null || layout == null)
+                throw new AuthoringFailure("binding", "Definition has no Campaign source/scene or layout.");
+            var primary = compiled.FirstOrDefault(x => x.Size == SkirmishSizeId.Standard && x.Difficulty == SkirmishDifficultyId.Regular)
+                ?? throw new AuthoringFailure("binding", "No compiled Standard/Regular variant.");
+            if ((areaDraft != null) != (primary.Inputs.ObjectiveKind != SkirmishObjectiveKind.BaseAssault))
+                throw new AuthoringFailure("binding", "Typed areas are required for FC/BT/CE and refused for Base Assault.");
+            view = SkirmishEngineeringViewProfileFactory.Create(definition, primary.Inputs);
+            view.name = "SkirmishMissionViewProfile_" + definition.CatalogId;
+            // Matches() needs an accepted setup; FC/BT/CE get the same check per variant in VerifyBoundVariants.
+            if (!view.IsValid || (primary.Setup != null && !view.Matches(primary.Setup, definition)))
+                throw new AuthoringFailure("view", "Engineering view profile is invalid or does not match the compiled setup.");
+            var shared = view;
+            var variants = compiled.Select(x => BuildVariant(x, shared, areaDraft)).ToArray();
+
+            var binding = ScriptableObject.CreateInstance<SkirmishMissionLogicalBindingConfig>();
+            binding.name = "SkirmishMissionLogicalBinding_" + definition.CatalogId;
+            binding.SchemaVersion = 1; binding.ContentVersion = 1;
+            binding.DefinitionVersion = definition.ContentVersion;
+            binding.ValueFormat = primary.Inputs.ValueFormat;
+            binding.CatalogId = definition.CatalogId; binding.DefinitionId = definition.DefinitionId;
+            binding.SourceOperationMapId = source.OperationMapId;
+            binding.SourceSceneGuid = source.SourceSceneReference.AssetGUID;
+            binding.SourceContentHash = source.ContentHash;
+            binding.SourceSemanticFingerprint = primary.Inputs.SourceSemanticFingerprint;
+            binding.LayoutId = layout.LayoutId;
+            binding.ReviewedLayoutSemanticFingerprint = primary.Inputs.LayoutSemanticFingerprint;
+            binding.ObjectiveKind = primary.Inputs.ObjectiveKind;
+            binding.Variants = variants;
+            foreach (var row in compiled)
+                if (row.Inputs.SourceSemanticFingerprint != binding.SourceSemanticFingerprint ||
+                    row.Inputs.LayoutSemanticFingerprint != binding.ReviewedLayoutSemanticFingerprint || row.Inputs.ValueFormat != binding.ValueFormat ||
+                    row.Inputs.ObjectiveKind != binding.ObjectiveKind)
+                    throw new AuthoringFailure("fingerprints", "Source/layout fingerprints differ across " + row.Size + "/" + row.Difficulty + ".");
+            return binding;
+        }
+
+        // Every authored variant must pass the normal compiler with the bound binding (logical binding, view match,
+        // framing, typed areas and, for FC/BT/CE, the enemy objective policy that needs the binding fingerprint).
+        internal static void VerifyBoundVariants(SkirmishScenarioDefinitionConfig definition, IEnumerable<Compiled> compiled,
+            SkirmishContentManifest manifest, List<SkirmishSetupMatrixRow> matrix)
+        {
+            if (definition.MissionLogicalBinding == null) throw new AuthoringFailure("bound", "Definition carries no logical binding.");
+            foreach (var row in compiled)
+            {
+                string check = "bound." + row.Size + "." + row.Difficulty;
+                if (!SkirmishSetupCompiler.TryCompile(definition, row.Difficulty, row.Size, AuthoringSeed, manifest, matrix, out var setup, out var reasons))
+                    throw new AuthoringFailure(check, Describe(reasons));
+                if (string.IsNullOrEmpty(setup.MissionLogicalBindingFingerprint))
+                    throw new AuthoringFailure(check, "Compiled setup carries no mission logical binding fingerprint.");
+            }
+        }
+
         // Framing rows, opening focus and pins follow Tools/CI/SkirmishMissionLogicalBindingAuthor.cs:89-133.
         private static SkirmishMissionLogicalVariant BuildVariant(Compiled row, SkirmishMissionViewProfile view, AreaDraft areaDraft)
         {
-            var setup = row.Setup; var inputs = row.Inputs;
+            var setup = row.Setup; var inputs = row.Inputs; var forces = row.Forces;
             var framing = inputs.RequiredFramingRoles.Select(role =>
             {
                 bool aircraft = role == SkirmishRoleKind.TransportHeli || role == SkirmishRoleKind.TransportPlane ||
                     role == SkirmishRoleKind.Drone || SkirmishRoleIds.Category(role) == SkirmishPopulationCategory.Air;
-                bool enemy = setup.Forces.Any(x => x.FactionId == 2 && x.Quantity > 0 && x.RoleKind == role);
+                bool enemy = forces.Any(x => x.FactionId == 2 && x.Quantity > 0 && x.RoleKind == role);
                 var stages = SkirmishViewCaptureStage.Opening | SkirmishViewCaptureStage.MinimumZoom |
                     SkirmishViewCaptureStage.MaximumZoom | SkirmishViewCaptureStage.MatchExitRestored;
                 if (aircraft) stages |= SkirmishViewCaptureStage.FollowParked | SkirmishViewCaptureStage.FollowCruising |
@@ -413,9 +492,9 @@ namespace Game.Editor
             string focusId = null; var focusRole = SkirmishRoleKind.None;
             foreach (var role in inputs.RequiredFramingRoles.OrderBy(x => (byte)x))
             {
-                for (int i = 0; i < setup.Forces.Length && focusId == null; i++)
+                for (int i = 0; i < forces.Length && focusId == null; i++)
                 {
-                    var force = setup.Forces[i];
+                    var force = forces[i];
                     if (force.FactionId != 1 || force.Quantity <= 0 || force.RoleKind != role) continue;
                     string candidate = force.RoleId + ".1." + i.ToString(CultureInfo.InvariantCulture) + ".0";
                     if (inputs.ActualOpeningPlayerActorIds.Contains(candidate)) { focusId = candidate; focusRole = role; }
@@ -425,7 +504,7 @@ namespace Game.Editor
             if (focusId == null) throw new AuthoringFailure("opening-focus", "No opening player actor for a required framing role (" + row.Size + "/" + row.Difficulty + ").");
             var variant = new SkirmishMissionLogicalVariant
             {
-                Size = setup.SizeId, Difficulty = setup.DifficultyId, Areas = null, View = view,
+                Size = row.Size, Difficulty = row.Difficulty, Areas = null, View = view,
                 OpeningFocusRole = focusRole, OpeningFocusStableActorId = focusId, OpeningFocusSmoothSeconds = 2.25f,
                 SourceMinimumElevation = inputs.SourceMinimumElevation, SourceMaximumElevation = inputs.SourceMaximumElevation,
                 Framing = framing
@@ -439,7 +518,8 @@ namespace Game.Editor
                 variant.ReviewedGeometryFingerprint = areas.GeometryFingerprint;
             }
             variant.ReviewedViewFingerprint = SkirmishMissionLogicalBindingCompiler.ViewFingerprint(variant);
-            if (!SkirmishMissionLogicalBindingCompiler.ValidateFraming(variant, setup, out string error))
+            // Needs an accepted setup (roles + overlays); FC/BT/CE are framed-checked by VerifyBoundVariants.
+            if (setup != null && !SkirmishMissionLogicalBindingCompiler.ValidateFraming(variant, setup, out string error))
                 throw new AuthoringFailure("framing." + row.Size + "." + row.Difficulty, error);
             return variant;
         }
@@ -570,7 +650,7 @@ namespace Game.Editor
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
 
-        private sealed class AreaDraft
+        internal sealed class AreaDraft
         {
             public SkirmishObjectiveKind Kind;
             public SkirmishObjectiveArea[] Areas;
@@ -679,7 +759,7 @@ namespace Game.Editor
                     throw new AuthoringFailure("areas." + row.Size + "." + row.Difficulty, "Layout binding format carries no typed-area binding.");
                 config = new SkirmishObjectiveAreaConfig
                 {
-                    AreaSetId = ("areas." + row.Setup.DefinitionId + "." + row.Size + "." + row.Difficulty).ToLowerInvariant(),
+                    AreaSetId = ("areas." + row.Inputs.DefinitionId + "." + row.Size + "." + row.Difficulty).ToLowerInvariant(),
                     ObjectiveKind = draft.Kind, Binding = row.Inputs.ActualAreaBinding,
                     Areas = draft.Areas.Select(area => { area.Points = (SkirmishObjectiveAreaPoint[])area.Points.Clone(); return area; }).ToArray()
                 };

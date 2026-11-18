@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "cycle_active": false,
-  "cycle_owner": null,
-  "cycle_started": "2026-11-18T10:54:24+01:00",
-  "unity_lane": "idle",
-  "phase": "lane 29 done; lane idle",
+  "cycle_active": true,
+  "cycle_owner": "lane worker 30",
+  "cycle_started": "2026-11-18T12:30:50+01:00",
+  "unity_lane": "busy",
+  "phase": "lane 30 heli follow camera capture",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

@@ -156,7 +156,7 @@ or enemy structure-defender targeting is wrong; fix the right side minimally, ne
 missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
 
 ## W31 — Pacing: per-family deadlines for Desert Base CE S019-S024 and City Crossroads BT S037-S042 (2026-11-19)
-status: READY (first; owner decision 2 of 2026-11-19 in decisions_pending.md)
+status: data DONE, not accepted (25aa408e7: drafts, assets and both matrices carry 420/540 s, but SkirmishConvoyReducer.cs:65-71 and SkirmishBreakthroughReducer.cs:75-85 take the deadline from SizeId, so every run logs deadline=1080). Continue in W31b.
 codex effort: medium
 Measured Mac counted wins (match clock): DB CE 123-155 s (11.42-14.34% of 1080, lane41/a); CC BT 160-225 s (14.85-20.79%, lane42/a). The gate-2 floor is 20%.
 Budget revision under CAMPAIGN_MAP_REUSE_POLICY "Budget revisions": intended improvement = a clock that actually pressures the escort/breakthrough.
@@ -166,6 +166,13 @@ Change the authoritative data together: the drafts, the per-mission `SkirmishObj
 pins those rows' values (check which other missions share each value; change none of them). Record the old and new values in the results file. Re-author, then run
 non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept if each win lands at 25-50% and nothing else changes (no TimeLimit draws).
 Branch `missions/win-w31-pacing-ce-bt`. No shared code.
+
+## W31b — CE/BT (and FC if the same) reducers ignore the authored deadline (2026-11-19)
+status: READY FIRST once the owner confirms the standing OK in the Windows session (shared code)
+codex effort: high
+Pass `setup.DeadlineSeconds` (SkirmishSetupCompiler.cs:275) into the reducer Create calls (SkirmishNativeObjectiveLifecycleHooks.cs:42/44, SkirmishNativeObjectiveCheckpoint.cs:179/200),
+check whether the FC reducer has the same size-only pattern and fix it the same way, and update the reducer tests that assert 1080. A missing or zero value keeps the size default.
+Rows that keep 1080 must behave identically (S002 test pin). Prove with EditMode tests and the 12 W31 non-counted runs logging deadline=420/540 with wins at 25-50%. Build on `missions/win-w31-pacing-ce-bt`.
 
 ## W32 — ARIA leaves starting units idle on objective missions (new gate 3) (2026-11-19)
 status: diagnosis DONE (1d3d3a0f7: idle starting groups are never commanded; the used-recorder is fine. The objective chooser picks only objective subjects, the escort path is starved by a time-expiring offer, a stuck support recruit holds the Build drawer ~60 s repeatedly, and the transport heli has no FC/CE command path). Fix READY after W31 and W27 cause 1, once the owner confirms the standing OK in the Windows session; accept the proposed order: escorts before support/coverage, offers expire on failed attempts, Move-to-goal for unassigned infantry/heli, bounded support recruit.

@@ -1,17 +1,249 @@
 {
   "catalog_id": "S074",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "Partial S073 deployment anchors only; source map anchors identify faction deployments, not base/staging, legal pads, or measured routes. Layout incomplete.",
+  "notes": "PROVISIONAL BOOTSTRAP HOST (Windows W29 2026-11-19, program lead option 1): authored only so that S074 is a registered Industrial Basin host for the read-only layout dump. Not evidence. Bases at the S073 deployment anchors (player 800,600; enemy 930,470); staging and route waypoints are unmeasured guesses on the straight line between them; building pads are derived. To be rewritten from the S074 layout dump. Partial S073 deployment anchors only; source map anchors identify faction deployments, not base/staging, legal pads, or measured routes. Layout incomplete.",
   "anchors": {
     "candidate.deployment.player": [
-      800,
-      600
+      800.0,
+      600.0
     ],
     "candidate.deployment.enemy": [
-      930,
-      470
+      930.0,
+      470.0
+    ],
+    "base.player": [
+      800.0,
+      600.0
+    ],
+    "base.enemy": [
+      930.0,
+      470.0
+    ],
+    "staging.player": [
+      825.0,
+      575.0
+    ],
+    "staging.enemy": [
+      905.0,
+      495.0
+    ],
+    "route.main.mid": [
+      865.0,
+      535.0
+    ],
+    "route.north.mid": [
+      890.0,
+      580.0
+    ],
+    "route.south.mid": [
+      840.0,
+      490.0
+    ],
+    "economy.player": [
+      775.0,
+      625.0
+    ],
+    "economy.enemy": [
+      955.0,
+      445.0
+    ],
+    "service.player": [
+      820.0,
+      625.0
+    ],
+    "service.enemy": [
+      910.0,
+      445.0
+    ],
+    "air.player": [
+      770.0,
+      570.0
+    ],
+    "air.enemy": [
+      960.0,
+      500.0
+    ],
+    "spawn.infantry.player": [
+      790.0,
+      580.0
+    ],
+    "spawn.vehicle.player": [
+      810.0,
+      580.0
+    ],
+    "rally.player": [
+      835.0,
+      590.0
+    ],
+    "spawn.infantry.enemy": [
+      940.0,
+      490.0
+    ],
+    "spawn.vehicle.enemy": [
+      920.0,
+      490.0
+    ],
+    "rally.enemy": [
+      895.0,
+      480.0
     ]
   },
-  "pads": {},
-  "routes": []
+  "pads": {
+    "spawn.infantry.player": {
+      "at": [
+        790.0,
+        580.0
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        810.0,
+        580.0
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "rally.player": {
+      "at": [
+        835.0,
+        590.0
+      ],
+      "anchor": "rally.player",
+      "size": [
+        3.0,
+        3.0
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        940.0,
+        490.0
+      ],
+      "anchor": "spawn.infantry.enemy",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        920.0,
+        490.0
+      ],
+      "anchor": "spawn.vehicle.enemy",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        895.0,
+        480.0
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        3.0,
+        3.0
+      ]
+    }
+  },
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "staging.player",
+        "route.main.mid",
+        "staging.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "staging.player",
+        "route.north.mid",
+        "staging.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "staging.player",
+        "route.south.mid",
+        "staging.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  },
+  "pad_slack_m": 12
 }

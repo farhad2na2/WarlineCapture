@@ -1,7 +1,7 @@
 {
   "catalog_id": "S062",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "candidate=1, measured 2026-11-18 (Windows W23 r3 on Mountain Pass host S050 seed 130365 after moving BreakthroughExit to the south-lane east end (1252..1290, 440..452): CorridorA/B/Exit inside playable (1491/2619/456 m2, exit 456/456 vehicle-passable), defense.approach.a/b fit 98/98 and 100/100, routes 336/398/430 m flood with no failed segment; Design/AgentReports/SkirmishExpansion/S061/area-measurement-r3.json; geometry still a candidate). Superseded: measured 2026-11-18 (Windows W10 r2 on Mountain Pass host S050 seed 130365 after moving both defense pads off the road band: CorridorA/B/Exit inside playable (1491/2619/1845 m2) and reachable from both bases and stagings, defense.approach.a/b fit (98/98 and 100/100 vehicle-passable cells), three vehicle routes with no failed flood/native segment (223/292/322 m); Design/AgentReports/SkirmishExpansion/S061/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. Citywide Alert uses the S049 layout and the S050 salvage source binding. All three vehicle routes reuse the W8 S055 area-measurement-r2 chains on host S050, from base.player to rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293). MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate 292. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates 31, 1, 37 and 95 in route order. Dump indices are zero-based and both flanks are 6 m wide. The Breakthrough rectangles and defense pads retain their S061 r1 geometry. The rectangles use S049 anchor pairs s050.f1.satellite_dish to service.enemy, s050.f1.fuel_bladder to air.enemy, and spawn.infantry.enemy to staging.enemy, respectively. Defense pad centres reuse the S051 enemy economy and infantry spawn anchors for A and B, respectively. The Breakthrough schema, defense pad sizes, structure footprints and pad slack come from S013. Established approach watchtower and satellite dish positions on both sides come from S050. Helipad anchors and pads on both sides come from S050. War and LargeWar second refinery module positions are unmeasured and left to derived pads. Windows W10 fix 2026-11-19: before measurement, the S050 layout-dump bitmap showed both defense guard-tower spots on the road band z 412-436 (road + not level), which aborts startup with BlockedSpawn as in W9; moved defense.approach.a (1209.5,441) -> (1209.5,446); defense.approach.b (1188.5,416.5) -> (1152,446) onto clear S050 ground north of the road (bitmap flag 0, no pad overlap). Windows W23 2026-11-19: BreakthroughExit moved from (1170..1211, 363.5..407.5), which covered the enemy barracks, staging and rally, to the east end of the south lane (1252..1290, 440..452) on clear S050 cells, beyond both defense towers; routes now end at route.goal.exit (1271,446) instead of rally.enemy. Measured in r3.",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W23 r3 on Mountain Pass host S050 seed 130365 after moving BreakthroughExit to the south-lane east end (1252..1290, 440..452): CorridorA/B/Exit inside playable (1491/2619/456 m2, exit 456/456 vehicle-passable), defense.approach.a/b fit 98/98 and 100/100, routes 336/398/430 m flood with no failed segment; Design/AgentReports/SkirmishExpansion/S061/area-measurement-r3.json; geometry still a candidate). Superseded: measured 2026-11-18 (Windows W10 r2 on Mountain Pass host S050 seed 130365 after moving both defense pads off the road band: CorridorA/B/Exit inside playable (1491/2619/1845 m2) and reachable from both bases and stagings, defense.approach.a/b fit (98/98 and 100/100 vehicle-passable cells), three vehicle routes with no failed flood/native segment (223/292/322 m); Design/AgentReports/SkirmishExpansion/S061/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. Citywide Alert uses the S049 layout and the S050 salvage source binding. All three vehicle routes reuse the W8 S055 area-measurement-r2 chains on host S050, from base.player to rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293). MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate 292. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates 31, 1, 37 and 95 in route order. Dump indices are zero-based and both flanks are 6 m wide. The Breakthrough rectangles and defense pads retain their S061 r1 geometry. The rectangles use S049 anchor pairs s050.f1.satellite_dish to service.enemy, s050.f1.fuel_bladder to air.enemy, and spawn.infantry.enemy to staging.enemy, respectively. Defense pad centres reuse the S051 enemy economy and infantry spawn anchors for A and B, respectively. The Breakthrough schema, defense pad sizes, structure footprints and pad slack come from S013. Established approach watchtower and satellite dish positions on both sides come from S050. Helipad anchors and pads on both sides come from S050. War and LargeWar second refinery module positions are unmeasured and left to derived pads. Windows W10 fix 2026-11-19: before measurement, the S050 layout-dump bitmap showed both defense guard-tower spots on the road band z 412-436 (road + not level), which aborts startup with BlockedSpawn as in W9; moved defense.approach.a (1209.5,441) -> (1209.5,446); defense.approach.b (1188.5,416.5) -> (1152,446) onto clear S050 ground north of the road (bitmap flag 0, no pad overlap). Windows W23 2026-11-19: BreakthroughExit moved from (1170..1211, 363.5..407.5), which covered the enemy barracks, staging and rally, to the east end of the south lane (1252..1290, 440..452) on clear S050 cells, beyond both defense towers; routes now end at route.goal.exit (1271,446) instead of rally.enemy. Measured in r3. Windows W23b 2026-11-19: BreakthroughExit moved inward from the east camera edge to (1068..1096, 440..460), 52 m inside playable bounds (tap point 62 m), so ARIA can tap it clear of the HUD; it is west of the enemy defense line because no clear strip past it is 40 m inside the bounds. route.goal.exit moved to its centre. Measured in r4. Routes end at the goal after their last waypoint west of x 1050 (the eastward legs through the enemy base were dropped).",
   "anchors": {
     "base.player": [
       1002.0,
@@ -176,8 +176,8 @@
       459.5
     ],
     "route.goal.exit": [
-      1271.0,
-      446.0
+      1082.0,
+      450.0
     ]
   },
   "pads": {
@@ -661,7 +661,6 @@
         "basemove.route.1.waypoint.01",
         "basemove.route.1.waypoint.02",
         "basemove.route.1.waypoint.03",
-        "basemove.route.1.waypoint.04",
         "route.goal.exit"
       ],
       "width": 3.0,
@@ -674,8 +673,6 @@
         "base.player",
         "basemove.route.2.waypoint.00",
         "basemove.route.2.waypoint.01",
-        "basemove.route.2.waypoint.02",
-        "basemove.route.2.waypoint.03",
         "route.goal.exit"
       ],
       "width": 6,
@@ -688,8 +685,6 @@
         "base.player",
         "basemove.route.3.waypoint.00",
         "basemove.route.3.waypoint.01",
-        "basemove.route.3.waypoint.02",
-        "basemove.route.3.waypoint.03",
         "route.goal.exit"
       ],
       "width": 6,
@@ -783,12 +778,12 @@
     "BreakthroughExit": {
       "rectangle": [
         [
-          1252.0,
+          1068.0,
           440.0
         ],
         [
-          1290.0,
-          452.0
+          1096.0,
+          460.0
         ]
       ]
     }

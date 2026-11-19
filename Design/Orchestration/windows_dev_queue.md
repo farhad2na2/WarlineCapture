@@ -178,6 +178,18 @@ objective/escort/hold planners), or is it commanded but not logged as `used` (Ar
 each starting group gets a role in the objective (escort/flank/hold/screen). Prove with an EditMode test and non-counted runs of S014/S020/S032 that the
 evaluator passes and the rows still win at the same pacing. Branch `missions/win-w32-aria-starting-coverage`.
 
+## W33 — Mountain Pass enlarged Skirmish-only Citywide crop with full Airports (owner-approved route B2) (2026-11-19)
+status: READY after W31 (owner approved the Airport plan in chat 2026-11-19: "Approve the plan"; decisions_pending.md. It is new map tooling, so confirm with the owner in your session)
+codex effort: xhigh
+Study: `Design/Orchestration/notes/airport-map-feasibility-2026-11-19.md`, Mountain Pass section. Copy `CH05M01CitywideAlertConfigBuilder` into a Skirmish-only builder with a new MapId and folder
+(CropZ ~40, Height ~480, the same ClearZones so the current MP geometry stays). Package it like `CH05M01CitywideAlertContentBuilder.cs:55-80`. Never run the CH05M01 builder in place;
+prove the CH05-M01 protected-source hashes and `GeneratedOperationMaps/CH05M01CitywideAlert/*` are unchanged.
+Then on a new MP host row bound to the derivative:
+1. Run an Airport-only layout dump (`WARLINE_LAYOUT_DUMP_KINDS=airport`); full 210x55 candidates > 0 in each faction half.
+2. Re-measure S050's geometry on it (bitmap match against the current S050 dump).
+3. Report whether the extra depth (z 40-300) now allows a W23c-rule BT exit / CE destination past both corridors (S061/S067).
+Do not move the MP rows yet; report first. Branch `missions/win-w33-mp-enlarged`. Per-task results file.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh

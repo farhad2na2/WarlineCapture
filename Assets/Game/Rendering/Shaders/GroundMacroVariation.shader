@@ -26,6 +26,7 @@ Shader "Game/Environment/GroundMacroVariation"
         _MacroContrastLow("Macro Mask Low", Range(0, 1)) = 0.25
         _MacroContrastHigh("Macro Mask High", Range(0, 1)) = 0.75
         [Header(Desert Landscape Palette)]
+        _WindSandStrength("Additional Dry Sand Coverage", Range(0, 1)) = 0
         _SandPaletteStrength("Landscape Palette Blend", Range(0, 1)) = 0
         _SandDryColor("Sunlit Sand", Color) = (0.88, 0.75, 0.51, 1)
         _SandWornColor("Worn Earth", Color) = (0.69, 0.57, 0.39, 1)
@@ -151,6 +152,7 @@ Shader "Game/Environment/GroundMacroVariation"
                 half4 _MacroTintA;
                 half4 _MacroTintB;
                 half _SandPaletteStrength;
+                half _WindSandStrength;
                 half4 _SandDryColor;
                 half4 _SandWornColor;
                 half4 _SandScrubColor;
@@ -238,6 +240,7 @@ Shader "Game/Environment/GroundMacroVariation"
                      + ValueNoise(p * 4.71 + 9.1) * 0.15;
             }
             #include "SkirmishDistrictSurfaces.hlsl"
+            #include "DesertSurfaceDetail.hlsl"
             // ------------------------------------------------------------------
 
             // Computes the world-projected variation multiplier and perturbs the
@@ -367,6 +370,9 @@ Shader "Game/Environment/GroundMacroVariation"
                 albedo = lerp(albedo, sand, _SandPaletteStrength);
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
+                half dryCoverage = max(_WindSandStrength, _SandPaletteStrength);
+                albedo = DesertSurfaceColor(landscape, albedo, dryCoverage * (1 - saturate(_GroundVariationDisabled))
+                    * smoothstep(.78, .96, input.normalWS.y));
                 albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);
                 ApplyDistrictSurface(input.positionWS, albedo, normalWS);
                 if(_ActivityStrength>.001)

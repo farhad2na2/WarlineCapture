@@ -1809,7 +1809,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s074
   operationMapId: opmap.skirmish.industrial_basin
   contentVersion: 1
-  contentHash: authored.s074.f5f8b29b0bbde219
+  contentHash: authored.s074.c8165cabc573dff1
   worldWidthMetres: 258.12122
   worldDepthMetres: 288.9673
   originX: -619.66583
@@ -1860,10 +1860,10 @@ MonoBehaviour:
     WorldZ: 982.92584
   - AnchorId: anchor.skirmish.s074.rally_player
     RoleId: rally.player
-    NormalizedU: 0.23876263
-    NormalizedV: 0.33621147
-    WorldX: -558.03613
-    WorldZ: 842.44995
+    NormalizedU: 0.23054591
+    NormalizedV: 0.3574744
+    WorldX: -560.15704
+    WorldZ: 848.59424
   - AnchorId: anchor.skirmish.s074.service_enemy
     RoleId: service.enemy
     NormalizedU: 0.74069613
@@ -1884,10 +1884,10 @@ MonoBehaviour:
     WorldZ: 962.46576
   - AnchorId: anchor.skirmish.s074.spawn_infantry_player
     RoleId: spawn.infantry.player
-    NormalizedU: 0.37264374
-    NormalizedV: 0.36341068
-    WorldX: -523.4786
-    WorldZ: 850.30963
+    NormalizedU: 0.2740452
+    NormalizedV: 0.3134377
+    WorldX: -548.92896
+    WorldZ: 835.8691
   - AnchorId: anchor.skirmish.s074.spawn_vehicle_enemy
     RoleId: spawn.vehicle.enemy
     NormalizedU: 0.8530693
@@ -1896,10 +1896,10 @@ MonoBehaviour:
     WorldZ: 942.7543
   - AnchorId: anchor.skirmish.s074.spawn_vehicle_player
     RoleId: spawn.vehicle.player
-    NormalizedU: 0.3006282
-    NormalizedV: 0.33275762
-    WorldX: -542.0673
-    WorldZ: 841.4519
+    NormalizedU: 0.33591098
+    NormalizedV: 0.30998364
+    WorldX: -532.9601
+    WorldZ: 834.871
   - AnchorId: anchor.skirmish.s074.staging_enemy
     RoleId: staging.enemy
     NormalizedU: 0.87409395
@@ -2119,8 +2119,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.rally_player
     RoleId: rally.player
     Kind: 5
-    CenterX: -558.03613
-    CenterZ: 842.44995
+    CenterX: -560.15704
+    CenterZ: 848.59424
     WidthMetres: 10
     DepthMetres: 8
     FactionId: 1
@@ -2155,8 +2155,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_infantry_player
     RoleId: spawn.infantry.player
     Kind: 3
-    CenterX: -523.4786
-    CenterZ: 850.30963
+    CenterX: -548.92896
+    CenterZ: 835.8691
     WidthMetres: 12
     DepthMetres: 10
     FactionId: 1
@@ -2173,8 +2173,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_vehicle_player
     RoleId: spawn.vehicle.player
     Kind: 4
-    CenterX: -542.0673
-    CenterZ: 841.4519
+    CenterX: -532.9601
+    CenterZ: 834.871
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 1

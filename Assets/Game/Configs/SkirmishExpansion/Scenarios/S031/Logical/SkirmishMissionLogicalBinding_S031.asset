@@ -1,50 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7031011099269866278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
-  m_Name: SkirmishMissionViewProfile_S031
-  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
-  OpeningFocusPolicy: 0
-  OpeningFocusStableActorId: 
-  ActiveOperationMapId: 
-  ActiveMapContentHash: 
-  ActiveMapSourceIdentityHash: 
-  UseSeparateAircraftYaw: 0
-  AircraftYaw: 0
-  AuthoredNonBaseAssault: 1
-  AuthoredGenericBaseAssault: 0
-  ObjectiveKind: 2
-  SchemaVersion: 1
-  ContentVersion: 1
-  DefinitionVersion: 2
-  CatalogId: S031
-  DefinitionId: skirmish.s031
-  CampaignSourceContentHash: 400075d3e32a2ce1964b386152ebd05721757b008b622ef2904d82af8a25b286
-  LayoutContentHash: authored.s031.ce87364a464e86a6
-  MinHeight: 6.68918
-  MaxHeight: 14.68918
-  NormalHeight: 12.68918
-  BuildHeight: 14.68918
-  Pitch: 65
-  Yaw: 35
-  NormalFieldOfView: 46
-  BuildFieldOfView: 50
-  GroundReferenceY: -5.31082
-  MaximumGroundCenterSlantDistance: 32
-  InfantryMinimumViewportHeight: 0.03
-  PlaneMaximumViewportDimension: 0.45
-  AircraftPitch: 50
-  AircraftFieldOfView: 60
-  AircraftMinimumDistance: 1
-  AircraftMaximumDistance: 300
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,10 +29,10 @@ MonoBehaviour:
   - Size: 1
     Difficulty: 1
     Areas:
-      rid: 564157642831560704
+      rid: 564157668271063112
     ReviewedAreaLogicalFingerprint: ecca9c482c85cdf7b3de8abab6a037d7de245f5dd222fbd617bf69986e3de92c
     ReviewedGeometryFingerprint: c5e80ff7cda3c5eb73c2f12b9b20ec5f184ceb9f14e26017842c547ce89a0deb
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -248,10 +203,10 @@ MonoBehaviour:
   - Size: 1
     Difficulty: 2
     Areas:
-      rid: 564157642831560705
+      rid: 564157668271063113
     ReviewedAreaLogicalFingerprint: c435311b4ddffee9d106d5dfac5ce5336cb349be43b7ec18748bcf1edfeac8d3
     ReviewedGeometryFingerprint: d7e7c6b0f707dc30cf8cccdb8f0b105351257387671defd3264f35d7107eadb7
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -422,10 +377,10 @@ MonoBehaviour:
   - Size: 1
     Difficulty: 3
     Areas:
-      rid: 564157642831560706
+      rid: 564157668271063114
     ReviewedAreaLogicalFingerprint: de3cc96488696eb9a2a4fa148d67da204fabd8e19b4a4d3b1e57067b0f22dc04
     ReviewedGeometryFingerprint: 118e22c4ad978fd71f67942895e2efc8a3037b817c10aec10e52950877a78c66
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -596,10 +551,10 @@ MonoBehaviour:
   - Size: 1
     Difficulty: 4
     Areas:
-      rid: 564157642831560707
+      rid: 564157668271063115
     ReviewedAreaLogicalFingerprint: 3a2aa385d4b8bf27be70fa2480400b662996d7a327ba520ec8de57b25bf0d25e
     ReviewedGeometryFingerprint: 1e59f8f403cc78ffb124bad43d5c8f6da1e87dd8245b43c52fadd5b950262a24
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -770,10 +725,10 @@ MonoBehaviour:
   - Size: 2
     Difficulty: 1
     Areas:
-      rid: 564157642831560708
+      rid: 564157668271063116
     ReviewedAreaLogicalFingerprint: 0c7c02b185de9e6548f838a6564582d8ede3e5deb653874d67858e0a9df60c20
     ReviewedGeometryFingerprint: 8c53fb9d9c0ca160841b3a994ac1c9fb4c12316d7aefe3f60ed786e627e899fe
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -944,10 +899,10 @@ MonoBehaviour:
   - Size: 2
     Difficulty: 2
     Areas:
-      rid: 564157642831560709
+      rid: 564157668271063117
     ReviewedAreaLogicalFingerprint: 3e3d61d35e56d57062a3827a275f513b90d317dd9750f56e7b20e347a948a26a
     ReviewedGeometryFingerprint: 980f87993d88aaf25bda064059995d0625210d5ef67ee673bb7ce7eb743233b6
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1118,10 +1073,10 @@ MonoBehaviour:
   - Size: 2
     Difficulty: 3
     Areas:
-      rid: 564157642831560710
+      rid: 564157668271063118
     ReviewedAreaLogicalFingerprint: 165b08884c323b5b919772301a8b21ce3e50d5a7a7d98038c1c972fc4dd0a633
     ReviewedGeometryFingerprint: fcdb6124c5101f5f52e42610710044c35503e596c0305d1ca44944d09e5c3af2
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1292,10 +1247,10 @@ MonoBehaviour:
   - Size: 2
     Difficulty: 4
     Areas:
-      rid: 564157642831560711
+      rid: 564157668271063119
     ReviewedAreaLogicalFingerprint: 724e9a14d79df9f1a7c3b4a0488dd34afa142ae0f87c5c44e4bfbc87e44ab99a
     ReviewedGeometryFingerprint: 4f7d28700209bbbb265db39ee68993819c36ef3ca836fe35c6faa1ea08ed1cb1
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1466,10 +1421,10 @@ MonoBehaviour:
   - Size: 3
     Difficulty: 1
     Areas:
-      rid: 564157642831560712
+      rid: 564157668271063120
     ReviewedAreaLogicalFingerprint: dcffb65ccdca78d29d1aed71c614ac44957bbb9a9040a1e73e4fc50565bb3a9b
     ReviewedGeometryFingerprint: cedc94418da2710db5b9104a41a8511290e2ea3977b0fcfeca2968ac5057b6a0
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1640,10 +1595,10 @@ MonoBehaviour:
   - Size: 3
     Difficulty: 2
     Areas:
-      rid: 564157642831560713
+      rid: 564157668271063121
     ReviewedAreaLogicalFingerprint: 23ba8a83289dd56cc36a191708c9333b13e44405ae476a37b7281cba6bb67ed6
     ReviewedGeometryFingerprint: ea56d8dc4c9e850d469e8b731a5671e6efb00e949841a437d71d06a94c84140b
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1814,10 +1769,10 @@ MonoBehaviour:
   - Size: 3
     Difficulty: 3
     Areas:
-      rid: 564157642831560714
+      rid: 564157668271063122
     ReviewedAreaLogicalFingerprint: b0eac1c1150ea9676bdd6d1a0f64b48c3d8a3403661afccb477a6a1588059537
     ReviewedGeometryFingerprint: c59ad9eb1f6650a8cf7b6aabf5af9ab3863c56c4f4f696cebe8aab9f3836d179
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1988,10 +1943,10 @@ MonoBehaviour:
   - Size: 3
     Difficulty: 4
     Areas:
-      rid: 564157642831560715
+      rid: 564157668271063123
     ReviewedAreaLogicalFingerprint: 73979a9be6ec08405076aeb656e26706719fd8461ba0d1ae889dd311c460f64f
     ReviewedGeometryFingerprint: fff2738be3c4b8b2c690ef50e087eaeed793774ef91ec9c32dd85ff9e6617741
-    View: {fileID: -7031011099269866278}
+    View: {fileID: 3917269483606485365}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2162,7 +2117,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 564157642831560704
+    - rid: 564157668271063112
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2211,7 +2166,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: c5e80ff7cda3c5eb73c2f12b9b20ec5f184ceb9f14e26017842c547ce89a0deb
-    - rid: 564157642831560705
+    - rid: 564157668271063113
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2260,7 +2215,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: d7e7c6b0f707dc30cf8cccdb8f0b105351257387671defd3264f35d7107eadb7
-    - rid: 564157642831560706
+    - rid: 564157668271063114
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2309,7 +2264,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: 118e22c4ad978fd71f67942895e2efc8a3037b817c10aec10e52950877a78c66
-    - rid: 564157642831560707
+    - rid: 564157668271063115
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2358,7 +2313,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: 1e59f8f403cc78ffb124bad43d5c8f6da1e87dd8245b43c52fadd5b950262a24
-    - rid: 564157642831560708
+    - rid: 564157668271063116
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2407,7 +2362,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: 8c53fb9d9c0ca160841b3a994ac1c9fb4c12316d7aefe3f60ed786e627e899fe
-    - rid: 564157642831560709
+    - rid: 564157668271063117
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2456,7 +2411,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: 980f87993d88aaf25bda064059995d0625210d5ef67ee673bb7ce7eb743233b6
-    - rid: 564157642831560710
+    - rid: 564157668271063118
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2505,7 +2460,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: fcdb6124c5101f5f52e42610710044c35503e596c0305d1ca44944d09e5c3af2
-    - rid: 564157642831560711
+    - rid: 564157668271063119
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2554,7 +2509,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: 4f7d28700209bbbb265db39ee68993819c36ef3ca836fe35c6faa1ea08ed1cb1
-    - rid: 564157642831560712
+    - rid: 564157668271063120
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2603,7 +2558,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: cedc94418da2710db5b9104a41a8511290e2ea3977b0fcfeca2968ac5057b6a0
-    - rid: 564157642831560713
+    - rid: 564157668271063121
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2652,7 +2607,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: ea56d8dc4c9e850d469e8b731a5671e6efb00e949841a437d71d06a94c84140b
-    - rid: 564157642831560714
+    - rid: 564157668271063122
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2701,7 +2656,7 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: c59ad9eb1f6650a8cf7b6aabf5af9ab3863c56c4f4f696cebe8aab9f3836d179
-    - rid: 564157642831560715
+    - rid: 564157668271063123
       type: {class: SkirmishObjectiveAreaConfig, ns: Game.Configs, asm: Game.Configs}
       data:
         SchemaVersion: 1
@@ -2750,3 +2705,48 @@ MonoBehaviour:
           ArtifactId: Design/AgentReports/SkirmishExpansion/S031/area-measurement-r2.json
           ArtifactSha256: 8b02537df2ba59a1d7b641f6f8900f9763868d20c23e41be238ee0e3e5eabd19
           GeometryFingerprint: fff2738be3c4b8b2c690ef50e087eaeed793774ef91ec9c32dd85ff9e6617741
+--- !u!114 &3917269483606485365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
+  m_Name: SkirmishMissionViewProfile_S031
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
+  OpeningFocusPolicy: 0
+  OpeningFocusStableActorId: 
+  ActiveOperationMapId: 
+  ActiveMapContentHash: 
+  ActiveMapSourceIdentityHash: 
+  UseSeparateAircraftYaw: 0
+  AircraftYaw: 0
+  AuthoredNonBaseAssault: 1
+  AuthoredGenericBaseAssault: 0
+  ObjectiveKind: 2
+  SchemaVersion: 1
+  ContentVersion: 1
+  DefinitionVersion: 2
+  CatalogId: S031
+  DefinitionId: skirmish.s031
+  CampaignSourceContentHash: 400075d3e32a2ce1964b386152ebd05721757b008b622ef2904d82af8a25b286
+  LayoutContentHash: authored.s031.ce87364a464e86a6
+  MinHeight: 6.68918
+  MaxHeight: 14.68918
+  NormalHeight: 12.68918
+  BuildHeight: 14.68918
+  Pitch: 65
+  Yaw: 35
+  NormalFieldOfView: 46
+  BuildFieldOfView: 50
+  GroundReferenceY: -5.31082
+  MaximumGroundCenterSlantDistance: 32
+  InfantryMinimumViewportHeight: 0.03
+  PlaneMaximumViewportDimension: 0.45
+  AircraftPitch: 50
+  AircraftFieldOfView: 60
+  AircraftMinimumDistance: 1
+  AircraftMaximumDistance: 300

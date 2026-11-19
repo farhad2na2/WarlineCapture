@@ -34,14 +34,16 @@ namespace Game.Runtime
             if(state.SizeId!=SkirmishSizeId.Standard&&state.SizeId!=SkirmishSizeId.War&&state.SizeId!=SkirmishSizeId.LargeWar)
             {error="Canonical objective size missing.";return false;}
             var record=new SkirmishNativeObjectiveRecord{Collector=collector,Areas=areas,MissionViewProfileFingerprint=missionViewProfileFingerprint};
+            // W31b: the clock uses the resolved per-mission deadline, the same value the setup compiler resolved.
+            int deadline=em.HasComponent<SkirmishResolvedSetupRecord>(session)?em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup?.DeadlineSeconds??0:0;
             string Id(SkirmishObjectiveAreaRole role)
             {if(!areas.TryRead(role,out var area))throw new System.ArgumentException("Required typed objective area missing.");return area.StableAreaId;}
             if(state.ObjectiveKind==SkirmishObjectiveKind.FrontlineControl)
-                record.Frontline=SkirmishFrontlineReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.FrontlineA),Id(SkirmishObjectiveAreaRole.FrontlineB),Id(SkirmishObjectiveAreaRole.FrontlineC));
+                record.Frontline=SkirmishFrontlineReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.FrontlineA),Id(SkirmishObjectiveAreaRole.FrontlineB),Id(SkirmishObjectiveAreaRole.FrontlineC),deadline);
             else if(state.ObjectiveKind==SkirmishObjectiveKind.Breakthrough)
-                record.Breakthrough=SkirmishBreakthroughReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.BreakthroughCorridorA),Id(SkirmishObjectiveAreaRole.BreakthroughCorridorB),collector.OriginalStableIds());
+                record.Breakthrough=SkirmishBreakthroughReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.BreakthroughCorridorA),Id(SkirmishObjectiveAreaRole.BreakthroughCorridorB),collector.OriginalStableIds(),deadline);
             else if(state.ObjectiveKind==SkirmishObjectiveKind.ConvoyEscort)
-                record.Convoy=SkirmishConvoyReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.ConvoyDestination),collector.OriginalStableIds());
+                record.Convoy=SkirmishConvoyReducer.Create(state.SizeId,Id(SkirmishObjectiveAreaRole.ConvoyDestination),collector.OriginalStableIds(),deadline);
             else return false;
             em.AddComponentObject(session,record);error=null;return true;
         }

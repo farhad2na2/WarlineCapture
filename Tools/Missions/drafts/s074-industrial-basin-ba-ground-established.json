@@ -1,7 +1,7 @@
 {
   "catalog_id": "S074",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "S074 Industrial Basin BA ground established (Windows W29 2026-11-19). Measured from the S074 stride-8 layout dump (win-dev-unity w29-dump-S074-stride8; host = S074 provisional bootstrap, program lead option 1). Every building pad centre is a native-validated unrotated dump candidate centre (codex notes w29_pick_layout.py; the starting-grant placer does not rotate, 6 m inside the playable bounds); instance pads follow the compiler's per-kind order (Supply: oil pump, refinery, fuel bladder, fabrication depot, refinery module; Service: watchtower, approach watchtower, satellite dish). Spawn and rally pads sit on passable level blocks on the nearest level passable blocks to each base inside its own half (player z>=545, enemy z<530) (enemy spawn pads on the level patch east of x 895); route waypoints are passable blocks with straight passable segments to both stagings. Player base on the level north cluster; enemy base in the south on not-level ground, which the native validator accepts; the level patch east of x 895 is kept for the enemy spawn and rally pads. S073's deployment anchors (800,600 / 930,470) only seeded the search. No legal Airport site on this source (Airport-only dump: 62 tested, 0 valid).",
+  "notes": "S074 Industrial Basin BA ground established (Windows W29 2026-11-19). Measured from the S074 stride-8 layout dump (win-dev-unity w29-dump-S074-stride8; host = S074 provisional bootstrap, program lead option 1). Every building pad centre is a native-validated unrotated dump candidate centre (codex notes w29_pick_layout.py; the starting-grant placer does not rotate, 6 m inside the playable bounds); instance pads follow the compiler's per-kind order (Supply: oil pump, refinery, fuel bladder, fabrication depot, refinery module; Service: watchtower, approach watchtower, satellite dish). Spawn and rally pads sit on passable level blocks on the nearest level passable blocks to each base inside its own half (player z>=545, enemy z<530) (enemy spawn pads on the level patch east of x 895); route waypoints are passable blocks with straight passable segments to both stagings. Player base on the level north cluster; enemy base in the south on not-level ground, which the native validator accepts; the level patch east of x 895 is kept for the enemy spawn and rally pads. S073's deployment anchors (800,600 / 930,470) only seeded the search. No legal Airport site on this source (Airport-only dump: 62 tested, 0 valid). Player spawn and rally pads moved onto the S073 player deployment anchor (800,600), where the legacy S073 starts its units: at (816,575.5) the second player rifleman could not spawn (w29-s074-c, BlockedSpawn) although the bitmap there is clear.",
   "anchors": {
     "base.player": [
       834.0,
@@ -48,16 +48,16 @@
       545.0
     ],
     "spawn.vehicle.player": [
-      806.0,
-      593.5
+      800.0,
+      584.0
     ],
     "spawn.infantry.player": [
-      816.0,
-      575.5
+      800.0,
+      600.0
     ],
     "rally.player": [
-      806.0,
-      609.5
+      812.0,
+      612.0
     ],
     "base.enemy": [
       842.0,
@@ -142,8 +142,8 @@
     },
     "spawn.vehicle.player": {
       "at": [
-        806.0,
-        593.5
+        800.0,
+        584.0
       ],
       "anchor": "spawn.vehicle.player",
       "size": [
@@ -153,8 +153,8 @@
     },
     "spawn.infantry.player": {
       "at": [
-        816.0,
-        575.5
+        800.0,
+        600.0
       ],
       "anchor": "spawn.infantry.player",
       "size": [
@@ -164,8 +164,8 @@
     },
     "rally.player": {
       "at": [
-        806.0,
-        609.5
+        812.0,
+        612.0
       ],
       "anchor": "rally.player",
       "size": [

@@ -55,6 +55,11 @@ Shader "Game/Environment/GroundMacroVariation"
         _RoadTerminalStrength("Road End Finish", Range(0,1)) = 0
 
         [Header(Dirt To Asphalt Transition)]
+        [NoScaleOffset] _StreetEdgeMap("Road shoulder field", 2D) = "black" {}
+        _StreetEdgeRect("Road shoulder world footprint", Vector) = (0,0,1,1)
+        _StreetEdgeLevels("Road elevation range and texel size", Vector) = (0,1,1,0)
+        [HideInInspector] _StreetLitSource("Original URP Lit surface", Float) = 0
+        _StreetEdgeMode("Road shoulder receiver (0 off, 1 soil, 2 asphalt, 3 painted verge)", Float) = 0
         _RoadBlendMap("Transition Mask (R signed distance, G join zone, B tyre tracks, A damp bank)", 2D) = "black" {}
         _RoadBlendRect("Transition World Rect", Vector) = (0,0,1,1)
         _RoadBlendStrength("Transition Strength", Range(0,1)) = 0
@@ -125,6 +130,8 @@ Shader "Game/Environment/GroundMacroVariation"
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "GroundMacroProperties.hlsl"
+            #include "RoadShoulderMask.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             TEXTURE2D(_BaseMap);
@@ -139,55 +146,7 @@ Shader "Game/Environment/GroundMacroVariation"
 
             TEXTURE2D(_ActivityMap); SAMPLER(sampler_ActivityMap);
             TEXTURE2D(_RoadBlendMap); SAMPLER(sampler_RoadBlendMap);
-            CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
-                float4 _DistrictSurfaceRect;
-                half4 _DistrictSurfaceConstant;
-                half _DistrictSurfaceStrength;
-                half _DetailAntiRepeat;
-                half4 _BaseColor;
-                half _BaseColorInfluence;
-                half _Smoothness;
-                half4 _SpecColor;
-                half4 _MacroTintA;
-                half4 _MacroTintB;
-                half _SandPaletteStrength;
-                half _WindSandStrength;
-                half4 _SandDryColor;
-                half4 _SandWornColor;
-                half4 _SandScrubColor;
-                half _SandScrubCoverage;
-                half _MacroStrength;
-                float _MacroScale;
-                half _MacroContrastLow;
-                half _MacroContrastHigh;
-                half _DetailStrength;
-                float _DetailScale;
-                float _DetailFadeStart;
-                float _DetailFadeEnd;
-                float _GroundDetailTiling;
-                half _GroundDetailStrength;
-                half _GroundDetailNormalStrength;
-                half _GreenPatchThreshold;
-                half4 _DirtShoulderColorScale;
-                half _DirtShoulderTintStrength;
-                half _DirtShoulderWarmthThreshold;
-                float4 _RoadTerminalA, _RoadTerminalB;
-                half4 _RoadTerminalEarth;
-                half _RoadTerminalStrength;
-                float4 _RunwayEdgeRect;
-                half4 _RunwayEdgeColor;
-                half _RunwayEdgeStrength;
-                float4 _CivicSurfaceRect;
-                half _CivicSurfaceStrength;
-                float4 _ActivityRect;
-                half _ActivityStrength;
-                float4 _RoadBlendRect;
-                half _RoadBlendStrength;
-                half _RoadBlendRole;
-                half4 _RoadBlendSand;
-                half4 _RoadBlendAsphalt;
-            CBUFFER_END
+
 
             // Global runtime toggle (0 = enabled, 1 = disabled). Globals default
             // to 0, so the effect is on in edit mode without any bootstrap code.
@@ -241,6 +200,7 @@ Shader "Game/Environment/GroundMacroVariation"
             }
             #include "SkirmishDistrictSurfaces.hlsl"
             #include "DesertSurfaceDetail.hlsl"
+            #include "RoadShoulderColor.hlsl"
             // ------------------------------------------------------------------
 
             // Computes the world-projected variation multiplier and perturbs the
@@ -482,6 +442,12 @@ Shader "Game/Environment/GroundMacroVariation"
                     stone=lerp(stone,half3(.32,.34,.33),border*.75);
                     albedo=lerp(albedo,stone,weight);
                 }
+                if (_StreetLitSource > .5)
+                {
+                    albedo = atlas.rgb * _BaseColor.rgb;
+                    normalWS = NormalizeNormalPerPixel(input.normalWS);
+                }
+                ApplyStreetShoulder(input.positionWS, input.normalWS.y, albedo);
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;
                 inputData.normalWS = normalWS;
@@ -500,7 +466,11 @@ Shader "Game/Environment/GroundMacroVariation"
                 surfaceData.normalTS = half3(0, 0, 1);
                 surfaceData.occlusion = 1;
 
-                half4 color = UniversalFragmentBlinnPhong(inputData, surfaceData);
+                half4 color;
+                if (_StreetLitSource > .5)
+                    color = UniversalFragmentPBR(inputData, surfaceData);
+                else
+                    color = UniversalFragmentBlinnPhong(inputData, surfaceData);
                 color.rgb = MixFog(color.rgb, inputData.fogCoord);
                 color.a = 1;
                 return color;
@@ -527,6 +497,8 @@ Shader "Game/Environment/GroundMacroVariation"
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "GroundMacroProperties.hlsl"
+            #include "RoadShoulderMask.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 
             float3 _LightDirection;
@@ -542,6 +514,7 @@ Shader "Game/Environment/GroundMacroVariation"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD1;
             };
 
             Varyings ShadowVertex(Attributes input)
@@ -550,6 +523,7 @@ Shader "Game/Environment/GroundMacroVariation"
                 UNITY_SETUP_INSTANCE_ID(input);
 
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.positionWS = positionWS;
                 float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
 
             #if defined(_CASTING_PUNCTUAL_LIGHT_SHADOW)
@@ -570,6 +544,8 @@ Shader "Game/Environment/GroundMacroVariation"
 
             half4 ShadowFragment(Varyings input) : SV_Target
             {
+                half4 field;
+                if (_StreetEdgeMode > 1.5 && StreetEdgeSample(input.positionWS, field)) RevealStreetSidewalk(field, input.positionWS.xz);
                 return 0;
             }
             ENDHLSL
@@ -592,6 +568,8 @@ Shader "Game/Environment/GroundMacroVariation"
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "GroundMacroProperties.hlsl"
+            #include "RoadShoulderMask.hlsl"
 
             struct Attributes
             {
@@ -602,18 +580,22 @@ Shader "Game/Environment/GroundMacroVariation"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD1;
             };
 
             Varyings DepthOnlyVertex(Attributes input)
             {
                 Varyings output;
                 UNITY_SETUP_INSTANCE_ID(input);
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.positionCS = TransformWorldToHClip(output.positionWS);
                 return output;
             }
 
             half DepthOnlyFragment(Varyings input) : SV_Target
             {
+                half4 field;
+                if (_StreetEdgeMode > 1.5 && StreetEdgeSample(input.positionWS, field)) RevealStreetSidewalk(field, input.positionWS.xz);
                 return input.positionCS.z;
             }
             ENDHLSL
@@ -635,6 +617,8 @@ Shader "Game/Environment/GroundMacroVariation"
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "GroundMacroProperties.hlsl"
+            #include "RoadShoulderMask.hlsl"
 
             struct Attributes
             {
@@ -646,6 +630,7 @@ Shader "Game/Environment/GroundMacroVariation"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD1;
                 float3 normalWS : TEXCOORD0;
             };
 
@@ -653,13 +638,16 @@ Shader "Game/Environment/GroundMacroVariation"
             {
                 Varyings output;
                 UNITY_SETUP_INSTANCE_ID(input);
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.positionCS = TransformWorldToHClip(output.positionWS);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 return output;
             }
 
             half4 DepthNormalsFragment(Varyings input) : SV_Target
             {
+                half4 field;
+                if (_StreetEdgeMode > 1.5 && StreetEdgeSample(input.positionWS, field)) RevealStreetSidewalk(field, input.positionWS.xz);
                 return half4(normalize(input.normalWS), 0);
             }
             ENDHLSL

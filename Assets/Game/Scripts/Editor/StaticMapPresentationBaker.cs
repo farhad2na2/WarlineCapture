@@ -792,6 +792,9 @@ namespace Game.Editor
                 return false;
             }
 
+            var roadMaterial = MapVariants.OtherMapSurfacePolish.LegacyRoadMaterial(
+                MapVariants.OtherMapSurfacePolish.LegacyRoadMap(renderer.gameObject.scene.path), renderer, mesh, materials[0]);
+            if (roadMaterial) materials[0] = roadMaterial;
             List<StaticMapPresentationMaterialEntry> materialEntries = new(materials.Length);
             for (int i = 0; i < materials.Length; i++)
             {

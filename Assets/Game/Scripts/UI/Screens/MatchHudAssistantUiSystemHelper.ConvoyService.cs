@@ -37,7 +37,9 @@ namespace Game.UI.Runtime
             {
                 watchSkirmish.PresentConvoyServiceDiagnosis(UiShellRuntimeGateway.Localization.IsRightToLeft?
                     "دسترسی به محل تعمیر یا تعمیر تأیید نشد. کنترل با شماست.":convoyServiceJourney.Failure+" You have control.");
-                view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true,Intent=AriaSkirmishIntent.ServiceOriginalTruck};return;
+                if(oldStage!=ConvoyServiceStage.Handback){publicObjectiveChoice=default;nextPublicObjectiveDecision=0;publicRepairScope=null;}
+                if(SkirmishConvoyServiceJourney.PresentsEscortObjective(stage))view.PublicObjective=escort;
+                return;
             }
             if(stage==ConvoyServiceStage.Repair)
             {

@@ -55,7 +55,10 @@ namespace Game.UI.Shell.Ecs
                 // Preserve the accepted order; never reissue just because dwell/travel takes time.
                 return;
             }
-            if (view.Time >= plan.Deadline || plan.RejectedAttempts >= 3)
+            // W27 cause 1: RejectedAttempts counts re-presses of one target (presses - 1). The input layer
+            // (AriaPlayDecisionSystem) stops ARIA with Blocked 115 before a fourth press of one target, so this
+            // attempt must end after the third press (2 rejected re-presses), where the skill absorbs it as a retry.
+            if (view.Time >= plan.Deadline || plan.RejectedAttempts >= MaxRejectedObjectiveContacts)
             { touch.Phase = AriaPlayPhase.Blocked; touch.GestureRequested = 0; return; }
             if (plan.Stage == 3 && touch.Actions > plan.LastContactActions && touch.TargetId == plan.LastTarget)
             { plan.CommandPending = true; plan.Deadline = view.Time + 8; return; }
@@ -96,6 +99,8 @@ namespace Game.UI.Shell.Ecs
             if (plan.Stage != 3) { plan.OrderRevisionAtIssue = objective.AcceptedOrderRevision; plan.IssueFrame = view.Frame; }
             Publish(target, world, ref plan, touch, ref output); plan.Stage = 3;
         }
+
+        public const int MaxRejectedObjectiveContacts = 2;
 
         static void Publish(in AriaTouchTarget target, bool world, ref AriaObjectiveTouchPlan plan,
             in AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)

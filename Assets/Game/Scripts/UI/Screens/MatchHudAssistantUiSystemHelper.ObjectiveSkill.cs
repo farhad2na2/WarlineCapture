@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
         private readonly HashSet<string> escortDone = new(StringComparer.Ordinal), escortSkipped = new(StringComparer.Ordinal);
         private readonly List<AriaEscortCandidate> escortCandidates = new();
         private string escortOfferKey;
-        private float escortOfferedAt;
+        private float escortOfferedAt, escortAttemptSeconds;
         private uint escortEpoch;
 
         private void ObserveObjectiveSkillFacts(ref AriaSkirmishObservation view, AriaPresentedObjectiveFrame frame)
@@ -75,15 +75,23 @@ namespace Game.UI.Runtime
                 foreach (var shown in frame.Targets) if (shown.GroupId == policy.GroupId && shown.PublicId == goalId) { target = true; break; }
                 escortCandidates.Add(new AriaEscortCandidate { GroupId = policy.GroupId, Role = row.Role, Domain = row.Domain,
                     CanMove = policy.CanMove, Originals = row.Originals, Target = target, Skipped = escortSkipped.Contains(key),
+                    Chosen = publicObjectiveChoice.Available && publicObjectiveChoice.GroupId == policy.GroupId,
                     Done = escortDone.Contains(key) || policy.AcceptedOrderActive && policy.AcceptedGoalId == goalId });
             }
             int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective));
             if (pick < 0) { escortOfferKey = null; return; }
             var chosen = escortCandidates[pick];
             string offer = chosen.GroupId + "|" + goalId;
-            if (offer != escortOfferKey) { escortOfferKey = offer; escortOfferedAt = frame.SimulationSeconds; }
-            else if (frame.SimulationSeconds - escortOfferedAt > AriaObjectiveEscortPolicy.OfferSeconds)
-            { escortSkipped.Add(offer); escortOfferKey = null; return; } // Bounded: the next vehicle group gets its turn.
+            // W32: the offer expires after OfferSeconds of actual attempt (the offered group selected, as ARIA does to
+            // order it), not elapsed time: an offer ARIA never got to while busy elsewhere stays open.
+            if (offer != escortOfferKey) { escortOfferKey = offer; escortOfferedAt = frame.SimulationSeconds; escortAttemptSeconds = 0; }
+            else
+            {
+                float elapsed = frame.SimulationSeconds - escortOfferedAt; escortOfferedAt = frame.SimulationSeconds;
+                if (elapsed > 0 && frame.ExclusiveSelectedGroup == chosen.GroupId) escortAttemptSeconds += elapsed;
+                if (AriaObjectiveEscortPolicy.OfferExpired(escortAttemptSeconds))
+                { escortSkipped.Add(offer); escortOfferKey = null; return; } // Bounded: the next group gets its turn.
+            }
             AriaPresentedObjectiveTarget target1 = default;
             foreach (var shown in frame.Targets) if (shown.GroupId == chosen.GroupId && shown.PublicId == goalId) { target1 = shown; break; }
             var escort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true,

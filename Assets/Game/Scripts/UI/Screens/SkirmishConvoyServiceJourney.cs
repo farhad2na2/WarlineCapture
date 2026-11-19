@@ -15,6 +15,10 @@ namespace Game.UI.Runtime
         public int Failures,DestinationIndex,HealthAtStart;
         public float BestDistance=float.PositiveInfinity,LastProgress;
         readonly Dictionary<string,int> servicedHealth=new(StringComparer.Ordinal);
+        // W27 cause 3 (S068, CC CE field rows): after a handed-back service the convoy objective stays presented,
+        // so ARIA keeps escorting instead of a blank objective frame stopping it 20 s later. The stage stays
+        // latched, so the failed service is never retried; the player still sees the diagnosis.
+        public static bool PresentsEscortObjective(ConvoyServiceStage stage)=>stage==ConvoyServiceStage.Resume||stage==ConvoyServiceStage.Handback;
         public void Reset(){Stage=ConvoyServiceStage.None;Attempt=OriginalId=ServiceId=null;GroupId=ProgressRevision=LastRejectedRequest=LastRepairRequest=LastRepairFailureRequest=HoldRevisionAtStart=0;Failures=DestinationIndex=HealthAtStart=0;BestDistance=float.PositiveInfinity;LastProgress=0;Failure=null;servicedHealth.Clear();Epoch++;}
         void Retry(float now,string reason)
         {Failures++;Failure=reason;Epoch++;DestinationIndex=Failures%3;BestDistance=float.PositiveInfinity;LastProgress=now;Stage=Failures>=3?ConvoyServiceStage.Handback:ConvoyServiceStage.Travel;}

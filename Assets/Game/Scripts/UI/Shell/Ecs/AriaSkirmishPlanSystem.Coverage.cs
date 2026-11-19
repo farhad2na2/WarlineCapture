@@ -12,6 +12,21 @@ namespace Game.UI.Shell.Ecs
 
         // After a given-up base search (AriaFindBasePolicy.Recover): Attack off through its own control
         // (bounded), otherwise wait; true while recovering, so no search control is pressed again.
+        // Bounded search: turn Attack off, keep the orders already accepted, and let the
+        // other steps act instead of searching with Attack armed indefinitely.
+        static void GiveUpAssaultSearch(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            Game.Simulation.AriaFindBasePolicy.LatchGivenUp(ref plan.ColumnSkipKeyA, ref plan.ColumnSkipKeyB, ref plan.ColumnSkips,
+                view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
+            plan.AssaultIssued = 1; plan.StructureOrdered = 1; plan.FindBaseGiveUps++;
+            ClearFindBase(ref plan);
+            var recovery = new Game.Simulation.AriaFindBaseRecovery();
+            Game.Simulation.AriaFindBasePolicy.BeginRecovery(ref recovery, view.Time);
+            plan.FindBaseRetryAt = recovery.RetryAt; plan.FindBaseDisarms = 0; plan.FindBaseDisarmActions = 0; plan.FindBaseDisarmAt = 0;
+            StepFindBaseRecovery(view, ref plan, ref touch, ref output);
+        }
+
         static bool StepFindBaseRecovery(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {

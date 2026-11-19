@@ -8,7 +8,7 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishConvoyServiceJourneyTests
     {
-        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=23 nativeMissionPending=1");}
+        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=24 nativeMissionPending=1");}
         static UiSkirmishPublicObjectiveModel Model(int health=60,float x=0)
         {
             var node=new SkirmishPublicGoalNode{PublicId="original.truck",Kind=SkirmishPublicGoalNodeKind.OwnDesignatedSubject,Provenance=SkirmishPublicGoalProvenance.OwnRoster,
@@ -30,6 +30,26 @@ namespace Game.Tests.Editor
         static void AtPad(UiSkirmishPublicObjectiveModel model){model.OwnGroups[0].Policy.WorldX=100;model.OwnGroups[0].OwnMemberPositions=new[]{new Vector2(100,100)};model.OwnGroups[0].HoldActive=true;}
         static void BeginRepair(SkirmishConvoyServiceJourney journey,UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected)
         {journey.Tick(model,null,false,false);AtPad(model);Assert.That(journey.Tick(model,selected,false,false),Is.EqualTo(ConvoyServiceStage.Hold));model.Order=new UiSkirmishPublicOrderReadout{Present=true,Accepted=true,GroupId=7,Action=AriaObjectiveAction.Hold,Revision=1};Assert.That(journey.Tick(model,selected,true,false),Is.EqualTo(ConvoyServiceStage.Repair));}
+        // W27 cause 3 (S068, S043/S045/S047): a handed-back service kept ARIA on a blank objective until the 20 s frame
+        // Block. The handback stays latched (no retried service) while the escort objective stays presented.
+        [Test]
+        public void HandbackKeepsTheEscortObjectiveForAria()
+        {
+            var model=Model();var journey=new SkirmishConvoyServiceJourney();
+            journey.Tick(model,null,false,false);model.Service.Available=false;
+            Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Handback));
+            Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Handback),"latched: the failed service is not retried");
+            Assert.That(SkirmishConvoyServiceJourney.PresentsEscortObjective(ConvoyServiceStage.Handback),Is.True);
+            Assert.That(SkirmishConvoyServiceJourney.PresentsEscortObjective(ConvoyServiceStage.Resume),Is.True);
+            foreach(var stage in new[]{ConvoyServiceStage.None,ConvoyServiceStage.Travel,ConvoyServiceStage.Hold,ConvoyServiceStage.Repair,ConvoyServiceStage.EmergencyHold})
+                Assert.That(SkirmishConvoyServiceJourney.PresentsEscortObjective(stage),Is.False,stage.ToString());
+            string root=System.IO.Path.GetFullPath(System.IO.Path.Combine(ThisFile(),"..","..","..",".."));
+            string hud=System.IO.File.ReadAllText(System.IO.Path.Combine(root,"Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs"));
+            Assert.That(hud,Does.Contain("if(SkirmishConvoyServiceJourney.PresentsEscortObjective(stage))view.PublicObjective=escort;"));
+            Assert.That(hud,Does.Not.Contain("view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true,Intent=AriaSkirmishIntent.ServiceOriginalTruck};return;"));
+        }
+        static string ThisFile([System.Runtime.CompilerServices.CallerFilePath] string path="")=>path;
+
         [TestCase(0)][TestCase(1)][TestCase(2)][TestCase(3)][TestCase(4)][TestCase(5)][TestCase(6)]
         [TestCase(7)][TestCase(8)][TestCase(9)][TestCase(10)][TestCase(11)][TestCase(12)][TestCase(13)]
         [TestCase(14)][TestCase(15)][TestCase(16)][TestCase(17)][TestCase(18)][TestCase(19)]

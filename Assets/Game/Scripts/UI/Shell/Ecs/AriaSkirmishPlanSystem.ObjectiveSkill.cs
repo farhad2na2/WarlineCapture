@@ -84,6 +84,13 @@ namespace Game.UI.Shell.Ecs
             if (!pending && ObjectiveCoverageInFlight(plan) && StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
             // Ordinary rifles refill to the type's strength until coverage starts, then only to the floor:
             // FieldBase materials go to the other offered types (gunner/marksman/breacher add infantry too).
+            // W32 (gate 3): one escort turn after each accepted objective order, before support and coverage. Otherwise
+            // FC's Hold re-issues left starting vehicle/infantry groups no idle frame and every offer expired unused.
+            if (!pending && plan.ObjectiveEscortTurn != 0)
+            {
+                plan.ObjectiveEscortTurn = 0;
+                if (StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
+            }
             var supportView = view;
             supportView.ObjectiveSupport.InfantryTarget = Game.Simulation.AriaObjectiveSkillPolicy.RifleTarget(
                 (Game.Simulation.AriaObjectiveType)view.ObjectiveType, plan.CoverageAssaultSeen != 0);
@@ -123,7 +130,7 @@ namespace Game.UI.Shell.Ecs
                     var order = new Game.Simulation.AriaObjectiveOrderState { Failures = plan.ObjectiveFailures, Accepted = plan.ObjectiveAccepted, RetryAt = plan.ObjectiveRetryAt };
                     Game.Simulation.AriaObjectiveSkillPolicy.Accepted(ref order);
                     plan.ObjectiveFailures = order.Failures; plan.ObjectiveAccepted = order.Accepted;
-                    plan.ObjectiveCoverageTurn = 1;
+                    plan.ObjectiveCoverageTurn = 1; plan.ObjectiveEscortTurn = 1;
                     touch.LastProgressAt = view.Time;
                 }
                 plan.Intent = AriaSkirmishIntent.ObserveObjective;
@@ -134,6 +141,8 @@ namespace Game.UI.Shell.Ecs
             plan.ObjectiveFailures = state.Failures; plan.ObjectiveRetryAt = state.RetryAt;
             if (!retry) return;
             touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+            // W27 cause 1: the retry starts a fresh input count; a stale count of 3 would stop the next press (115).
+            touch.Attempts = 0; touch.TargetId = 0;
             plan.ObjectiveTouch = default;
             output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
         }
@@ -169,6 +178,7 @@ namespace Game.UI.Shell.Ecs
                 plan.EscortFailures++; plan.EscortRetryAt = view.Time + Game.Simulation.AriaObjectiveSkillPolicy.OrderRetrySeconds;
                 plan.ObjectiveOwner = 0; plan.EscortTouch = default;
                 touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+                touch.Attempts = 0; touch.TargetId = 0;
                 output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
             }
             return true;
@@ -241,11 +251,19 @@ namespace Game.UI.Shell.Ecs
                         touch.LastObjectiveProgressAt = view.Time; touch.LastProgressAt = view.Time;
                         plan.Intent = AriaSkirmishIntent.Inspect; Target(view.CloseDrawer, false, ref output); return true;
                     }
-                    if (support.RepeatedContacts < 3) return ExecuteSupport(view, ref plan, ref touch, ref output);
+                    // W32: the support deadline also bounds the recruit while its drawer is open (S032: an unaffordable
+                    // AttackAircraft held the drawer for the 60 s popup limit five times).
+                    if (support.RepeatedContacts < 3 && view.Time + plan.ObjectiveClockOffset < support.Deadline)
+                        return ExecuteSupport(view, ref plan, ref touch, ref output);
                 }
             }
             // Nothing of ours is pending in this popup (or it overstayed): close it, cancelling an unconfirmed preview.
-            if (support.Action != AriaObjectiveSupportAction.ReturnAircraft) support.Action = AriaObjectiveSupportAction.None;
+            if (support.Action != AriaObjectiveSupportAction.ReturnAircraft)
+            {
+                // W32: a dropped recruit waits like an expired one, so the same recruit is not chosen again at once.
+                if (support.Action != AriaObjectiveSupportAction.None) support.NextDecisionAt = view.Time + plan.ObjectiveClockOffset + 15;
+                support.Action = AriaObjectiveSupportAction.None;
+            }
             support.Closing = false;
             if (forceClose) { plan.CoverageCurrent = 0; plan.ResearchCurrent = 0; plan.BuildCurrent = 0; plan.PadStage = 0; if (plan.BreacherStage == 1) plan.BreacherStage = 2; if (plan.ObjectiveRocketeerStage == 1) plan.ObjectiveRocketeerStage = 2; }
             plan.Intent = AriaSkirmishIntent.Inspect;

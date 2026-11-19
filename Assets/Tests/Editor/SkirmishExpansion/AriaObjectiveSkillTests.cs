@@ -32,7 +32,10 @@ namespace Game.Tests.Editor
             t.ProgressRenewsInputWatchdogs();
             t.EscortRunsWhenNoObjectiveOrderIsWanted();
             t.FinishedObjectiveHandsBack();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=15");
+            t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
+            t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
+            t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=18");
         }
 
         // ---------- pure policy ----------
@@ -226,6 +229,35 @@ namespace Game.Tests.Editor
             Assert.AreEqual(72, o.TargetId, "an unconfirmed preview is cancelled through its own control");
         }
 
+        // W27 cause 1 (S061 Blocked 115): the Move control was pressed three times without arming move mode; the
+        // planner's own bound came one press too late, so the input layer stopped ARIA instead of the skill retrying.
+        [Test]
+        public void RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+            v.PublicObjective.Intent = AriaSkirmishIntent.OpenObjectiveCorridor; v.PublicObjective.ExclusiveGroupSelected = true;
+            v.PublicObjective.GoalInView = true; v.PublicObjective.MoveMode = false; v.PublicObjective.Move = T(7);
+            int presses = 0;
+            for (int frame = 0; frame < 6 && p.ObjectiveFailures == 0; frame++)
+            {
+                v.Frame++; v.Time += .5f;
+                Step(v, ref p, ref t, out var o);
+                Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase, "frame " + frame);
+                if (o.TargetId != 7) continue;
+                // Mirror of AriaPlayDecisionSystem: a fourth consecutive press of one target is Blocked 115.
+                if (t.TargetId != 7) { t.TargetId = 7; t.Attempts = 0; }
+                Assert.Less(t.Attempts, 3, "the planner must end the attempt before the input layer's 115");
+                t.Attempts++; t.Actions++; presses++;
+            }
+            Assert.AreEqual(3, presses, "three presses of the unresponsive Move control");
+            Assert.AreEqual(1, p.ObjectiveFailures, "absorbed as a retry, not a stop");
+            Assert.AreEqual(0, t.Attempts, "the retry starts a fresh input count");
+            Assert.AreEqual(0, t.TargetId);
+            Assert.AreEqual(2, AriaSkirmishPlanSystem.MaxRejectedObjectiveContacts);
+        }
+
         [Test]
         public void ObjectiveOrderTimeoutIsRetriedNotBlocked()
         {
@@ -278,6 +310,35 @@ namespace Game.Tests.Editor
             v.PublicObjective.SelectGroup = T(5);
             Step(v, ref p, ref t, out o);
             Assert.AreEqual(8, o.TargetId);
+        }
+
+        // W32 (gate 3): FC re-issues Holds every ~15 s, so escorts used to run only on idle frames that never came.
+        [Test]
+        public void EscortGetsATurnAfterAnAcceptedObjectiveOrder()
+        {
+            var p = new AriaSkirmishPlanComponent { ObjectiveAccepted = 1, ObjectiveEscortTurn = 1 };
+            var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Hold;
+            v.PublicObjective.Intent = AriaSkirmishIntent.ControlZone; v.PublicObjective.SelectGroup = T(5);
+            v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                GroupId = 7, NavigationGroupId = 7, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(8, o.TargetId, "the escort's vehicle card, although an objective order is wanted");
+            Assert.AreEqual(2, p.ObjectiveOwner); Assert.AreEqual(0, p.ObjectiveEscortTurn, "one turn per accepted order");
+        }
+
+        // W32 (S032: an unaffordable AttackAircraft recruit held the Build drawer for the 60 s popup limit 5 times).
+        [Test]
+        public void StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen()
+        {
+            var p = new AriaSkirmishPlanComponent { ObjectiveSupport = new AriaObjectiveSupportPlan { Epoch = 1, Action = AriaObjectiveSupportAction.Rifle, Deadline = 50, BaselineInfantry = 12 } };
+            var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Missing(60); v.DrawerOpen = true; v.Recruit = T(91); v.CloseDrawer = T(71); v.Infantry = 12;
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(71, o.TargetId, "past its deadline the recruit closes the drawer instead of pressing again");
+            Assert.AreEqual(AriaObjectiveSupportAction.None, p.ObjectiveSupport.Action);
+            Assert.AreEqual(75f, p.ObjectiveSupport.NextDecisionAt, 1e-3f, "and waits before choosing a recruit again");
         }
 
         [Test]

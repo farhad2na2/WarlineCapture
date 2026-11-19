@@ -155,11 +155,14 @@ namespace Game.Simulation
         public SkirmishRoleKind Role;
         public SkirmishPopulationCategory Domain;
         public bool CanMove, Originals, Done, Skipped, Target;
+        // W32: the group the objective chooser currently orders; an escort never re-tasks it.
+        public bool Chosen;
     }
 
     public static class AriaObjectiveEscortPolicy
     {
         public const float OfferSeconds = 45f;
+        public static bool OfferExpired(float attemptSeconds) => attemptSeconds > OfferSeconds;
 
         // Ground vehicles only. Radar keeps its support order; objective originals (BT riflemen, CE trucks)
         // and automatic logistics are never re-tasked by an escort order.
@@ -167,10 +170,13 @@ namespace Game.Simulation
 
         // CE: ordinary combat infantry also escorts by moving to the destination ahead of the trucks (the chooser
         // no longer orders infantry onto a moving truck, whose receipt can never cover a whole squad's move goals).
+        // W32 (gate 3, every starting role used): on FC/BT/CE combat infantry the objective chooser did not pick, and
+        // the transport helicopter, also take an ordinary Move to the objective goal. The chosen group is never re-tasked.
         public static bool Eligible(in AriaEscortCandidate c, AriaObjectiveType type) =>
-            c.GroupId != 0 && c.CanMove && !c.Originals && c.Role != SkirmishRoleKind.Radar &&
+            c.GroupId != 0 && c.CanMove && !c.Originals && !c.Chosen && c.Role != SkirmishRoleKind.Radar &&
             (c.Domain == SkirmishPopulationCategory.Ground ||
-             type == AriaObjectiveType.ConvoyEscort && c.Domain == SkirmishPopulationCategory.Infantry && CombatInfantryRole(c.Role));
+             type != AriaObjectiveType.None && c.Domain == SkirmishPopulationCategory.Infantry && CombatInfantryRole(c.Role) ||
+             type != AriaObjectiveType.None && c.Role == SkirmishRoleKind.TransportHeli);
 
         public static bool CombatInfantryRole(SkirmishRoleKind role) =>
             role == SkirmishRoleKind.Rifle || role == SkirmishRoleKind.Gunner || role == SkirmishRoleKind.Marksman ||

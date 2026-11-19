@@ -1,0 +1,666 @@
+{
+  "catalog_id": "S065",
+  "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W10 r2 on Mountain Pass host S050 seed 130365 after moving both defense pads off the road band: CorridorA/B/Exit inside playable (1491/2619/1845 m2) and reachable from both bases and stagings, defense.approach.a/b fit (98/98 and 100/100 vehicle-passable cells), three vehicle routes with no failed flood/native segment (223/292/322 m); Design/AgentReports/SkirmishExpansion/S061/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. Citywide Alert uses the S049 layout and the S050 salvage source binding. All three vehicle routes reuse the W8 S055 area-measurement-r2 chains on host S050, from base.player to rally.enemy (S049/S050 anchors, with rally.enemy also S050 dump candidate 293). MainHighway keeps the S049/S050 basemove.route.1 waypoints. FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate 292. FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates 31, 1, 37 and 95 in route order. Dump indices are zero-based and both flanks are 6 m wide. The Breakthrough rectangles and defense pads retain their S061 r1 geometry. The rectangles use S049 anchor pairs s050.f1.satellite_dish to service.enemy, s050.f1.fuel_bladder to air.enemy, and spawn.infantry.enemy to staging.enemy, respectively. Defense pad centres reuse the S051 enemy economy and infantry spawn anchors for A and B, respectively. The Breakthrough schema, defense pad sizes, structure footprints and pad slack come from S013. Airport placement and capacity are unmeasured. The starting roster uses helipads only when established. Windows W10 fix 2026-11-19: before measurement, the S050 layout-dump bitmap showed both defense guard-tower spots on the road band z 412-436 (road + not level), which aborts startup with BlockedSpawn as in W9; moved defense.approach.a (1209.5,441) -> (1209.5,446); defense.approach.b (1188.5,416.5) -> (1152,446) onto clear S050 ground north of the road (bitmap flag 0, no pad overlap).",
+  "anchors": {
+    "base.player": [
+      1002.0,
+      363.5
+    ],
+    "base.enemy": [
+      1218.0,
+      387.5
+    ],
+    "s050.f1.barracks": [
+      1002.0,
+      363.5
+    ],
+    "s050.f1.fabrication_depot": [
+      1093.5,
+      364.0
+    ],
+    "economy.player": [
+      1019.5,
+      334.0
+    ],
+    "s050.f1.refinery": [
+      1072.5,
+      387.5
+    ],
+    "s050.f1.fuel_bladder": [
+      1043.0,
+      337.0
+    ],
+    "staging.player": [
+      1019.0,
+      407.5
+    ],
+    "service.player": [
+      1043.0,
+      407.5
+    ],
+    "s050.f2.barracks": [
+      1218.0,
+      387.5
+    ],
+    "s050.f2.fabrication_depot": [
+      1141.5,
+      388.0
+    ],
+    "economy.enemy": [
+      1187.5,
+      406.0
+    ],
+    "s050.f2.refinery": [
+      1168.5,
+      339.5
+    ],
+    "s050.f2.fuel_bladder": [
+      1115.0,
+      385.0
+    ],
+    "staging.enemy": [
+      1211.0,
+      407.5
+    ],
+    "service.enemy": [
+      1163.0,
+      407.5
+    ],
+    "spawn.infantry.player": [
+      1024.5,
+      363.5
+    ],
+    "spawn.infantry.enemy": [
+      1170.0,
+      363.5
+    ],
+    "spawn.vehicle.player": [
+      1019.5,
+      346.0
+    ],
+    "spawn.vehicle.enemy": [
+      1189.5,
+      340.0
+    ],
+    "rally.player": [
+      1019.5,
+      382.0
+    ],
+    "rally.enemy": [
+      1207.5,
+      363.0
+    ],
+    "basemove.route.1.waypoint.00": [
+      1022.0,
+      362.0
+    ],
+    "basemove.route.1.waypoint.01": [
+      1034.0,
+      350.0
+    ],
+    "basemove.route.1.waypoint.02": [
+      1046.0,
+      350.0
+    ],
+    "basemove.route.1.waypoint.03": [
+      1046.0,
+      354.0
+    ],
+    "basemove.route.1.waypoint.04": [
+      1186.0,
+      354.0
+    ],
+    "basemove.route.2.waypoint.00": [
+      998.0,
+      386.0
+    ],
+    "basemove.route.2.waypoint.01": [
+      1010.0,
+      398.0
+    ],
+    "basemove.route.2.waypoint.02": [
+      1202.0,
+      398.0
+    ],
+    "basemove.route.2.waypoint.03": [
+      1183.5,
+      363.0
+    ],
+    "basemove.route.3.waypoint.00": [
+      996.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.01": [
+      1019.5,
+      322.0
+    ],
+    "basemove.route.3.waypoint.02": [
+      1164.0,
+      317.5
+    ],
+    "basemove.route.3.waypoint.03": [
+      1206.0,
+      339.5
+    ],
+    "defense.approach.a": [
+      1209.5,
+      446.0
+    ],
+    "defense.approach.b": [
+      1152.0,
+      446.0
+    ]
+  },
+  "pads": {
+    "base.player": {
+      "at": [
+        1002.0,
+        363.5
+      ],
+      "anchor": "s050.f1.barracks",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "economy.player": {
+      "at": [
+        1019.5,
+        334.0
+      ],
+      "anchor": "economy.player",
+      "size": [
+        15,
+        4
+      ]
+    },
+    "staging.player": {
+      "at": [
+        1019.0,
+        407.5
+      ],
+      "anchor": "staging.player",
+      "size": [
+        14,
+        7
+      ]
+    },
+    "service.player": {
+      "at": [
+        1043.0,
+        407.5
+      ],
+      "anchor": "service.player",
+      "size": [
+        3,
+        4
+      ]
+    },
+    "base.enemy": {
+      "at": [
+        1218.0,
+        387.5
+      ],
+      "anchor": "s050.f2.barracks",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "economy.enemy": {
+      "at": [
+        1187.5,
+        406.0
+      ],
+      "anchor": "economy.enemy",
+      "size": [
+        15,
+        4
+      ]
+    },
+    "staging.enemy": {
+      "at": [
+        1211.0,
+        407.5
+      ],
+      "anchor": "staging.enemy",
+      "size": [
+        14,
+        7
+      ]
+    },
+    "service.enemy": {
+      "at": [
+        1163.0,
+        407.5
+      ],
+      "anchor": "service.enemy",
+      "size": [
+        3,
+        4
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        1024.5,
+        363.5
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        15,
+        11
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        1170.0,
+        363.5
+      ],
+      "anchor": "spawn.infantry.enemy",
+      "size": [
+        15,
+        11
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        1019.5,
+        346.0
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        15,
+        16
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        1189.5,
+        340.0
+      ],
+      "anchor": "spawn.vehicle.enemy",
+      "size": [
+        15,
+        16
+      ]
+    },
+    "rally.player": {
+      "at": [
+        1019.5,
+        382.0
+      ],
+      "anchor": "rally.player",
+      "size": [
+        1,
+        1
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        1207.5,
+        363.0
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        1,
+        1
+      ]
+    },
+    "defense.approach.a": {
+      "size": [
+        10,
+        10
+      ]
+    },
+    "defense.approach.b": {
+      "size": [
+        10,
+        10
+      ]
+    }
+  },
+  "instance_pads": [
+    {
+      "id": "s050.f1.barracks",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        1002.0,
+        363.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s050.f1.barracks"
+    },
+    {
+      "id": "s049.f1.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        1019.0,
+        407.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "s049.f1.oil_pump",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1019.5,
+        334.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "s050.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1072.5,
+        387.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s050.f1.refinery"
+    },
+    {
+      "id": "s050.f1.fuel_bladder",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1043.0,
+        337.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s050.f1.fuel_bladder"
+    },
+    {
+      "id": "s050.f1.fabrication_depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1093.5,
+        364.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s050.f1.fabrication_depot"
+    },
+    {
+      "id": "s049.f1.watchtower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        1043.0,
+        407.5
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "s050.f2.barracks",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        1218.0,
+        387.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s050.f2.barracks"
+    },
+    {
+      "id": "s049.f2.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        1211.0,
+        407.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "s049.f2.oil_pump",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1187.5,
+        406.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "s050.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1168.5,
+        339.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s050.f2.refinery"
+    },
+    {
+      "id": "s050.f2.fuel_bladder",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1115.0,
+        385.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s050.f2.fuel_bladder"
+    },
+    {
+      "id": "s050.f2.fabrication_depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1141.5,
+        388.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s050.f2.fabrication_depot"
+    },
+    {
+      "id": "s049.f2.watchtower",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1163.0,
+        407.5
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.enemy"
+    }
+  ],
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "base.player",
+        "basemove.route.1.waypoint.00",
+        "basemove.route.1.waypoint.01",
+        "basemove.route.1.waypoint.02",
+        "basemove.route.1.waypoint.03",
+        "basemove.route.1.waypoint.04",
+        "rally.enemy"
+      ],
+      "width": 3.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "base.player",
+        "basemove.route.2.waypoint.00",
+        "basemove.route.2.waypoint.01",
+        "basemove.route.2.waypoint.02",
+        "basemove.route.2.waypoint.03",
+        "rally.enemy"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "base.player",
+        "basemove.route.3.waypoint.00",
+        "basemove.route.3.waypoint.01",
+        "basemove.route.3.waypoint.02",
+        "basemove.route.3.waypoint.03",
+        "rally.enemy"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ],
+  "structure_footprints": {
+    "building.airport": [
+      210.0,
+      55.0
+    ],
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  },
+  "objective_areas": {
+    "BreakthroughCorridorA": {
+      "rectangle": [
+        [
+          1092.0,
+          387.5
+        ],
+        [
+          1163.0,
+          407.5
+        ]
+      ]
+    },
+    "BreakthroughCorridorB": {
+      "rectangle": [
+        [
+          1043.0,
+          337.0
+        ],
+        [
+          1140.0,
+          363.5
+        ]
+      ]
+    },
+    "BreakthroughExit": {
+      "rectangle": [
+        [
+          1170.0,
+          363.5
+        ],
+        [
+          1211.0,
+          407.5
+        ]
+      ]
+    }
+  },
+  "pad_slack_m": 12,
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S061/area-measurement-r2.json"
+  }
+}

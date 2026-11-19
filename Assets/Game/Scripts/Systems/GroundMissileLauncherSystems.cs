@@ -536,17 +536,23 @@ namespace Game.Runtime
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
+            state.RequireForUpdate<GroundMissileProjectileComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            foreach (var (transform, entity) in SystemAPI
-                         .Query<RefRO<LocalTransform>>()
-                         .WithAll<GroundMissileFlyingRocketVisualComponent>()
+            // The simulated projectile exists even on launchers without a detachable rack mesh.
+            foreach (var (flight, transform, entity) in SystemAPI
+                         .Query<RefRO<GroundMissileProjectileComponent>, RefRO<LocalTransform>>()
                          .WithEntityAccess())
             {
-                float3 direction = math.rotate(transform.ValueRO.Rotation, new float3(0f, 0f, 1f));
+                var missile = flight.ValueRO;
+                if (!SkirmishFogConsumerUtility.PlayerImpactVisible(state.EntityManager, missile.Source, Entity.Null,
+                    transform.ValueRO.Position, 1)) continue;
+                float t = math.saturate(missile.ElapsedSeconds / math.max(0.01f, missile.DurationSeconds));
+                float3 tangent = missile.TargetPosition - missile.StartPosition;
+                tangent.y += math.PI * math.cos(t * math.PI) * missile.ArcHeight;
+                float3 direction = math.normalizesafe(tangent, new float3(0f, 0f, 1f));
                 MissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
             }
         }

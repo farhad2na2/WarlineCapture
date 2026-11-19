@@ -10,17 +10,37 @@ namespace Game.Runtime
     public partial class UnitAttackVfxRequestSystem : SystemBase
     {
         private const int MaxMuzzleFlashOriginCount = 4;
+        private struct PendingImpact
+        {
+            public double At;
+            public UnitAttackVfxRequest Request;
+        }
+        private readonly System.Collections.Generic.List<PendingImpact> _pendingImpacts = new(64);
         private EntityQuery _requestQuery;
 
         protected override void OnCreate()
         {
             _requestQuery = GetEntityQuery(ComponentType.ReadOnly<UnitAttackVfxRequest>());
-            RequireForUpdate(_requestQuery);
+
         }
 
         protected override void OnUpdate()
         {
             EntityManager em = EntityManager;
+            double now = SystemAPI.Time.ElapsedTime;
+            for (int i = _pendingImpacts.Count - 1; i >= 0; i--)
+            {
+                PendingImpact pending = _pendingImpacts[i];
+                if (pending.At > now) continue;
+                UnitAttackVfxRequest impact = pending.Request;
+                if (SkirmishFogConsumerUtility.PlayerImpactVisible(em, impact.Source, impact.Target,
+                    impact.PlaybackPosition, 1))
+                    PlayImpact(impact);
+                int last = _pendingImpacts.Count - 1;
+                _pendingImpacts[i] = _pendingImpacts[last];
+                _pendingImpacts.RemoveAt(last);
+            }
+            if (_requestQuery.IsEmptyIgnoreFilter) return;
             foreach (RefRO<UnitAttackVfxRequest> request in SystemAPI.Query<RefRO<UnitAttackVfxRequest>>())
             {
                 UnitAttackVfxRequest value = request.ValueRO;
@@ -42,7 +62,12 @@ namespace Game.Runtime
                         PlayMuzzleFlash(value);
                         break;
                     case UnitAttackVfxRequestKind.Impact:
-                        PlayImpact(value);
+                        // Direct damage is resolved by simulation. Time the cosmetic impact to
+                        // the end of the visible flight, including a lethal shot's stored endpoint.
+                        if (em.HasComponent<UnitAttack>(value.Source))
+                            _pendingImpacts.Add(new PendingImpact { At = now + em.GetComponentData<UnitAttack>(value.Source).TraceVisibleSeconds, Request = value });
+                        else
+                            PlayImpact(value);
                         break;
                 }
             }

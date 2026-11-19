@@ -22,9 +22,8 @@ Shader "Game/AttackTraceInstanced"
             Name "Forward"
             Tags { "LightMode"="UniversalForward" }
 
-            // Additive: tracers add light into the scene instead of painting flat color.
-            // Brightness is carried entirely in RGB (premultiplied), so Blend One One.
-            Blend One One
+            // Premultiplied edge pigment remains legible over sand; the core is emissive.
+            Blend One OneMinusSrcAlpha
             ZWrite Off
             Cull Off
 
@@ -48,7 +47,7 @@ Shader "Game/AttackTraceInstanced"
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float4 color : COLOR0;
-                float2 traceParams : TEXCOORD1;
+                float4 traceParams : TEXCOORD1;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -73,7 +72,7 @@ Shader "Game/AttackTraceInstanced"
                 output.positionHCS = positionInputs.positionCS;
                 output.uv = input.uv;
                 output.color = UNITY_ACCESS_INSTANCED_PROP(Props, _TraceColor);
-                output.traceParams = UNITY_ACCESS_INSTANCED_PROP(Props, _TraceParams).xy;
+                output.traceParams = UNITY_ACCESS_INSTANCED_PROP(Props, _TraceParams);
                 return output;
             }
 
@@ -81,43 +80,30 @@ Shader "Game/AttackTraceInstanced"
             {
                 UNITY_SETUP_INSTANCE_ID(input);
 
-                float dashDensity = max(1.0, input.traceParams.x);
-                float scrollOffset = input.traceParams.y;
-
-                // 0..1 within each tracer segment. The bright head is at phase ~1,
-                // the tail fades behind it (toward phase 0).
-                float dashPhase = frac(input.uv.y * dashDensity - scrollOffset);
-
-                // Bullet-shaped streak: long faint tail rising steeply to a hot head,
-                // with a quick rounded falloff at the very tip so it doesn't hard-clip.
-                // Low dash densities (single shells) get a sharper tail so the shot
-                // reads as a compact flying projectile instead of a long beam.
-                float tailExponent = _TailExponent * max(1.0, 4.0 / dashDensity);
-                float tail = pow(dashPhase, tailExponent);
-                float tip = 1.0 - smoothstep(0.97, 1.0, dashPhase);
-                float streak = tail * tip;
-
-                // Cross-section: white-hot core in the middle, colored glow falling
-                // off toward the quad edges. The streak also tapers: the tail is
-                // thinner than the head.
-                float side = abs(input.uv.x - 0.5) * 2.0;
-                float taper = lerp(2.2, 1.0, streak); // tail effectively narrower
-                float s = saturate(side * taper);
-                float core = 1.0 - smoothstep(0.0, 0.30, s);
-                float glow = 1.0 - smoothstep(0.0, 1.0, s);
-                glow *= glow; // softer falloff
-
-                // Fade the whole trace in at the muzzle and out at the target so the
-                // line never hard-clips at either end.
-                float endFade = smoothstep(0.0, 0.07, input.uv.y) * (1.0 - smoothstep(0.90, 1.0, input.uv.y));
-
-                half3 traceRgb = input.color.rgb;
-                // Hot core trends toward white regardless of trace color.
-                half3 coreRgb = lerp(traceRgb, half3(1.0, 1.0, 1.0), 0.75) * _CoreIntensity;
-                half3 glowRgb = traceRgb * _GlowIntensity;
-
-                half3 rgb = (coreRgb * core + glowRgb * glow) * streak * endFade * input.color.a;
-                return half4(rgb, 1.0);
+                float density = input.traceParams.x;
+                float travel = input.traceParams.y;
+                float span = input.traceParams.z;
+                float coordinate = input.uv.y * density;
+                float head = lerp(span * 0.8, 1.0, travel);
+                float behind = density <= 1.0 ? head - coordinate : frac(travel - coordinate);
+                float t = behind / span; // nose = 0, tail = 1
+                float side = abs(input.uv.x * 2.0 - 1.0);
+                float width = lerp(0.92, 0.045, saturate(t));
+                float nose = smoothstep(-0.19, 0.035, t);
+                float body = (1.0 - smoothstep(0.72, 1.05, t)) * nose;
+                float edge = (1.0 - smoothstep(width * 0.50, width, side)) * body;
+                float core = (1.0 - smoothstep(width * 0.08, width * 0.48, side)) * body;
+                half3 rim = input.color.rgb * half3(0.72, 0.46, 0.32);
+                half3 hot = lerp(input.color.rgb, half3(1, 0.97, 0.82), 0.8);
+                half alpha = saturate(edge * input.color.a);
+                half3 rgb = rim * alpha + hot * core * (_CoreIntensity * 0.72);
+                // Rocket-style direct fire gets a short, scalloped smoke wake.
+                float puff = 0.72 + 0.23 * cos(t * 27.0);
+                float wake = input.traceParams.w * smoothstep(0.35, 0.7, t) *
+                    (1.0 - smoothstep(1.45, 2.35, t)) * (1.0 - smoothstep(0.15, puff, side));
+                half smokeAlpha = wake * 0.65 * (1.0 - alpha);
+                rgb += lerp(half3(0.31,0.28,0.24), half3(0.77,0.70,0.58), 1.0-side) * smokeAlpha;
+                return half4(rgb, saturate(alpha + smokeAlpha));
             }
             ENDHLSL
         }

@@ -33,7 +33,7 @@ template: `Tools/Missions/drafts/s019-desert-base-ce-ground-field-candidate.json
 deliverable: as W1 for S020–S024. Branch `missions/win-w3-db-ce`.
 
 ## W4 — City Crossroads Frontline Control S031–S036 (2026-11-18)
-status: DONE as drafts (branch kept unmerged: area.measurement missing -> W7)
+status: DONE (64ba63811; merged aee6ee07c with W7)
 codex effort: high
 templates: the S007 FC draft (structure) and `s026-city-crossroads-ba-ground-established.json` (City Crossroads source,
 bases and measured anchors).
@@ -66,7 +66,7 @@ Commit only the authored assets for these rows (with their .meta files) and the 
 Do not change catalog visibility. A row whose b or c fails twice: record the first failing line, leave its assets out, go on.
 
 ## W7 — City Crossroads FC area measurement and fixes, S031 then S032–S036 (2026-11-18)
-status: READY
+status: DONE (985c00437; merged aee6ee07c; Mac quickcheck/counted runs next)
 codex effort: high (draft fixes); Unity serial in the main checkout
 Measure on the City Crossroads host match: `WARLINE_SKIRMISH_CATALOG=S026 WARLINE_S002_SEED=130365 WARLINE_S002_LOCALE=en
 WARLINE_MISSION_DRAFT=<s031 draft> WARLINE_AREA_MEASUREMENT_OUT=Design/AgentReports/SkirmishExpansion/S031/area-measurement-r1.json`,
@@ -166,6 +166,12 @@ established roster spawn and get orders, why does the FC objective planner never
 tactics if that is the defect; otherwise tune only starting forces/resources/deadline per the map reuse policy budget guidance (owner
 direction 2026-11-06). No unit-stat or rule changes, no map changes. Windows proves with check_draft/quickcheck + the FC/ARIA EditMode
 tests it touches; Mac runs the counted queue. Branch `missions/win-w16-fc-established`. Per-task results file.
+Update 2026-11-19, Mac lanes 38/39 (130365 en, `program-logs/2026-11-18/lane38|lane39/q/unity.log`, extract.txt in each). This is not only
+established rows. City Crossroads S031-S036 won 6/6 with ARIA holding throughout, 2-10 Holds per row. Mountain Pass S055 (field!), S056, S058 and
+S060 lost on tickets at ~50%; S057/S059 won. On every MP row ARIA took both zones by ~45 s. On the losers it chose Hold only once (t=39-46 s,
+lane39 :4698 :42390 :66405) and then only Move ControlZone, losing both zones by 108-150 s and never retaking them. The winners chose Hold again
+after 90 s (S057 t=118-246, S059 t=93 :60264). Look at why the FC planner stops re-choosing Hold on owned zones under pressure, and at map-specific
+inputs (zone radius/threat range) that make City Crossroads hold and MP/DB not. Include S055/S056/S058/S060 in the proof rows.
 
 ## W17 — Burst BC1016: managed byte[] in AriaCoverageRecruitPolicy.TryStart (2026-11-18)
 status: READY
@@ -189,6 +195,60 @@ cell of rounding", so `[BuildingFootprintReadiness] result=Passed` is unreachabl
 side minimally, never weaken a test, no stat changes, no model/prefab edits under Assets/Game/Prefabs/UI. If the Clinic footprint is a real
 authored-footprint mismatch, report the numbers and stop for the Mac lead rather than resizing. Prove: the marker above on Windows, plus the
 UTF `-testFilter Building` set with 0 failures. Branch `missions/win-w18-building-readiness`, cut after W13 is merged. Per-task results file.
+
+## W19 — S049 (Mountain Pass BA) ARIA stalls with reason 101 on 2 of 4 seeds (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 37 (`program-logs/2026-11-18/lane37/counted/unity.log`): 155923 en Abort ariaStopped:Blocked at 353 s `[AriaBlocked] reason=101 kind=Waiting
+intent=Inspect` (:88940); 104731 en same at 323 s with intent=Recruit (:269540). 130365 en (smoke/unity.log:279722) and 130365 fa-IR (:382455) win.
+Gate-3 unused on the wins: helipad, satellite_dish, apc_heavy, drone, gunner, radar, siege, tank, transport_heli (:279707).
+Diagnose reason 101 from the log context (what ARIA waited on, why nothing was offered), fix ARIA (or the S049 data if a placement/spawn is wrong);
+no stat/rule changes. Prove with a unit test reproducing the stall plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
+Branch `missions/win-w19-s049-reason101`. Per-task results file.
+Update 2026-11-19, Windows W9 CE: the field rows S043/S045/S047 abort the same way: ariaStopped:Blocked `[AriaBlocked] reason=101 kind=Waiting
+intent=ObserveObjective` at actions 69-88, match ~176-223 s (`windows_dev_results/2026-11-18-w9-cc-ce-measure.md`). Include them in the proof rows.
+
+## W20 — S003 (Desert Base BA, army A field) ARIA loses its base without starting home defense (2026-11-18)
+status: READY
+codex effort: xhigh
+Mac lane 37 (`program-logs/2026-11-18/lane37/smoke-s003/unity.log`), seed 130366 en: Defeat MainBaseDestroyed at 185 s (17% of deadline, :477593).
+First base_alert at t=162.8 with base 800 hp (:411875), 778 at t=174.5 (:442646); homeDefenseStage stayed 0; enemy base untouched at 800 (:477150).
+Find why the home-defense policy never left stage 0 on S003 (S002 uses the same policy and reaches stage 5) and fix it; no stat/rule changes.
+Prove with a unit test reproducing the S003 alert sequence plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
+Branch `missions/win-w20-s003-home-defense`. Per-task results file. S003 first-visit seeds are 104732, 130366, 155924.
+
+## W21 — ARIA queue cannot dispatch coded legacy presets S001/S025 (2026-11-18)
+status: READY
+codex effort: high
+Mac lane 37 (`program-logs/2026-11-18/lane37/smoke/unity.log:601, :1064`): `launchFailed=1 error=Catalog S001 does not resolve to a definition in the
+expansion catalog` (same for S025), with and without --validation-library. S001/S025 are coded presets with no SkirmishScenario asset. Give the
+queue/harness a dispatch path for coded presets (the way the menu launches them), with no change to the presets themselves. Tooling/harness only;
+prove with the queue's Python tests and a Windows menu-journey launch of S001 and S025. Branch `missions/win-w21-preset-dispatch`. Per-task results file.
+
+## W22 — pad_preflight misses objective/defense pads on non-placeable cells (2026-11-18)
+status: READY (after W9/W10)
+codex effort: high
+Windows W9 run 2: all 12 BT/CE menu launches aborted `expandedStartupFailure=BlockedSpawn`. The enemy guard towers for defense.approach sat on
+S027-derived anchors that land on the S026 road band (z 348-360, no BuildingPlacement). pad_preflight skips objective pads, containment is
+envelope-only, and r2 reported fitsAsIs=true, so no check caught it. Extend `pad_preflight.py` (and `--surface`, from W13) to check every
+objective, defense and convoy pad that spawns a structure against the bitmap's BuildingPlacement flag (and road/sidewalk flags). It must
+report which pad failed and where. Then run it over every merged draft (`git ls-files Tools/Missions/drafts`) and list any failure, without
+fixing drafts in this task. Tooling only; prove with new Python tests (a known-bad W9 r2 pad must fail, the W9 fix must pass) and the full
+`Tools/Missions` unittest run. Branch `missions/win-w22-preflight-objective-pads`. Per-task results file.
+Update 2026-11-19: Windows' interim checker `notes/objective_pad_surface.py` (defense.* 3x4 tower and 10x10 pad vs bitmap flags and instance
+pads) is the starting point. Bitmap origin = gridOrigin + bitmapOriginCell x cellSize. S026's gridOrigin is (0,0), which hides an origin bug, so
+test on S050 (gridOrigin 860,300) too. It already caught road + not-level towers (flag 17) on all 12 W10 Mountain Pass drafts.
+
+## W23 — City Crossroads BT exit next to the enemy base: S038/S039/S040/S042 BreakthroughImpossible (2026-11-19)
+status: READY (W9 BT merged first)
+codex effort: high
+Windows W9 BT (`windows_dev_results/2026-11-18-w9-cc-bt-measure.md`): S037/S041 won by BreakthroughEvacuated 8/8 at ~20%, but S038/S039/S040/S042 lost by
+BreakthroughImpossible, 1/8 completed and 5 lost at 14-22%. The rifle squad dies at (1076-1080, 399-417), inside BreakthroughExit (1064..1094.5,
+374.5..409.5), built from S027 air.enemy plus the enemy rally. That is ~19 m from the enemy watchtower (1098,405) and next to the barracks (1116,380).
+Move the BT exit (and the route end) on the S026 geometry away from the enemy base's defensive reach: a logical anchor/area change only, on legal
+vehicle-passable cells, with no map, stat or rule change and no change to enemy structures. Then re-measure r3 on S037 and rebind the six BT drafts.
+Prove with check_draft 6/6, preflight 6/6 (with W22's objective-pad check if merged), authoring/containment 6/6 and non-counted Windows menu runs of
+all six. Report the new exit's distance to every enemy defensive structure. Branch `missions/win-w23-cc-bt-exit`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

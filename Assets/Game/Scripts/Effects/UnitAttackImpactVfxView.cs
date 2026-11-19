@@ -234,10 +234,33 @@ namespace Game.Runtime
         {
             GameObject root = Instantiate(prefab, transform);
             root.SetActive(false);
+            var particles = root.GetComponentsInChildren<ParticleSystem>(true);
+            // Apply once to the pooled instance. Each weapon keeps its authored bursts,
+            // duration, texture and color curves on every subsequent reuse.
+            bool muzzle = prefab.name.StartsWith("Vfx_MuzzleFlash_", System.StringComparison.Ordinal);
+            bool hit = prefab.name.StartsWith("Vfx_BulletImpact_", System.StringComparison.Ordinal);
+            bool missileHit = prefab.name == "FX_Explosion_Large_Dark_01";
+            if (muzzle || hit || missileHit)
+            {
+                foreach (var system in particles)
+                {
+                    var main = system.main;
+                    bool debris = system.name == "Dust" || system.name == "Sparks" || system.name == "Embers";
+                    float scale = muzzle ? 1.45f : debris ? 1.55f : missileHit ? 1.14f : 1.35f;
+                    if (main.startSize3D)
+                    {
+                        main.startSizeXMultiplier *= scale;
+                        main.startSizeYMultiplier *= scale;
+                        main.startSizeZMultiplier *= scale;
+                    }
+                    else main.startSizeMultiplier *= scale;
+                    if (debris) main.startSpeedMultiplier *= 1.2f;
+                }
+            }
             return new PooledInstance
             {
                 Root = root,
-                ParticleSystems = root.GetComponentsInChildren<ParticleSystem>(true),
+                ParticleSystems = particles,
                 Prefab = prefab
             };
         }

@@ -356,7 +356,7 @@ Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `
 Branch `missions/win-w29-ib-ba`. Per-task results file.
 
 ## W30 — Industrial Basin air/combined S075-S078: offer no Airport or fixed-wing, as S004 does (2026-11-19)
-status: READY
+status: HOLD (fec08368d: S004's exclusion is hard-coded in SkirmishExpansionCatalogFactory.cs:67-104 SkirmishMissionRoleExclusions; extending it to S075-S078, and later the CC/MP air rows, is shared code and needs the owner's OK in the Windows session)
 codex effort: medium
 W29 S077 lists `unused=` building.airport, fighter, strike, transport_plane, so the mission still offers them, although no Airport site exists (0/62 valid).
 Apply the owner's S004 decision the way S004 does it: find how S004 removes the Airport and fixed-wing from what the mission offers (data in its

@@ -168,7 +168,7 @@ non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept i
 Branch `missions/win-w31-pacing-ce-bt`. No shared code.
 
 ## W32 — ARIA leaves starting units idle on objective missions (new gate 3) (2026-11-19)
-status: READY after W31 and W27 cause 1; code change needs the owner's OK in the Windows session (standing OK pending there); diagnosis is read-only and may start now
+status: diagnosis DONE (1d3d3a0f7: idle starting groups are never commanded; the used-recorder is fine. The objective chooser picks only objective subjects, the escort path is starved by a time-expiring offer, a stuck support recruit holds the Build drawer ~60 s repeatedly, and the transport heli has no FC/CE command path). Fix READY after W31 and W27 cause 1, once the owner confirms the standing OK in the Windows session; accept the proposed order: escorts before support/coverage, offers expire on failed attempts, Move-to-goal for unassigned infantry/heli, bounded support recruit.
 codex effort: xhigh
 Owner decision 2026-11-19: on FC/BT/CE, gate 3 = ARIA uses every role in the player's starting force (plus objective roles). Evaluator `Tools/Missions/gate3_objective.py`
 (Mac run: `program-logs/2026-11-19/gate3/summary.txt`): 29 PASS / 63 FAIL jobs. Passing: S039, S041, S057, S059. The usual idle starting roles are role.car,

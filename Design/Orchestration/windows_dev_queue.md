@@ -259,7 +259,7 @@ Use it as the acceptance check. Run it over the Desert Base BT/CE drafts too and
 `missions/win-w23-cc-bt-exit`, `-mp-bt-exit`, `-mp-ce-dest`. Data/anchor change only, no shared code.
 
 ## W23b — BT exits / CE destinations: move inward from the east play edge (2026-11-19)
-status: READY (W23 branches stay unmerged; build on them)
+status: DONE for CC BT (a692cf316 accepted, 6/6 Victory; Mac merges it when its Editor is free). MP BT 36c18a508 and MP CE 59599aba4 not merged: continue in W23c.
 codex effort: high
 W23 (`windows_dev_results/2026-11-18-w23-*.md`, branches 621ee1092 / b1bb762ea / e4ebfe2df) moved the endpoints clear of the enemy bases (CC BT 124 m,
 MP 39.5-41 m), but ARIA now stops itself. Its objective Move to the new endpoint fails 6 times (`order_blocked failures=6`), then AriaBlocked
@@ -280,6 +280,33 @@ S064/S066, and CE S046/S048 on S026 spawn the same helicopter. Diagnose first: w
 overlapping the air spawn cell, f2 satellite dish at (1173,447), occupancy from the moved defense tower). Extend the startup-allocator capture beyond S002 if
 needed (harness/tooling). Fix the draft data if that is the cause; a shared-code fix needs the owner's OK in the Windows session. Prove with a menu launch of
 S070/S072 with expandedStartupFailure=0. Branch `missions/win-w24-s070-heli-spawn`. Per-task results file.
+
+## W23c — Mountain Pass BT S061-S066 / CE S067-S072: endpoint past the defenses, tappable (2026-11-19)
+status: READY (after W24's read-only diagnosis; build on the two W23b MP branches)
+codex effort: xhigh
+W23b fixed the tap (order_blocked 0) but moved the MP exit/destination in front of the defense line: BT never opens the exit (0/6 wins, S061 Blocked 115),
+CE wins in 64-68 s (6% of the deadline, under the 20% gate-2 floor) with no escort challenge. Decision (program lead): data only, option 1 of your list;
+no shared code (option 3 also leaves players with an untappable objective under the HUD), and no source change yet.
+1. Margins per edge, not 40 m on every side. From the W23b code read, derive the ground margin each edge needs for the tap point to land in the
+   safe area and outside every HUD raycast rect at the camera heights ARIA uses: east (right HUD) ~60 m; north/south/west from the actual top/bottom/left
+   HUD rects (likely much less). Write the derivation and the numbers in the results file.
+2. With those margins, scan for an exit/destination rectangle that lies past both corridors (a column must cross Corridor A or B to reach it), keeps the
+   W23 distance check (>=30 m from every enemy structure, staging and rally anchor), and is on passable measured cells.
+3. If none exists, move the corridors instead (inside the measured passable area, between the start and the W23b endpoint, still covered by the
+   defenses), re-measure and rebind. Keep the defense pads on legal cells (W22 rule).
+4. If neither works, do not pick another source: record the measured depth/clearance that fails, list existing Campaign sources that would fit, and stop.
+Re-measure (S061 r5, S067 r5), rebind, rerun the 18 non-counted menu runs. Diagnose S061 Blocked 115 (Control press during OpenObjectiveCorridor) and
+S068 Blocked 101 from those logs. Accept only if: order_blocked 0, AriaBlocked 0, exitOpen=1 on BT wins, S061 and S063 win again, and CE wins land at
+>=20% of the deadline. Branches: continue `missions/win-w23-mp-bt-exit` and `-mp-ce-dest`. Per-task results file.
+
+## W25 — S021/S023 (Desert Base CE field) abort on seed 155923: player convoy truck BlockedSpawn (2026-11-19)
+status: READY (after W23c)
+codex effort: high
+Mac lane 41 (`program-logs/2026-11-19/lane41/a/unity.log`): S021 at seed 155923 en aborts 24 s into the job, before the match:
+`[SkirmishStartingForce] failed prefab=Unit_Veh_Truck_Tray faction=1 member=0` (:416162) then `aborted reason=expandedStartupFailure=BlockedSpawn` (:416187).
+S023 the same (:448590/:448614). Both rows win on 104731 en and 130365 fa-IR; S020/S022/S024 win on all seeds. W14 fixed the established
+rows; this is the field rows on one seed. Diagnose what occupies the truck spawn cell on that seed (seeded enemy/ambient placement, field start
+package), fix the draft data, prove with menu launches of S021/S023 at 155923 en with expandedStartupFailure=0. Branch `missions/win-w25-db-ce-field-spawn`.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

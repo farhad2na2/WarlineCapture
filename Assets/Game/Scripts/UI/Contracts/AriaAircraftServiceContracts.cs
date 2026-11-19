@@ -16,5 +16,8 @@ namespace Game.UI.Contracts
         public uint GroupId,SetupHash,ReturnRevision;
         public int Stage,IssueFrame,Target,Actions,NextPage,NextSlot,PagesVisited;
         public bool Bound;
+        // W27b (S059 Blocked 114): when a wanted service control stays unavailable, the service ends instead
+        // of reporting Unavailable until the input layer's 15 s stop.
+        public float UnavailableSince;
     }
 }

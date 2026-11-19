@@ -112,6 +112,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         // Objective gate 3: one coverage turn after each accepted objective order (ObjectiveCoverageTurn) and the
         // one-time rocketeer purchase (AriaObjectiveSkillPolicy.OneTimeBuy: 0 none, 1 buying, 2 done).
         public byte ObjectiveCoverageTurn, ObjectiveRocketeerStage;
+        // W32 gate 3: one escort turn after each accepted objective order, before support/coverage take the frame.
+        public byte ObjectiveEscortTurn;
         public float ObjectiveRocketeerDeadline;
     }
 }

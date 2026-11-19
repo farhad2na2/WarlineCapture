@@ -26,10 +26,44 @@ namespace Game.Tests.Editor
             t.CoverageUsesTheObjectiveReserveMask();
             t.CoverageInFlightFinishesBeforeObjectiveOrders();
             t.BaseAssaultCoverageKeepsItsOwnReserveMask();
-            UnityEngine.Debug.Log("[AriaObjectiveCoverage] result=Passed controls=8");
+            t.StartingGroupsOfEveryRoleAreEscortCandidates();
+            UnityEngine.Debug.Log("[AriaObjectiveCoverage] result=Passed controls=9");
         }
 
         static AriaTouchTarget T(int id) => new AriaTouchTarget { Available = true, Id = id };
+
+        // W32 (gate 3: ARIA uses every starting role on FC/BT/CE): car, APC, tank, AA, transport heli and the
+        // infantry the objective chooser did not pick are all escort candidates; the chosen group, originals,
+        // radar and logistics never are. The offer expires on attempt time, not elapsed time.
+        [Test]
+        public void StartingGroupsOfEveryRoleAreEscortCandidates()
+        {
+            AriaEscortCandidate C(uint id, SkirmishRoleKind role, SkirmishPopulationCategory domain) => new AriaEscortCandidate
+            { GroupId = id, Role = role, Domain = domain, CanMove = true, Target = true };
+            foreach (var type in new[] { AriaObjectiveType.FrontlineControl, AriaObjectiveType.Breakthrough, AriaObjectiveType.ConvoyEscort })
+            {
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(6, SkirmishRoleKind.Car, SkirmishPopulationCategory.Ground), type));
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(7, SkirmishRoleKind.ApcArmored, SkirmishPopulationCategory.Ground), type));
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(8, SkirmishRoleKind.Tank, SkirmishPopulationCategory.Ground), type));
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(9, SkirmishRoleKind.AntiAir, SkirmishPopulationCategory.Ground), type));
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(10, SkirmishRoleKind.TransportHeli, SkirmishPopulationCategory.Air), type), type + " heli");
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(3, SkirmishRoleKind.Gunner, SkirmishPopulationCategory.Infantry), type), type + " gunner");
+                Assert.IsTrue(AriaObjectiveEscortPolicy.Eligible(C(4, SkirmishRoleKind.Rocketeer, SkirmishPopulationCategory.Infantry), type), type + " rocketeer");
+                var chosen = C(2, SkirmishRoleKind.Rifle, SkirmishPopulationCategory.Infantry); chosen.Chosen = true;
+                Assert.IsFalse(AriaObjectiveEscortPolicy.Eligible(chosen, type), type + " chosen");
+                Assert.IsFalse(AriaObjectiveEscortPolicy.Eligible(C(11, SkirmishRoleKind.Radar, SkirmishPopulationCategory.Ground), type));
+                Assert.IsFalse(AriaObjectiveEscortPolicy.Eligible(C(12, SkirmishRoleKind.AttackHeli, SkirmishPopulationCategory.Air), type), "combat air has its own sortie path");
+            }
+            Assert.IsFalse(AriaObjectiveEscortPolicy.Eligible(C(10, SkirmishRoleKind.TransportHeli, SkirmishPopulationCategory.Air)), "base assault keeps vehicles only");
+            Assert.IsFalse(AriaObjectiveEscortPolicy.OfferExpired(AriaObjectiveEscortPolicy.OfferSeconds));
+            Assert.IsTrue(AriaObjectiveEscortPolicy.OfferExpired(AriaObjectiveEscortPolicy.OfferSeconds + .1f));
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(ThisFile(), "..", "..", "..", ".."));
+            string hud = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSkill.cs"));
+            Assert.IsTrue(hud.Contains("if (elapsed > 0 && frame.ExclusiveSelectedGroup == chosen.GroupId) escortAttemptSeconds += elapsed;"), "attempt-time expiry");
+            Assert.IsTrue(hud.Contains("Chosen = publicObjectiveChoice.Available && publicObjectiveChoice.GroupId == policy.GroupId,"));
+        }
+
+        static string ThisFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;
 
         // A presented FC frame with no current objective choice, after one accepted order.
         static AriaSkirmishObservation View(float time) => new AriaSkirmishObservation
@@ -78,7 +112,10 @@ namespace Game.Tests.Editor
             var trucks = new AriaEscortCandidate { GroupId = 1, Role = SkirmishRoleKind.ConvoyLogic, Domain = SkirmishPopulationCategory.ObjectiveSupport, CanMove = true, Target = true, Originals = true };
             var list = new List<AriaEscortCandidate> { trucks, rifle };
             Assert.AreEqual(1, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.ConvoyEscort));
-            Assert.AreEqual(-1, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl), "FC infantry follow the zone chooser");
+            Assert.AreEqual(1, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl), "W32: unassigned FC infantry take a Move to the zone");
+            var chosen = list[1]; chosen.Chosen = true; list[1] = chosen;
+            Assert.AreEqual(-1, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl), "the chosen group follows the zone chooser");
+            chosen.Chosen = false; list[1] = chosen;
             Assert.AreEqual(-1, AriaObjectiveEscortPolicy.Pick(list), "base overload keeps vehicles only");
         }
 

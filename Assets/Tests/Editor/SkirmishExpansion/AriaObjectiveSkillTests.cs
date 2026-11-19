@@ -33,7 +33,9 @@ namespace Game.Tests.Editor
             t.EscortRunsWhenNoObjectiveOrderIsWanted();
             t.FinishedObjectiveHandsBack();
             t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=16");
+            t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
+            t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=18");
         }
 
         // ---------- pure policy ----------
@@ -308,6 +310,35 @@ namespace Game.Tests.Editor
             v.PublicObjective.SelectGroup = T(5);
             Step(v, ref p, ref t, out o);
             Assert.AreEqual(8, o.TargetId);
+        }
+
+        // W32 (gate 3): FC re-issues Holds every ~15 s, so escorts used to run only on idle frames that never came.
+        [Test]
+        public void EscortGetsATurnAfterAnAcceptedObjectiveOrder()
+        {
+            var p = new AriaSkirmishPlanComponent { ObjectiveAccepted = 1, ObjectiveEscortTurn = 1 };
+            var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Hold;
+            v.PublicObjective.Intent = AriaSkirmishIntent.ControlZone; v.PublicObjective.SelectGroup = T(5);
+            v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                GroupId = 7, NavigationGroupId = 7, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(8, o.TargetId, "the escort's vehicle card, although an objective order is wanted");
+            Assert.AreEqual(2, p.ObjectiveOwner); Assert.AreEqual(0, p.ObjectiveEscortTurn, "one turn per accepted order");
+        }
+
+        // W32 (S032: an unaffordable AttackAircraft recruit held the Build drawer for the 60 s popup limit 5 times).
+        [Test]
+        public void StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen()
+        {
+            var p = new AriaSkirmishPlanComponent { ObjectiveSupport = new AriaObjectiveSupportPlan { Epoch = 1, Action = AriaObjectiveSupportAction.Rifle, Deadline = 50, BaselineInfantry = 12 } };
+            var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Missing(60); v.DrawerOpen = true; v.Recruit = T(91); v.CloseDrawer = T(71); v.Infantry = 12;
+            Step(v, ref p, ref t, out var o);
+            Assert.AreEqual(71, o.TargetId, "past its deadline the recruit closes the drawer instead of pressing again");
+            Assert.AreEqual(AriaObjectiveSupportAction.None, p.ObjectiveSupport.Action);
+            Assert.AreEqual(75f, p.ObjectiveSupport.NextDecisionAt, 1e-3f, "and waits before choosing a recruit again");
         }
 
         [Test]

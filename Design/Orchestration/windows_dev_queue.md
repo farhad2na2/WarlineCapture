@@ -282,7 +282,7 @@ needed (harness/tooling). Fix the draft data if that is the cause; a shared-code
 S070/S072 with expandedStartupFailure=0. Branch `missions/win-w24-s070-heli-spawn`. Per-task results file.
 
 ## W23c — Mountain Pass BT S061-S066 / CE S067-S072: endpoint past the defenses, tappable (2026-11-19)
-status: READY (after W24's read-only diagnosis; build on the two W23b MP branches)
+status: DONE (stopped at step 4 as briefed: no endpoint past the corridors on Citywide Alert; results 1d80a0a2d / b1f82105a). Continue in W26.
 codex effort: xhigh
 W23b fixed the tap (order_blocked 0) but moved the MP exit/destination in front of the defense line: BT never opens the exit (0/6 wins, S061 Blocked 115),
 CE wins in 64-68 s (6% of the deadline, under the 20% gate-2 floor) with no escort challenge. Decision (program lead): data only, option 1 of your list;
@@ -307,6 +307,28 @@ Mac lane 41 (`program-logs/2026-11-19/lane41/a/unity.log`): S021 at seed 155923 
 S023 the same (:448590/:448614). Both rows win on 104731 en and 130365 fa-IR; S020/S022/S024 win on all seeds. W14 fixed the established
 rows; this is the field rows on one seed. Diagnose what occupies the truck spawn cell on that seed (seeded enemy/ambient placement, field start
 package), fix the draft data, prove with menu launches of S021/S023 at 155923 en with expandedStartupFailure=0. Branch `missions/win-w25-db-ce-field-spawn`.
+
+## W26 — Mountain Pass BT S061-S066 / CE S067-S072: evaluate Armor Break as the source (2026-11-19)
+status: READY (after W25)
+codex effort: xhigh
+W23c showed Citywide Alert (S050) cannot hold a tappable BT exit or CE destination past the defended corridors (the z 412-436 highway bypasses both;
+the start-to-endpoint band is the player base). `CAMPAIGN_MAP_REUSE_POLICY.md` names "Existing Armor Break approach sector" as the Skirmish MP source,
+so the program lead selects Armor Break (CH04-M05, `Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/`) for these 12 rows. The BA/FC Mountain Pass
+rows stay on S050. No new geometry.
+1. Read-only first: can a Skirmish catalog row host Armor Break with existing bindings and the existing harness (as S050 hosts Citywide Alert)? If
+   it needs shared code or a new environment scene, stop and record that as the source-fit gate (do not build it).
+2. If it can: pick a sector with the start, two defended corridors that must be crossed (no passable bypass), and an endpoint past them that meets the
+   W23c per-edge tap margins and the W23 distance check (>=30 m from enemy structures, staging, rally). Write S061 and S067 template drafts with
+   measured anchors only, measure (r1) and run the 2 template rows non-counted. Then siblings as before.
+3. Accept as W23b/W23c: order_blocked 0, AriaBlocked 0, exitOpen=1 on BT wins, CE wins at >=20% of the deadline, preflight/authoring/containment/menu
+   journey pass. Keep S070/S072's W24 lesson (no item that widens the layout frame onto an exact cell edge of an air pad).
+New branches `missions/win-w26-mp-bt-ab`, `missions/win-w26-mp-ce-ab` cut from integration. Per-task results file.
+
+## W27 — ARIA: Move press does not arm move mode (S061 Blocked 115); repair loop after a partial delivery (S068 Blocked 101) (2026-11-19)
+status: HOLD (shared ARIA code: needs the owner's OK in the Windows session)
+From W23c's log reading: S061 group-19 Move for OpenObjectiveCorridor tapped 3x, none accepted, then `AriaBlockedControl control=Move moveMode=False`.
+S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> RepairVehicle every ~27 s with accepted orders and no progress until
+the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

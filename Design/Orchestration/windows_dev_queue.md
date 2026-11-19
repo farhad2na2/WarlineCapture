@@ -325,10 +325,13 @@ rows stay on S050. No new geometry.
 New branches `missions/win-w26-mp-bt-ab`, `missions/win-w26-mp-ce-ab` cut from integration. Per-task results file.
 
 ## W27 — ARIA: Move press does not arm move mode (S061 Blocked 115); repair loop after a partial delivery (S068 Blocked 101) (2026-11-19)
-status: HOLD (shared ARIA code: needs the owner's OK in the Windows session)
+status: HOLD for code changes (shared ARIA code: needs the owner's OK in the Windows session). Read-only diagnosis is READY now, including the W29 IB stops.
 From W23c's log reading: S061 group-19 Move for OpenObjectiveCorridor tapped 3x, none accepted, then `AriaBlockedControl control=Move moveMode=False`.
 S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> RepairVehicle every ~27 s with accepted orders and no progress until
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
+
+Added 2026-11-19 (W29, non-counted 130365 en): S074 Blocked 101 Waiting intent Recruit (31.24%), S075 115 WorldTarget intent Advance, S076/S078 101 Waiting intent
+DefendBase. Diagnose all four read-only from the W29 logs, together with S061/S068, and write one cause list (which ARIA step waits on what) in the results file.
 
 ## W28 — S019 (Desert Base CE ground field): same latent vehicle-pad / convoy-bay overlap (2026-11-19)
 status: DONE (183429daa; S019 3/3 Victory non-counted, startup failure 0; Mac merges after lane 41)
@@ -338,7 +341,7 @@ won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the
 authoring, containment, and non-counted menu runs at 155923 / 130365 / 104731 en with expandedStartupFailure 0. Branch `missions/win-w28-s019-pad`.
 
 ## W29 — Industrial Basin Base Assault S074-S078: layout, measurement and authoring (2026-11-19)
-status: READY, bounded (f271d5f59: S074 bootstrapped, dumps committed, Airport 0/62 valid so S075-S078 use helipads only; S074 still aborts on the player rifleman). Program lead picks option 2 with one diagnostic step instead of blind guessing. Read the IB map surface movement data offline and read-only (MapSurfaceComponent source: the IB map Surface/Grid assets or the legacy SkirmishIndustrialBasin.asset; a standalone script under codex notes is fine, no shared code). List the cells near the player base that pass the placer rule (walkable + surface admission, as TryMask/EnsureTraversable require), and check the W24 lesson (layout frame / float32 cell-edge rounding at the pad). Then at most 2 placement attempts from that list. If S074 still does not start, record the S074 source-fit gate (option 3) in the results file and stop. The S002 allocator capture extension is the same shared-harness request as W24; it waits for the owner in the Windows session. Do not merge or ship the non-starting S074 assets.
+status: DONE (7e6b1ecf2: offline surface-mask read found the NW strip not admitted; attempt 1 moved spawn/rally pads; S074-S078 all start, authoring/containment/menu journey pass, startup failure 0). Play: S074/S075/S076/S078 ARIA Blocked 101/115, S077 Defeat 20.08%. Mac merges after lane 42; ARIA stops go to W27.
 codex effort: high
 Drafts `Tools/Missions/drafts/s07[4-8]-industrial-basin-ba-*.json` hold only partial S073 deployment anchors ("Layout incomplete"). Source: RefineryDistrict /
 `Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset`, which the map reuse policy names for Skirmish IB; S073 stays the coded preset, unchanged.
@@ -351,6 +354,15 @@ Authoring input (not evidence): `Design/Orchestration/salvage/s074-logical-bindi
    say so in the results file, and do not place an Airport. Then sibling drafts from the S074 layout, the same checks, and one non-counted menu run each.
 Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `[StartingGrantPlacement] failed`; report result, % of deadline and `unused=` per row.
 Branch `missions/win-w29-ib-ba`. Per-task results file.
+
+## W30 — Industrial Basin air/combined S075-S078: offer no Airport or fixed-wing, as S004 does (2026-11-19)
+status: READY
+codex effort: medium
+W29 S077 lists `unused=` building.airport, fighter, strike, transport_plane, so the mission still offers them, although no Airport site exists (0/62 valid).
+Apply the owner's S004 decision the way S004 does it: find how S004 removes the Airport and fixed-wing from what the mission offers (data in its
+scenario/army/production config, not shared code), apply the same to S075-S078, re-author, and show in one non-counted S077 run that those entries are
+gone from `unused=`. If S004 needs shared code for this, stop and report. Branch `missions/win-w30-ib-air-offer` from integration once W29 is merged (or from
+`missions/win-w29-ib-ba`). Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin FC/BT/CE (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

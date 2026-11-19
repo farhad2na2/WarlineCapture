@@ -1809,199 +1809,199 @@ MonoBehaviour:
   layoutId: layout.skirmish.s074
   operationMapId: opmap.skirmish.industrial_basin
   contentVersion: 1
-  contentHash: authored.s074.3002238b88b2b389
-  worldWidthMetres: 271.63098
-  worldDepthMetres: 271.33838
-  originX: -336.2485
-  originZ: 837.26465
+  contentHash: authored.s074.f5f8b29b0bbde219
+  worldWidthMetres: 258.12122
+  worldDepthMetres: 288.9673
+  originX: -619.66583
+  originZ: 745.29584
   cellSize: 1
   anchors:
   - AnchorId: anchor.skirmish.s074.air_enemy
     RoleId: air.enemy
-    NormalizedU: 0.5519216
-    NormalizedV: 0.49385327
-    WorldX: -186.3295
-    WorldZ: 971.266
+    NormalizedU: 0.8047368
+    NormalizedV: 0.5473287
+    WorldX: -411.9462
+    WorldZ: 903.45593
   - AnchorId: anchor.skirmish.s074.air_player
     RoleId: air.player
-    NormalizedU: 0.20484543
-    NormalizedV: 0.7481325
-    WorldX: -280.60614
-    WorldZ: 1040.2617
+    NormalizedU: 0.18607998
+    NormalizedV: 0.58186734
+    WorldX: -571.63464
+    WorldZ: 913.43646
   - AnchorId: anchor.skirmish.s074.base_enemy
     RoleId: base.enemy
-    NormalizedU: 0.76326966
-    NormalizedV: 0.53849775
-    WorldX: -128.92082
-    WorldZ: 983.37976
+    NormalizedU: 0.7965202
+    NormalizedV: 0.42989752
+    WorldX: -414.06708
+    WorldZ: 869.52216
   - AnchorId: anchor.skirmish.s074.base_player
     RoleId: base.player
-    NormalizedU: 0.2599984
-    NormalizedV: 0.53849775
-    WorldX: -265.62488
-    WorldZ: 983.37976
+    NormalizedU: 0.29966155
+    NormalizedV: 0.42989752
+    WorldX: -542.31683
+    WorldZ: 869.52216
   - AnchorId: anchor.skirmish.s074.economy_enemy
     RoleId: economy.enemy
-    NormalizedU: 0.8322109
-    NormalizedV: 0.5126167
-    WorldX: -110.19424
-    WorldZ: 976.35724
+    NormalizedU: 0.72535056
+    NormalizedV: 0.43907177
+    WorldX: -432.43747
+    WorldZ: 872.1732
   - AnchorId: anchor.skirmish.s074.economy_player
     RoleId: economy.player
-    NormalizedU: 0.2098006
-    NormalizedV: 0.5042055
-    WorldX: -279.26016
-    WorldZ: 974.07495
+    NormalizedU: 0.22849178
+    NormalizedV: 0.43907177
+    WorldX: -560.68726
+    WorldZ: 872.1732
   - AnchorId: anchor.skirmish.s074.rally_enemy
     RoleId: rally.enemy
-    NormalizedU: 0.6400371
-    NormalizedV: 0.7343292
-    WorldX: -162.39459
-    WorldZ: 1036.5164
+    NormalizedU: 0.72305477
+    NormalizedV: 0.8223422
+    WorldX: -433.03006
+    WorldZ: 982.92584
   - AnchorId: anchor.skirmish.s074.rally_player
     RoleId: rally.player
-    NormalizedU: 0.31428963
-    NormalizedV: 0.6204537
-    WorldX: -250.8777
-    WorldZ: 1005.61755
+    NormalizedU: 0.23876263
+    NormalizedV: 0.33621147
+    WorldX: -558.03613
+    WorldZ: 842.44995
   - AnchorId: anchor.skirmish.s074.service_enemy
     RoleId: service.enemy
-    NormalizedU: 0.5661407
-    NormalizedV: 0.4216024
-    WorldX: -182.46715
-    WorldZ: 951.66156
+    NormalizedU: 0.74069613
+    NormalizedV: 0.38100368
+    WorldX: -428.47644
+    WorldZ: 855.39343
   - AnchorId: anchor.skirmish.s074.service_player
     RoleId: service.player
-    NormalizedU: 0.2740021
-    NormalizedV: 0.58637714
-    WorldX: -261.82104
-    WorldZ: 996.3713
+    NormalizedU: 0.24383752
+    NormalizedV: 0.38100368
+    WorldX: -556.7262
+    WorldZ: 855.39343
   - AnchorId: anchor.skirmish.s074.spawn_infantry_enemy
     RoleId: spawn.infantry.enemy
-    NormalizedU: 0.835658
-    NormalizedV: 0.66876453
-    WorldX: -109.257904
-    WorldZ: 1018.72614
+    NormalizedU: 0.873369
+    NormalizedV: 0.7515381
+    WorldX: -394.23077
+    WorldZ: 962.46576
   - AnchorId: anchor.skirmish.s074.spawn_infantry_player
     RoleId: spawn.infantry.player
-    NormalizedU: 0.26861608
-    NormalizedV: 0.4565416
-    WorldX: -263.28406
-    WorldZ: 961.1419
+    NormalizedU: 0.37264374
+    NormalizedV: 0.36341068
+    WorldX: -523.4786
+    WorldZ: 850.30963
   - AnchorId: anchor.skirmish.s074.spawn_vehicle_enemy
     RoleId: spawn.vehicle.enemy
-    NormalizedU: 0.8821933
-    NormalizedV: 0.73001575
-    WorldX: -96.61746
-    WorldZ: 1035.346
+    NormalizedU: 0.8530693
+    NormalizedV: 0.6833245
+    WorldX: -399.47055
+    WorldZ: 942.7543
   - AnchorId: anchor.skirmish.s074.spawn_vehicle_player
     RoleId: spawn.vehicle.player
-    NormalizedU: 0.1936424
-    NormalizedV: 0.44532648
-    WorldX: -283.64923
-    WorldZ: 958.0988
+    NormalizedU: 0.3006282
+    NormalizedV: 0.33275762
+    WorldX: -542.0673
+    WorldZ: 841.4519
   - AnchorId: anchor.skirmish.s074.staging_enemy
     RoleId: staging.enemy
-    NormalizedU: 0.72362846
-    NormalizedV: 0.44316974
-    WorldX: -139.6886
-    WorldZ: 957.5136
+    NormalizedU: 0.87409395
+    NormalizedV: 0.42903405
+    WorldX: -394.04364
+    WorldZ: 869.27264
   - AnchorId: anchor.skirmish.s074.staging_player
     RoleId: staging.player
-    NormalizedU: 0.18524024
-    NormalizedV: 0.5645941
-    WorldX: -285.93152
-    WorldZ: 990.4607
+    NormalizedU: 0.37723532
+    NormalizedV: 0.42903405
+    WorldX: -522.2934
+    WorldZ: 869.27264
   - AnchorId: anchor.skirmish.s074.w29_f1_approach
     RoleId: w29.f1.approach
-    NormalizedU: 0.3015786
-    NormalizedV: 0.57602495
-    WorldX: -254.33041
-    WorldZ: 993.5623
+    NormalizedU: 0.12397276
+    NormalizedV: 0.44317323
+    WorldX: -587.66583
+    WorldZ: 873.3584
   - AnchorId: anchor.skirmish.s074.w29_f1_depot
     RoleId: w29.f1.depot
-    NormalizedU: 0.11780711
-    NormalizedV: 0.599749
-    WorldX: -304.24844
-    WorldZ: 999.9996
+    NormalizedU: 0.2560414
+    NormalizedV: 0.72185665
+    WorldX: -553.5761
+    WorldZ: 953.8888
   - AnchorId: anchor.skirmish.s074.w29_f1_dish
     RoleId: w29.f1.dish
-    NormalizedU: 0.14646082
-    NormalizedV: 0.66574514
-    WorldX: -296.4652
-    WorldZ: 1017.90686
+    NormalizedU: 0.49516678
+    NormalizedV: 0.42244998
+    WorldX: -491.85278
+    WorldZ: 867.37006
   - AnchorId: anchor.skirmish.s074.w29_f1_fuel
     RoleId: w29.f1.fuel
-    NormalizedU: 0.20075198
-    NormalizedV: 0.6217478
-    WorldX: -281.71805
-    WorldZ: 1005.9687
+    NormalizedU: 0.4333011
+    NormalizedV: 0.425904
+    WorldX: -507.82162
+    WorldZ: 868.36816
   - AnchorId: anchor.skirmish.s074.w29_f1_module
     RoleId: w29.f1.module
-    NormalizedU: 0.31989115
-    NormalizedV: 0.8820661
-    WorldX: -249.35616
-    WorldZ: 1076.603
+    NormalizedU: 0.42496368
+    NormalizedV: 0.8892608
+    WorldX: -509.9737
+    WorldZ: 1002.2631
   - AnchorId: anchor.skirmish.s074.w29_f1_refinery
     RoleId: w29.f1.refinery
-    NormalizedU: 0.3715971
-    NormalizedV: 0.5162833
-    WorldX: -235.31122
-    WorldZ: 977.3521
+    NormalizedU: 0.1755677
+    NormalizedV: 0.43162444
+    WorldX: -574.3481
+    WorldZ: 870.0212
   - AnchorId: anchor.skirmish.s074.w29_f2_approach
     RoleId: w29.f2.approach
-    NormalizedU: 0.68334085
-    NormalizedV: 0.31462827
-    WorldX: -150.63196
-    WorldZ: 922.6354
+    NormalizedU: 0.8605608
+    NormalizedV: 0.31883433
+    WorldX: -397.53683
+    WorldZ: 837.4285
   - AnchorId: anchor.skirmish.s074.w29_f2_depot
     RoleId: w29.f2.depot
-    NormalizedU: 0.72449017
-    NormalizedV: 0.37199748
-    WorldX: -139.45453
-    WorldZ: 938.20184
+    NormalizedU: 0.72583383
+    NormalizedV: 0.3350242
+    WorldX: -432.3127
+    WorldZ: 842.1069
   - AnchorId: anchor.skirmish.s074.w29_f2_dish
     RoleId: w29.f2.dish
-    NormalizedU: 0.7384939
-    NormalizedV: 0.2939236
-    WorldX: -135.65068
-    WorldZ: 917.0174
+    NormalizedU: 0.8760272
+    NormalizedV: 0.5398814
+    WorldX: -393.54462
+    WorldZ: 901.3039
   - AnchorId: anchor.skirmish.s074.w29_f2_fuel
     RoleId: w29.f2.fuel
-    NormalizedU: 0.7807204
-    NormalizedV: 0.4276414
-    WorldX: -124.18065
-    WorldZ: 953.3002
+    NormalizedU: 0.8006284
+    NormalizedV: 0.3499191
+    WorldX: -413.00665
+    WorldZ: 846.411
   - AnchorId: anchor.skirmish.s074.w29_f2_module
     RoleId: w29.f2.module
-    NormalizedU: 0.6133224
-    NormalizedV: 0.37436995
-    WorldX: -169.65114
-    WorldZ: 938.8456
+    NormalizedU: 0.6337603
+    NormalizedV: 0.32282785
+    WorldX: -456.07886
+    WorldZ: 838.5825
   - AnchorId: anchor.skirmish.s074.w29_f2_refinery
     RoleId: w29.f2.refinery
-    NormalizedU: 0.64434594
-    NormalizedV: 0.45718876
-    WorldX: -161.22418
-    WorldZ: 961.3175
+    NormalizedU: 0.67242634
+    NormalizedV: 0.43162444
+    WorldX: -446.09833
+    WorldZ: 870.0212
   - AnchorId: anchor.skirmish.s074.w29_route_FlankNorthRuins
     RoleId: w29.route.FlankNorthRuins
-    NormalizedU: 0.27788007
-    NormalizedV: 0.6597064
-    WorldX: -260.76767
-    WorldZ: 1016.2683
+    NormalizedU: 0.6694056
+    NormalizedV: 0.47166762
+    WorldX: -446.87805
+    WorldZ: 881.59235
   - AnchorId: anchor.skirmish.s074.w29_route_FlankSouthSweep
     RoleId: w29.route.FlankSouthSweep
-    NormalizedU: 0.546751
-    NormalizedV: 0.1179337
-    WorldX: -187.734
-    WorldZ: 869.2646
+    NormalizedU: 0.67520547
+    NormalizedV: 0.11073918
+    WorldX: -445.38098
+    WorldZ: 777.29584
   - AnchorId: anchor.skirmish.s074.w29_route_MainHighway
     RoleId: w29.route.MainHighway
-    NormalizedU: 0.3468213
-    NormalizedV: 0.38191852
-    WorldX: -242.04109
-    WorldZ: 940.8938
+    NormalizedU: 0.8279364
+    NormalizedV: 0.29638416
+    WorldX: -405.9579
+    WorldZ: 830.94116
   routes:
   - RouteId: route.skirmish.s074.main
     WaypointAnchorIds:
@@ -2009,12 +2009,12 @@ MonoBehaviour:
     - anchor.skirmish.s074.w29_route_MainHighway
     - anchor.skirmish.s074.staging_enemy
     Kind: 1
-    LengthMetres: 169.89917
-    InfantryTransitSeconds: 42.474792
-    GroundTransitSeconds: 21.237396
-    AirTransitSeconds: 10.618698
-    InfantryFirstContactSeconds: 21.237396
-    GroundFirstContactSeconds: 10.618698
+    LengthMetres: 162.62813
+    InfantryTransitSeconds: 40.657032
+    GroundTransitSeconds: 20.328516
+    AirTransitSeconds: 10.164258
+    InfantryFirstContactSeconds: 20.328516
+    GroundFirstContactSeconds: 10.164258
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -2025,12 +2025,12 @@ MonoBehaviour:
     - anchor.skirmish.s074.w29_route_FlankSouthSweep
     - anchor.skirmish.s074.staging_enemy
     Kind: 3
-    LengthMetres: 256.46487
-    InfantryTransitSeconds: 64.11622
-    GroundTransitSeconds: 32.05811
-    AirTransitSeconds: 16.029055
-    InfantryFirstContactSeconds: 32.05811
-    GroundFirstContactSeconds: 16.029055
+    LengthMetres: 225.23082
+    InfantryTransitSeconds: 56.307705
+    GroundTransitSeconds: 28.153852
+    AirTransitSeconds: 14.076926
+    InfantryFirstContactSeconds: 28.153852
+    GroundFirstContactSeconds: 14.076926
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -2041,12 +2041,12 @@ MonoBehaviour:
     - anchor.skirmish.s074.w29_route_FlankNorthRuins
     - anchor.skirmish.s074.staging_enemy
     Kind: 2
-    LengthMetres: 170.62686
-    InfantryTransitSeconds: 42.656715
-    GroundTransitSeconds: 21.328358
-    AirTransitSeconds: 10.664179
-    InfantryFirstContactSeconds: 21.328358
-    GroundFirstContactSeconds: 10.664179
+    LengthMetres: 130.66672
+    InfantryTransitSeconds: 32.66668
+    GroundTransitSeconds: 16.33334
+    AirTransitSeconds: 8.16667
+    InfantryFirstContactSeconds: 16.33334
+    GroundFirstContactSeconds: 8.16667
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -2056,8 +2056,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.air_enemy
     RoleId: air.enemy
     Kind: 6
-    CenterX: -186.3295
-    CenterZ: 971.266
+    CenterX: -411.9462
+    CenterZ: 903.45593
     WidthMetres: 16
     DepthMetres: 16
     FactionId: 2
@@ -2065,8 +2065,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.air_player
     RoleId: air.player
     Kind: 6
-    CenterX: -280.60614
-    CenterZ: 1040.2617
+    CenterX: -571.63464
+    CenterZ: 913.43646
     WidthMetres: 16
     DepthMetres: 16
     FactionId: 1
@@ -2074,26 +2074,26 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.base_enemy
     RoleId: base.enemy
     Kind: 1
-    CenterX: -128.92082
-    CenterZ: 983.37976
-    WidthMetres: 15
-    DepthMetres: 28
+    CenterX: -414.06708
+    CenterZ: 869.52216
+    WidthMetres: 28
+    DepthMetres: 15
     FactionId: 2
   - PadId: pad.skirmish.s074.base_player
     AnchorId: anchor.skirmish.s074.base_player
     RoleId: base.player
     Kind: 1
-    CenterX: -265.62488
-    CenterZ: 983.37976
-    WidthMetres: 15
-    DepthMetres: 28
+    CenterX: -542.31683
+    CenterZ: 869.52216
+    WidthMetres: 28
+    DepthMetres: 15
     FactionId: 1
   - PadId: pad.skirmish.s074.economy_enemy
     AnchorId: anchor.skirmish.s074.economy_enemy
     RoleId: economy.enemy
     Kind: 7
-    CenterX: -110.19424
-    CenterZ: 976.35724
+    CenterX: -432.43747
+    CenterZ: 872.1732
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 2
@@ -2101,8 +2101,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.economy_player
     RoleId: economy.player
     Kind: 7
-    CenterX: -279.26016
-    CenterZ: 974.07495
+    CenterX: -560.68726
+    CenterZ: 872.1732
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 1
@@ -2110,8 +2110,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.rally_enemy
     RoleId: rally.enemy
     Kind: 5
-    CenterX: -162.39459
-    CenterZ: 1036.5164
+    CenterX: -433.03006
+    CenterZ: 982.92584
     WidthMetres: 10
     DepthMetres: 8
     FactionId: 2
@@ -2119,8 +2119,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.rally_player
     RoleId: rally.player
     Kind: 5
-    CenterX: -250.8777
-    CenterZ: 1005.61755
+    CenterX: -558.03613
+    CenterZ: 842.44995
     WidthMetres: 10
     DepthMetres: 8
     FactionId: 1
@@ -2128,8 +2128,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.service_enemy
     RoleId: service.enemy
     Kind: 8
-    CenterX: -182.46715
-    CenterZ: 951.66156
+    CenterX: -428.47644
+    CenterZ: 855.39343
     WidthMetres: 12
     DepthMetres: 10
     FactionId: 2
@@ -2137,8 +2137,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.service_player
     RoleId: service.player
     Kind: 8
-    CenterX: -261.82104
-    CenterZ: 996.3713
+    CenterX: -556.7262
+    CenterZ: 855.39343
     WidthMetres: 12
     DepthMetres: 10
     FactionId: 1
@@ -2146,8 +2146,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_infantry_enemy
     RoleId: spawn.infantry.enemy
     Kind: 3
-    CenterX: -109.257904
-    CenterZ: 1018.72614
+    CenterX: -394.23077
+    CenterZ: 962.46576
     WidthMetres: 12
     DepthMetres: 10
     FactionId: 2
@@ -2155,8 +2155,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_infantry_player
     RoleId: spawn.infantry.player
     Kind: 3
-    CenterX: -263.28406
-    CenterZ: 961.1419
+    CenterX: -523.4786
+    CenterZ: 850.30963
     WidthMetres: 12
     DepthMetres: 10
     FactionId: 1
@@ -2164,8 +2164,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_vehicle_enemy
     RoleId: spawn.vehicle.enemy
     Kind: 4
-    CenterX: -96.61746
-    CenterZ: 1035.346
+    CenterX: -399.47055
+    CenterZ: 942.7543
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 2
@@ -2173,8 +2173,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.spawn_vehicle_player
     RoleId: spawn.vehicle.player
     Kind: 4
-    CenterX: -283.64923
-    CenterZ: 958.0988
+    CenterX: -542.0673
+    CenterZ: 841.4519
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 1
@@ -2182,8 +2182,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.staging_enemy
     RoleId: staging.enemy
     Kind: 2
-    CenterX: -139.6886
-    CenterZ: 957.5136
+    CenterX: -394.04364
+    CenterZ: 869.27264
     WidthMetres: 20
     DepthMetres: 14
     FactionId: 2
@@ -2191,8 +2191,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.staging_player
     RoleId: staging.player
     Kind: 2
-    CenterX: -285.93152
-    CenterZ: 990.4607
+    CenterX: -522.2934
+    CenterZ: 869.27264
     WidthMetres: 20
     DepthMetres: 14
     FactionId: 1
@@ -2200,214 +2200,214 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s074.base_player
     RoleId: instance.w29.f1.base
     Kind: 1
-    CenterX: -265.62488
-    CenterZ: 983.37976
-    WidthMetres: 65.02221
-    DepthMetres: 57.414536
+    CenterX: -542.31683
+    CenterZ: 869.52216
+    WidthMetres: 44.341606
+    DepthMetres: 56.50537
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_base
     AnchorId: anchor.skirmish.s074.base_enemy
     RoleId: instance.w29.f2.base
     Kind: 1
-    CenterX: -128.92082
-    CenterZ: 983.37976
-    WidthMetres: 65.02221
-    DepthMetres: 57.414536
+    CenterX: -414.06708
+    CenterZ: 869.52216
+    WidthMetres: 44.341606
+    DepthMetres: 56.50537
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_staging
     AnchorId: anchor.skirmish.s074.staging_player
     RoleId: instance.w29.f1.staging
     Kind: 2
-    CenterX: -285.93152
-    CenterZ: 990.4607
-    WidthMetres: 45.00817
-    DepthMetres: 49.104614
+    CenterX: -522.2934
+    CenterZ: 869.27264
+    WidthMetres: 35.483887
+    DepthMetres: 42.033607
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_staging
     AnchorId: anchor.skirmish.s074.staging_enemy
     RoleId: instance.w29.f2.staging
     Kind: 2
-    CenterX: -139.6886
-    CenterZ: 957.5136
-    WidthMetres: 49.104614
-    DepthMetres: 45.00817
+    CenterX: -394.04364
+    CenterZ: 869.27264
+    WidthMetres: 35.483887
+    DepthMetres: 42.033607
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_economy
     AnchorId: anchor.skirmish.s074.economy_player
     RoleId: instance.w29.f1.economy
     Kind: 7
-    CenterX: -279.26016
-    CenterZ: 974.07495
-    WidthMetres: 48.98757
-    DepthMetres: 42.55031
+    CenterX: -560.68726
+    CenterZ: 872.1732
+    WidthMetres: 32.55211
+    DepthMetres: 42.844524
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_economy
     AnchorId: anchor.skirmish.s074.economy_enemy
     RoleId: instance.w29.f2.economy
     Kind: 7
-    CenterX: -110.19424
-    CenterZ: 976.35724
-    WidthMetres: 38.044224
-    DepthMetres: 44.481487
+    CenterX: -432.43747
+    CenterZ: 872.1732
+    WidthMetres: 32.55211
+    DepthMetres: 42.844524
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_refinery
     AnchorId: anchor.skirmish.s074.w29_f1_refinery
     RoleId: instance.w29.f1.refinery
     Kind: 7
-    CenterX: -235.31122
-    CenterZ: 977.3521
-    WidthMetres: 56.361164
-    DepthMetres: 62.213223
+    CenterX: -574.3481
+    CenterZ: 870.0212
+    WidthMetres: 44.15447
+    DepthMetres: 53.51121
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_refinery
     AnchorId: anchor.skirmish.s074.w29_f2_refinery
     RoleId: instance.w29.f2.refinery
     Kind: 7
-    CenterX: -161.22418
-    CenterZ: 961.3175
-    WidthMetres: 62.213223
-    DepthMetres: 56.361164
+    CenterX: -446.09833
+    CenterZ: 870.0212
+    WidthMetres: 44.15447
+    DepthMetres: 53.51121
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_fuel
     AnchorId: anchor.skirmish.s074.w29_f1_fuel
     RoleId: instance.w29.f1.fuel
     Kind: 7
-    CenterX: -281.71805
-    CenterZ: 1005.9687
-    WidthMetres: 47.81716
-    DepthMetres: 50.15798
+    CenterX: -507.82162
+    CenterZ: 868.36816
+    WidthMetres: 38.478046
+    DepthMetres: 42.22074
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_fuel
     AnchorId: anchor.skirmish.s074.w29_f2_fuel
     RoleId: instance.w29.f2.fuel
     Kind: 7
-    CenterX: -124.18065
-    CenterZ: 953.3002
-    WidthMetres: 48.226803
-    DepthMetres: 45.885983
+    CenterX: -413.00665
+    CenterZ: 846.411
+    WidthMetres: 38.478046
+    DepthMetres: 42.22074
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_depot
     AnchorId: anchor.skirmish.s074.w29_f1_depot
     RoleId: instance.w29.f1.depot
     Kind: 7
-    CenterX: -304.24844
-    CenterZ: 999.9996
-    WidthMetres: 36.52269
-    DepthMetres: 38.278305
+    CenterX: -553.5761
+    CenterZ: 953.8888
+    WidthMetres: 44.77825
+    DepthMetres: 47.585278
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_depot
     AnchorId: anchor.skirmish.s074.w29_f2_depot
     RoleId: instance.w29.f2.depot
     Kind: 7
-    CenterX: -139.45453
-    CenterZ: 938.20184
-    WidthMetres: 55.190754
-    DepthMetres: 56.94637
+    CenterX: -432.3127
+    CenterZ: 842.1069
+    WidthMetres: 44.77825
+    DepthMetres: 47.585278
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_service
     AnchorId: anchor.skirmish.s074.service_player
     RoleId: instance.w29.f1.service
     Kind: 8
-    CenterX: -261.82104
-    CenterZ: 996.3713
-    WidthMetres: 38.336826
-    DepthMetres: 37.75162
+    CenterX: -556.7262
+    CenterZ: 855.39343
+    WidthMetres: 31.80357
+    DepthMetres: 30.867895
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_service
     AnchorId: anchor.skirmish.s074.service_enemy
     RoleId: instance.w29.f2.service
     Kind: 8
-    CenterX: -182.46715
-    CenterZ: 951.66156
-    WidthMetres: 38.336826
-    DepthMetres: 37.75162
+    CenterX: -428.47644
+    CenterZ: 855.39343
+    WidthMetres: 31.80357
+    DepthMetres: 30.867895
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_approach
     AnchorId: anchor.skirmish.s074.w29_f1_approach
     RoleId: instance.w29.f1.approach
     Kind: 8
-    CenterX: -254.33041
-    CenterZ: 993.5623
-    WidthMetres: 38.336826
-    DepthMetres: 37.75162
+    CenterX: -587.66583
+    CenterZ: 873.3584
+    WidthMetres: 31.80357
+    DepthMetres: 30.867895
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_approach
     AnchorId: anchor.skirmish.s074.w29_f2_approach
     RoleId: instance.w29.f2.approach
     Kind: 8
-    CenterX: -150.63196
-    CenterZ: 922.6354
-    WidthMetres: 38.336826
-    DepthMetres: 37.75162
+    CenterX: -397.53683
+    CenterZ: 837.4285
+    WidthMetres: 31.80357
+    DepthMetres: 30.867895
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_dish
     AnchorId: anchor.skirmish.s074.w29_f1_dish
     RoleId: instance.w29.f1.dish
     Kind: 8
-    CenterX: -296.4652
-    CenterZ: 1017.90686
-    WidthMetres: 38.68795
-    DepthMetres: 38.68795
+    CenterX: -491.85278
+    CenterZ: 867.37006
+    WidthMetres: 38.22853
+    DepthMetres: 38.22853
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_dish
     AnchorId: anchor.skirmish.s074.w29_f2_dish
     RoleId: instance.w29.f2.dish
     Kind: 8
-    CenterX: -135.65068
-    CenterZ: 917.0174
-    WidthMetres: 44.481487
-    DepthMetres: 44.481487
+    CenterX: -393.54462
+    CenterZ: 901.3039
+    WidthMetres: 38.22853
+    DepthMetres: 38.22853
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_air
     AnchorId: anchor.skirmish.s074.air_player
     RoleId: instance.w29.f1.air
     Kind: 6
-    CenterX: -280.60614
-    CenterZ: 1040.2617
-    WidthMetres: 49.280174
-    DepthMetres: 48.69497
+    CenterX: -571.63464
+    CenterZ: 913.43646
+    WidthMetres: 43.593067
+    DepthMetres: 44.52874
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_air
     AnchorId: anchor.skirmish.s074.air_enemy
     RoleId: instance.w29.f2.air
     Kind: 6
-    CenterX: -186.3295
-    CenterZ: 971.266
-    WidthMetres: 53.201054
-    DepthMetres: 53.78626
+    CenterX: -411.9462
+    CenterZ: 903.45593
+    WidthMetres: 43.593067
+    DepthMetres: 44.52874
     FactionId: 2
   - PadId: pad.skirmish.s074.i_w29_f1_module
     AnchorId: anchor.skirmish.s074.w29_f1_module
     RoleId: instance.w29.f1.module
     Kind: 7
-    CenterX: -249.35616
-    CenterZ: 1076.603
-    WidthMetres: 56.361164
-    DepthMetres: 62.213223
+    CenterX: -509.9737
+    CenterZ: 1002.2631
+    WidthMetres: 31.429298
+    DepthMetres: 40.78604
     FactionId: 1
   - PadId: pad.skirmish.s074.i_w29_f2_module
     AnchorId: anchor.skirmish.s074.w29_f2_module
     RoleId: instance.w29.f2.module
     Kind: 7
-    CenterX: -169.65114
-    CenterZ: 938.8456
-    WidthMetres: 62.213223
-    DepthMetres: 56.361164
+    CenterX: -456.07886
+    CenterZ: 838.5825
+    WidthMetres: 44.15447
+    DepthMetres: 53.51121
     FactionId: 2
   worldBinding:
-    OriginX: 792.9216
-    OriginZ: 656.45917
-    ForwardX: 0.35112345
-    ForwardZ: -0.9363292
-    AcrossX: 0.9363292
-    AcrossZ: 0.35112345
-    ForwardMetres: 271.63098
-    AcrossMetres: 271.33838
+    OriginX: 849.393
+    OriginZ: 673.962
+    ForwardX: 0.062378287
+    ForwardZ: -0.9980526
+    AcrossX: 0.9980526
+    AcrossZ: 0.062378287
+    ForwardMetres: 258.12122
+    AcrossMetres: 288.9673
     PlayerAnchorId: anchor.skirmish.s074.base_player
     EnemyAnchorId: anchor.skirmish.s074.base_enemy
     SourceHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
     HasMeasuredDeployments: 1
-    PlayerDeployment: {x: 827.5, y: 594}
-    EnemyDeployment: {x: 875.5, y: 466}
+    PlayerDeployment: {x: 834, y: 595.5}
+    EnemyDeployment: {x: 842, y: 467.5}
     BindAllConfigurations: 1
   bindingValueFormat: 0

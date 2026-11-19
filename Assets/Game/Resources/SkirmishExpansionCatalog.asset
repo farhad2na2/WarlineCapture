@@ -59,4 +59,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f2e11467d185464e9e4fa9545e5f3fc, type: 2}
   - {fileID: 11400000, guid: 32642fd8e6674ec408f79e49b5d5eb46, type: 2}
   - {fileID: 11400000, guid: 83178c2ab20b0b24a9d67afce1843897, type: 2}
+  - {fileID: 11400000, guid: 2a10fad92d1b1a14eb2e61e8fa9bdfb0, type: 2}
+  - {fileID: 11400000, guid: d2d07b436ab80ad42984660f8cb8ec12, type: 2}
+  - {fileID: 11400000, guid: 406d4eeb6634dee4d9f4de7a0ef20c0b, type: 2}
+  - {fileID: 11400000, guid: 26d77236c967cce44aba9be1063a641b, type: 2}
+  - {fileID: 11400000, guid: ebe3ed45e4728c7478d1de5e338434ea, type: 2}
+  - {fileID: 11400000, guid: 6a1cb282e349ed94da036e20fb0abbda, type: 2}
   historicalDefinitions: []

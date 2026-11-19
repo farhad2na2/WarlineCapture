@@ -407,7 +407,37 @@ namespace Game.Editor
             return mesh;
         }
 
-        private static Mesh BuildCompactTriangleReducedMesh(Mesh source, float triangleRatio)
+        // The soldier carries baked animation coordinates per vertex. Use connected
+        // LOD triangles and copy the surviving vertices with all animation UV channels.
+        private static Mesh BuildCompactTriangleReducedMesh(Mesh original, float triangleRatio)
+        {
+            Mesh source = Object.Instantiate(original);
+            try
+            {
+                MeshLodUtility.GenerateMeshLods(source, -1);
+                if (source.lodCount < 2)
+                    throw new System.InvalidOperationException("Unity could not simplify the animated soldier mesh.");
+                int limit = Mathf.CeilToInt(IndexCountAtLod(source, 0) * triangleRatio);
+                int level = 1;
+                while (level + 1 < source.lodCount && IndexCountAtLod(source, level) > limit)
+                    level++;
+                return CompactSoldierLod(source, level);
+            }
+            finally
+            {
+                Object.DestroyImmediate(source);
+            }
+        }
+
+        private static int IndexCountAtLod(Mesh mesh, int level)
+        {
+            int total = 0;
+            for (int slot = 0; slot < mesh.subMeshCount; slot++)
+                total += (int)mesh.GetLod(slot, level).indexCount;
+            return total;
+        }
+
+        private static Mesh CompactSoldierLod(Mesh source, int level)
         {
             Vector3[] sourceVertices = source.vertices;
             Vector3[] sourceNormals = source.normals;
@@ -429,16 +459,10 @@ namespace Game.Editor
 
             for (int submesh = 0; submesh < source.subMeshCount; submesh++)
             {
-                int[] triangles = source.GetTriangles(submesh);
-                List<int> selectedTriangleStarts = SelectTriangleStarts(sourceVertices, triangles, triangleRatio);
-                List<int> outputTriangles = new(selectedTriangleStarts.Count * 3);
-                for (int i = 0; i < selectedTriangleStarts.Count; i++)
-                {
-                    int start = selectedTriangleStarts[i];
-                    outputTriangles.Add(CopyVertex(triangles[start], sourceVertices, sourceNormals, sourceTangents, sourceColors, sourceColors32, sourceBoneWeights, sourceUvs, vertices, normals, tangents, colors, colors32, boneWeights, uvs, remap));
-                    outputTriangles.Add(CopyVertex(triangles[start + 1], sourceVertices, sourceNormals, sourceTangents, sourceColors, sourceColors32, sourceBoneWeights, sourceUvs, vertices, normals, tangents, colors, colors32, boneWeights, uvs, remap));
-                    outputTriangles.Add(CopyVertex(triangles[start + 2], sourceVertices, sourceNormals, sourceTangents, sourceColors, sourceColors32, sourceBoneWeights, sourceUvs, vertices, normals, tangents, colors, colors32, boneWeights, uvs, remap));
-                }
+                int[] indices = source.GetIndices(submesh, level, true);
+                List<int> outputTriangles = new(indices.Length);
+                foreach (int index in indices)
+                    outputTriangles.Add(CopyVertex(index, sourceVertices, sourceNormals, sourceTangents, sourceColors, sourceColors32, sourceBoneWeights, sourceUvs, vertices, normals, tangents, colors, colors32, boneWeights, uvs, remap));
 
                 submeshTriangles[submesh] = outputTriangles;
             }

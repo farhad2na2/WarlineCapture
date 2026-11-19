@@ -1,0 +1,404 @@
+{
+  "CH04M04GroundedSignal": {
+    "asphaltRenderers": 222,
+    "sidewalkRenderers": 3708,
+    "asphaltSoilEdgeSamples": 3127,
+    "sidewalkOverlapSamples": 86,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 6870,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 56258,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH04M05ArmorBreak": {
+    "asphaltRenderers": 225,
+    "sidewalkRenderers": 2020,
+    "asphaltSoilEdgeSamples": 5260,
+    "sidewalkOverlapSamples": 46,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 6142,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 63807,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH05M01CitywideAlert": {
+    "asphaltRenderers": 141,
+    "sidewalkRenderers": 643,
+    "asphaltSoilEdgeSamples": 2003,
+    "sidewalkOverlapSamples": 604,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 11560,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 108055,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 12050,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 136347,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH05M02TrustUnderFire": {
+    "asphaltRenderers": 156,
+    "sidewalkRenderers": 2098,
+    "asphaltSoilEdgeSamples": 3991,
+    "sidewalkOverlapSamples": 62,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 5398,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 54005,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 10536,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "bridge-normal": {
+        "pixelsChangedAbove5": 10962,
+        "width": 1600,
+        "height": 900
+      },
+      "bridge-soldiers": {
+        "pixelsChangedAbove5": 355,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH05M03NetworkCollapse": {
+    "asphaltRenderers": 140,
+    "sidewalkRenderers": 643,
+    "asphaltSoilEdgeSamples": 333,
+    "sidewalkOverlapSamples": 604,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 11560,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 108054,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 12051,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 136349,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH05M04LastCorridor": {
+    "asphaltRenderers": 140,
+    "sidewalkRenderers": 643,
+    "asphaltSoilEdgeSamples": 333,
+    "sidewalkOverlapSamples": 604,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 11560,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 108054,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 12051,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 136349,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CH05M05CommandNode": {
+    "asphaltRenderers": 140,
+    "sidewalkRenderers": 643,
+    "asphaltSoilEdgeSamples": 333,
+    "sidewalkOverlapSamples": 604,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 11560,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 108054,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 12051,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 136349,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "DesertBase": {
+    "asphaltRenderers": 73,
+    "sidewalkRenderers": 456,
+    "asphaltSoilEdgeSamples": 37187,
+    "sidewalkOverlapSamples": 0,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 122597,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 290156,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 144052,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "DenseCity": {
+    "asphaltRenderers": 2339,
+    "sidewalkRenderers": 16467,
+    "asphaltSoilEdgeSamples": 101724,
+    "sidewalkOverlapSamples": 2110025,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 40250,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 158463,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 5813,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 6221,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "StagedDesertBase": {
+    "asphaltRenderers": 73,
+    "sidewalkRenderers": 456,
+    "asphaltSoilEdgeSamples": 37187,
+    "sidewalkOverlapSamples": 0,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 124240,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 284316,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 144445,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "AshLinePort": {
+    "asphaltRenderers": 276,
+    "sidewalkRenderers": 3370,
+    "asphaltSoilEdgeSamples": 426,
+    "sidewalkOverlapSamples": 390,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 5305,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 54357,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 10521,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "CityEdgeAirfield": {
+    "asphaltRenderers": 222,
+    "sidewalkRenderers": 3708,
+    "asphaltSoilEdgeSamples": 3127,
+    "sidewalkOverlapSamples": 70,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 86385,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 245641,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 17,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "Frontier": {
+    "asphaltRenderers": 319,
+    "sidewalkRenderers": 7380,
+    "asphaltSoilEdgeSamples": 3049,
+    "sidewalkOverlapSamples": 79,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 5137,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 72782,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 0,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  },
+  "RefineryDistrict": {
+    "asphaltRenderers": 141,
+    "sidewalkRenderers": 3160,
+    "asphaltSoilEdgeSamples": 123,
+    "sidewalkOverlapSamples": 48,
+    "views": {
+      "shoulder-normal": {
+        "pixelsChangedAbove5": 6322,
+        "width": 1600,
+        "height": 900
+      },
+      "shoulder-soldiers": {
+        "pixelsChangedAbove5": 71487,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-normal": {
+        "pixelsChangedAbove5": 233,
+        "width": 1600,
+        "height": 900
+      },
+      "sidewalk-soldiers": {
+        "pixelsChangedAbove5": 1089,
+        "width": 1600,
+        "height": 900
+      }
+    }
+  }
+}

@@ -337,6 +337,8 @@ namespace Game.Rendering
                         continue;
 
                     float3 unitPosition = transforms[i].Position;
+                    if (em.HasComponent<InfantryVisualFooting>(entities[i]))
+                        unitPosition.y += em.GetComponentData<InfantryVisualFooting>(entities[i]).Lift;
                     Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
                     Vector3 toCamera = cameraPosition - position;
                     FixedString64Bytes sourceKey = sourceKeys[i].Value;

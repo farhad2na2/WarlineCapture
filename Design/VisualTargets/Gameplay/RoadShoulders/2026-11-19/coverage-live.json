@@ -1,0 +1,10 @@
+{
+  "result": "[LiveRoadReview] result=Passed scenario=S002 seed=104731 infantry=(986.50, -0.51, 318.50) shoulder=(986.85, 0.78, 318.75) distance=1.37 verifiedMaterials=54 desertReady=1",
+  "pixelsChangedAbove5": {
+    "normal": 61012,
+    "soldiers": 228684
+  },
+  "capture": {
+    "method": "Original and corrected game runs on the same seed, spawn, camera height, lens and angle. Three consecutive rendered frames passed the shader-readiness check before each screenshot."
+  }
+}

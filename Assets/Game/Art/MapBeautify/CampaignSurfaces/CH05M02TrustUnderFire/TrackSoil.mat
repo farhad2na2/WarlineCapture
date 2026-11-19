@@ -23,6 +23,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _StreetEdgeMap:
+        m_Texture: {fileID: 2800000, guid: 92eedc27fabfe48d49c79bcb98cf6057, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ActivityMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -53,6 +57,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _StreetEdgeMode: 1
     - _ActivityStrength: 0
     - _BaseColorInfluence: 1
     - _CivicSurfaceStrength: 0
@@ -81,6 +86,8 @@ Material:
     - _SandScrubCoverage: 0.1
     - _Smoothness: 0.04
     m_Colors:
+    - _StreetEdgeRect: {r: 288, g: 374.40002, b: 864.00006, a: 345.6}
+    - _StreetEdgeLevels: {r: -0.27, g: 3.846467, b: 0.3, a: 0}
     - _ActivityRect: {r: 0, g: 0, b: 1, a: 1}
     - _BaseColor: {r: 1.12, g: 1.08, b: 0.96, a: 1}
     - _CivicSurfaceRect: {r: 0, g: 0, b: 0, a: 0}

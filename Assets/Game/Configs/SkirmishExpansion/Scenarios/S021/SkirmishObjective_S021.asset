@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishObjectiveConfig
   objectiveId: CE
   kind: 4
-  standardDeadlineSeconds: 420
-  warDeadlineSeconds: 583
-  largeWarDeadlineSeconds: 700
+  standardDeadlineSeconds: 525
+  warDeadlineSeconds: 729
+  largeWarDeadlineSeconds: 875
   playerBaseRoleId: base.player
   enemyBaseRoleId: base.enemy
   contentVersion: 1

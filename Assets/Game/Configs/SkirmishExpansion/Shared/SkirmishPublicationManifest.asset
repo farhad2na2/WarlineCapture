@@ -316,6 +316,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s042
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S042/
+    Notes: 
   - CatalogId: S043
     DefinitionId: skirmish.s043
     Status: 1
@@ -355,6 +356,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s048
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S048/
+    Notes: 
   - CatalogId: S061
     DefinitionId: skirmish.s061
     Status: 1
@@ -394,6 +396,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s066
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S066/
+    Notes: 
   - CatalogId: S067
     DefinitionId: skirmish.s067
     Status: 1

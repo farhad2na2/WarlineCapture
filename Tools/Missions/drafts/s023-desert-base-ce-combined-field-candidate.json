@@ -1,7 +1,7 @@
 {
   "catalog_id": "S023",
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
-  "notes": "candidate=1, measured 2026-11-18 (lane22 r2 on S002 seed 130365: destination inside playable with truck-footprint cells reachable from both sides, convoy.origin.1-3 bays fitsAsIs for the 3x3 truck, defense.approach.a/b fitsAsIs for the 3x4 watchtower, three vehicle routes flood-measured 720/798/701 m; Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json; geometry still a candidate). Earlier history: Bases, side pads, routes and per-building pads moved (2026-11-18) to the S006 example's Unity-measured legal positions (Tools/Missions/examples/s006-desert-base-ba-combined-established.json, legal candidates from lane4-dump-S002, post spawn fixes 5e1eb1b9c..29dc2818b): the earlier copy (a70de70f9) kept the illegal enemy HQ [1387.8,650]/highway staging and had no instance_pads, the cause of the S007 lane20 BlockedSpawn. S019 instance pads (Field roster, 7 per side) are ordered like SkirmishSetupCompiler.BuildStructures so each building takes the pad measured for its own footprint; the defender towers use their defense.approach.a/b role pads. Desert Base host geometry only (S019 omitted air.* for Ground Maneuver Field). structure_footprints copied from the S006 example. S019 Convoy Escort: the three bays keep their rule (thirds of the spawn.vehicle.player pad along the layout's forward axis, each 4.6 wide, so they do not overlap in the layout frame) and therefore move with that pad to [926.0,651.5] 14x12 (old pad partly blocked: 2cc13ab02); the frame now runs player base -> relocated enemy base, so the thirds lie on that axis instead of world X. Destination unchanged as literal coordinates [1308.36,621.2]..[1352.05,650.0] (originally old rally.enemy..staging.enemy x, service.enemy..staging.enemy z). Towers as S013: defense.approach.a/b moved minimally to the nearest clear 3x4 tower origins (pad_preflight on lane4-dump-S002: the old centres on ruins.far/sweep.east had no clear origin inside the 10x10 pad, scenery/road): a [1340.14,706.0]->[1340.5,702.0] (4.0 m, origin 1339,700), b [1316.31,598.8]->[1310.5,610.0] (12.6 m, origin 1309,608), beside the north/south flank routes; pad [10,10]. All three routes are vehicle routes with different middle waypoints; bay and tower pad dimensions remain candidates. The lane22 r2 area_measurement records the static fitsAsIs checks for the truck and tower footprints. S023 combined / field sibling. S019 positions and objective-area evidence are inherited as candidate geometry. S006 supplies the air.player and air.enemy anchors and the air.enemy pad. The air.player role pad is generated from the copied anchor, as in S006. Field starts retain the seven S019 starting structures per side and grant no starting helipad. Airport placement for paid construction is unmeasured in S006. The starting roster has no Airport. The inherited footprint is retained.",
+  "notes": "candidate=1, measured 2026-11-18 (lane22 r2 on S002 seed 130365: destination inside playable with truck-footprint cells reachable from both sides, convoy.origin.1-3 bays fitsAsIs for the 3x3 truck, defense.approach.a/b fitsAsIs for the 3x4 watchtower, three vehicle routes flood-measured 720/798/701 m; Design/AgentReports/SkirmishExpansion/S019/area-measurement-r2.json; geometry still a candidate). Earlier history: Bases, side pads, routes and per-building pads moved (2026-11-18) to the S006 example's Unity-measured legal positions (Tools/Missions/examples/s006-desert-base-ba-combined-established.json, legal candidates from lane4-dump-S002, post spawn fixes 5e1eb1b9c..29dc2818b): the earlier copy (a70de70f9) kept the illegal enemy HQ [1387.8,650]/highway staging and had no instance_pads, the cause of the S007 lane20 BlockedSpawn. S019 instance pads (Field roster, 7 per side) are ordered like SkirmishSetupCompiler.BuildStructures so each building takes the pad measured for its own footprint; the defender towers use their defense.approach.a/b role pads. Desert Base host geometry only (S019 omitted air.* for Ground Maneuver Field). structure_footprints copied from the S006 example. S019 Convoy Escort: the three bays keep their rule (thirds of the spawn.vehicle.player pad along the layout's forward axis, each 4.6 wide, so they do not overlap in the layout frame) and therefore move with that pad to [926.0,651.5] 14x12 (old pad partly blocked: 2cc13ab02); the frame now runs player base -> relocated enemy base, so the thirds lie on that axis instead of world X. Destination unchanged as literal coordinates [1308.36,621.2]..[1352.05,650.0] (originally old rally.enemy..staging.enemy x, service.enemy..staging.enemy z). Towers as S013: defense.approach.a/b moved minimally to the nearest clear 3x4 tower origins (pad_preflight on lane4-dump-S002: the old centres on ruins.far/sweep.east had no clear origin inside the 10x10 pad, scenery/road): a [1340.14,706.0]->[1340.5,702.0] (4.0 m, origin 1339,700), b [1316.31,598.8]->[1310.5,610.0] (12.6 m, origin 1309,608), beside the north/south flank routes; pad [10,10]. All three routes are vehicle routes with different middle waypoints; bay and tower pad dimensions remain candidates. The lane22 r2 area_measurement records the static fitsAsIs checks for the truck and tower footprints. S023 combined / field sibling. S019 positions and objective-area evidence are inherited as candidate geometry. S006 supplies the air.player and air.enemy anchors and the air.enemy pad. The air.player role pad is generated from the copied anchor, as in S006. Field starts retain the seven S019 starting structures per side and grant no starting helipad. Airport placement for paid construction is unmeasured in S006. The starting roster has no Airport. The inherited footprint is retained. Windows W25 2026-11-19: the player vehicle pad moves off the convoy bays, as W14 did for the established rows. Its centre [830,583.5] is the unrotated Barracks candidate at origin [816,576] in the S002 layout dump. On seed 155923 an opening vehicle took a cell in convoy bay 1 and the first objective truck could not spawn (BlockedSpawn).",
   "anchors": {
     "base.player": [
       935,
@@ -208,8 +208,8 @@
       462
     ],
     "spawn.vehicle.player": [
-      926,
-      651.5
+      830.0,
+      583.5
     ],
     "spawn.infantry.player": [
       876,
@@ -306,13 +306,13 @@
     ],
     "spawn.vehicle.player": {
       "at": [
-        926,
-        651.5
+        830.0,
+        583.5
       ],
       "anchor": "spawn.vehicle.player",
       "size": [
-        14,
-        12
+        22,
+        20
       ]
     },
     "spawn.vehicle.enemy": [

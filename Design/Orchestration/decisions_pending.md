@@ -221,4 +221,4 @@ helicopters only) to every map.\" I prefer we have Airport. Investigate if we ca
 5. **Map fallback:** when the named Campaign source cannot fit a mission, use an existing map that already works (Desert Base or City Crossroads) and keep the
    theater name. Record the fit evidence.
 Workflow: Mac counted runs only after Windows' non-counted runs land in the pacing band; merges only when the lane is idle and its commit is in; one
-combined owner list for shared-code requests. Certify-by-family (fewer counted runs per sibling) was offered as optional and is not adopted.
+combined owner list for shared-code requests. Certify-by-family (fewer counted runs per sibling): the owner agreed with the recommendation ("ok so go as you recommend"). Keep 4 counted runs per mission for now; revisit only if Mac time becomes the limit.

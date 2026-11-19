@@ -455,7 +455,8 @@ SkirmishMatchView.PublicObjectiveHud.cs:196-199 builds targets only for Dismount
 objective target, prove the Move receipt with EditMode tests and non-counted runs on S022, S024 and S040 or S042. Note S047 (truck group 15 service detour 126.6-268.4 s, then ConvoyImpossible 339.2 s) as a candidate cause; no change yet.
 
 ## W36 — Combined pacing sweep on the full ARIA stack, then one deadline per family (2026-11-19)
-status: READY (data only after the sweep)
+status: RESUME (owner: Windows updated, resume 2026-11-19). Paused at 23/29 on local stack 9dfde3121 (missions/win-pacing-stack-sweep f3c7f1afb): all 23 Victory, gate 3 PASS; CE median 39.7% of 525 (keep 525), BT median 49.6% of 540 (proposed 670, accepted in principle).
+Next: (1) finish S042@130365 + FC S009/S011/S031/S033/S035 @130365 on the same stack, push the results file; (2) one data branch off current integration with BT S037-S042 670 s (War/LargeWar scaled as before) and FC only if its median is >50%; authoring + containment, then report the commit; (3) W16. The Mac stays paused; it merges W31d/W27b/W32b + the deadline data on resume.
 Non-counted, local merge of integration + W31d + W27b + W32b: DB CE S019-S024 (525 s) and CC BT S037-S042 (540 s) on 155923 + 130365; FC S009/S011/S031/S033/S035 on 130365.
 Report deadlinePct and gate 3 per run, then propose one deadline per family with the median near 40% (owner target 25-50%). Escort turns (W32/W32b) add 10-90 s per run.
 Then W16 (FC established losses), then W34/W35/W33 (Airport plan).

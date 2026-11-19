@@ -214,6 +214,8 @@ helicopters only) to every map.\" I prefer we have Airport. Investigate if we ca
    covers investigation now. Building it waits for the findings. S004 keeps its earlier decision.
    Owner follow-up (same chat): "its acceptable a map without airport but not all without". So one of CC/MP/IB may go without an Airport,
    but not all of them: the study ranks the three by Airport feasibility and recommends which to change. Rows on a map that stays without one use helipads.
+   Owner follow-up: "you can consider small airport as well. for example some maps with big airport that a transporter can land and smaller
+   airport for jets and drones". The study also sizes a small airport (fighter/strike/drone, no transport_plane) per map.
 4. **Standing OK for shared ARIA and test-tool fixes** that come with passing tests and change no unit stats or game rules. Windows' own rules require the owner's
    words in the Windows session; the program lead forwards this quote, and Windows confirms with the owner there.
 5. **Map fallback:** when the named Campaign source cannot fit a mission, use an existing map that already works (Desert Base or City Crossroads) and keep the

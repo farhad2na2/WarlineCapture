@@ -338,7 +338,7 @@ won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the
 authoring, containment, and non-counted menu runs at 155923 / 130365 / 104731 en with expandedStartupFailure 0. Branch `missions/win-w28-s019-pad`.
 
 ## W29 — Industrial Basin Base Assault S074-S078: layout, measurement and authoring (2026-11-19)
-status: READY
+status: READY again (step 1 stopped: S073 is the legacy coded preset, not an expansion host). Program lead OKs option 1: bootstrap S074 as its own host (provisional author from the S073 deployment anchors + salvage binding, dump with WARLINE_SKIRMISH_CATALOG=S074, then rewrite S074 from the measured layout and re-author). Data only; the provisional S074 run is not evidence. Then steps 1-2 as written, using S074 as the IB host.
 codex effort: high
 Drafts `Tools/Missions/drafts/s07[4-8]-industrial-basin-ba-*.json` hold only partial S073 deployment anchors ("Layout incomplete"). Source: RefineryDistrict /
 `Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset`, which the map reuse policy names for Skirmish IB; S073 stays the coded preset, unchanged.

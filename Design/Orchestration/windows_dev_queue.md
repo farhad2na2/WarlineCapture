@@ -300,7 +300,7 @@ S068 Blocked 101 from those logs. Accept only if: order_blocked 0, AriaBlocked 0
 >=20% of the deadline. Branches: continue `missions/win-w23-mp-bt-exit` and `-mp-ce-dest`. Per-task results file.
 
 ## W25 — S021/S023 (Desert Base CE field) abort on seed 155923: player convoy truck BlockedSpawn (2026-11-19)
-status: READY (after W23c)
+status: DONE (130328c86: S021/S023 player vehicle pad moved to the W14 position; 6/6 Victory non-counted on three seeds; Mac merges after lane 41). S019 follow-up is W28.
 codex effort: high
 Mac lane 41 (`program-logs/2026-11-19/lane41/a/unity.log`): S021 at seed 155923 en aborts 24 s into the job, before the match:
 `[SkirmishStartingForce] failed prefab=Unit_Veh_Truck_Tray faction=1 member=0` (:416162) then `aborted reason=expandedStartupFailure=BlockedSpawn` (:416187).
@@ -309,7 +309,7 @@ rows; this is the field rows on one seed. Diagnose what occupies the truck spawn
 package), fix the draft data, prove with menu launches of S021/S023 at 155923 en with expandedStartupFailure=0. Branch `missions/win-w25-db-ce-field-spawn`.
 
 ## W26 — Mountain Pass BT S061-S066 / CE S067-S072: evaluate Armor Break as the source (2026-11-19)
-status: READY (after W25)
+status: HOLD after step 1 (dc2ff829e): Armor Break is hostable by data, but no registered row runs on it, and the area measurement needs a registered host on the draft's source. Program lead picks option 2 (the dump and measurement take the draft's campaign_source, plus the test_drafts.py MP source entry). That is shared tooling: it needs the owner's OK in the Windows session. Not option 1 (S049 keeps its Citywide evidence). Until the OK comes, S061-S072 stay blocked on source fit. If step 2 later fails on Armor Break's 669x56-cell clear area, record it and stop.
 codex effort: xhigh
 W23c showed Citywide Alert (S050) cannot hold a tappable BT exit or CE destination past the defended corridors (the z 412-436 highway bypasses both;
 the start-to-endpoint band is the player base). `CAMPAIGN_MAP_REUSE_POLICY.md` names "Existing Armor Break approach sector" as the Skirmish MP source,
@@ -329,6 +329,13 @@ status: HOLD (shared ARIA code: needs the owner's OK in the Windows session)
 From W23c's log reading: S061 group-19 Move for OpenObjectiveCorridor tapped 3x, none accepted, then `AriaBlockedControl control=Move moveMode=False`.
 S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> RepairVehicle every ~27 s with accepted orders and no progress until
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
+
+## W28 — S019 (Desert Base CE ground field): same latent vehicle-pad / convoy-bay overlap (2026-11-19)
+status: READY
+codex effort: medium
+W25 found S019's player vehicle pad (926,651.5, 14x12) still contains the convoy bays, as S021/S023 did before ae7034004. S019 has not aborted yet (lane 41
+won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the W14/W25 anchor and pad (830,583.5, 22x20) to S019, then preflight, check_draft,
+authoring, containment, and non-counted menu runs at 155923 / 130365 / 104731 en with expandedStartupFailure 0. Branch `missions/win-w28-s019-pad`.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

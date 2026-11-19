@@ -316,6 +316,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s042
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S042/
+    Notes: 
   - CatalogId: S043
     DefinitionId: skirmish.s043
     Status: 1
@@ -355,6 +356,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s048
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S048/
+    Notes: 
   - CatalogId: S061
     DefinitionId: skirmish.s061
     Status: 1
@@ -394,6 +396,7 @@ MonoBehaviour:
     DefinitionId: skirmish.s066
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S066/
+    Notes: 
   - CatalogId: S067
     DefinitionId: skirmish.s067
     Status: 1
@@ -433,6 +436,13 @@ MonoBehaviour:
     DefinitionId: skirmish.s072
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S072/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S074
+    DefinitionId: skirmish.s074
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S074/
     Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
       source fit, normal-input/ARIA journeys, result/return and device acceptance
       required; asset existence does not set Playable.

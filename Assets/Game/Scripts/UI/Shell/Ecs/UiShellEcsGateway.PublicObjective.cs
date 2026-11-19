@@ -147,9 +147,12 @@ namespace Game.UI.Shell.Ecs
                 bool ground=group.Domain==SkirmishPopulationCategory.Infantry||group.Domain==SkirmishPopulationCategory.Ground||
                     group.Domain==SkirmishPopulationCategory.LogisticsSupport||
                     (group.Domain==SkirmishPopulationCategory.ObjectiveSupport&&group.Role==SkirmishRoleKind.ConvoyLogic&&originals.Count>0);
+                // W32b (gate 3): an own transport helicopter takes an ordinary public Move to the objective goal (escort);
+                // it never holds a zone and never becomes an objective subject.
+                bool airMove=group.Domain==SkirmishPopulationCategory.Air&&group.Role==SkirmishRoleKind.TransportHeli;
                 var policy=new SkirmishPublicPlayerGroup {GroupId=group.GroupId,Own=true,Living=true,
                     CombatInfantry=group.Domain==SkirmishPopulationCategory.Infantry&&SkirmishExpandedPresentedOrders.IsAssaultRole(group.Role),
-                    Dismounted=!mounted,CanMove=ground&&!mounted,CanHold=ground&&!mounted,CanUnload=false,
+                    Dismounted=!mounted,CanMove=(ground||airMove)&&!mounted,CanHold=ground&&!mounted,CanUnload=false,
                     PositionKnown=true,WorldX=center.x,WorldZ=center.y,DesignatedSubjects=originals.ToArray()};
                 SkirmishPublicOriginalTransportGroup transport=null;
                 bool unload=mounted&&SkirmishPublicOriginalTransportProjection.TryRead(em,session,goal,group.GroupId,out transport);

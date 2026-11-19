@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "cycle_active": false,
-  "cycle_owner": "lane worker 43 (returned)",
-  "cycle_started": "2026-11-19T14:17:00+01:00",
+  "cycle_owner": "lane worker 45 (returned)",
+  "cycle_started": "2026-11-19T17:58:00+01:00",
   "unity_lane": "idle",
-  "phase": "lane 43 done; lane idle",
+  "phase": "lane 45 done; lane idle; program paused on owner request",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

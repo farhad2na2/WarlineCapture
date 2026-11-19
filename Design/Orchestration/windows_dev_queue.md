@@ -190,6 +190,26 @@ Then on a new MP host row bound to the derivative:
 3. Report whether the extra depth (z 40-300) now allows a W23c-rule BT exit / CE destination past both corridors (S061/S067).
 Do not move the MP rows yet; report first. Branch `missions/win-w33-mp-enlarged`. Per-task results file.
 
+## W34 — Small airport building (owner-approved Airport plan) (2026-11-19)
+status: READY after W31 (owner approved in chat 2026-11-19; it is new shared game code, so confirm with the owner in your session)
+codex effort: xhigh
+Add `building.airport_small` (120x40 cells, runway ~100 m) that produces fighter + strike only. Drones stay on the satellite dish; transport_plane goes through the
+per-map army profile. Every place that hard-wires one Airport type is listed in `notes/airport-map-feasibility-2026-11-19.md`, section "Airport type assumptions in code".
+Generalize `AirportPresent` and the producer mapping so either airport type qualifies; the enemy AI builds the type its map offers; map it in the gate model.
+Existing full-Airport missions must stay byte-identical, and S004 keeps its exclusion. Build `Building_Airport_Small.prefab` as a variant of Building_Airport with an
+idempotent Editor builder (marker `[SmallAirportPrefabBuilder] result=Passed`). If the landing delivery plane cannot work on a 100 m strip, use self-arrival and say so.
+EditMode tests: id/prefab mapping, eligibility (fighter/strike yes, transport_plane not from it), enemy AI type choice, full Airport unchanged. Wire no mission yet.
+Branch `missions/win-w34-small-airport`.
+
+## W35 — City Crossroads "CC air" logical window with extended bounds (owner-approved Airport plan) (2026-11-19)
+status: READY after W31 (owner approved in chat 2026-11-19; confirm with the owner in your session)
+codex effort: high
+Clone `OperationMap_CityCrossroads` into a Skirmish-only asset (e.g. `OperationMap_CityCrossroadsAir`) with playable 804-1300 x 156-875 and matching camera/minimap
+bounds, following the `SkirmishS004CampaignMapBuilder.cs:16-40` pattern (marker with `campaignAssetsUnchanged=1`). The original asset, `Resources/SkirmishCityCrossroads.asset` (S025),
+the shared world surface/grid and all Campaign assets must stay unchanged. Name the binding field a later task rebinds; do not rebind rows yet. Then run an Airport-only layout dump
+(`WARLINE_LAYOUT_DUMP_KINDS=airport`, as `notes/airport-probe-2026-11-17.md:77-88`) on a host bound to the clone: full Airport first; the small one after W34. Proposed sites are in the study
+(enemy x 1120-1240 z 156-196; player x 804-844 z 644-764). EditMode test: original bounds unchanged, clone bounds as specified. Branch `missions/win-w35-cc-air-window`.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh

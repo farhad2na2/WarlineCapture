@@ -443,3 +443,13 @@ gone from `unused=`. If S004 needs shared code for this, stop and report. Branch
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin FC/BT/CE (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).
+
+## W31d — Dam Bridge CE family deadline 525 s (2026-11-19)
+status: READY (data only). Windows W32 pacing sweep (8983b34be, 2026-11-18-w32-db-ce-pacing-sweep.md): 12/12 Victory, median 50.09% of 420 s; established rows S020/S022/S024 at ~57%.
+Program-lead choice: family option 525/729/875 s for S019-S024 (sweep projects 33.4-46.2%, median 40.1%). Branch `missions/win-w31d-db-ce-deadline` off 65b1808de; authoring/matrix only, authoring 6/6 and containment 6/6. Then Mac re-count S019-S024.
+
+## W32b — ARIA air-transport escort gets a presented objective target (2026-11-19)
+status: READY after W27b (shared ARIA/HUD code under the owner's standing OK)
+Gate 3 FAIL on S022/S024 (and lane 43 S040/S042): role.transport_heli eligible since W32 but never offered; candidates need a presented target and
+SkirmishMatchView.PublicObjectiveHud.cs:196-199 builds targets only for Dismounted/UnloadCarrierGroupId groups with an expanded tray card. Give own air-transport groups a presented
+objective target, prove the Move receipt with EditMode tests and non-counted runs on S022, S024 and S040 or S042. Note S047 (truck group 15 service detour 126.6-268.4 s, then ConvoyImpossible 339.2 s) as a candidate cause; no change yet.

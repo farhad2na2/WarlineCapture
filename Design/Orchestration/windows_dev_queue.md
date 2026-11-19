@@ -174,6 +174,13 @@ Pass `setup.DeadlineSeconds` (SkirmishSetupCompiler.cs:275) into the reducer Cre
 check whether the FC reducer has the same size-only pattern and fix it the same way, and update the reducer tests that assert 1080. A missing or zero value keeps the size default.
 Rows that keep 1080 must behave identically (S002 test pin). Prove with EditMode tests and the 12 W31 non-counted runs logging deadline=420/540 with wins at 25-50%. Build on `missions/win-w31-pacing-ce-bt`.
 
+## W31c — Pacing data: City Crossroads CE S043-S048 per-family deadline (2026-11-19)
+status: READY with W31b (data only)
+codex effort: medium
+Mac lane 44 (`program-logs/2026-11-19/lane44/q/unity.log`): CC CE wins at 135-180 s (12.52-16.66% of 1080). Same W31 treatment: standard 1080 -> 450 s, war 1500 -> 625, large war 1800 -> 750
+(expected wins 30-40%). Drafts, objective assets and both matrices together; record old/new. Verify in the same run as W31b. Also: S043/S045/S047 abort with AriaBlocked 101 ObserveObjective after the
+convoy-service Move/Hold loop, reproducing W19/W27 cause 3 on the Mac (lane44 :31096, :54577, :75076).
+
 ## W32 — ARIA leaves starting units idle on objective missions (new gate 3) (2026-11-19)
 status: diagnosis DONE (1d3d3a0f7: idle starting groups are never commanded; the used-recorder is fine. The objective chooser picks only objective subjects, the escort path is starved by a time-expiring offer, a stuck support recruit holds the Build drawer ~60 s repeatedly, and the transport heli has no FC/CE command path). Fix READY after W31 and W27 cause 1, once the owner confirms the standing OK in the Windows session; accept the proposed order: escorts before support/coverage, offers expire on failed attempts, Move-to-goal for unassigned infantry/heli, bounded support recruit.
 codex effort: xhigh

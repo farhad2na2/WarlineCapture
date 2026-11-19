@@ -331,7 +331,7 @@ S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> Repa
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
 
 ## W28 — S019 (Desert Base CE ground field): same latent vehicle-pad / convoy-bay overlap (2026-11-19)
-status: READY
+status: DONE (183429daa; S019 3/3 Victory non-counted, startup failure 0; Mac merges after lane 41)
 codex effort: medium
 W25 found S019's player vehicle pad (926,651.5, 14x12) still contains the convoy bays, as S021/S023 did before ae7034004. S019 has not aborted yet (lane 41
 won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the W14/W25 anchor and pad (830,583.5, 22x20) to S019, then preflight, check_draft,

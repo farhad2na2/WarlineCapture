@@ -16,4 +16,4 @@ Known deviations, for the native implementation to correct:
 - O003's Materials "80/80" stands for the authored repair budget.
 - Generated buildings, units, portraits and text are illustrative; native assets and copy are authoritative.
 
-Status: awaiting owner approval. Not implementation evidence.
+Status: owner approved all three v01 boards for implementation on 2026-11-19 ("Approve all three"). Visual direction only, not implementation evidence. Native-screen review, normal-input ARIA journeys and device acceptance are tracked separately.

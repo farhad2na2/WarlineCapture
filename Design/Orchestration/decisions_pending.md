@@ -249,3 +249,4 @@ imagegen for the mockups, we can use the same." Survey: `Design/Orchestration/no
 3. **Mockups:** Codex ImageGen boards for the new family HUDs (ESCORT O002, REPAIR O003, RESCUE O005). Each goes to the owner for approval before implementation.
 4. **Build order:** the free intro O001-O003 first. Extending existing tools (an Operations job format in run_aria_queue, a draft format) is allowed.
 The trigger for Operations production stays: one accepted Skirmish mission per objective type. Offline prep (drafts, tool extensions, a gap table) may start now.
+- Owner approved the three Operations HUD mockups v01 (O002 escort, O003 repair, O005 rescue) on 2026-11-19: "Approve all three". Board: `Design/AgentReports/OperationsMockups/review.md`.

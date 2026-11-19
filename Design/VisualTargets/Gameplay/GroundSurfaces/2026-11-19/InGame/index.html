@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S002 · Desert ground in game</title>
+<style>
+:root{color-scheme:dark;font:16px/1.45 system-ui,sans-serif;background:#151512;color:#f2eee3}
+body{margin:0 auto;padding:clamp(14px,3vw,48px);max-width:1500px}
+h1{font-size:clamp(25px,3vw,42px);line-height:1.1;margin:0 0 10px}
+h2{font-size:20px;margin-top:32px}p{color:#c6c2b7;margin:8px 0 18px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button{font:inherit;cursor:pointer;color:inherit;background:#252521;border:1px solid #545249;border-radius:5px;padding:7px 12px}
+button[aria-pressed=true]{color:#181710;background:#e6cfa4;border-color:#e6cfa4}
+figure{position:relative;margin:0;line-height:0;background:#302e28;aspect-ratio:16/9;overflow:hidden}
+figure img{position:absolute;width:100%;height:100%;object-fit:contain;inset:0}
+#after{clip-path:inset(0 var(--cut,0%) 0 0)}
+#divider{position:absolute;top:0;bottom:0;left:var(--pos,100%);border-left:2px solid #fff;pointer-events:none}
+.controls{display:flex;gap:12px;align-items:center;margin:12px 0}
+.controls input{flex:1;accent-color:#dec899;min-width:50px}.controls[hidden]{display:none}
+video{width:100%;height:auto;background:#000}small,a{color:#dbd4c5}
+</style>
+<main>
+<h1>Desert ground in S002</h1>
+<p>Native gameplay camera · 1600 × 900 · Seed 104731</p>
+<nav aria-label="Camera view">
+<button data-view="normal" aria-pressed="true">Normal zoom · 44 m</button>
+<button data-view="soldiers" aria-pressed="false">Soldiers · 15 m</button>
+<button data-view="motorpool" aria-pressed="false">Base approach · 44 m</button>
+<button data-view="masonry" aria-pressed="false">Ruin fragments · 15 m</button>
+</nav>
+<figure>
+<img id="before" src="normal-before.png" alt="Original S002 ground">
+<img id="after" src="normal-after.png" alt="S002 ground with the new surface and props">
+<span id="divider"></span>
+</figure>
+<div class="controls" id="controls">
+<button id="old">Original</button><input id="mix" aria-label="Reveal the applied surface from left to right" type="range" min="0" max="100" value="100"><button id="new">Applied</button>
+</div>
+<h2>In motion</h2>
+<video controls playsinline preload="metadata" poster="normal-after.png" src="desert-ground.mp4"></video>
+<p>Both runs used the same staged encounter in the macOS Unity Editor. All 2,097,152 baked primary cells matched for height, movement mask, flags and surface type. The surface fingerprint was <code>28A735F2812689B3</code> in both runs.</p>
+</main>
+<script>
+const figure=document.querySelector("figure"),before=document.querySelector("#before"),after=document.querySelector("#after"),mix=document.querySelector("#mix"),controls=document.querySelector("#controls"),divider=document.querySelector("#divider");
+function reveal(value){mix.value=value;figure.style.setProperty("--cut",100-value+"%");figure.style.setProperty("--pos",value+"%");divider.hidden=value==0||value==100}
+function choose(key){const pair=key==="normal"||key==="soldiers";controls.hidden=!pair;before.hidden=!pair;if(pair)before.src=key+"-before.png";after.src=key+"-after.png";for(const b of document.querySelectorAll("[data-view]"))b.setAttribute("aria-pressed",b.dataset.view===key);reveal(100)}
+for(const b of document.querySelectorAll("[data-view]"))b.onclick=()=>choose(b.dataset.view);
+mix.oninput=()=>reveal(Number(mix.value));document.querySelector("#old").onclick=()=>reveal(0);document.querySelector("#new").onclick=()=>reveal(100);reveal(100);
+</script>
+</html>

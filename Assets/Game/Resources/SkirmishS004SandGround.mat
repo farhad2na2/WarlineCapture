@@ -42,6 +42,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _WindSandStrength: 1
     - _BaseColorInfluence: 1
     - _DetailFadeEnd: 380
     - _DetailFadeStart: 140

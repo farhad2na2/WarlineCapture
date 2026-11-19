@@ -258,6 +258,19 @@ tool or alongside it) that prints, for every merged BT/CE draft, the exit or des
 Use it as the acceptance check. Run it over the Desert Base BT/CE drafts too and list them; do not change those. One branch per family is fine:
 `missions/win-w23-cc-bt-exit`, `-mp-bt-exit`, `-mp-ce-dest`. Data/anchor change only, no shared code.
 
+## W23b — BT exits / CE destinations: move inward from the east play edge (2026-11-19)
+status: READY (W23 branches stay unmerged; build on them)
+codex effort: high
+W23 (`windows_dev_results/2026-11-18-w23-*.md`, branches 621ee1092 / b1bb762ea / e4ebfe2df) moved the endpoints clear of the enemy bases (CC BT 124 m,
+MP 39.5-41 m), but ARIA now stops itself. Its objective Move to the new endpoint fails 6 times (`order_blocked failures=6`), then AriaBlocked
+reason 101/111 at ~290-350 s, 0 evacuated/delivered. That breaks rows that won before (S037/S041, S061/S063). Both new endpoints sit at the
+east edge of the playable area (x up to 1296/1300 and 1290/1292). Hypothesis: the endpoint ends up under the right HUD (play area ends at screen x
+1444/1920) and ARIA cannot tap it. First, read the ARIA order-target and camera-framing code read-only to confirm or refute this (reading is not
+a code change); write the finding in the results file. Then, data only: move each endpoint inward to a spot at least ~40 m inside the playable
+bounds on every side and still clear of enemy defensive structures (keep the W23 distance check; report the nearest-enemy and nearest-edge
+distance). Re-measure (S037 r5, S061 r4, S067 r4), rebind, and rerun the 18 non-counted menu runs. Accept only if order_blocked/AriaBlocked fall
+back to 0 and the rows that won before W23 win again. Branches: continue the three W23 branches. No shared code changes.
+
 ## W24 — S070/S072 (Mountain Pass CE established, air/combined) abort: enemy transport helicopter BlockedSpawn (2026-11-19)
 status: READY
 codex effort: xhigh

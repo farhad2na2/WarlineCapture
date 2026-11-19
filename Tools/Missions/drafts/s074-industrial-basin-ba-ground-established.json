@@ -1,7 +1,7 @@
 {
   "catalog_id": "S074",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "S074 Industrial Basin BA ground established (Windows W29 2026-11-19). Measured from the S074 layout dump (win-dev-unity w29-dump-S074; host = S074 provisional bootstrap, program lead option 1). Every building position is a native-validated dump candidate centre (codex notes w29_pick_layout.py). Spawn and rally pads sit on passable bitmap blocks next to each base. Route waypoints are passable blocks with straight passable segments to both stagings. The player base is on the level north cluster; the enemy base is in the south on not-level ground, which the native validator accepts. S073's deployment anchors (800,600 / 930,470) only seeded the search. No legal Airport site on this source (Airport-only dump: 62 tested, 0 valid).",
+  "notes": "S074 Industrial Basin BA ground established (Windows W29 2026-11-19). Measured from the S074 stride-8 layout dump (win-dev-unity w29-dump-S074-stride8; host = S074 provisional bootstrap, program lead option 1). Every building pad centre is a native-validated dump candidate centre (codex notes w29_pick_layout.py, 6 m inside the playable bounds); instance pads follow the compiler's per-kind order (Supply: oil pump, refinery, fuel bladder, fabrication depot, refinery module; Service: watchtower, approach watchtower, satellite dish). Spawn and rally pads sit on passable level blocks next to each base; route waypoints are passable blocks with straight passable segments to both stagings. Player base on the level north cluster; enemy base in the south on not-level ground, which the native validator accepts; the level patch east of x 895 is kept for the enemy spawn and rally pads. S073's deployment anchors (800,600 / 930,470) only seeded the search. No legal Airport site on this source (Airport-only dump: 62 tested, 0 valid).",
   "anchors": {
     "base.player": [
       827.5,
@@ -12,35 +12,51 @@
       615.5
     ],
     "economy.player": [
-      838.0,
-      619.5
-    ],
-    "service.player": [
-      925.5,
-      652.0
-    ],
-    "air.player": [
-      940.0,
-      619.5
+      814.0,
+      603.5
     ],
     "w29.f1.refinery": [
-      816.5,
-      651.5
+      832.5,
+      563.5
     ],
     "w29.f1.fuel": [
+      843.0,
+      617.0
+    ],
+    "w29.f1.depot": [
+      829.5,
+      636.0
+    ],
+    "w29.f1.module": [
+      920.5,
+      611.5
+    ],
+    "air.player": [
+      875.5,
+      628.0
+    ],
+    "service.player": [
       841.0,
-      571.0
+      595.0
+    ],
+    "w29.f1.approach": [
+      841.0,
+      587.0
+    ],
+    "w29.f1.dish": [
+      849.0,
+      635.0
     ],
     "spawn.infantry.player": [
       807.5,
-      594.0
+      584.0
     ],
     "spawn.vehicle.player": [
-      821.5,
-      568.0
+      797.5,
+      602.0
     ],
     "rally.player": [
-      847.5,
+      853.5,
       588.0
     ],
     "base.enemy": [
@@ -48,28 +64,44 @@
       466.0
     ],
     "staging.enemy": [
-      843.0,
-      471.5
+      847.5,
+      467.0
     ],
     "economy.enemy": [
-      854.0,
-      459.5
-    ],
-    "service.enemy": [
-      813.5,
-      460.0
-    ],
-    "air.enemy": [
-      844.0,
-      523.5
+      875.5,
+      446.0
     ],
     "w29.f2.refinery": [
       843.5,
-      496.5
+      488.5
     ],
     "w29.f2.fuel": [
-      843.0,
-      457.0
+      849.0,
+      451.0
+    ],
+    "w29.f2.depot": [
+      829.5,
+      460.0
+    ],
+    "w29.f2.module": [
+      819.5,
+      488.5
+    ],
+    "air.enemy": [
+      844.0,
+      515.5
+    ],
+    "service.enemy": [
+      827.0,
+      505.0
+    ],
+    "w29.f2.approach": [
+      811.0,
+      465.0
+    ],
+    "w29.f2.dish": [
+      811.0,
+      449.0
     ],
     "spawn.infantry.enemy": [
       915.5,
@@ -88,8 +120,8 @@
       481.0
     ],
     "w29.route.FlankNorthRuins": [
-      852.0,
-      501.0
+      860.0,
+      601.0
     ],
     "w29.route.MainHighway": [
       796.0,
@@ -111,7 +143,7 @@
     "spawn.infantry.player": {
       "at": [
         807.5,
-        594.0
+        584.0
       ],
       "anchor": "spawn.infantry.player",
       "size": [
@@ -121,8 +153,8 @@
     },
     "spawn.vehicle.player": {
       "at": [
-        821.5,
-        568.0
+        797.5,
+        602.0
       ],
       "anchor": "spawn.vehicle.player",
       "size": [
@@ -132,7 +164,7 @@
     },
     "rally.player": {
       "at": [
-        847.5,
+        853.5,
         588.0
       ],
       "anchor": "rally.player",
@@ -234,8 +266,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        838.0,
-        619.5
+        814.0,
+        603.5
       ],
       "size": [
         4,
@@ -244,40 +276,12 @@
       "anchor": "economy.player"
     },
     {
-      "id": "w29.f1.service",
-      "kind": "Service",
-      "faction": 1,
-      "at": [
-        925.5,
-        652.0
-      ],
-      "size": [
-        19,
-        16
-      ],
-      "anchor": "service.player"
-    },
-    {
-      "id": "w29.f1.air",
-      "kind": "AirReturn",
-      "faction": 1,
-      "at": [
-        940.0,
-        619.5
-      ],
-      "size": [
-        16,
-        15
-      ],
-      "anchor": "air.player"
-    },
-    {
       "id": "w29.f1.refinery",
       "kind": "Supply",
       "faction": 1,
       "at": [
-        816.5,
-        651.5
+        832.5,
+        563.5
       ],
       "size": [
         25,
@@ -290,26 +294,110 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        841.0,
-        571.0
+        843.0,
+        617.0
       ],
       "size": [
-        10,
-        14
+        14,
+        10
       ],
       "anchor": "w29.f1.fuel"
+    },
+    {
+      "id": "w29.f1.depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        829.5,
+        636.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f1.depot"
+    },
+    {
+      "id": "w29.f1.module",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        920.5,
+        611.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f1.module"
+    },
+    {
+      "id": "w29.f1.air",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        875.5,
+        628.0
+      ],
+      "size": [
+        15,
+        16
+      ],
+      "anchor": "air.player"
+    },
+    {
+      "id": "w29.f1.service",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        841.0,
+        595.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "w29.f1.approach",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        841.0,
+        587.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "w29.f1.approach"
+    },
+    {
+      "id": "w29.f1.dish",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        849.0,
+        635.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "w29.f1.dish"
     },
     {
       "id": "w29.f2.staging",
       "kind": "GroundStaging",
       "faction": 2,
       "at": [
-        843.0,
-        471.5
+        847.5,
+        467.0
       ],
       "size": [
-        14,
-        7
+        7,
+        14
       ],
       "anchor": "staging.enemy"
     },
@@ -318,42 +406,14 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        854.0,
-        459.5
+        875.5,
+        446.0
       ],
       "size": [
-        4,
-        15
+        15,
+        4
       ],
       "anchor": "economy.enemy"
-    },
-    {
-      "id": "w29.f2.service",
-      "kind": "Service",
-      "faction": 2,
-      "at": [
-        813.5,
-        460.0
-      ],
-      "size": [
-        19,
-        16
-      ],
-      "anchor": "service.enemy"
-    },
-    {
-      "id": "w29.f2.air",
-      "kind": "AirReturn",
-      "faction": 2,
-      "at": [
-        844.0,
-        523.5
-      ],
-      "size": [
-        16,
-        15
-      ],
-      "anchor": "air.enemy"
     },
     {
       "id": "w29.f2.refinery",
@@ -361,7 +421,7 @@
       "faction": 2,
       "at": [
         843.5,
-        496.5
+        488.5
       ],
       "size": [
         15,
@@ -374,14 +434,98 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        843.0,
-        457.0
+        849.0,
+        451.0
       ],
       "size": [
-        14,
-        10
+        10,
+        14
       ],
       "anchor": "w29.f2.fuel"
+    },
+    {
+      "id": "w29.f2.depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        829.5,
+        460.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f2.depot"
+    },
+    {
+      "id": "w29.f2.module",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        819.5,
+        488.5
+      ],
+      "size": [
+        15,
+        25
+      ],
+      "anchor": "w29.f2.module"
+    },
+    {
+      "id": "w29.f2.air",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        844.0,
+        515.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.enemy"
+    },
+    {
+      "id": "w29.f2.service",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        827.0,
+        505.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.enemy"
+    },
+    {
+      "id": "w29.f2.approach",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        811.0,
+        465.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "w29.f2.approach"
+    },
+    {
+      "id": "w29.f2.dish",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        811.0,
+        449.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "w29.f2.dish"
     }
   ],
   "routes": [

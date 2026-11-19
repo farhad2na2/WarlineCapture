@@ -249,6 +249,24 @@ Move the BT exit (and the route end) on the S026 geometry away from the enemy ba
 vehicle-passable cells, with no map, stat or rule change and no change to enemy structures. Then re-measure r3 on S037 and rebind the six BT drafts.
 Prove with check_draft 6/6, preflight 6/6 (with W22's objective-pad check if merged), authoring/containment 6/6 and non-counted Windows menu runs of
 all six. Report the new exit's distance to every enemy defensive structure. Branch `missions/win-w23-cc-bt-exit`. Per-task results file.
+Update 2026-11-19, widened after Windows W10 (`windows_dev_results/2026-11-18-w10-mp-bt-measure.md`, `-w10-mp-ce-measure.md`). The same class of
+defect is on Mountain Pass. BT S062/S064/S065/S066 lost BreakthroughImpossible 0/8 (exit ~1 m from enemy staging, 8 m from the enemy base). CE S067/S068/
+S069/S071 lost ConvoyImpossible 0/2 (ConvoyDestination (1186..1202, 354..398) is ~2 m from the enemy barracks pad, 6 m from staging, 5 m from
+rally.enemy; trucks lost at 72-110 s). Scope W23 to all three families: CC BT S037-S042, MP BT S061-S066 and MP CE S067-S072. Move each BT exit or CE
+destination (plus the route end) clear of the enemy base, re-measure r3 on S037/S061/S067 and rebind. First add a small read-only check (in W22's
+tool or alongside it) that prints, for every merged BT/CE draft, the exit or destination distance to each enemy structure and staging/rally anchor.
+Use it as the acceptance check. Run it over the Desert Base BT/CE drafts too and list them; do not change those. One branch per family is fine:
+`missions/win-w23-cc-bt-exit`, `-mp-bt-exit`, `-mp-ce-dest`. Data/anchor change only, no shared code.
+
+## W24 — S070/S072 (Mountain Pass CE established, air/combined) abort: enemy transport helicopter BlockedSpawn (2026-11-19)
+status: READY
+codex effort: xhigh
+Windows W10 CE: S070 and S072 abort with expandedStartupFailure=BlockedSpawn after every enemy building is placed. The log shows `[SkirmishStartingForce] failed
+prefab=Unit_Veh_Helicopter_Transport faction=2 member=0`. The same helipad (AirReturn (1261,467.5)), army profile and start package launch fine in S058 and
+S064/S066, and CE S046/S048 on S026 spawn the same helicopter. Diagnose first: what differs at spawn time on S070/S072 (CE destination/convoy pads
+overlapping the air spawn cell, f2 satellite dish at (1173,447), occupancy from the moved defense tower). Extend the startup-allocator capture beyond S002 if
+needed (harness/tooling). Fix the draft data if that is the cause; a shared-code fix needs the owner's OK in the Windows session. Prove with a menu launch of
+S070/S072 with expandedStartupFailure=0. Branch `missions/win-w24-s070-heli-spawn`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

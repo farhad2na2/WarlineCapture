@@ -1,0 +1,811 @@
+{
+  "catalog_id": "S038",
+  "campaign_source": "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W9 r3 on City Crossroads host S026 seed 130365 after moving defense.approach.b to (1098.5,366): CorridorA/B/Exit inside playable (3567/6069/1116 m2), defense.approach.a/b fit with 100/100 vehicle-passable cells, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r3.json; geometry still a candidate). Superseded: measured 2026-11-18 (Windows W9 r2 on City Crossroads host S026 seed 130365: CorridorA/B/Exit inside playable (3567/6069/1116 m2) and reachable from both bases and stagings, defense.approach.a/b fit, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. City Crossroads Breakthrough family S037-S042. S013 supplies the BT roles, defense pad sizes, structure footprints and pad slack. S026 BA supplies the City Crossroads source, side anchors and pads, Field building pads in compiler order, and MainHighway (tank primary). The two flank chains and their anchors match W7 S031 r2 on host S026, which recorded zero failed flood or native segments across all three routes. FlankNorthRuins follows west_refined via S026 dump candidate #274 and S026 tank primary waypoint 04, bypassing the two code 7 failures at west_refined 05 to 06 and 06 to 07 in S037 r1. FlankSouthSweep uses S026 tank.start and tank.goal with S026 dump candidates #303, #393, #398, #279, #371, #360 and #357 in order. Dump candidate indices are zero-based in Design/AgentReports/SkirmishExpansion/LayoutDumps/S026/dump.json. Corridor A uses W7 S031 r2 FrontlineB (3567 m2 in that measurement), with corners from S026 tank primary waypoint 02 and dump candidate #303. Corridor B uses S026 west_refined waypoints 05 and 03. Exit uses S027 BA air.enemy and S026 enemy rally. The defense.approach.a/b pads at S027 BA economy.enemy and service.enemy fit in S037 r1. Native re-measurement of the revised Breakthrough routes and areas and profile placement validation remain pending. S026 BA supplies the established approach watchtowers, satellite dishes and helipads. The second refinery module per faction in War and LargeWar is unmeasured and uses a derived pad. W9 fix 2026-11-18: the first Windows menu launch aborted with BlockedSpawn because the enemy guard tower could not be placed on the S026 road band (z 348-360); moved defense.approach.b (1098.5,352) -> (1098.5,366) onto clear S026 ground (layout-dump bitmap flag 0, no pad overlap).",
+  "anchors": {
+    "base.player": [
+      1020.0,
+      750.0
+    ],
+    "base.enemy": [
+      1100.0,
+      400.0
+    ],
+    "candidate.structure.standard.0": [
+      962.0,
+      723.5
+    ],
+    "candidate.structure.standard.1": [
+      1130.0,
+      387.5
+    ],
+    "staging.player": [
+      931.0,
+      671.5
+    ],
+    "staging.enemy": [
+      1027.0,
+      359.5
+    ],
+    "economy.player": [
+      1003.5,
+      718.0
+    ],
+    "economy.enemy": [
+      1051.5,
+      406.0
+    ],
+    "candidate.structure.standard.6": [
+      1104.5,
+      675.5
+    ],
+    "candidate.structure.standard.7": [
+      1008.5,
+      315.5
+    ],
+    "candidate.structure.standard.8": [
+      1027.0,
+      721.0
+    ],
+    "candidate.structure.standard.9": [
+      1099.0,
+      385.0
+    ],
+    "candidate.structure.standard.10": [
+      1005.5,
+      652.0
+    ],
+    "candidate.structure.standard.11": [
+      1029.5,
+      340.0
+    ],
+    "service.player": [
+      979.0,
+      719.5
+    ],
+    "service.enemy": [
+      1099.0,
+      407.5
+    ],
+    "candidate.route.shared.waypoint.00": [
+      1004.5,
+      734.5
+    ],
+    "candidate.route.shared.waypoint.01": [
+      988.5,
+      721.5
+    ],
+    "candidate.route.shared.waypoint.02": [
+      969.5,
+      695.5
+    ],
+    "candidate.route.rifle.start": [
+      1020.5,
+      750.5
+    ],
+    "candidate.route.rifle.goal": [
+      1100.5,
+      400.5
+    ],
+    "candidate.route.tank.start": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.goal": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.apc_armored.start": [
+      1028.5,
+      751.5
+    ],
+    "candidate.route.apc_armored.goal": [
+      1101.5,
+      406.5
+    ],
+    "candidate.spawn.variant0.faction_1.infantry": [
+      1012.0,
+      750.0
+    ],
+    "candidate.spawn.variant0.faction_1.vehicle": [
+      1028.0,
+      750.0
+    ],
+    "candidate.spawn.variant0.faction_2.infantry": [
+      1092.0,
+      400.0
+    ],
+    "candidate.spawn.variant0.faction_2.vehicle": [
+      1108.0,
+      400.0
+    ],
+    "candidate.rally.variant0.faction_1": [
+      1025.5,
+      715.5
+    ],
+    "candidate.rally.variant0.faction_2": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.tank.primary.waypoint.00": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.primary.waypoint.01": [
+      1028.5,
+      695.5
+    ],
+    "candidate.route.tank.primary.waypoint.02": [
+      1008.5,
+      636.5
+    ],
+    "candidate.route.tank.primary.waypoint.03": [
+      989.5,
+      577.5
+    ],
+    "candidate.route.tank.primary.waypoint.04": [
+      986.5,
+      519.5
+    ],
+    "candidate.route.tank.primary.waypoint.05": [
+      1035.5,
+      468.5
+    ],
+    "candidate.route.tank.primary.waypoint.06": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.00": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.01": [
+      1004.5,
+      734.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.02": [
+      988.5,
+      721.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.03": [
+      969.5,
+      695.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.04": [
+      912.5,
+      636.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.05": [
+      919.5,
+      577.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.06": [
+      948.5,
+      548.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.07": [
+      977.5,
+      519.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.08": [
+      1035.5,
+      461.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.09": [
+      1094.5,
+      409.5
+    ],
+    "defense.approach.a": [
+      1087.5,
+      371.0
+    ],
+    "defense.approach.b": [
+      1098.5,
+      366.0
+    ],
+    "candidate.structure.standard.14": [
+      933.5,
+      652.0
+    ],
+    "candidate.structure.standard.16": [
+      1052.0,
+      627.5
+    ],
+    "air.player": [
+      1052.0,
+      651.5
+    ],
+    "candidate.structure.standard.15": [
+      1051.0,
+      289.0
+    ],
+    "candidate.structure.standard.17": [
+      1028.0,
+      315.5
+    ],
+    "air.enemy": [
+      1052.0,
+      459.5
+    ],
+    "candidate.route.tank.west_refined.bypass.waypoint.00": [
+      977.0,
+      555.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.01": [
+      1049.0,
+      723.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.02": [
+      1047.5,
+      675.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.03": [
+      1143.5,
+      675.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.04": [
+      1219.0,
+      601.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.05": [
+      1263.5,
+      507.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.06": [
+      1143.5,
+      459.0
+    ],
+    "candidate.route.tank.south_sweep.waypoint.07": [
+      1099.0,
+      455.5
+    ]
+  },
+  "pads": {
+    "base.player": {
+      "at": [
+        962.0,
+        723.5
+      ],
+      "anchor": "candidate.structure.standard.0",
+      "size": [
+        28.0,
+        15.0
+      ]
+    },
+    "base.enemy": {
+      "at": [
+        1130.0,
+        387.5
+      ],
+      "anchor": "candidate.structure.standard.1",
+      "size": [
+        28.0,
+        15.0
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        1012.0,
+        750.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_1.infantry",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        1028.0,
+        750.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_1.vehicle",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        1092.0,
+        400.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_2.infantry",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        1108.0,
+        400.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_2.vehicle",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "rally.player": {
+      "at": [
+        1025.5,
+        715.5
+      ],
+      "anchor": "candidate.rally.variant0.faction_1",
+      "size": [
+        3.0,
+        3.0
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        1094.5,
+        409.5
+      ],
+      "anchor": "candidate.rally.variant0.faction_2",
+      "size": [
+        3.0,
+        3.0
+      ]
+    },
+    "defense.approach.a": {
+      "size": [
+        10,
+        10
+      ]
+    },
+    "defense.approach.b": {
+      "size": [
+        10,
+        10
+      ]
+    },
+    "air.player": {
+      "size": [
+        16.0,
+        15.0
+      ]
+    },
+    "air.enemy": {
+      "size": [
+        16.0,
+        15.0
+      ]
+    }
+  },
+  "instance_pads": [
+    {
+      "id": "candidate.structure.standard.0",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        962.0,
+        723.5
+      ],
+      "size": [
+        28.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.0"
+    },
+    {
+      "id": "candidate.structure.standard.2",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        931.0,
+        671.5
+      ],
+      "size": [
+        14.0,
+        7.0
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "candidate.structure.standard.4",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1003.5,
+        718.0
+      ],
+      "size": [
+        15.0,
+        4.0
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "candidate.structure.standard.6",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1104.5,
+        675.5
+      ],
+      "size": [
+        25.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.6"
+    },
+    {
+      "id": "candidate.structure.standard.8",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1027.0,
+        721.0
+      ],
+      "size": [
+        14.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.8"
+    },
+    {
+      "id": "candidate.structure.standard.10",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1005.5,
+        652.0
+      ],
+      "size": [
+        19.0,
+        16.0
+      ],
+      "anchor": "candidate.structure.standard.10"
+    },
+    {
+      "id": "candidate.structure.standard.12",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        979.0,
+        719.5
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "candidate.structure.standard.14",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        933.5,
+        652.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "candidate.structure.standard.14"
+    },
+    {
+      "id": "candidate.structure.standard.16",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        1052.0,
+        627.5
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.16"
+    },
+    {
+      "id": "candidate.structure.standard.18",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        1052.0,
+        651.5
+      ],
+      "size": [
+        16.0,
+        15.0
+      ],
+      "anchor": "air.player"
+    },
+    {
+      "id": "candidate.structure.standard.1",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        1130.0,
+        387.5
+      ],
+      "size": [
+        28.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.1"
+    },
+    {
+      "id": "candidate.structure.standard.3",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        1027.0,
+        359.5
+      ],
+      "size": [
+        14.0,
+        7.0
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.5",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1051.5,
+        406.0
+      ],
+      "size": [
+        15.0,
+        4.0
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.7",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1008.5,
+        315.5
+      ],
+      "size": [
+        25.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.7"
+    },
+    {
+      "id": "candidate.structure.standard.9",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1099.0,
+        385.0
+      ],
+      "size": [
+        14.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.9"
+    },
+    {
+      "id": "candidate.structure.standard.11",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1029.5,
+        340.0
+      ],
+      "size": [
+        19.0,
+        16.0
+      ],
+      "anchor": "candidate.structure.standard.11"
+    },
+    {
+      "id": "candidate.structure.standard.13",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1099.0,
+        407.5
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.15",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1051.0,
+        289.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "candidate.structure.standard.15"
+    },
+    {
+      "id": "candidate.structure.standard.17",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1028.0,
+        315.5
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.17"
+    },
+    {
+      "id": "candidate.structure.standard.19",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        1052.0,
+        459.5
+      ],
+      "size": [
+        16.0,
+        15.0
+      ],
+      "anchor": "air.enemy"
+    }
+  ],
+  "pad_slack_m": 12,
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "candidate.route.tank.primary.waypoint.00",
+        "candidate.route.tank.primary.waypoint.01",
+        "candidate.route.tank.primary.waypoint.02",
+        "candidate.route.tank.primary.waypoint.03",
+        "candidate.route.tank.primary.waypoint.04",
+        "candidate.route.tank.primary.waypoint.05",
+        "candidate.route.tank.primary.waypoint.06"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "candidate.route.tank.west_refined.waypoint.00",
+        "candidate.route.tank.west_refined.waypoint.01",
+        "candidate.route.tank.west_refined.waypoint.02",
+        "candidate.route.tank.west_refined.waypoint.03",
+        "candidate.route.tank.west_refined.waypoint.04",
+        "candidate.route.tank.west_refined.waypoint.05",
+        "candidate.route.tank.west_refined.bypass.waypoint.00",
+        "candidate.route.tank.primary.waypoint.04",
+        "candidate.route.tank.west_refined.waypoint.08",
+        "candidate.route.tank.west_refined.waypoint.09"
+      ],
+      "width": 6.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "candidate.route.tank.start",
+        "candidate.route.tank.south_sweep.waypoint.01",
+        "candidate.route.tank.south_sweep.waypoint.02",
+        "candidate.route.tank.south_sweep.waypoint.03",
+        "candidate.route.tank.south_sweep.waypoint.04",
+        "candidate.route.tank.south_sweep.waypoint.05",
+        "candidate.route.tank.south_sweep.waypoint.06",
+        "candidate.route.tank.south_sweep.waypoint.07",
+        "candidate.route.tank.goal"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ],
+  "objective_areas": {
+    "BreakthroughCorridorA": {
+      "rectangle": [
+        [
+          1008.5,
+          636.5
+        ],
+        [
+          1049.0,
+          723.0
+        ]
+      ]
+    },
+    "BreakthroughCorridorB": {
+      "rectangle": [
+        [
+          919.5,
+          577.5
+        ],
+        [
+          969.5,
+          695.5
+        ]
+      ]
+    },
+    "BreakthroughExit": {
+      "rectangle": [
+        [
+          1064.0,
+          374.5
+        ],
+        [
+          1094.5,
+          409.5
+        ]
+      ]
+    }
+  },
+  "structure_footprints": {
+    "building.airport": [
+      210.0,
+      55.0
+    ],
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S037/area-measurement-r3.json"
+  }
+}

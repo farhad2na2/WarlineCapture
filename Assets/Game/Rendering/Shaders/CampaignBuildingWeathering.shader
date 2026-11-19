@@ -100,8 +100,8 @@ Shader "Game/Environment/CampaignBuildingWeathering"
             }
             ENDHLSL
         }
-        UsePass "Game/Environment/GroundMacroVariation/ShadowCaster"
-        UsePass "Game/Environment/GroundMacroVariation/DepthOnly"
-        UsePass "Game/Environment/GroundMacroVariation/DepthNormals"
+        UsePass "Hidden/Game/Environment/OpaqueGeometryPasses/ShadowCaster"
+        UsePass "Hidden/Game/Environment/OpaqueGeometryPasses/DepthOnly"
+        UsePass "Hidden/Game/Environment/OpaqueGeometryPasses/DepthNormals"
     }
 }

@@ -292,7 +292,7 @@ namespace Game.Authoring
                 footprintCells.y);
         }
 
-        [BakingVersion("WarlineCapture", 2)]
+        [BakingVersion("WarlineCapture", 3)]
         private partial class UnitGridBaker : Baker<UnitGridAuthoring>
         {
             public override void Bake(UnitGridAuthoring authoring)

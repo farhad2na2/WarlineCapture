@@ -1,0 +1,23 @@
+{
+  "originalSceneSHA256": {
+    "Assets/Game/Scenes/OperationMaps/Variants/Frontier/PreparedEntities.unity": "f34dadd18211b35fb834a21d707132ae88aebcf1f10b06b4800b168f82dce529",
+    "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_candidate.unity": "7fd4b51ae56334e016b094810f9685ff67f5877f9420a885dc5b1de3d1cc330c",
+    "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity": "f210e53df16b9dad1c96457b4e72c03260ac8ab215a3f4e959b97d54c904be88"
+  },
+  "legacyMaterialBindings": [
+    "DesertBase materialAssignments=333 inspectedRenderers=14003 entityDraws=15154",
+    "StagedDesertBase materialAssignments=333 inspectedRenderers=15584 entityDraws=15870",
+    "Frontier materialAssignments=1204 inspectedRenderers=83536 entityDraws=84391"
+  ],
+  "connectedSoldierLods": [
+    "MidLOD triangles=2688 sourceTriangles=10594 target=0.35 oldExposedLength=294.596 newExposedLength=5.376 sourceExposedLength=8.515",
+    "LowLOD triangles=5312 sourceTriangles=10594 target=0.85 oldExposedLength=143.500 newExposedLength=7.532 sourceExposedLength=8.515"
+  ],
+  "liveFootContact": "runway=15 sand=5 authoredRunways=1 maxOriginalPenetration=1.481 maxFootError=0.0000",
+  "posedSoldierContacts": 58,
+  "mapPresentations": 14,
+  "captureSites": 29,
+  "stagedChunks": 269,
+  "liveScenario": "S002",
+  "seed": 104731
+}

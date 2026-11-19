@@ -15,6 +15,7 @@ namespace Game.Authoring
             {
                 AddComponent(entity,new UnitGroundOffsetComponent{Value=authoring.ConfiguredGroundOffset});
                 if(authoring.animationGroundOffsets==null||authoring.animationGroundOffsets.Length==0)return;
+                AddComponent<InfantryVisualFooting>(entity);
                 var offsets=AddBuffer<UnitAnimationGroundOffset>(entity);
                 foreach(float offset in authoring.animationGroundOffsets)offsets.Add(new UnitAnimationGroundOffset{Value=offset});
             }

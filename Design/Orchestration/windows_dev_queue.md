@@ -272,7 +272,7 @@ distance). Re-measure (S037 r5, S061 r4, S067 r4), rebind, and rerun the 18 non-
 back to 0 and the rows that won before W23 win again. Branches: continue the three W23 branches. No shared code changes.
 
 ## W24 — S070/S072 (Mountain Pass CE established, air/combined) abort: enemy transport helicopter BlockedSpawn (2026-11-19)
-status: READY
+status: DONE (b351a8088: S070/S072 player dish + approach tower at the S064 positions; helipad spawns, expandedStartupFailure 0; Mac merges it with CC BT when its Editor is free). W23c: keep both notes lines on S070/S072 when merging, then re-author.
 codex effort: xhigh
 Windows W10 CE: S070 and S072 abort with expandedStartupFailure=BlockedSpawn after every enemy building is placed. The log shows `[SkirmishStartingForce] failed
 prefab=Unit_Veh_Helicopter_Transport faction=2 member=0`. The same helipad (AirReturn (1261,467.5)), army profile and start package launch fine in S058 and

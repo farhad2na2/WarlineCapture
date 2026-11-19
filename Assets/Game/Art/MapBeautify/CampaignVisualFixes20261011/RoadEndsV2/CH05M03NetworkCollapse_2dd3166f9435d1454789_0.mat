@@ -24,6 +24,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _StreetEdgeMap:
+        m_Texture: {fileID: 2800000, guid: c63a3bdbc6c8c45b78aeaeee11bc3836, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ActivityMap:
         m_Texture: {fileID: 2800000, guid: 8918887c03bef46008ea7620260e4a45, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -106,6 +110,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _StreetEdgeMode: 2
     - _ActivityStrength: 0.85
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
@@ -166,6 +171,8 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
+    - _StreetEdgeRect: {r: 835.2, g: 345.6, b: 489.6, a: 201.6}
+    - _StreetEdgeLevels: {r: 0.019741237, g: 0.16025877, b: 0.3, a: 0}
     - _ActivityRect: {r: 833, g: 273, b: 494, a: 274}
     - _BaseColor: {r: 0.29, g: 0.315, b: 0.34, a: 1}
     - _CivicSurfaceRect: {r: 0, g: 0, b: 0, a: 0}

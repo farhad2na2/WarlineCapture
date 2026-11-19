@@ -98,7 +98,7 @@ Shader "Game/Environment/CampaignRockWeathering"
             }
             ENDHLSL
         }
-        UsePass "Game/Environment/GroundMacroVariation/ShadowCaster"
-        UsePass "Game/Environment/GroundMacroVariation/DepthOnly"
+        UsePass "Hidden/Game/Environment/OpaqueGeometryPasses/ShadowCaster"
+        UsePass "Hidden/Game/Environment/OpaqueGeometryPasses/DepthOnly"
     }
 }

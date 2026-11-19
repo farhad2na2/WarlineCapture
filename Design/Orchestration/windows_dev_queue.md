@@ -167,6 +167,17 @@ pins those rows' values (check which other missions share each value; change non
 non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept if each win lands at 25-50% and nothing else changes (no TimeLimit draws).
 Branch `missions/win-w31-pacing-ce-bt`. No shared code.
 
+## W32 — ARIA leaves starting units idle on objective missions (new gate 3) (2026-11-19)
+status: READY after W31 and W27 cause 1; code change needs the owner's OK in the Windows session (standing OK pending there); diagnosis is read-only and may start now
+codex effort: xhigh
+Owner decision 2026-11-19: on FC/BT/CE, gate 3 = ARIA uses every role in the player's starting force (plus objective roles). Evaluator `Tools/Missions/gate3_objective.py`
+(Mac run: `program-logs/2026-11-19/gate3/summary.txt`): 29 PASS / 63 FAIL jobs. Passing: S039, S041, S057, S059. The usual idle starting roles are role.car,
+role.apc_armored, role.tank, role.aa and role.transport_heli; on CE also role.rifle/role.gunner. First, read-only: for 3 failing jobs (e.g. S014 155923, S020 155923,
+S032 130365), find why those starting groups never receive a recorded command. Is the group not recruited by the objective skills (AriaCoverageRecruitPolicy,
+objective/escort/hold planners), or is it commanded but not logged as `used` (AriaCommandEvidence receipt)? Then fix the cause in ARIA, without changing gates or stats:
+each starting group gets a role in the objective (escort/flank/hold/screen). Prove with an EditMode test and non-counted runs of S014/S020/S032 that the
+evaluator passes and the rows still win at the same pacing. Branch `missions/win-w32-aria-starting-coverage`.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh

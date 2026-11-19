@@ -298,69 +298,69 @@
       "shape": "rectangle",
       "points": [
         [
-          1260.0,
-          440.0
+          1208.0,
+          460.0
         ],
         [
-          1296.0,
-          468.0
+          1224.0,
+          496.0
         ]
       ],
       "insidePlayable": true,
-      "cellsInside": 1008,
+      "cellsInside": 576,
       "cellsOutsidePlayableWindow": 0,
-      "areaSquareMetres": 1008.0,
-      "infantryPassableCells": 1008,
-      "vehiclePassableCells": 1008,
-      "truckFootprintCells": 1008,
+      "areaSquareMetres": 576.0,
+      "infantryPassableCells": 576,
+      "vehiclePassableCells": 576,
+      "truckFootprintCells": 576,
       "reachability": [
         {
           "from": "base.player",
           "kind": "infantry",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 390.4
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 338.6
         },
         {
           "from": "base.player",
           "kind": "truck",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 404.8
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 352.4
         },
         {
           "from": "staging.player",
           "kind": "infantry",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 409.0
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 345.8
         },
         {
           "from": "staging.player",
           "kind": "truck",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 412.2
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 349.6
         },
         {
           "from": "base.enemy",
           "kind": "infantry",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 176.0
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 132.0
         },
         {
           "from": "base.enemy",
           "kind": "truck",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 176.0
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 132.0
         },
         {
           "from": "staging.enemy",
           "kind": "infantry",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 267.0
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 223.0
         },
         {
           "from": "staging.enemy",
           "kind": "truck",
-          "reachableCellsInside": 1008,
-          "nearestPathMetres": 263.8
+          "reachableCellsInside": 576,
+          "nearestPathMetres": 219.8
         }
       ]
     }
@@ -496,22 +496,22 @@
           "from": "candidate.route.tank.primary.waypoint.05",
           "to": "route.goal.exit",
           "floodStatus": "Reached",
-          "floodMetres": 248.6,
+          "floodMetres": 185.8,
           "native": {
             "status": "NativeQueryFoundExactGoal",
             "failureCode": 0,
-            "expansions": 244,
-            "pathCells": 3,
-            "pathMetres": 2.4142135600000003,
+            "expansions": 2352,
+            "pathCells": 5,
+            "pathMetres": 4.8284271200000006,
             "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
           }
         }
       ],
-      "straightLineMetres": 554.09454345703125,
-      "floodPathMetres": 582.4,
-      "nativePathMetres": 34.798989840000004,
+      "straightLineMetres": 491.9112548828125,
+      "floodPathMetres": 519.6,
+      "nativePathMetres": 37.213203400000005,
       "lengthBasis": "native",
-      "nominalTruckSeconds": 4.3498737300000005,
+      "nominalTruckSeconds": 4.6516504250000006,
       "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
     },
     {
@@ -647,22 +647,22 @@
           "from": "candidate.route.tank.west_refined.waypoint.08",
           "to": "route.goal.exit",
           "floodStatus": "Reached",
-          "floodMetres": 245.8,
+          "floodMetres": 187.8,
           "native": {
             "status": "NativeQueryFoundExactGoal",
             "failureCode": 0,
-            "expansions": 0,
-            "pathCells": 2,
-            "pathMetres": 1.41421356,
+            "expansions": 2133,
+            "pathCells": 3,
+            "pathMetres": 2.4142135600000003,
             "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
           }
         }
       ],
-      "straightLineMetres": 639.62613868713379,
-      "floodPathMetres": 657.40000000000009,
-      "nativePathMetres": 21.970562720000004,
+      "straightLineMetres": 578.26276588439941,
+      "floodPathMetres": 599.40000000000009,
+      "nativePathMetres": 22.970562720000004,
       "lengthBasis": "native",
-      "nominalTruckSeconds": 2.7463203400000005,
+      "nominalTruckSeconds": 2.8713203400000005,
       "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
     },
     {
@@ -753,22 +753,22 @@
           "from": "candidate.route.tank.south_sweep.waypoint.05",
           "to": "route.goal.exit",
           "floodStatus": "Reached",
-          "floodMetres": 59.0,
+          "floodMetres": 67.0,
           "native": {
             "status": "NativeQueryFoundExactGoal",
             "failureCode": 0,
-            "expansions": 0,
-            "pathCells": 2,
-            "pathMetres": 1.41421356,
+            "expansions": 373,
+            "pathCells": 7,
+            "pathMetres": 7.2426406800000009,
             "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
           }
         }
       ],
-      "straightLineMetres": 447.1933708190918,
-      "floodPathMetres": 481.4,
-      "nativePathMetres": 37.627416960000005,
+      "straightLineMetres": 447.89860916137695,
+      "floodPathMetres": 489.4,
+      "nativePathMetres": 43.455844080000006,
       "lengthBasis": "native",
-      "nominalTruckSeconds": 4.7034271200000006,
+      "nominalTruckSeconds": 5.4319805100000007,
       "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
     }
   ]

@@ -172,3 +172,29 @@ acceptance.
 **Recommendation.** (a). The economy stays as designed, and every type still gets exercised.
 **Meanwhile.** No gate change. Lane runs continue to record `unused=`. The S019 pacing (10.7%) is handled as a separate pacing item.
 - **Update (program lead, 2026-11-19).** City Crossroads FC S031-S036 have 4/4 counted Mac wins each (lane 38 `program-logs/2026-11-18/lane38/q/unity.log:74155`, lane 40 `program-logs/2026-11-19/lane40/counted/unity.log:227513`) at 45-86% of the deadline, with menu journey and return Passed and 0 AriaBlocked. Gates 1, 2 and 4 are met, so gate 3 is now the only thing holding six missions. With option (a) they become acceptable as soon as an objective-relevant role set is defined and one coverage run proves the rest. The air/combined rows S033-S036 also used no aircraft, so option (a) needs a rule on whether aircraft count as objective-relevant on FC air rows. Lane 41 is running counted seeds for 10 Desert Base BT/CE rows, which will add to this group. This is ready for the daily decision.
+
+## Convoy Escort wins land under the 20% gate-2 floor; City Crossroads BT is borderline (program lead, 2026-11-19)
+
+**Question.** Gate 2 needs wins at 20-70% of the deadline. Every CE row so far wins at 11-14% of its 1080 s Standard deadline. How should the
+CE family meet the band, and should City Crossroads BT be retuned?
+
+**Evidence.**
+- Desert Base CE, Mac lane 41 counted (`program-logs/2026-11-19/lane41/a/unity.log`): 13 wins, all ConvoyDelivered 2/2 lost=0, at 11.42-14.34%
+  (115-155 s). S019 130365 en 11.47% (:14184), S020 13.59-13.75%, S021 11.48/11.62%, S022 14.00-14.34%, S023 11.42/11.51%, S024 13.97-14.10%.
+- Mountain Pass CE W23b (non-counted, Windows): 6% (destination before the defenses; W23c moves it past them).
+- Desert Base BT in the same run: 24.22-35.34%, inside the band. City Crossroads BT W23b (non-counted, Windows): 16.06-20.62%.
+- Deadlines are per mission (`Scenarios/SNNN/SkirmishObjective_SNNN.asset`: standard 1080 / war 1500 / large war 1800), but every row copies
+  `MATCH_SETUP.md`'s 18-minute Standard rule, so a change is a family rule for 18 CE rows (S019-S024, S043-S048, S067-S072).
+- CE ends on delivery or truck loss, not on attrition; a timeout never decided a CE run.
+
+**Options.**
+1. CE family deadline: Standard 1080 -> 480 s (war 667, large war 800, same ratio). The measured wins land at 24-32%. One data change per CE row
+   plus the matrices/tests that pin the value; owner direction 2026-11-06 allows deadline revisions.
+2. Keep 1080 s; make CE harder (longer route through the defenses, more ambush) until delivery takes 216+ s. More design work per map; risks turning
+   wins into truck losses rather than slower wins.
+3. Change gate 2 for CE: measure against a per-layout target time; the deadline stays a safety limit.
+
+**Recommendation.** Option 1 for CE: it keeps the gate and the convoy route design, and a shorter clock is what makes an escort tense. City Crossroads BT:
+decide after its Mac counted runs (the CC BT merge is pending the Mac Editor); if they stay under 20%, apply the same treatment (Standard ~900 s).
+
+**Meanwhile.** No deadline change. CE rows keep running; their wins are recorded with their percentages and the rows stay not accepted on gate 2.

@@ -61,6 +61,11 @@ namespace Game.Tests.Editor
             string hud = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ObjectiveSkill.cs"));
             Assert.IsTrue(hud.Contains("if (elapsed > 0 && frame.ExclusiveSelectedGroup == chosen.GroupId) escortAttemptSeconds += elapsed;"), "attempt-time expiry");
             Assert.IsTrue(hud.Contains("Chosen = publicObjectiveChoice.Available && publicObjectiveChoice.GroupId == policy.GroupId,"));
+            // W32b (S022/S024/S040/S042 gate 3: transport_heli unused): the public own-group row lets a transport
+            // helicopter move (never hold), so it can become an escort candidate at all.
+            string gateway = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.PublicObjective.cs"));
+            Assert.IsTrue(gateway.Contains("bool airMove=group.Domain==SkirmishPopulationCategory.Air&&group.Role==SkirmishRoleKind.TransportHeli;"));
+            Assert.IsTrue(gateway.Contains("CanMove=(ground||airMove)&&!mounted,CanHold=ground&&!mounted,"));
         }
 
         static string ThisFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;

@@ -337,7 +337,7 @@ rows stay on S050. No new geometry.
 New branches `missions/win-w26-mp-bt-ab`, `missions/win-w26-mp-ce-ab` cut from integration. Per-task results file.
 
 ## W27 — ARIA: Move press does not arm move mode (S061 Blocked 115); repair loop after a partial delivery (S068 Blocked 101) (2026-11-19)
-status: HOLD for code changes (shared ARIA code: needs the owner's OK in the Windows session). Read-only diagnosis is READY now, including the W29 IB stops.
+status: diagnosis DONE (87a7504b1: 3 causes. (1) input-layer 3-press stop races the planner's re-offer, S061/S075; (2) IB assault never reaches the enemy base and the 180 s watchdog fires, S074/S076/S078; (3) convoy-service handback blanks the objective frame, S068). Fixes are READY after W31 once the owner confirms the standing OK in the Windows session; do cause 1 first (it also hits S057/S059 on 104731). Each fix needs an EditMode test.
 From W23c's log reading: S061 group-19 Move for OpenObjectiveCorridor tapped 3x, none accepted, then `AriaBlockedControl control=Move moveMode=False`.
 S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> RepairVehicle every ~27 s with accepted orders and no progress until
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.

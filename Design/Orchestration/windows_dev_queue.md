@@ -224,6 +224,13 @@ the shared world surface/grid and all Campaign assets must stay unchanged. Name 
 (`WARLINE_LAYOUT_DUMP_KINDS=airport`, as `notes/airport-probe-2026-11-17.md:77-88`) on a host bound to the clone: full Airport first; the small one after W34. Proposed sites are in the study
 (enemy x 1120-1240 z 156-196; player x 804-844 z 644-764). EditMode test: original bounds unchanged, clone bounds as specified. Branch `missions/win-w35-cc-air-window`.
 
+## W27b — Two new ARIA stops after the W27 fixes: S059 reason 114 (ReturnAircraft recruit target unavailable), S075 101 Inspect (foreign popup) (2026-11-19)
+status: READY after W32 (shared ARIA code under the owner's standing OK)
+codex effort: xhigh
+From the W27 cause 1+3 runs (15e5bbe02; results 2026-11-18-w27-aria-stop-fixes.md): S059 104731 aborts with reason 114, a ReturnAircraft recruit target Unavailable for 15 s (log :55463);
+S075 130365 aborts with 101 intent=Inspect on the foreign-popup path (AriaSkirmishPlanSystem.cs:824) at 430 s. Also: S043/S047 now end Defeat ConvoyImpossible (trucks lost after the
+handback), which is an escort skill/balance question; look at it together with W32's escort changes. Diagnose and fix with EditMode tests; prove with non-counted runs.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh

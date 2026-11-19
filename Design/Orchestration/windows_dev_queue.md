@@ -205,6 +205,8 @@ Gate-3 unused on the wins: helipad, satellite_dish, apc_heavy, drone, gunner, ra
 Diagnose reason 101 from the log context (what ARIA waited on, why nothing was offered), fix ARIA (or the S049 data if a placement/spawn is wrong);
 no stat/rule changes. Prove with a unit test reproducing the stall plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
 Branch `missions/win-w19-s049-reason101`. Per-task results file.
+Update 2026-11-19, Windows W9 CE: the field rows S043/S045/S047 abort the same way: ariaStopped:Blocked `[AriaBlocked] reason=101 kind=Waiting
+intent=ObserveObjective` at actions 69-88, match ~176-223 s (`windows_dev_results/2026-11-18-w9-cc-ce-measure.md`). Include them in the proof rows.
 
 ## W20 — S003 (Desert Base BA, army A field) ARIA loses its base without starting home defense (2026-11-18)
 status: READY
@@ -233,6 +235,17 @@ objective, defense and convoy pad that spawns a structure against the bitmap's B
 report which pad failed and where. Then run it over every merged draft (`git ls-files Tools/Missions/drafts`) and list any failure, without
 fixing drafts in this task. Tooling only; prove with new Python tests (a known-bad W9 r2 pad must fail, the W9 fix must pass) and the full
 `Tools/Missions` unittest run. Branch `missions/win-w22-preflight-objective-pads`. Per-task results file.
+
+## W23 — City Crossroads BT exit next to the enemy base: S038/S039/S040/S042 BreakthroughImpossible (2026-11-19)
+status: READY (W9 BT merged first)
+codex effort: high
+Windows W9 BT (`windows_dev_results/2026-11-18-w9-cc-bt-measure.md`): S037/S041 won by BreakthroughEvacuated 8/8 at ~20%, but S038/S039/S040/S042 lost by
+BreakthroughImpossible, 1/8 completed and 5 lost at 14-22%. The rifle squad dies at (1076-1080, 399-417), inside BreakthroughExit (1064..1094.5,
+374.5..409.5), built from S027 air.enemy plus the enemy rally. That is ~19 m from the enemy watchtower (1098,405) and next to the barracks (1116,380).
+Move the BT exit (and the route end) on the S026 geometry away from the enemy base's defensive reach: a logical anchor/area change only, on legal
+vehicle-passable cells, with no map, stat or rule change and no change to enemy structures. Then re-measure r3 on S037 and rebind the six BT drafts.
+Prove with check_draft 6/6, preflight 6/6 (with W22's objective-pad check if merged), authoring/containment 6/6 and non-counted Windows menu runs of
+all six. Report the new exit's distance to every enemy defensive structure. Branch `missions/win-w23-cc-bt-exit`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

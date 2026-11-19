@@ -1,0 +1,667 @@
+{
+  "schema": "warline.area-measurement/v1",
+  "draft": "s055-mountain-pass-fc-ground-field-candidate.json",
+  "catalogHost": "S050",
+  "draftCatalog": "S055",
+  "campaignSource": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+  "scope": "ReadOnlyStartupOnlyGridMeasurement_NoTruckDriven_NoOrders",
+  "boundsSource": "session logical map",
+  "limitation": "Measures passability, footprints and static route lengths on the host's source; it does not certify native source fit, ARIA play, a winnable mission or readiness. Live unit occupancy is ignored; reachability is a flood fill over the logical playable window using the native passability rules.",
+  "cellSize": 1.0,
+  "gridWidth": 440,
+  "gridHeight": 220,
+  "playableMin": [
+    868.0,
+    308.0
+  ],
+  "playableMax": [
+    1292.0,
+    512.0
+  ],
+  "truck": {
+    "footprintSource": "NativeBakedUnitFootprint",
+    "nativePrefabInHost": true,
+    "footprintCells": [
+      3,
+      3
+    ],
+    "footprintMetres": [
+      3.0,
+      3.0
+    ],
+    "speedMetresPerSecond": 8.0,
+    "roadSpeedMultiplier": 1.35
+  },
+  "guardTower": {
+    "footprintSource": "Building_GuardTower prefab BuildingDefinitionAuthoring.ConfiguredFootprintCells",
+    "footprintCells": [
+      3,
+      4
+    ],
+    "footprintMetres": [
+      3.0,
+      4.0
+    ]
+  },
+  "window": {
+    "minCell": [
+      8,
+      8
+    ],
+    "cells": [
+      424,
+      204
+    ],
+    "infantryPassableCells": 68627,
+    "vehiclePassableCells": 68627,
+    "truckPassableCells": 64178
+  },
+  "sources": [
+    {
+      "role": "base.player",
+      "world": [
+        1002.0,
+        363.5
+      ],
+      "infantry": {
+        "snappedCell": [
+          142,
+          55
+        ],
+        "snapDistanceMetres": 8.0,
+        "reachableCells": 67724
+      },
+      "truck": {
+        "snappedCell": [
+          142,
+          71
+        ],
+        "snapDistanceMetres": 8.0,
+        "reachableCells": 63872
+      }
+    },
+    {
+      "role": "staging.player",
+      "world": [
+        1019.0,
+        407.5
+      ],
+      "infantry": {
+        "snappedCell": [
+          159,
+          103
+        ],
+        "snapDistanceMetres": 4.0,
+        "reachableCells": 67724
+      },
+      "truck": {
+        "snappedCell": [
+          159,
+          111
+        ],
+        "snapDistanceMetres": 4.0,
+        "reachableCells": 63872
+      }
+    },
+    {
+      "role": "base.enemy",
+      "world": [
+        1218.0,
+        387.5
+      ],
+      "infantry": {
+        "snappedCell": [
+          358,
+          79
+        ],
+        "snapDistanceMetres": 8.0,
+        "reachableCells": 67724
+      },
+      "truck": {
+        "snappedCell": [
+          358,
+          95
+        ],
+        "snapDistanceMetres": 8.0,
+        "reachableCells": 63872
+      }
+    },
+    {
+      "role": "staging.enemy",
+      "world": [
+        1211.0,
+        407.5
+      ],
+      "infantry": {
+        "snappedCell": [
+          351,
+          103
+        ],
+        "snapDistanceMetres": 4.0,
+        "reachableCells": 67724
+      },
+      "truck": {
+        "snappedCell": [
+          351,
+          111
+        ],
+        "snapDistanceMetres": 4.0,
+        "reachableCells": 63872
+      }
+    }
+  ],
+  "areas": [
+    {
+      "role": "FrontlineA",
+      "shape": "rectangle",
+      "points": [
+        [
+          1092.0,
+          387.5
+        ],
+        [
+          1187.5,
+          406.0
+        ]
+      ],
+      "insidePlayable": true,
+      "cellsInside": 1824,
+      "cellsOutsidePlayableWindow": 0,
+      "areaSquareMetres": 1824.0,
+      "infantryPassableCells": 1567,
+      "vehiclePassableCells": 1567,
+      "truckFootprintCells": 1507,
+      "reachability": [
+        {
+          "from": "base.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1567,
+          "nearestPathMetres": 106.0
+        },
+        {
+          "from": "base.player",
+          "kind": "truck",
+          "reachableCellsInside": 1507,
+          "nearestPathMetres": 99.6
+        },
+        {
+          "from": "staging.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1567,
+          "nearestPathMetres": 73.0
+        },
+        {
+          "from": "staging.player",
+          "kind": "truck",
+          "reachableCellsInside": 1507,
+          "nearestPathMetres": 75.4
+        },
+        {
+          "from": "base.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1567,
+          "nearestPathMetres": 34.2
+        },
+        {
+          "from": "base.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1507,
+          "nearestPathMetres": 31.0
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1567,
+          "nearestPathMetres": 24.0
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1507,
+          "nearestPathMetres": 30.4
+        }
+      ]
+    },
+    {
+      "role": "FrontlineB",
+      "shape": "rectangle",
+      "points": [
+        [
+          1046.0,
+          354.0
+        ],
+        [
+          1115.0,
+          385.0
+        ]
+      ],
+      "insidePlayable": true,
+      "cellsInside": 2139,
+      "cellsOutsidePlayableWindow": 0,
+      "areaSquareMetres": 2139.0,
+      "infantryPassableCells": 1645,
+      "vehiclePassableCells": 1645,
+      "truckFootprintCells": 1449,
+      "reachability": [
+        {
+          "from": "base.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1645,
+          "nearestPathMetres": 44.0
+        },
+        {
+          "from": "base.player",
+          "kind": "truck",
+          "reachableCellsInside": 1449,
+          "nearestPathMetres": 44.0
+        },
+        {
+          "from": "staging.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1645,
+          "nearestPathMetres": 34.6
+        },
+        {
+          "from": "staging.player",
+          "kind": "truck",
+          "reachableCellsInside": 1449,
+          "nearestPathMetres": 41.4
+        },
+        {
+          "from": "base.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1645,
+          "nearestPathMetres": 104.0
+        },
+        {
+          "from": "base.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1449,
+          "nearestPathMetres": 111.2
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1645,
+          "nearestPathMetres": 106.6
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1449,
+          "nearestPathMetres": 113.0
+        }
+      ]
+    },
+    {
+      "role": "FrontlineC",
+      "shape": "polygon",
+      "points": [
+        [
+          1043.0,
+          337.0
+        ],
+        [
+          1189.5,
+          340.0
+        ],
+        [
+          1186.0,
+          354.0
+        ],
+        [
+          1046.0,
+          350.0
+        ]
+      ],
+      "insidePlayable": true,
+      "cellsInside": 1936,
+      "cellsOutsidePlayableWindow": 0,
+      "areaSquareMetres": 1936.0,
+      "infantryPassableCells": 1677,
+      "vehiclePassableCells": 1677,
+      "truckFootprintCells": 1601,
+      "reachability": [
+        {
+          "from": "base.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1677,
+          "nearestPathMetres": 46.2
+        },
+        {
+          "from": "base.player",
+          "kind": "truck",
+          "reachableCellsInside": 1601,
+          "nearestPathMetres": 52.6
+        },
+        {
+          "from": "staging.player",
+          "kind": "infantry",
+          "reachableCellsInside": 1677,
+          "nearestPathMetres": 64.8
+        },
+        {
+          "from": "staging.player",
+          "kind": "truck",
+          "reachableCellsInside": 1601,
+          "nearestPathMetres": 76.4
+        },
+        {
+          "from": "base.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1677,
+          "nearestPathMetres": 43.2
+        },
+        {
+          "from": "base.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1601,
+          "nearestPathMetres": 65.4
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "infantry",
+          "reachableCellsInside": 1677,
+          "nearestPathMetres": 60.4
+        },
+        {
+          "from": "staging.enemy",
+          "kind": "truck",
+          "reachableCellsInside": 1601,
+          "nearestPathMetres": 74.4
+        }
+      ]
+    }
+  ],
+  "pads": [],
+  "routes": [
+    {
+      "route": 1,
+      "kind": "MainHighway",
+      "vehicles": true,
+      "via": [
+        "base.player",
+        "basemove.route.1.waypoint.00",
+        "basemove.route.1.waypoint.01",
+        "basemove.route.1.waypoint.02",
+        "basemove.route.1.waypoint.03",
+        "basemove.route.1.waypoint.04",
+        "rally.enemy"
+      ],
+      "segments": [
+        {
+          "from": "base.player",
+          "to": "basemove.route.1.waypoint.00",
+          "floodStatus": "Reached",
+          "floodMetres": 24.8,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 48,
+            "pathCells": 5,
+            "pathMetres": 4.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.1.waypoint.00",
+          "to": "basemove.route.1.waypoint.01",
+          "floodStatus": "Reached",
+          "floodMetres": 16.8,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.1.waypoint.01",
+          "to": "basemove.route.1.waypoint.02",
+          "floodStatus": "Reached",
+          "floodMetres": 12.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.0,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.1.waypoint.02",
+          "to": "basemove.route.1.waypoint.03",
+          "floodStatus": "Reached",
+          "floodMetres": 4.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.0,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.1.waypoint.03",
+          "to": "basemove.route.1.waypoint.04",
+          "floodStatus": "Reached",
+          "floodMetres": 140.8,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.0,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.1.waypoint.04",
+          "to": "rally.enemy",
+          "floodStatus": "Reached",
+          "floodMetres": 24.6,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        }
+      ],
+      "straightLineMetres": 216.33445739746094,
+      "floodPathMetres": 223.0,
+      "nativePathMetres": 10.242640680000001,
+      "lengthBasis": "native",
+      "nominalTruckSeconds": 1.2803300850000001,
+      "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
+    },
+    {
+      "route": 2,
+      "kind": "FlankNorthRuins",
+      "vehicles": true,
+      "via": [
+        "base.player",
+        "basemove.route.2.waypoint.00",
+        "basemove.route.2.waypoint.01",
+        "basemove.route.2.waypoint.02",
+        "basemove.route.2.waypoint.03",
+        "rally.enemy"
+      ],
+      "segments": [
+        {
+          "from": "base.player",
+          "to": "basemove.route.2.waypoint.00",
+          "floodStatus": "Reached",
+          "floodMetres": 16.6,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.2.waypoint.00",
+          "to": "basemove.route.2.waypoint.01",
+          "floodStatus": "Reached",
+          "floodMetres": 16.8,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.2.waypoint.01",
+          "to": "basemove.route.2.waypoint.02",
+          "floodStatus": "Reached",
+          "floodMetres": 192.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.0,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.2.waypoint.02",
+          "to": "basemove.route.2.waypoint.03",
+          "floodStatus": "Reached",
+          "floodMetres": 42.6,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.2.waypoint.03",
+          "to": "rally.enemy",
+          "floodStatus": "Reached",
+          "floodMetres": 24.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.0,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        }
+      ],
+      "straightLineMetres": 295.4118595123291,
+      "floodPathMetres": 292.0,
+      "nativePathMetres": 6.24264068,
+      "lengthBasis": "native",
+      "nominalTruckSeconds": 0.780330085,
+      "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
+    },
+    {
+      "route": 3,
+      "kind": "FlankSouthSweep",
+      "vehicles": true,
+      "via": [
+        "base.player",
+        "basemove.route.3.waypoint.00",
+        "basemove.route.3.waypoint.01",
+        "basemove.route.3.waypoint.02",
+        "basemove.route.3.waypoint.03",
+        "rally.enemy"
+      ],
+      "segments": [
+        {
+          "from": "base.player",
+          "to": "basemove.route.3.waypoint.00",
+          "floodStatus": "Reached",
+          "floodMetres": 74.6,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 266,
+            "pathCells": 7,
+            "pathMetres": 6.8284271200000006,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.3.waypoint.00",
+          "to": "basemove.route.3.waypoint.01",
+          "floodStatus": "Reached",
+          "floodMetres": 25.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.3.waypoint.01",
+          "to": "basemove.route.3.waypoint.02",
+          "floodStatus": "Reached",
+          "floodMetres": 147.0,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.3.waypoint.02",
+          "to": "basemove.route.3.waypoint.03",
+          "floodStatus": "Reached",
+          "floodMetres": 50.8,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        },
+        {
+          "from": "basemove.route.3.waypoint.03",
+          "to": "rally.enemy",
+          "floodStatus": "Reached",
+          "floodMetres": 24.4,
+          "native": {
+            "status": "NativeQueryFoundExactGoal",
+            "failureCode": 0,
+            "expansions": 0,
+            "pathCells": 2,
+            "pathMetres": 1.41421356,
+            "queryScope": "ManualMoveVehicle_StaticBlockersAndSurface_NoLiveOccupancy"
+          }
+        }
+      ],
+      "straightLineMetres": 285.84757804870605,
+      "floodPathMetres": 321.79999999999995,
+      "nativePathMetres": 12.485281360000002,
+      "lengthBasis": "native",
+      "nominalTruckSeconds": 1.5606601700000002,
+      "timeNote": "length / ChassisConfig.Speed; ignores road multiplier and traffic. The convoy deadline is not changed by this probe."
+    }
+  ]
+}

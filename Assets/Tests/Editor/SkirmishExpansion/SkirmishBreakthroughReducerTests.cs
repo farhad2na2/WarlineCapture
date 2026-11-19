@@ -206,10 +206,22 @@ namespace Game.Tests.Editor
             Assert.IsEmpty(SkirmishBreakthroughReducer.Step(ref state, overflow)); Assert.AreEqual(before, JsonUtility.ToJson(state));
         }
 
+        [Test]
+        public void PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt()
+        {
+            // W31b: the resolved per-mission deadline (setup.DeadlineSeconds) drives the BT clock; 0 keeps the size default.
+            Assert.AreEqual(T(540), SkirmishBreakthroughReducer.Create(SkirmishSizeId.Standard, "a", "b", Ids(), 540).DeadlineTicks);
+            Assert.AreEqual(T(750), SkirmishBreakthroughReducer.Create(SkirmishSizeId.War, "a", "b", Ids(), 750).DeadlineTicks);
+            Assert.AreEqual(T(900), SkirmishBreakthroughReducer.Create(SkirmishSizeId.LargeWar, "a", "b", Ids(), 900).DeadlineTicks);
+            Assert.AreEqual(T(1080), SkirmishBreakthroughReducer.Create(SkirmishSizeId.Standard, "a", "b", Ids(), 0).DeadlineTicks);
+            Assert.AreEqual(T(1080), SkirmishBreakthroughReducer.Create(SkirmishSizeId.Standard, "a", "b", Ids(), 1080).DeadlineTicks);
+            Assert.Throws<ArgumentOutOfRangeException>(() => SkirmishBreakthroughReducer.Create(SkirmishSizeId.Standard, "a", "b", Ids(), -1));
+        }
+
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishBreakthroughReducerTests();
-            Action[] tests = { suite.ExactlyTwelveOriginalIdsAndSizeDeadlinesAreRequired,
+            Action[] tests = { suite.ExactlyTwelveOriginalIdsAndSizeDeadlinesAreRequired, suite.PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt,
                 suite.EitherCorridorCanOpenWithOrdinarySupportInfantry, suite.HoldingBothCorridorsDoesNotReduceEightRequired,
                 suite.ContestOrEmptyCorridorResetsEvenOnFinalHoldTick, suite.ExitLatchSurvivesLosingBothCorridors,
                 suite.ExactUnlockTickNeverCreditsRetroactiveExitDwell, suite.TransportedFlyoverCannotCountUntilDismountedThreeSeconds,
@@ -217,7 +229,7 @@ namespace Game.Tests.Editor
                 suite.FourDeathsRemainWinnableFifthMakesVictoryImpossible, suite.ReplacementRecruitAndDuplicateFactsCannotReplaceDesignatedIdentity,
                 suite.EvacuatedTombstonesSurviveCheckpointWithoutDuplicateTransition, suite.CheckpointPreservesNineteenPointNineHoldAndTwoPointNineDwell,
                 suite.EighthEvacuationOnDeadlineWinsOtherwiseDeadlineLoses, suite.PauseSurrenderInvalidFactsAndOverflowPreserveFrozenOrUnchangedState };
-            try { foreach (var test in tests) test(); Debug.Log("[SkirmishBreakthroughReducerTests] result=Passed tests=15"); }
+            try { foreach (var test in tests) test(); Debug.Log("[SkirmishBreakthroughReducerTests] result=Passed tests=16"); }
             catch (Exception error) { Debug.LogError("[SkirmishBreakthroughReducerTests] result=Failed\n" + error); throw; }
         }
     }

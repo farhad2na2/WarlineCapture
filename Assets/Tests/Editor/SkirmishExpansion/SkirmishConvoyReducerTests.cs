@@ -176,17 +176,33 @@ namespace Game.Tests.Editor
             Assert.AreEqual(before, JsonUtility.ToJson(state)); Assert.AreEqual(SkirmishEndReasonKind.Surrender, state.Reason);
         }
 
+        [Test]
+        public void PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt()
+        {
+            // W31b: the resolved per-mission deadline (setup.DeadlineSeconds) drives the CE clock; 0 keeps the size default.
+            Assert.AreEqual(T(420), SkirmishConvoyReducer.Create(SkirmishSizeId.Standard, "exit", Ids(), 420).DeadlineTicks);
+            Assert.AreEqual(T(583), SkirmishConvoyReducer.Create(SkirmishSizeId.War, "exit", Ids(), 583).DeadlineTicks);
+            Assert.AreEqual(T(700), SkirmishConvoyReducer.Create(SkirmishSizeId.LargeWar, "exit", Ids(), 700).DeadlineTicks);
+            Assert.AreEqual(New().DeadlineTicks, SkirmishConvoyReducer.Create(SkirmishSizeId.Standard, "destination", Ids(), 0).DeadlineTicks);
+            Assert.AreEqual(T(1080), SkirmishConvoyReducer.Create(SkirmishSizeId.Standard, "exit", Ids(), 1080).DeadlineTicks);
+            Assert.Throws<ArgumentOutOfRangeException>(() => SkirmishConvoyReducer.Create(SkirmishSizeId.Standard, "exit", Ids(), -1));
+            var state = SkirmishConvoyReducer.Create(SkirmishSizeId.Standard, "destination", Ids(), 420);
+            state.ElapsedTicks = state.DeadlineTicks - T(.1); var final = Facts(.1, 1);
+            SkirmishConvoyReducer.Step(ref state, final);
+            Assert.IsTrue(state.Terminal); Assert.AreEqual(SkirmishEndReasonKind.ObjectiveDeadline, state.Reason);
+        }
+
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishConvoyReducerTests();
-            Action[] tests = { suite.ExactlyThreeDistinctOriginalIdsAndSizeDeadlinesAreRequired,
+            Action[] tests = { suite.ExactlyThreeDistinctOriginalIdsAndSizeDeadlinesAreRequired, suite.PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt,
                 suite.FirstDeliveredIsNonterminalSecondWinsAndThirdMayDeliverSameTick, suite.TwoDeathsBeforeDepartureMakeVictoryImpossible,
                 suite.OneDeliveredOneLiveOneDeadRemainsWinnable, suite.DeathOnFifthSecondPreventsCredit, suite.ExitOnFifthSecondResetsOnlyThatTruck,
                 suite.LogisticsReplacementCannotSubstituteOriginalIdentity, suite.DuplicateOrMissingObservationFailsWithoutMutation,
                 suite.DeliveredTombstoneSurvivesRemovedActorAndRepeatedDelivery, suite.DestroyedTombstoneCannotResurrectOrDeliver,
                 suite.FourPointNineSecondCheckpointPreservesFractionAndStableIds, suite.SecondDeliveryOnDeadlineWinsOtherwiseDeadlineLoses,
                 suite.PausedOrNotPlayingFreezesDwellAndDeadline, suite.InvalidLifeClockDwellAndOverflowDoNotPartiallyCommitAndSurrenderFreezes };
-            try { foreach (var test in tests) test(); Debug.Log("[SkirmishConvoyReducerTests] result=Passed tests=14"); }
+            try { foreach (var test in tests) test(); Debug.Log("[SkirmishConvoyReducerTests] result=Passed tests=15"); }
             catch (Exception error) { Debug.LogError("[SkirmishConvoyReducerTests] result=Failed\n" + error); throw; }
         }
     }

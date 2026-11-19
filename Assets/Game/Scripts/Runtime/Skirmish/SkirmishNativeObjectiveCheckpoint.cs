@@ -155,7 +155,7 @@ namespace Game.Runtime
                     var state = Parse<SkirmishFrontlineState>(value.Reducer);
                     if (state.Terminal || state.Reason != SkirmishEndReasonKind.None || state.PlayerTickets<=0 || state.EnemyTickets<=0 ||
                         state.ElapsedTicks>=state.DeadlineTicks) return false;
-                    var baseline = SkirmishFrontlineReducer.Create(setup.SizeId, state.ZoneA.StableZoneId, state.ZoneB.StableZoneId, state.ZoneC.StableZoneId);
+                    var baseline = SkirmishFrontlineReducer.Create(setup.SizeId, state.ZoneA.StableZoneId, state.ZoneB.StableZoneId, state.ZoneC.StableZoneId, setup.DeadlineSeconds);
                     if (state.DeadlineTicks != baseline.DeadlineTicks) return false;
                     SkirmishFrontlineReducer.Step(ref state, new SkirmishFrontlineTickFacts { Paused = true });
                     foreach (var row in rows.Values) if (row.Disposition != SkirmishOriginalObjectiveDisposition.Live || row.IsStructure != 1) return false;
@@ -176,7 +176,7 @@ namespace Game.Runtime
                         if(subject.Status==SkirmishBreakthroughSubjectStatus.Evacuated)escaped++;
                         facts[i] = new SkirmishBreakthroughSubjectFacts { StableOriginalId = ids[i], AuthoritativeLifeKnown = true };
                     }
-                    var baseline = SkirmishBreakthroughReducer.Create(setup.SizeId, state.CorridorA.StableCorridorId, state.CorridorB.StableCorridorId, ids);
+                    var baseline = SkirmishBreakthroughReducer.Create(setup.SizeId, state.CorridorA.StableCorridorId, state.CorridorB.StableCorridorId, ids, setup.DeadlineSeconds);
                     if (state.DeadlineTicks != baseline.DeadlineTicks) return false;
                     if(escaped>=8 || alive+escaped<8)return false;
                     SkirmishBreakthroughReducer.Step(ref state, new SkirmishBreakthroughTickFacts { Paused = true, OriginalSubjects = facts }); elapsed = state.ElapsedTicks;
@@ -197,7 +197,7 @@ namespace Game.Runtime
                         if(subject.Status==SkirmishConvoySubjectStatus.Delivered)delivered++;
                         facts[i] = new SkirmishConvoySubjectFacts { StableOriginalId = ids[i], AuthoritativeLifeKnown = true };
                     }
-                    var baseline = SkirmishConvoyReducer.Create(setup.SizeId, state.StableDestinationId, ids);
+                    var baseline = SkirmishConvoyReducer.Create(setup.SizeId, state.StableDestinationId, ids, setup.DeadlineSeconds);
                     if (state.DeadlineTicks != baseline.DeadlineTicks) return false;
                     if(delivered>=2 || alive+delivered<2)return false;
                     SkirmishConvoyReducer.Step(ref state, new SkirmishConvoyTickFacts { Paused = true, OriginalTrucks = facts }); elapsed = state.ElapsedTicks;

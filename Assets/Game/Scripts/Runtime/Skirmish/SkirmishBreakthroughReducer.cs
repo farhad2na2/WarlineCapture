@@ -59,7 +59,7 @@ namespace Game.Runtime
         public const long ExitDwellTicks = 3 * TicksPerSecond;
 
         public static SkirmishBreakthroughState Create(SkirmishSizeId size, string corridorA, string corridorB,
-            IReadOnlyList<string> originalRifleIds)
+            IReadOnlyList<string> originalRifleIds, int deadlineSeconds = 0)
         {
             if (string.IsNullOrWhiteSpace(corridorA) || string.IsNullOrWhiteSpace(corridorB) || corridorA == corridorB ||
                 originalRifleIds == null || originalRifleIds.Count != OriginalCount)
@@ -80,6 +80,10 @@ namespace Game.Runtime
                 case SkirmishSizeId.LargeWar: deadline = 1800; break;
                 default: throw new ArgumentOutOfRangeException(nameof(size));
             }
+            // W31b: a positive per-mission deadline (setup.DeadlineSeconds from the matrix/objective asset) replaces the size
+            // default; 0 keeps the default, so rows whose deadline equals the default are unchanged.
+            if (deadlineSeconds < 0) throw new ArgumentOutOfRangeException(nameof(deadlineSeconds));
+            if (deadlineSeconds > 0) deadline = deadlineSeconds;
             return new SkirmishBreakthroughState
             {
                 OriginalSubjects = subjects, DeadlineTicks = deadline * TicksPerSecond,

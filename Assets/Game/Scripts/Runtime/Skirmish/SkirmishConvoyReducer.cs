@@ -47,7 +47,7 @@ namespace Game.Runtime
         // Fixed stable roles map to the three actual original objective truck IDs
         // at native startup. They are separate from ordinary logistics identities.
         public static SkirmishConvoyState Create(SkirmishSizeId size, string destinationId,
-            IReadOnlyList<string> originalTruckIds)
+            IReadOnlyList<string> originalTruckIds, int deadlineSeconds = 0)
         {
             if (string.IsNullOrWhiteSpace(destinationId) || originalTruckIds == null || originalTruckIds.Count != OriginalCount)
                 throw new ArgumentException("Destination and exactly three original objective truck IDs required.");
@@ -67,6 +67,10 @@ namespace Game.Runtime
                 case SkirmishSizeId.LargeWar: deadline = 1800; break;
                 default: throw new ArgumentOutOfRangeException(nameof(size));
             }
+            // W31b: a positive per-mission deadline (setup.DeadlineSeconds from the matrix/objective asset) replaces the size
+            // default; 0 keeps the default, so rows whose deadline equals the default are unchanged.
+            if (deadlineSeconds < 0) throw new ArgumentOutOfRangeException(nameof(deadlineSeconds));
+            if (deadlineSeconds > 0) deadline = deadlineSeconds;
             return new SkirmishConvoyState { OriginalTrucks = trucks, StableDestinationId = destinationId,
                 DeadlineTicks = deadline * TicksPerSecond };
         }

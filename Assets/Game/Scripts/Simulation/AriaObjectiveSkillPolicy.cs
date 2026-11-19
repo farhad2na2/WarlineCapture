@@ -223,6 +223,11 @@ namespace Game.Simulation
                 if (node.Contested) count += 2;
                 if (count > most) { most = count; committed = node.PublicId; }
             }
+            if (committed != null && type == AriaObjectiveType.FrontlineControl)
+            {
+                string thin = Garrison(goal, groups, committed);
+                if (thin != null) return thin;
+            }
             if (committed != null) return committed;
             if (!string.IsNullOrEmpty(chosen))
                 for (int i = 0; i < goal.NodeCount; i++)
@@ -233,6 +238,43 @@ namespace Game.Simulation
                 if (node.Kind == kind && !(node.OwnerKnown && node.OwnerFaction == goal.ObserverFaction)) return node.PublicId;
             }
             return First(goal, kind);
+        }
+
+        // W16 (DB FC S010/S012 @130365): with two zones owned, every escort followed the infantry holding the first
+        // zone, the second owned zone had no committed group, and the enemy's single wave took it unopposed at ~141 s
+        // (then held two zones for 500 s). While the committed zone is ours and uncontested, escorts garrison the
+        // other owned, uncontested zone that has fewer own groups (any domain) moving to or holding it.
+        static string Garrison(SkirmishPublicGoalSnapshot goal, IReadOnlyList<SkirmishPublicPlayerGroup> groups, string committed)
+        {
+            bool committedHeld = false;
+            for (int i = 0; i < goal.NodeCount; i++)
+            {
+                var node = goal.Node(i);
+                if (node.PublicId == committed)
+                    committedHeld = node.Kind == SkirmishPublicGoalNodeKind.CaptureZone && node.OwnerKnown &&
+                        node.OwnerFaction == goal.ObserverFaction && !node.Contested;
+            }
+            if (!committedHeld) return null;
+            string thin = null; int fewest = Groups(groups, committed);
+            for (int i = 0; i < goal.NodeCount; i++)
+            {
+                var node = goal.Node(i);
+                if (node.Kind != SkirmishPublicGoalNodeKind.CaptureZone || node.PublicId == committed || !node.PositionKnown ||
+                    !node.OwnerKnown || node.OwnerFaction != goal.ObserverFaction || node.Contested) continue;
+                int count = Groups(groups, node.PublicId);
+                if (count < fewest) { fewest = count; thin = node.PublicId; }
+            }
+            return thin;
+        }
+
+        static int Groups(IReadOnlyList<SkirmishPublicPlayerGroup> groups, string zone)
+        {
+            int count = 0;
+            if (groups != null)
+                foreach (var group in groups)
+                    if (group != null && group.Own && group.Living && group.AcceptedOrderActive &&
+                        string.Equals(group.AcceptedGoalId, zone, StringComparison.Ordinal)) count++;
+            return count;
         }
 
         static string First(SkirmishPublicGoalSnapshot goal, SkirmishPublicGoalNodeKind kind)

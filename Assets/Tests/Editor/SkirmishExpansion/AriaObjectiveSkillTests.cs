@@ -35,7 +35,8 @@ namespace Game.Tests.Editor
             t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=18");
+            t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=19");
         }
 
         // ---------- pure policy ----------
@@ -145,6 +146,28 @@ namespace Game.Tests.Editor
             Assert.AreEqual("exit", AriaObjectiveEscortPolicy.Goal(Breakthrough(true, false), null, null));
             Assert.AreEqual("corridor.a", AriaObjectiveEscortPolicy.Goal(Breakthrough(false, false), null, null));
             Assert.AreEqual("destination", AriaObjectiveEscortPolicy.Goal(Convoy(), null, null));
+        }
+
+        [Test]
+        public void FrontlineEscortsGarrisonTheThinnerOwnedZone()
+        {
+            SkirmishPublicPlayerGroup G(uint id, string goal, bool infantry) => new SkirmishPublicPlayerGroup
+            { GroupId = id, Own = true, Living = true, CombatInfantry = infantry, Dismounted = infantry, AcceptedOrderActive = goal != null, AcceptedGoalId = goal };
+            // W16 S010/S012: infantry holds zone.a; zone.b is also ours with nobody on it -> escorts go to zone.b.
+            var holding = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(2, null, true), G(3, null, false) };
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, contestedC: false), holding, null), "empty owned zone is garrisoned");
+            // Once zone.b has as many own groups (any domain) as zone.a, escorts return to the committed zone.
+            var balanced = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(3, "zone.b", false) };
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, contestedC: false), balanced, null), "balanced: committed zone");
+            // One owned zone: the committed (owned) zone is kept; escorts never go alone to unowned zones.
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 0, 2, contestedC: false), holding, null), "one owned zone unchanged");
+            // A contested zone still comes first.
+            Assert.AreEqual("zone.c", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 1, contestedC: true), holding, null), "contested zone first");
+            // The committed zone is not ours (attack in progress): unchanged.
+            var attacking = new List<SkirmishPublicPlayerGroup> { G(1, "zone.c", true) };
+            Assert.AreEqual("zone.c", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 0, contestedC: false), attacking, null), "attack support unchanged");
+            // Not FC: unchanged.
+            Assert.AreEqual("corridor.a", AriaObjectiveEscortPolicy.Goal(Breakthrough(false, false), holding, null));
         }
 
         [Test]

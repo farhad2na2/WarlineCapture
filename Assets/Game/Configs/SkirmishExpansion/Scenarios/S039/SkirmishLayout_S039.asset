@@ -1361,7 +1361,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s039
   operationMapId: opmap.skirmish.city_crossroads
   contentVersion: 1
-  contentHash: authored.s039.f39c7c7805d42d8d
+  contentHash: authored.s039.8533a6ed1c9d2c98
   worldWidthMetres: 487.2
   worldDepthMetres: 383.64218
   originX: -538.0491
@@ -1704,6 +1704,12 @@ MonoBehaviour:
     NormalizedV: 0.37846497
     WorldX: -476.34375
     WorldZ: 1138.2588
+  - AnchorId: anchor.skirmish.s039.route_goal_exit
+    RoleId: route.goal.exit
+    NormalizedU: 0.7040674
+    NormalizedV: 0.7790451
+    WorldX: -195.02742
+    WorldZ: 1291.9382
   - AnchorId: anchor.skirmish.s039.service_enemy
     RoleId: service.enemy
     NormalizedU: 0.7916229
@@ -1737,14 +1743,14 @@ MonoBehaviour:
     - anchor.skirmish.s039.candidate_route_tank_primary_waypoint_03
     - anchor.skirmish.s039.candidate_route_tank_primary_waypoint_04
     - anchor.skirmish.s039.candidate_route_tank_primary_waypoint_05
-    - anchor.skirmish.s039.candidate_route_tank_primary_waypoint_06
+    - anchor.skirmish.s039.route_goal_exit
     Kind: 1
-    LengthMetres: 394.6
-    InfantryTransitSeconds: 98.65
-    GroundTransitSeconds: 49.325
-    AirTransitSeconds: 24.6625
-    InfantryFirstContactSeconds: 49.325
-    GroundFirstContactSeconds: 24.6625
+    LengthMetres: 491.91125
+    InfantryTransitSeconds: 122.97781
+    GroundTransitSeconds: 61.488907
+    AirTransitSeconds: 30.744453
+    InfantryFirstContactSeconds: 61.488907
+    GroundFirstContactSeconds: 30.744453
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -1760,14 +1766,14 @@ MonoBehaviour:
     - anchor.skirmish.s039.candidate_route_tank_west_refined_bypass_waypoint_00
     - anchor.skirmish.s039.candidate_route_tank_primary_waypoint_04
     - anchor.skirmish.s039.candidate_route_tank_west_refined_waypoint_08
-    - anchor.skirmish.s039.candidate_route_tank_west_refined_waypoint_09
+    - anchor.skirmish.s039.route_goal_exit
     Kind: 2
-    LengthMetres: 475.65497
-    InfantryTransitSeconds: 118.91374
-    GroundTransitSeconds: 59.45687
-    AirTransitSeconds: 29.728436
-    InfantryFirstContactSeconds: 59.45687
-    GroundFirstContactSeconds: 29.728436
+    LengthMetres: 578.26276
+    InfantryTransitSeconds: 144.56569
+    GroundTransitSeconds: 72.282845
+    AirTransitSeconds: 36.141422
+    InfantryFirstContactSeconds: 72.282845
+    GroundFirstContactSeconds: 36.141422
     ProvisionalTimes: 1
     WidthMetres: 6
     AllowsVehicles: 1
@@ -1780,16 +1786,14 @@ MonoBehaviour:
     - anchor.skirmish.s039.candidate_route_tank_south_sweep_waypoint_03
     - anchor.skirmish.s039.candidate_route_tank_south_sweep_waypoint_04
     - anchor.skirmish.s039.candidate_route_tank_south_sweep_waypoint_05
-    - anchor.skirmish.s039.candidate_route_tank_south_sweep_waypoint_06
-    - anchor.skirmish.s039.candidate_route_tank_south_sweep_waypoint_07
-    - anchor.skirmish.s039.candidate_route_tank_goal
+    - anchor.skirmish.s039.route_goal_exit
     Kind: 3
-    LengthMetres: 612.3467
-    InfantryTransitSeconds: 153.08667
-    GroundTransitSeconds: 76.543335
-    AirTransitSeconds: 38.271667
-    InfantryFirstContactSeconds: 76.543335
-    GroundFirstContactSeconds: 38.271667
+    LengthMetres: 447.89862
+    InfantryTransitSeconds: 111.974655
+    GroundTransitSeconds: 55.987328
+    AirTransitSeconds: 27.993664
+    InfantryFirstContactSeconds: 55.987328
+    GroundFirstContactSeconds: 27.993664
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1

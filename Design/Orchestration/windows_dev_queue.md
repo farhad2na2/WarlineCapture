@@ -155,6 +155,75 @@ or enemy structure-defender targeting is wrong; fix the right side minimally, ne
 `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation` → `[SkirmishExpandedAriaTests] result=Passed` on Windows, cut from
 missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
 
+## W31 — Pacing: per-family deadlines for Desert Base CE S019-S024 and City Crossroads BT S037-S042 (2026-11-19)
+status: data DONE, not accepted (25aa408e7: drafts, assets and both matrices carry 420/540 s, but SkirmishConvoyReducer.cs:65-71 and SkirmishBreakthroughReducer.cs:75-85 take the deadline from SizeId, so every run logs deadline=1080). Continue in W31b.
+codex effort: medium
+Measured Mac counted wins (match clock): DB CE 123-155 s (11.42-14.34% of 1080, lane41/a); CC BT 160-225 s (14.85-20.79%, lane42/a). The gate-2 floor is 20%.
+Budget revision under CAMPAIGN_MAP_REUSE_POLICY "Budget revisions": intended improvement = a clock that actually pressures the escort/breakthrough.
+- DB CE S019-S024: standardDeadlineSeconds 1080 -> 420, war 1500 -> 583, large war 1800 -> 700 (expected wins 29-37%).
+- CC BT S037-S042: 1080 -> 540, war 1500 -> 750, large war 1800 -> 900 (expected wins 30-42%).
+Change the authoritative data together: the drafts, the per-mission `SkirmishObjective_SNNN.asset`, both `InitialSetupMatrix.csv` copies and any test that
+pins those rows' values (check which other missions share each value; change none of them). Record the old and new values in the results file. Re-author, then run
+non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept if each win lands at 25-50% and nothing else changes (no TimeLimit draws).
+Branch `missions/win-w31-pacing-ce-bt`. No shared code.
+
+## W31b — CE/BT (and FC if the same) reducers ignore the authored deadline (2026-11-19)
+status: READY FIRST once the owner confirms the standing OK in the Windows session (shared code)
+codex effort: high
+Pass `setup.DeadlineSeconds` (SkirmishSetupCompiler.cs:275) into the reducer Create calls (SkirmishNativeObjectiveLifecycleHooks.cs:42/44, SkirmishNativeObjectiveCheckpoint.cs:179/200),
+check whether the FC reducer has the same size-only pattern and fix it the same way, and update the reducer tests that assert 1080. A missing or zero value keeps the size default.
+Rows that keep 1080 must behave identically (S002 test pin). Prove with EditMode tests and the 12 W31 non-counted runs logging deadline=420/540 with wins at 25-50%. Build on `missions/win-w31-pacing-ce-bt`.
+
+## W31c — Pacing data: City Crossroads CE S043-S048 per-family deadline (2026-11-19)
+status: READY with W31b (data only)
+codex effort: medium
+Mac lane 44 (`program-logs/2026-11-19/lane44/q/unity.log`): CC CE wins at 135-180 s (12.52-16.66% of 1080). Same W31 treatment: standard 1080 -> 450 s, war 1500 -> 625, large war 1800 -> 750
+(expected wins 30-40%). Drafts, objective assets and both matrices together; record old/new. Verify in the same run as W31b. Also: S043/S045/S047 abort with AriaBlocked 101 ObserveObjective after the
+convoy-service Move/Hold loop, reproducing W19/W27 cause 3 on the Mac (lane44 :31096, :54577, :75076).
+
+## W32 — ARIA leaves starting units idle on objective missions (new gate 3) (2026-11-19)
+status: diagnosis DONE (1d3d3a0f7: idle starting groups are never commanded; the used-recorder is fine. The objective chooser picks only objective subjects, the escort path is starved by a time-expiring offer, a stuck support recruit holds the Build drawer ~60 s repeatedly, and the transport heli has no FC/CE command path). Fix READY after W31 and W27 cause 1, once the owner confirms the standing OK in the Windows session; accept the proposed order: escorts before support/coverage, offers expire on failed attempts, Move-to-goal for unassigned infantry/heli, bounded support recruit.
+codex effort: xhigh
+Owner decision 2026-11-19: on FC/BT/CE, gate 3 = ARIA uses every role in the player's starting force (plus objective roles). Evaluator `Tools/Missions/gate3_objective.py`
+(Mac run: `program-logs/2026-11-19/gate3/summary.txt`): 29 PASS / 63 FAIL jobs. Passing: S039, S041, S057, S059. The usual idle starting roles are role.car,
+role.apc_armored, role.tank, role.aa and role.transport_heli; on CE also role.rifle/role.gunner. First, read-only: for 3 failing jobs (e.g. S014 155923, S020 155923,
+S032 130365), find why those starting groups never receive a recorded command. Is the group not recruited by the objective skills (AriaCoverageRecruitPolicy,
+objective/escort/hold planners), or is it commanded but not logged as `used` (AriaCommandEvidence receipt)? Then fix the cause in ARIA, without changing gates or stats:
+each starting group gets a role in the objective (escort/flank/hold/screen). Prove with an EditMode test and non-counted runs of S014/S020/S032 that the
+evaluator passes and the rows still win at the same pacing. Branch `missions/win-w32-aria-starting-coverage`.
+
+## W33 — Mountain Pass enlarged Skirmish-only Citywide crop with full Airports (owner-approved route B2) (2026-11-19)
+status: READY after W31 (owner approved the Airport plan in chat 2026-11-19: "Approve the plan"; decisions_pending.md. It is new map tooling, so confirm with the owner in your session)
+codex effort: xhigh
+Study: `Design/Orchestration/notes/airport-map-feasibility-2026-11-19.md`, Mountain Pass section. Copy `CH05M01CitywideAlertConfigBuilder` into a Skirmish-only builder with a new MapId and folder
+(CropZ ~40, Height ~480, the same ClearZones so the current MP geometry stays). Package it like `CH05M01CitywideAlertContentBuilder.cs:55-80`. Never run the CH05M01 builder in place;
+prove the CH05-M01 protected-source hashes and `GeneratedOperationMaps/CH05M01CitywideAlert/*` are unchanged.
+Then on a new MP host row bound to the derivative:
+1. Run an Airport-only layout dump (`WARLINE_LAYOUT_DUMP_KINDS=airport`); full 210x55 candidates > 0 in each faction half.
+2. Re-measure S050's geometry on it (bitmap match against the current S050 dump).
+3. Report whether the extra depth (z 40-300) now allows a W23c-rule BT exit / CE destination past both corridors (S061/S067).
+Do not move the MP rows yet; report first. Branch `missions/win-w33-mp-enlarged`. Per-task results file.
+
+## W34 — Small airport building (owner-approved Airport plan) (2026-11-19)
+status: READY after W31 (owner approved in chat 2026-11-19; it is new shared game code, so confirm with the owner in your session)
+codex effort: xhigh
+Add `building.airport_small` (120x40 cells, runway ~100 m) that produces fighter + strike only. Drones stay on the satellite dish; transport_plane goes through the
+per-map army profile. Every place that hard-wires one Airport type is listed in `notes/airport-map-feasibility-2026-11-19.md`, section "Airport type assumptions in code".
+Generalize `AirportPresent` and the producer mapping so either airport type qualifies; the enemy AI builds the type its map offers; map it in the gate model.
+Existing full-Airport missions must stay byte-identical, and S004 keeps its exclusion. Build `Building_Airport_Small.prefab` as a variant of Building_Airport with an
+idempotent Editor builder (marker `[SmallAirportPrefabBuilder] result=Passed`). If the landing delivery plane cannot work on a 100 m strip, use self-arrival and say so.
+EditMode tests: id/prefab mapping, eligibility (fighter/strike yes, transport_plane not from it), enemy AI type choice, full Airport unchanged. Wire no mission yet.
+Branch `missions/win-w34-small-airport`.
+
+## W35 — City Crossroads "CC air" logical window with extended bounds (owner-approved Airport plan) (2026-11-19)
+status: READY after W31 (owner approved in chat 2026-11-19; confirm with the owner in your session)
+codex effort: high
+Clone `OperationMap_CityCrossroads` into a Skirmish-only asset (e.g. `OperationMap_CityCrossroadsAir`) with playable 804-1300 x 156-875 and matching camera/minimap
+bounds, following the `SkirmishS004CampaignMapBuilder.cs:16-40` pattern (marker with `campaignAssetsUnchanged=1`). The original asset, `Resources/SkirmishCityCrossroads.asset` (S025),
+the shared world surface/grid and all Campaign assets must stay unchanged. Name the binding field a later task rebinds; do not rebind rows yet. Then run an Airport-only layout dump
+(`WARLINE_LAYOUT_DUMP_KINDS=airport`, as `notes/airport-probe-2026-11-17.md:77-88`) on a host bound to the clone: full Airport first; the small one after W34. Proposed sites are in the study
+(enemy x 1120-1240 z 156-196; player x 804-844 z 644-764). EditMode test: original bounds unchanged, clone bounds as specified. Branch `missions/win-w35-cc-air-window`.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh
@@ -325,7 +394,7 @@ rows stay on S050. No new geometry.
 New branches `missions/win-w26-mp-bt-ab`, `missions/win-w26-mp-ce-ab` cut from integration. Per-task results file.
 
 ## W27 — ARIA: Move press does not arm move mode (S061 Blocked 115); repair loop after a partial delivery (S068 Blocked 101) (2026-11-19)
-status: HOLD for code changes (shared ARIA code: needs the owner's OK in the Windows session). Read-only diagnosis is READY now, including the W29 IB stops.
+status: diagnosis DONE (87a7504b1: 3 causes. (1) input-layer 3-press stop races the planner's re-offer, S061/S075; (2) IB assault never reaches the enemy base and the 180 s watchdog fires, S074/S076/S078; (3) convoy-service handback blanks the objective frame, S068). Fixes are READY after W31 once the owner confirms the standing OK in the Windows session; do cause 1 first (it also hits S057/S059 on 104731). Each fix needs an EditMode test.
 From W23c's log reading: S061 group-19 Move for OpenObjectiveCorridor tapped 3x, none accepted, then `AriaBlockedControl control=Move moveMode=False`.
 S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> RepairVehicle every ~27 s with accepted orders and no progress until
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
@@ -356,7 +425,7 @@ Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `
 Branch `missions/win-w29-ib-ba`. Per-task results file.
 
 ## W30 — Industrial Basin air/combined S075-S078: offer no Airport or fixed-wing, as S004 does (2026-11-19)
-status: READY
+status: HOLD (superseded: the owner wants an Airport, not the S004 exclusion, on CC/MP/IB air rows; a map investigation is running on the Mac. Keep fec08368d unmerged.)
 codex effort: medium
 W29 S077 lists `unused=` building.airport, fighter, strike, transport_plane, so the mission still offers them, although no Airport site exists (0/62 valid).
 Apply the owner's S004 decision the way S004 does it: find how S004 removes the Airport and fixed-wing from what the mission offers (data in its

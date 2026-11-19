@@ -1,0 +1,763 @@
+{
+ "mission": "O002",
+ "campaign_source": {
+  "packet": "../../examples/old-quarter-source.json",
+  "roles": {
+   "player_start": "anchor.operations.d01.spawn.player",
+   "enemy_a": "anchor.operations.d01.spawn.enemy_a",
+   "enemy_b": "anchor.operations.d01.spawn.enemy_b",
+   "exit": "anchor.operations.d01.exit.ground",
+   "cargo_start": null,
+   "junction": null,
+   "clinic": null,
+   "clinic_unload": null,
+   "route_main_waypoint": null,
+   "route_safe_waypoint": null
+  },
+  "notes": "candidate=1, measured 2026-11-19 offline from Design/AgentReports/SkirmishExpansion/LayoutDumps/S002/dump.json (Mac lane 4 whole-world bitmap, 4 m blocks, flags 1=road 4=authoredScenery 32=sidewalk) inside the OldQuarter.asset playable window 1672-1912 x 680-856. Bound roles reuse the four existing OldQuarter.asset anchors (spawn.player, exit.ground, spawn.enemy_a, spawn.enemy_b); every other role is unbound (null) and has only a candidate position below. Routes are A* paths over non-blocked bitmap blocks (layout_dump_to_draft.is_blocked: scenery, water, not-level and non-road cached-invalid are blocked) restricted to the playable window; endpoints on scenery are allowed. No vehicle clearance, BuildingPlacement surface, occupancy or Unity reachability was measured; geometry is a candidate. The graph uses the abstract D01 greybox anchors (OperationsMapGreybox.cs CreateOldQuarter) as the o004 example does; physical_candidates maps each greybox alias to the measured world position. Cargo trucks are Neutral because the draft runner counts every Player spawn against the fixed FP_SERVICE package (OperationDraft.CheckPackage); the authored O002 (OperationsAuthoredMissions.cs) uses Player cargo and a 12 s hold trimmed from the brief's 30 s.",
+  "measured_from": "Design/AgentReports/SkirmishExpansion/LayoutDumps/S002/dump.json",
+  "physical_candidates": {
+   "spawn.player": {
+    "x": 1690.5,
+    "z": 700.5,
+    "bitmap_flags": 33,
+    "clear_6m": 1.0,
+    "clear_12m": 0.95,
+    "bound": "anchor.operations.d01.spawn.player",
+    "greybox": "player_spawn",
+    "note": "existing anchor on the west road (road+sidewalk)"
+   },
+   "exit.ground": {
+    "x": 1690.5,
+    "z": 700.5,
+    "bitmap_flags": 33,
+    "clear_6m": 1.0,
+    "clear_12m": 0.95,
+    "bound": "anchor.operations.d01.exit.ground",
+    "greybox": "exit",
+    "note": "existing anchor; same point as spawn.player"
+   },
+   "spawn.enemy_a": {
+    "x": 1900.5,
+    "z": 825.5,
+    "bitmap_flags": 5,
+    "clear_6m": 0.34,
+    "clear_12m": 0.27,
+    "bound": "anchor.operations.d01.spawn.enemy_a",
+    "greybox": "enemy_a",
+    "note": "existing anchor sits on a road+scenery block; joins the main passable component 4 m away"
+   },
+   "spawn.enemy_b": {
+    "x": 1900.5,
+    "z": 695.5,
+    "bitmap_flags": 4,
+    "clear_6m": 0.1,
+    "clear_12m": 0.42,
+    "bound": "anchor.operations.d01.spawn.enemy_b",
+    "greybox": "enemy_b",
+    "note": "existing anchor on a scenery block; its passable pocket (51 blocks) is NOT connected to the main component inside the playable window (connects only outside it). Wave B on this anchor cannot reach the clinic in-window: source-fit gate. Candidate alternative: south_spur_entry."
+   },
+   "south_spur_entry": {
+    "x": 1792,
+    "z": 684,
+    "bitmap_flags": 1,
+    "note": "candidate replacement approach for wave B: road block on the south window edge, main passable component, 72 m road leg north to the street at z 756"
+   },
+   "cargo_start": {
+    "x": 1686,
+    "z": 718,
+    "bitmap_flags": 33,
+    "clear_6m": 1.0,
+    "clear_12m": 1.0,
+    "greybox": "cargo_start",
+    "note": "west road, 17.5 m north of spawn.player"
+   },
+   "junction": {
+    "x": 1734,
+    "z": 826,
+    "bitmap_flags": 1,
+    "clear_6m": 1.0,
+    "clear_12m": 0.9,
+    "greybox": "junction",
+    "note": "road junction where the north road meets the x~1732 road; both convoy routes branch here (SCAN target)"
+   },
+   "route_main_waypoint": {
+    "x": 1764,
+    "z": 800,
+    "bitmap_flags": 0,
+    "clear_6m": 1.0,
+    "clear_12m": 0.94,
+    "greybox": "lane",
+    "note": "open plaza ground on the direct route; no building cover (exposed)"
+   },
+   "route_safe_waypoint": {
+    "x": 1734,
+    "z": 756,
+    "bitmap_flags": 1,
+    "greybox": "courtyard",
+    "note": "street corner on the service loop; buildings line the z~756 street to the east (cover)"
+   },
+   "clinic": {
+    "x": 1792,
+    "z": 764,
+    "bitmap_flags": 4,
+    "clear_6m": 0.21,
+    "clear_12m": 0.5,
+    "greybox": "clinic",
+    "note": "existing map building block (scenery) on the south edge of the plaza; bind as the protected clinic site, do not place a new structure"
+   },
+   "clinic_unload": {
+    "x": 1808,
+    "z": 770,
+    "bitmap_flags": 0,
+    "clear_6m": 1.0,
+    "clear_12m": 0.94,
+    "note": "open gap beside the clinic, reachable from the plaza and the street; unload and HOLD(clinic,30) zone centre (12 m)"
+   }
+  },
+  "measured_routes": {
+   "route.main": {
+    "waypoints": [
+     "cargo_start",
+     "west_road_north",
+     "junction",
+     "plaza_mid",
+     "clinic_unload"
+    ],
+    "metres": 257.5,
+    "legs": [
+     {
+      "metres": 108.0,
+      "blocks": 28,
+      "road_blocks": 28
+     },
+     {
+      "metres": 48.0,
+      "blocks": 13,
+      "road_blocks": 13
+     },
+     {
+      "metres": 44.3,
+      "blocks": 10,
+      "road_blocks": 1
+     },
+     {
+      "metres": 57.3,
+      "blocks": 12,
+      "road_blocks": 0
+     }
+    ],
+    "note": "cargo_start > west road north (1686,826) > junction > plaza (1764,800) > clinic_unload; direct, 47 of 91 blocks off-road across open ground"
+   },
+   "route.safe": {
+    "waypoints": [
+     "cargo_start",
+     "west_road_north",
+     "junction",
+     "street_corner",
+     "street_east",
+     "clinic_unload"
+    ],
+    "metres": 333.3,
+    "legs": [
+     {
+      "metres": 108.0,
+      "blocks": 28,
+      "road_blocks": 28
+     },
+     {
+      "metres": 48.0,
+      "blocks": 13,
+      "road_blocks": 13
+     },
+     {
+      "metres": 68.0,
+      "blocks": 18,
+      "road_blocks": 18
+     },
+     {
+      "metres": 97.3,
+      "blocks": 22,
+      "road_blocks": 11
+     },
+     {
+      "metres": 12.0,
+      "blocks": 4,
+      "road_blocks": 1
+     }
+    ],
+    "note": "cargo_start > west road north > junction > street corner (1734,756) > street east (1808,756) > clinic_unload; 75.8 m longer, mostly road between buildings"
+   },
+   "infantry.spawn_to_junction": {
+    "waypoints": [
+     "spawn.player",
+     "west_road_north",
+     "junction"
+    ],
+    "metres": 173.7,
+    "legs": [
+     {
+      "metres": 125.7,
+      "blocks": 32,
+      "road_blocks": 32
+     },
+     {
+      "metres": 48.0,
+      "blocks": 13,
+      "road_blocks": 13
+     }
+    ]
+   },
+   "enemy_a_to_clinic_unload": {
+    "waypoints": [
+     "spawn.enemy_a",
+     "clinic_unload"
+    ],
+    "metres": 136.3,
+    "legs": [
+     {
+      "metres": 136.3,
+      "blocks": 33,
+      "road_blocks": 24
+     }
+    ]
+   },
+   "enemy_b_to_clinic_unload": {
+    "waypoints": [
+     "spawn.enemy_b",
+     "clinic_unload"
+    ],
+    "metres": null,
+    "legs": [
+     null
+    ],
+    "note": "no in-window path"
+   }
+  },
+  "unmeasured": [
+   "vehicle clearance for cargo trucks and APCs on both routes",
+   "BuildingPlacement surface for any clinic prop (none needed if the map building is bound)",
+   "Unity reachability flood for infantry/vehicles",
+   "camera framing of the junction scan from the west road"
+  ]
+ },
+ "graph": {
+  "PartialProgressNodeId": "escort_trucks",
+  "PartialProgressMinimum": 1,
+  "Nodes": [
+   {
+    "NodeId": "scan_junction",
+    "Rule": "Scan",
+    "TargetIds": [
+     "site.d01.junction"
+    ],
+    "DurationTicks": 6,
+    "RadiusMeters": 8,
+    "HiddenUntilObserved": true
+   },
+   {
+    "NodeId": "escort_trucks",
+    "Rule": "Escort",
+    "TargetIds": [
+     "cargo.01",
+     "cargo.02",
+     "cargo.03"
+    ],
+    "TargetCount": 2,
+    "LegalRouteIds": [
+     "route.main",
+     "route.safe"
+    ],
+    "Prerequisites": [
+     "scan_junction"
+    ],
+    "Activation": "Prerequisites"
+   },
+   {
+    "NodeId": "hold_clinic",
+    "Rule": "Hold",
+    "ZoneAnchorId": "anchor.operations.d01.clinic",
+    "DurationTicks": 30,
+    "RadiusMeters": 12,
+    "Prerequisites": [
+     "escort_trucks"
+    ],
+    "Activation": "Prerequisites"
+   },
+   {
+    "NodeId": "protect_clinic",
+    "Rule": "Protect",
+    "TargetIds": [
+     "site.d01.clinic"
+    ]
+   }
+  ],
+  "Spawns": [
+   {
+    "ObjectId": "site.d01.junction",
+    "RoleId": "role.neutral.junction",
+    "Faction": "Neutral",
+    "Body": "Site",
+    "AnchorId": "anchor.operations.d01.junction"
+   },
+   {
+    "ObjectId": "site.d01.clinic",
+    "RoleId": "role.neutral.clinic",
+    "Faction": "Neutral",
+    "Body": "Site",
+    "AnchorId": "anchor.operations.d01.clinic"
+   }
+  ],
+  "Waves": [
+   {
+    "Group": 1,
+    "Trigger": "NodeCompletion",
+    "TriggerNodeId": "scan_junction",
+    "WarningSeconds": 30
+   },
+   {
+    "Group": 2,
+    "Trigger": "NodeActivation",
+    "TriggerNodeId": "hold_clinic",
+    "WarningSeconds": 45
+   }
+  ]
+ },
+ "groups": [
+  {
+   "count": 12,
+   "spawn": {
+    "ObjectId": "rifle",
+    "RoleId": "role.friendly.rifle",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "recon",
+    "RoleId": "role.friendly.recon",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "ReconInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 4,
+   "spawn": {
+    "ObjectId": "support",
+    "RoleId": "role.friendly.support",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "repair",
+    "RoleId": "role.friendly.repair",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "RepairSpecialist",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "apc",
+    "RoleId": "role.friendly.apc",
+    "Faction": "Player",
+    "Body": "Vehicle",
+    "RosterRole": "Apc",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 3,
+   "spawn": {
+    "ObjectId": "cargo",
+    "RoleId": "role.neutral.aid_truck",
+    "Faction": "Neutral",
+    "Body": "Cargo",
+    "RosterRole": "CargoTruck",
+    "AnchorId": "anchor.operations.d01.cargo_start",
+    "HasCargo": true
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "street",
+    "RoleId": "role.hostile.street_watch",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.lane"
+   }
+  },
+  {
+   "count": 6,
+   "spawn": {
+    "ObjectId": "raider.a",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.a.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a"
+   }
+  },
+  {
+   "count": 4,
+   "spawn": {
+    "ObjectId": "raider.b",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.b.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.b.vehicle",
+    "RoleId": "role.hostile.light_vehicle",
+    "Faction": "Hostile",
+    "Body": "Vehicle",
+    "RosterRole": "LightVehicle",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 6,
+   "spawn": {
+    "ObjectId": "wave_a",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a",
+    "Group": 1
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_a.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a",
+    "Group": 1
+   }
+  },
+  {
+   "count": 6,
+   "spawn": {
+    "ObjectId": "wave_b",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_b.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_b.vehicle",
+    "RoleId": "role.hostile.light_vehicle",
+    "Faction": "Hostile",
+    "Body": "Vehicle",
+    "RosterRole": "LightVehicle",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  }
+ ],
+ "cases": [
+  {
+   "name": "scout junction then convoy by direct street",
+   "expect": "Victory",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "observe",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "scan",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "street.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "street.02"
+    },
+    {
+     "at": 7,
+     "verb": "escort_go",
+     "target": "route.main"
+    },
+    {
+     "at": 23,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 28,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 33,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 38,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 43,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 48,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    }
+   ]
+  },
+  {
+   "name": "scout junction then convoy by service loop",
+   "expect": "Victory",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "observe",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "scan",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "street.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "street.02"
+    },
+    {
+     "at": 7,
+     "verb": "escort_go",
+     "target": "route.safe"
+    },
+    {
+     "at": 9,
+     "verb": "escort_hold"
+    },
+    {
+     "at": 12,
+     "verb": "escort_go",
+     "target": "route.safe"
+    },
+    {
+     "at": 30,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 35,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 40,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 45,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 50,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    },
+    {
+     "at": 55,
+     "verb": "hold",
+     "actor": "rifle.03",
+     "target": "anchor.operations.d01.clinic"
+    }
+   ]
+  },
+  {
+   "name": "deliver trucks and conclude before the clinic hold",
+   "expect": "Partial",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "observe",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "scan",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "street.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "street.02"
+    },
+    {
+     "at": 7,
+     "verb": "escort_go",
+     "target": "route.main"
+    },
+    {
+     "at": 25,
+     "verb": "conclude"
+    }
+   ]
+  },
+  {
+   "name": "deliver trucks but never hold the clinic",
+   "expect": "Partial",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "observe",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "scan",
+     "actor": "recon.01",
+     "target": "site.d01.junction"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "street.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "street.02"
+    },
+    {
+     "at": 7,
+     "verb": "escort_go",
+     "target": "route.main"
+    }
+   ]
+  },
+  {
+   "name": "idle until deadline",
+   "expect": "Defeat",
+   "orders": []
+  },
+  {
+   "name": "withdraw before contact",
+   "expect": "Withdrawn",
+   "orders": [
+    {
+     "at": 3,
+     "verb": "withdraw"
+    }
+   ]
+  }
+ ]
+}

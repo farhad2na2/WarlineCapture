@@ -1,0 +1,11 @@
+{
+  "result": "[LiveRoadReview] result=Passed scenario=S002 seed=104731 infantry=(986.50, -0.51, 318.50) shoulder=(986.85, 0.78, 318.75) distance=1.37 verifiedMaterials=54 desertReady=1",
+  "pixelsChangedAbove5": {
+    "normal": 53853,
+    "soldiers": 141025
+  },
+  "capture": {
+    "normal": "Warmed gameplay camera, three consecutive frames with zero fallback pixels before saving each state",
+    "soldiers": "Both material states rendered at the same simulation and render frame in a second run of the same seed"
+  }
+}

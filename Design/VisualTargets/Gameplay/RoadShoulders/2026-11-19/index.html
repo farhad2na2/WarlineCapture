@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Warline Capture · Road edges and sidewalks</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#161916;color:#f4f3e8;font:16px/1.5 system-ui,sans-serif}main{max-width:1730px;margin:auto;padding:28px clamp(16px,3vw,52px) 50px}h1{font-size:clamp(26px,2.8vw,46px);margin:0 0 4px;letter-spacing:-.04em}p{margin:0;color:#c0c3b7}.controls{display:flex;gap:18px;align-items:end;flex-wrap:wrap;margin:22px 0}label{display:grid;gap:5px;color:#c0c3b7;font-size:13px}select,button{background:#2b312a;color:#fff;border:1px solid #626c5c;border-radius:4px;padding:9px 12px;font:inherit}select{min-width:174px}button{cursor:pointer}h2{font-size:20px;margin:18px 0 4px} .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}figure{margin:0}figcaption{color:#e1dfcf;font-size:13px;margin:0 0 4px}img{display:block;width:100%;height:auto;background:#272b26}a:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #d4bf83}.note{margin-top:18px;max-width:90ch;font-size:14px}@media(max-width:680px){.pair{grid-template-columns:1fr}.controls{gap:9px}main{padding-top:14px}}
+</style><main>
+<h1>Road edges and sidewalks</h1>
+<p>Matched Unity renders from all 14 map presentations. Select an image to open the full-size frame.</p>
+<p><a href="live.html" style="color:#d7dfbc">See the same treatment in live S002 gameplay</a></p><div class="controls"><label>Map<select id="map"></select></label><label>Location<select id="site"><option value="shoulder">Asphalt and dirt</option><option value="sidewalk">Sidewalk contact</option></select></label><button id="prev" aria-label="Previous map">←</button><button id="next" aria-label="Next map">→</button></div>
+<div id="frames"></div><p class="note">Both views use the gameplay camera angle and field of view. The normal view is 44 m above the road. The close view is 12 m above it. Two game infantry models were posed for scale in the review scene. Camera, lighting, and soldier positions match within each pair.</p>
+</main><script>
+const maps=[{"id": "DenseCity", "title": "Dense City", "intactWalk": false}, {"id": "CityEdgeAirfield", "title": "City Edge Airfield", "intactWalk": false}, {"id": "AshLinePort", "title": "Ash Line Port", "intactWalk": false}, {"id": "RefineryDistrict", "title": "Refinery District", "intactWalk": false}, {"id": "Frontier", "title": "Frontier", "intactWalk": false}, {"id": "DesertBase", "title": "Desert Base", "intactWalk": true}, {"id": "StagedDesertBase", "title": "Desert Base · staged presentation", "intactWalk": true}, {"id": "CH04M04GroundedSignal", "title": "Grounded Signal", "intactWalk": false}, {"id": "CH04M05ArmorBreak", "title": "Armor Break", "intactWalk": false}, {"id": "CH05M01CitywideAlert", "title": "Citywide Alert", "intactWalk": false}, {"id": "CH05M02TrustUnderFire", "title": "Trust Under Fire", "intactWalk": false}, {"id": "CH05M03NetworkCollapse", "title": "Network Collapse", "intactWalk": false}, {"id": "CH05M04LastCorridor", "title": "Last Corridor", "intactWalk": false}, {"id": "CH05M05CommandNode", "title": "Command Node", "intactWalk": false}];
+const map=document.querySelector('#map'),site=document.querySelector('#site'),frames=document.querySelector('#frames');
+for(const m of maps)map.add(new Option(m.title,m.id));
+function render(){
+ let data=maps[map.selectedIndex];frames.replaceChildren();
+ site.querySelector('[value=sidewalk]').textContent=data.intactWalk?'Intact sidewalk':'Sidewalk contact';
+ const bridge=site.querySelector('[value=bridge]');
+ if(data.id==='CH05M02TrustUnderFire' && !bridge)site.add(new Option('Bridge joint','bridge'));
+ if(data.id!=='CH05M02TrustUnderFire' && bridge)bridge.remove();
+ for(const [zoom,title] of [['normal','Normal gameplay zoom'],['soldiers','Soldier close-up']]){
+  let h=document.createElement('h2');h.textContent=title;frames.append(h);
+  let row=document.createElement('div');row.className='pair';frames.append(row);
+  for(const state of ['before','after']){
+   const url='frames/'+data.id+'-'+site.value+'-'+zoom+'-'+state+'.webp';let f=document.createElement('figure'),cap=document.createElement('figcaption'),a=document.createElement('a'),img=new Image();
+   cap.textContent=state==='before'?'Before':'After';a.href=url;a.target='_blank';a.rel='noopener';img.src=url;img.width=1600;img.height=900;img.alt=data.title+' · '+site.selectedOptions[0].text+' · '+title+' · '+state;a.append(img);f.append(cap,a);row.append(f);
+  }
+ }
+ history.replaceState(null,'','#'+map.value+'/'+site.value);
+}
+const [initial,loc]=location.hash.slice(1).split('/');
+if(maps.some(m=>m.id===initial))map.value=initial;
+if(loc==='sidewalk')site.value=loc;
+if(loc==='bridge' && map.value==='CH05M02TrustUnderFire'){render();site.value='bridge';}
+map.onchange=site.onchange=render;
+for(const [id,delta] of [['prev',-1],['next',1]])document.getElementById(id).onclick=()=>{map.selectedIndex=(map.selectedIndex+delta+maps.length)%maps.length;render()};
+render();
+</script></html>

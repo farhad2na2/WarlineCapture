@@ -222,3 +222,17 @@ helicopters only) to every map.\" I prefer we have Airport. Investigate if we ca
    theater name. Record the fit evidence.
 Workflow: Mac counted runs only after Windows' non-counted runs land in the pacing band; merges only when the lane is idle and its commit is in; one
 combined owner list for shared-code requests. Certify-by-family (fewer counted runs per sibling): the owner agreed with the recommendation ("ok so go as you recommend"). Keep 4 counted runs per mission for now; revisit only if Mac time becomes the limit.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-19): Airport plan per map ("Approve the plan")
+
+Study: `Design/Orchestration/notes/airport-map-feasibility-2026-11-19.md` (offline; every site still needs a native Airport-only layout dump).
+This is the explicit owner request the map reuse policy requires for the new building type and the new physical derivative below.
+- **City Crossroads:** small airport (120x40, fighter + strike; no transport_plane) on both sides. Clone `OperationMap_CityCrossroads` into a
+  Skirmish-only logical window with extended bounds (playable 804-1300 x 156-875) over existing terrain; the original asset and S025 stay untouched.
+  One "CC air" layout for its 16 air/combined rows.
+- **Mountain Pass:** full Airport (210x55) on both sides via route B2: a Skirmish-only enlarged copy of the Citywide Alert crop (new MapId and folder; never
+  re-run `CH05M01CitywideAlertConfigBuilder` in place; CH05-M01 protected-source hashes unchanged). Check whether the extra depth also fixes the MP BT/CE
+  endpoint source fit (W23c), which would replace the Armor Break move (W26).
+- **Industrial Basin:** stays helipad-only ("a map without airport" is allowed).
+- **New building:** a small-airport variant of Building_Airport with its own structure id and mappings (producer, eligibility, enemy AI build choice, gate
+  model). Drones stay on the satellite dish. Transport_plane is removed through the per-map army profile.

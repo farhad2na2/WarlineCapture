@@ -205,6 +205,8 @@ Gate-3 unused on the wins: helipad, satellite_dish, apc_heavy, drone, gunner, ra
 Diagnose reason 101 from the log context (what ARIA waited on, why nothing was offered), fix ARIA (or the S049 data if a placement/spawn is wrong);
 no stat/rule changes. Prove with a unit test reproducing the stall plus the ARIA EditMode suites. Shared code: owner OK in the Windows session.
 Branch `missions/win-w19-s049-reason101`. Per-task results file.
+Update 2026-11-19, Windows W9 CE: the field rows S043/S045/S047 abort the same way: ariaStopped:Blocked `[AriaBlocked] reason=101 kind=Waiting
+intent=ObserveObjective` at actions 69-88, match ~176-223 s (`windows_dev_results/2026-11-18-w9-cc-ce-measure.md`). Include them in the proof rows.
 
 ## W20 — S003 (Desert Base BA, army A field) ARIA loses its base without starting home defense (2026-11-18)
 status: READY
@@ -233,6 +235,38 @@ objective, defense and convoy pad that spawns a structure against the bitmap's B
 report which pad failed and where. Then run it over every merged draft (`git ls-files Tools/Missions/drafts`) and list any failure, without
 fixing drafts in this task. Tooling only; prove with new Python tests (a known-bad W9 r2 pad must fail, the W9 fix must pass) and the full
 `Tools/Missions` unittest run. Branch `missions/win-w22-preflight-objective-pads`. Per-task results file.
+Update 2026-11-19: Windows' interim checker `notes/objective_pad_surface.py` (defense.* 3x4 tower and 10x10 pad vs bitmap flags and instance
+pads) is the starting point. Bitmap origin = gridOrigin + bitmapOriginCell x cellSize. S026's gridOrigin is (0,0), which hides an origin bug, so
+test on S050 (gridOrigin 860,300) too. It already caught road + not-level towers (flag 17) on all 12 W10 Mountain Pass drafts.
+
+## W23 — City Crossroads BT exit next to the enemy base: S038/S039/S040/S042 BreakthroughImpossible (2026-11-19)
+status: READY (W9 BT merged first)
+codex effort: high
+Windows W9 BT (`windows_dev_results/2026-11-18-w9-cc-bt-measure.md`): S037/S041 won by BreakthroughEvacuated 8/8 at ~20%, but S038/S039/S040/S042 lost by
+BreakthroughImpossible, 1/8 completed and 5 lost at 14-22%. The rifle squad dies at (1076-1080, 399-417), inside BreakthroughExit (1064..1094.5,
+374.5..409.5), built from S027 air.enemy plus the enemy rally. That is ~19 m from the enemy watchtower (1098,405) and next to the barracks (1116,380).
+Move the BT exit (and the route end) on the S026 geometry away from the enemy base's defensive reach: a logical anchor/area change only, on legal
+vehicle-passable cells, with no map, stat or rule change and no change to enemy structures. Then re-measure r3 on S037 and rebind the six BT drafts.
+Prove with check_draft 6/6, preflight 6/6 (with W22's objective-pad check if merged), authoring/containment 6/6 and non-counted Windows menu runs of
+all six. Report the new exit's distance to every enemy defensive structure. Branch `missions/win-w23-cc-bt-exit`. Per-task results file.
+Update 2026-11-19, widened after Windows W10 (`windows_dev_results/2026-11-18-w10-mp-bt-measure.md`, `-w10-mp-ce-measure.md`). The same class of
+defect is on Mountain Pass. BT S062/S064/S065/S066 lost BreakthroughImpossible 0/8 (exit ~1 m from enemy staging, 8 m from the enemy base). CE S067/S068/
+S069/S071 lost ConvoyImpossible 0/2 (ConvoyDestination (1186..1202, 354..398) is ~2 m from the enemy barracks pad, 6 m from staging, 5 m from
+rally.enemy; trucks lost at 72-110 s). Scope W23 to all three families: CC BT S037-S042, MP BT S061-S066 and MP CE S067-S072. Move each BT exit or CE
+destination (plus the route end) clear of the enemy base, re-measure r3 on S037/S061/S067 and rebind. First add a small read-only check (in W22's
+tool or alongside it) that prints, for every merged BT/CE draft, the exit or destination distance to each enemy structure and staging/rally anchor.
+Use it as the acceptance check. Run it over the Desert Base BT/CE drafts too and list them; do not change those. One branch per family is fine:
+`missions/win-w23-cc-bt-exit`, `-mp-bt-exit`, `-mp-ce-dest`. Data/anchor change only, no shared code.
+
+## W24 — S070/S072 (Mountain Pass CE established, air/combined) abort: enemy transport helicopter BlockedSpawn (2026-11-19)
+status: READY
+codex effort: xhigh
+Windows W10 CE: S070 and S072 abort with expandedStartupFailure=BlockedSpawn after every enemy building is placed. The log shows `[SkirmishStartingForce] failed
+prefab=Unit_Veh_Helicopter_Transport faction=2 member=0`. The same helipad (AirReturn (1261,467.5)), army profile and start package launch fine in S058 and
+S064/S066, and CE S046/S048 on S026 spawn the same helicopter. Diagnose first: what differs at spawn time on S070/S072 (CE destination/convoy pads
+overlapping the air spawn cell, f2 satellite dish at (1173,447), occupancy from the moved defense tower). Extend the startup-allocator capture beyond S002 if
+needed (harness/tooling). Fix the draft data if that is the cause; a shared-code fix needs the owner's OK in the Windows session. Prove with a menu launch of
+S070/S072 with expandedStartupFailure=0. Branch `missions/win-w24-s070-heli-spawn`. Per-task results file.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.

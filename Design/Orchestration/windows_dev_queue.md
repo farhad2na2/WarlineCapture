@@ -337,6 +337,21 @@ W25 found S019's player vehicle pad (926,651.5, 14x12) still contains the convoy
 won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the W14/W25 anchor and pad (830,583.5, 22x20) to S019, then preflight, check_draft,
 authoring, containment, and non-counted menu runs at 155923 / 130365 / 104731 en with expandedStartupFailure 0. Branch `missions/win-w28-s019-pad`.
 
+## W29 — Industrial Basin Base Assault S074-S078: layout, measurement and authoring (2026-11-19)
+status: READY
+codex effort: high
+Drafts `Tools/Missions/drafts/s07[4-8]-industrial-basin-ba-*.json` hold only partial S073 deployment anchors ("Layout incomplete"). Source: RefineryDistrict /
+`Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset`, which the map reuse policy names for Skirmish IB; S073 stays the coded preset, unchanged.
+Authoring input (not evidence): `Design/Orchestration/salvage/s074-logical-binding.json`. Templates for structure: S026 / S050 BA drafts.
+1. S074 (ground, established) first. Measure the real layout on an existing registered IB host (S073 if the layout dump and measurement accept it).
+   If no registered host runs on this source, stop and report, as in W26; do not change tooling. Then write the bases, staging, legal pads and routes from that
+   measurement. Run pad_preflight, check_draft, authoring, containment, and one non-counted menu run at 130365 en.
+2. S075-S078 (air/combined): first check for a legal Airport site or an existing airfield on this source, using the game's own placement check as lane 9 did for
+   CC/MP (`decisions_pending.md`, Airport entry). If there is none, author them with helipads and helicopters only (the owner decided this for S004),
+   say so in the results file, and do not place an Airport. Then sibling drafts from the S074 layout, the same checks, and one non-counted menu run each.
+Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `[StartingGrantPlacement] failed`; report result, % of deadline and `unused=` per row.
+Branch `missions/win-w29-ib-ba`. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
-- Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
+- Industrial Basin FC/BT/CE (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

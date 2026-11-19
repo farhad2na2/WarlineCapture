@@ -1,7 +1,7 @@
 {
   "catalog_id": "S039",
   "campaign_source": "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset",
-  "notes": "candidate=1, measured 2026-11-18 (Windows W9 r3 on City Crossroads host S026 seed 130365 after moving defense.approach.b to (1098.5,366): CorridorA/B/Exit inside playable (3567/6069/1116 m2), defense.approach.a/b fit with 100/100 vehicle-passable cells, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r3.json; geometry still a candidate). Superseded: measured 2026-11-18 (Windows W9 r2 on City Crossroads host S026 seed 130365: CorridorA/B/Exit inside playable (3567/6069/1116 m2) and reachable from both bases and stagings, defense.approach.a/b fit, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. City Crossroads Breakthrough family S037-S042. S013 supplies the BT roles, defense pad sizes, structure footprints and pad slack. S026 BA supplies the City Crossroads source, side anchors and pads, Field building pads in compiler order, and MainHighway (tank primary). The two flank chains and their anchors match W7 S031 r2 on host S026, which recorded zero failed flood or native segments across all three routes. FlankNorthRuins follows west_refined via S026 dump candidate #274 and S026 tank primary waypoint 04, bypassing the two code 7 failures at west_refined 05 to 06 and 06 to 07 in S037 r1. FlankSouthSweep uses S026 tank.start and tank.goal with S026 dump candidates #303, #393, #398, #279, #371, #360 and #357 in order. Dump candidate indices are zero-based in Design/AgentReports/SkirmishExpansion/LayoutDumps/S026/dump.json. Corridor A uses W7 S031 r2 FrontlineB (3567 m2 in that measurement), with corners from S026 tank primary waypoint 02 and dump candidate #303. Corridor B uses S026 west_refined waypoints 05 and 03. Exit uses S027 BA air.enemy and S026 enemy rally. The defense.approach.a/b pads at S027 BA economy.enemy and service.enemy fit in S037 r1. Native re-measurement of the revised Breakthrough routes and areas and profile placement validation remain pending. S027 BA supplies the optional enemy AirReturn position. The Field roster starts without aircraft or air structures. Airport placement is unmeasured and remains open for air production; the airport is unbuilt at start. S026 BA supplies the player AirReturn position because the profile BA player helipad overlaps the shared S026 oil pump and fuel bladder footprints at their authored centres. W9 fix 2026-11-18: the first Windows menu launch aborted with BlockedSpawn because the enemy guard tower could not be placed on the S026 road band (z 348-360); moved defense.approach.b (1098.5,352) -> (1098.5,366) onto clear S026 ground (layout-dump bitmap flag 0, no pad overlap).",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W9 r3 on City Crossroads host S026 seed 130365 after moving defense.approach.b to (1098.5,366): CorridorA/B/Exit inside playable (3567/6069/1116 m2), defense.approach.a/b fit with 100/100 vehicle-passable cells, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r3.json; geometry still a candidate). Superseded: measured 2026-11-18 (Windows W9 r2 on City Crossroads host S026 seed 130365: CorridorA/B/Exit inside playable (3567/6069/1116 m2) and reachable from both bases and stagings, defense.approach.a/b fit, three vehicle routes with no failed flood/native segment (416/491/664 m); Design/AgentReports/SkirmishExpansion/S037/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. City Crossroads Breakthrough family S037-S042. S013 supplies the BT roles, defense pad sizes, structure footprints and pad slack. S026 BA supplies the City Crossroads source, side anchors and pads, Field building pads in compiler order, and MainHighway (tank primary). The two flank chains and their anchors match W7 S031 r2 on host S026, which recorded zero failed flood or native segments across all three routes. FlankNorthRuins follows west_refined via S026 dump candidate #274 and S026 tank primary waypoint 04, bypassing the two code 7 failures at west_refined 05 to 06 and 06 to 07 in S037 r1. FlankSouthSweep uses S026 tank.start and tank.goal with S026 dump candidates #303, #393, #398, #279, #371, #360 and #357 in order. Dump candidate indices are zero-based in Design/AgentReports/SkirmishExpansion/LayoutDumps/S026/dump.json. Corridor A uses W7 S031 r2 FrontlineB (3567 m2 in that measurement), with corners from S026 tank primary waypoint 02 and dump candidate #303. Corridor B uses S026 west_refined waypoints 05 and 03. Exit uses S027 BA air.enemy and S026 enemy rally. The defense.approach.a/b pads at S027 BA economy.enemy and service.enemy fit in S037 r1. Native re-measurement of the revised Breakthrough routes and areas and profile placement validation remain pending. S027 BA supplies the optional enemy AirReturn position. The Field roster starts without aircraft or air structures. Airport placement is unmeasured and remains open for air production; the airport is unbuilt at start. S026 BA supplies the player AirReturn position because the profile BA player helipad overlaps the shared S026 oil pump and fuel bladder footprints at their authored centres. W9 fix 2026-11-18: the first Windows menu launch aborted with BlockedSpawn because the enemy guard tower could not be placed on the S026 road band (z 348-360); moved defense.approach.b (1098.5,352) -> (1098.5,366) onto clear S026 ground (layout-dump bitmap flag 0, no pad overlap). Windows W23 2026-11-19: BreakthroughExit moved from (1064..1094.5, 374.5..409.5), which sat inside the enemy base (0 m from the barracks/watchtower), to the east flank (1260..1296, 440..468) on clear S026 cells, 124 m from the nearest enemy structure; routes now end at route.goal.exit (1278,454); FlankSouthSweep ends after south_sweep.waypoint.05. Re-measure r3 pending.",
   "anchors": {
     "base.player": [
       1020.0,
@@ -242,6 +242,10 @@
     "candidate.route.tank.south_sweep.waypoint.07": [
       1099.0,
       455.5
+    ],
+    "route.goal.exit": [
+      1278.0,
+      454.0
     ]
   },
   "pads": {
@@ -567,7 +571,7 @@
         "candidate.route.tank.primary.waypoint.03",
         "candidate.route.tank.primary.waypoint.04",
         "candidate.route.tank.primary.waypoint.05",
-        "candidate.route.tank.primary.waypoint.06"
+        "route.goal.exit"
       ],
       "width": 12.0,
       "vehicles": true,
@@ -585,7 +589,7 @@
         "candidate.route.tank.west_refined.bypass.waypoint.00",
         "candidate.route.tank.primary.waypoint.04",
         "candidate.route.tank.west_refined.waypoint.08",
-        "candidate.route.tank.west_refined.waypoint.09"
+        "route.goal.exit"
       ],
       "width": 6.0,
       "vehicles": true,
@@ -600,9 +604,7 @@
         "candidate.route.tank.south_sweep.waypoint.03",
         "candidate.route.tank.south_sweep.waypoint.04",
         "candidate.route.tank.south_sweep.waypoint.05",
-        "candidate.route.tank.south_sweep.waypoint.06",
-        "candidate.route.tank.south_sweep.waypoint.07",
-        "candidate.route.tank.goal"
+        "route.goal.exit"
       ],
       "width": 12.0,
       "vehicles": true,
@@ -637,12 +639,12 @@
     "BreakthroughExit": {
       "rectangle": [
         [
-          1064.0,
-          374.5
+          1260.0,
+          440.0
         ],
         [
-          1094.5,
-          409.5
+          1296.0,
+          468.0
         ]
       ]
     }

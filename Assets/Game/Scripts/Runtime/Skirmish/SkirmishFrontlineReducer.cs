@@ -57,7 +57,7 @@ namespace Game.Runtime
         public const long EmptyGraceTicks = 10 * TicksPerSecond;
         public const int InitialTickets = 500;
 
-        public static SkirmishFrontlineState Create(SkirmishSizeId size, string zoneA, string zoneB, string zoneC)
+        public static SkirmishFrontlineState Create(SkirmishSizeId size, string zoneA, string zoneB, string zoneC, int deadlineSeconds = 0)
         {
             if (string.IsNullOrWhiteSpace(zoneA) || string.IsNullOrWhiteSpace(zoneB) || string.IsNullOrWhiteSpace(zoneC) ||
                 zoneA == zoneB || zoneA == zoneC || zoneB == zoneC)
@@ -70,6 +70,10 @@ namespace Game.Runtime
                 case SkirmishSizeId.LargeWar: seconds = 1800; break;
                 default: throw new ArgumentOutOfRangeException(nameof(size));
             }
+            // W31b: a positive per-mission deadline (setup.DeadlineSeconds from the matrix/objective asset) replaces the size
+            // default; 0 keeps the default, so rows whose deadline equals the default are unchanged.
+            if (deadlineSeconds < 0) throw new ArgumentOutOfRangeException(nameof(deadlineSeconds));
+            if (deadlineSeconds > 0) seconds = deadlineSeconds;
             return new SkirmishFrontlineState
             {
                 ZoneA = new SkirmishFrontlineZoneState { StableZoneId = zoneA },

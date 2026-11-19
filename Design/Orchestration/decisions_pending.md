@@ -222,3 +222,31 @@ helicopters only) to every map.\" I prefer we have Airport. Investigate if we ca
    theater name. Record the fit evidence.
 Workflow: Mac counted runs only after Windows' non-counted runs land in the pacing band; merges only when the lane is idle and its commit is in; one
 combined owner list for shared-code requests. Certify-by-family (fewer counted runs per sibling): the owner agreed with the recommendation ("ok so go as you recommend"). Keep 4 counted runs per mission for now; revisit only if Mac time becomes the limit.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-19): Airport plan per map ("Approve the plan")
+
+Study: `Design/Orchestration/notes/airport-map-feasibility-2026-11-19.md` (offline; every site still needs a native Airport-only layout dump).
+This is the explicit owner request the map reuse policy requires for the new building type and the new physical derivative below.
+- **City Crossroads:** small airport (120x40, fighter + strike; no transport_plane) on both sides. Clone `OperationMap_CityCrossroads` into a
+  Skirmish-only logical window with extended bounds (playable 804-1300 x 156-875) over existing terrain; the original asset and S025 stay untouched.
+  One "CC air" layout for its 16 air/combined rows.
+- **Mountain Pass:** full Airport (210x55) on both sides via route B2: a Skirmish-only enlarged copy of the Citywide Alert crop (new MapId and folder; never
+  re-run `CH05M01CitywideAlertConfigBuilder` in place; CH05-M01 protected-source hashes unchanged). Check whether the extra depth also fixes the MP BT/CE
+  endpoint source fit (W23c), which would replace the Armor Break move (W26).
+- **Industrial Basin:** stays helipad-only ("a map without airport" is allowed).
+- **New building:** a small-airport variant of Building_Airport with its own structure id and mappings (producer, eligibility, enemy AI build choice, gate
+  model). Drones stay on the satellite dish. Transport_plane is removed through the per-map army profile.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-19): Operations decisions per the program-lead recommendation; mockups for review
+
+Owner's words: "regarding operation decisions. go for your recommendation. just for number 3 Mockups, show me the mockups I can approve. So far we used codex
+imagegen for the mockups, we can use the same." Survey: `Design/Orchestration/notes/operations-readiness-2026-11-19.md`.
+1. **Definition of done (test runs):** the same counted rule as Skirmish per mission (3 EN + 1 FA ARIA wins on Regular, menu journey, result/return).
+   ACCEPTANCE.md's other checks stay (Partial, Defeat, Withdraw, checkpoint restore, exactly-once settlement). Instead of the full 5-seed x every-difficulty
+   matrix on every mission, each family's first mission also runs one Easy and one Hard win.
+2. **New mechanics are approved:** Repair/Interact commands, civilian escort/release and the missing unit roles, as additions. Existing unit stats and Skirmish/Campaign
+   rules stay unchanged.
+3. **Mockups:** Codex ImageGen boards for the new family HUDs (ESCORT O002, REPAIR O003, RESCUE O005). Each goes to the owner for approval before implementation.
+4. **Build order:** the free intro O001-O003 first. Extending existing tools (an Operations job format in run_aria_queue, a draft format) is allowed.
+The trigger for Operations production stays: one accepted Skirmish mission per objective type. Offline prep (drafts, tool extensions, a gap table) may start now.
+- Owner approved the three Operations HUD mockups v01 (O002 escort, O003 repair, O005 rescue) on 2026-11-19: "Approve all three". Board: `Design/AgentReports/OperationsMockups/review.md`.

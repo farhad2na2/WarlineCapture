@@ -188,10 +188,20 @@ namespace Game.Tests.Editor
             Assert.AreEqual(before, JsonUtility.ToJson(state));
         }
 
+        [Test]
+        public void PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt()
+        {
+            // W31b: the resolved per-mission deadline (setup.DeadlineSeconds) drives the FC clock; 0 keeps the size default.
+            Assert.AreEqual(T(900), SkirmishFrontlineReducer.Create(SkirmishSizeId.Standard, "a", "b", "c", 900).DeadlineTicks);
+            Assert.AreEqual(T(1200), SkirmishFrontlineReducer.Create(SkirmishSizeId.Standard, "a", "b", "c", 0).DeadlineTicks);
+            Assert.AreEqual(T(1200), SkirmishFrontlineReducer.Create(SkirmishSizeId.Standard, "a", "b", "c", 1200).DeadlineTicks);
+            Assert.Throws<ArgumentOutOfRangeException>(() => SkirmishFrontlineReducer.Create(SkirmishSizeId.Standard, "a", "b", "c", -1));
+        }
+
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishFrontlineReducerTests();
-            Action[] tests = { suite.InitialTicketsAndAllSizeDeadlinesMatchContract,
+            Action[] tests = { suite.InitialTicketsAndAllSizeDeadlinesMatchContract, suite.PerMissionDeadlineReplacesSizeDefaultAndZeroKeepsIt,
                 suite.NeutralTakesEightHostileOwnedTakesEightPlusEight,
                 suite.MoreInfantryDoesNotAccelerateAndFinalTickContestFreezes,
                 suite.DefendingOwnerAndChangedCapturingFactionDiscardOpposingWork,
@@ -204,7 +214,7 @@ namespace Game.Tests.Editor
                 suite.DeadlineUsesGreaterOrEqualTicketsAndPauseFreezesEverything,
                 suite.AcceptedSurrenderAndTerminalResultCannotBeOverwritten,
                 suite.InvalidFactsAndOverflowDoNotPartlyMutateState };
-            try { foreach (var test in tests) test(); Debug.Log("[SkirmishFrontlineReducerTests] result=Passed tests=13"); }
+            try { foreach (var test in tests) test(); Debug.Log("[SkirmishFrontlineReducerTests] result=Passed tests=14"); }
             catch (Exception error) { Debug.LogError("[SkirmishFrontlineReducerTests] result=Failed\n" + error); throw; }
         }
     }

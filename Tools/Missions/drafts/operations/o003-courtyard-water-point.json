@@ -1,0 +1,857 @@
+{
+ "mission": "O003",
+ "campaign_source": {
+  "packet": "../../examples/old-quarter-source.json",
+  "roles": {
+   "player_start": "anchor.operations.d01.spawn.player",
+   "enemy_a": "anchor.operations.d01.spawn.enemy_a",
+   "enemy_b": "anchor.operations.d01.spawn.enemy_b",
+   "exit": "anchor.operations.d01.exit.ground",
+   "pump_west": null,
+   "pump_east": null,
+   "service_court": null,
+   "clinic": null
+  },
+  "notes": "candidate=1, measured 2026-11-19 offline from Design/AgentReports/SkirmishExpansion/LayoutDumps/S002/dump.json inside the OldQuarter.asset playable window 1672-1912 x 680-856, same method and limits as o002-clinic-supply-route.json (4 m bitmap, A* over non-blocked blocks in-window, no vehicle clearance, occupancy or Unity flood). The clinic reuses the O002 candidate building so the district keeps one clinic. pump_west is the only native IsPlacementValid pad for an existing Oil Pump footprint inside the window (dump candidate origin 1704,840 rotated 4x15); no candidate was accepted on the plaza, so pump_east is a marker position on open ground and a physical pump prop there needs its own pad measurement. Materials come from the catalog FP_SERVICE package (240) in the draft runner; the brief's 80 local Materials equal the two 40-Material repair charges. HOLD(service_court) uses the brief's 60 s; the authored O003 trims it to 20 s.",
+  "measured_from": "Design/AgentReports/SkirmishExpansion/LayoutDumps/S002/dump.json",
+  "physical_candidates": {
+   "spawn.player": {
+    "x": 1690.5,
+    "z": 700.5,
+    "bitmap_flags": 33,
+    "clear_6m": 1.0,
+    "clear_12m": 0.95,
+    "bound": "anchor.operations.d01.spawn.player",
+    "greybox": "player_spawn"
+   },
+   "spawn.enemy_a": {
+    "x": 1900.5,
+    "z": 825.5,
+    "bitmap_flags": 5,
+    "clear_6m": 0.34,
+    "clear_12m": 0.27,
+    "bound": "anchor.operations.d01.spawn.enemy_a",
+    "greybox": "enemy_a",
+    "note": "joins the main passable component 4 m away"
+   },
+   "spawn.enemy_b": {
+    "x": 1900.5,
+    "z": 695.5,
+    "bitmap_flags": 4,
+    "clear_6m": 0.1,
+    "clear_12m": 0.42,
+    "bound": "anchor.operations.d01.spawn.enemy_b",
+    "greybox": "enemy_b",
+    "note": "in-window pocket not connected to the main component (see O002 draft); candidate alternative south_spur_entry (1792,684)"
+   },
+   "pump_west": {
+    "x": 1706,
+    "z": 847.5,
+    "bitmap_flags": 0,
+    "clear_6m": 0.62,
+    "clear_12m": 0.51,
+    "greybox": "pump_west",
+    "dump_candidate": {
+     "definition": "Oil Pump",
+     "originX": 1704,
+     "originZ": 840,
+     "rectW": 4,
+     "rectH": 15,
+     "rotated": true,
+     "level": true
+    },
+    "note": "NW open lot off the west road; native pad for the existing Oil Pump footprint"
+   },
+   "pump_east": {
+    "x": 1820,
+    "z": 806,
+    "bitmap_flags": 0,
+    "clear_6m": 1.0,
+    "clear_12m": 0.88,
+    "greybox": "pump_east",
+    "note": "east plaza open ground, 93 m path from spawn.enemy_a (the exposed pump); no native building pad accepted here"
+   },
+   "service_court": {
+    "x": 1790,
+    "z": 790,
+    "bitmap_flags": 0,
+    "clear_6m": 1.0,
+    "clear_12m": 1.0,
+    "greybox": "service_court",
+    "note": "plaza centre between both pumps and the clinic; HOLD(service_court,60) zone (12 m fully clear); 1.5 m from the existing O001 anchor signal_b, which is not reused for this role"
+   },
+   "clinic": {
+    "x": 1792,
+    "z": 764,
+    "bitmap_flags": 4,
+    "clear_6m": 0.21,
+    "clear_12m": 0.5,
+    "greybox": "clinic",
+    "note": "existing map building, same as the O002 candidate; PROTECT target"
+   },
+   "clinic_zone": {
+    "x": 1808,
+    "z": 770,
+    "bitmap_flags": 0,
+    "clear_6m": 1.0,
+    "clear_12m": 0.94,
+    "note": "open gap beside the clinic"
+   }
+  },
+  "measured_routes": {
+   "specialist.spawn_to_pump_west": {
+    "waypoints": [
+     "spawn.player",
+     "west_road_north",
+     "pump_west"
+    ],
+    "metres": 153.9,
+    "legs": [
+     {
+      "metres": 125.7,
+      "blocks": 32,
+      "road_blocks": 32
+     },
+     {
+      "metres": 28.3,
+      "blocks": 6,
+      "road_blocks": 3
+     }
+    ]
+   },
+   "specialist.pump_west_to_pump_east": {
+    "waypoints": [
+     "pump_west",
+     "pump_east"
+    ],
+    "metres": 141.9,
+    "legs": [
+     {
+      "metres": 141.9,
+      "blocks": 34,
+      "road_blocks": 7
+     }
+    ]
+   },
+   "specialist.spawn_to_pump_east": {
+    "waypoints": [
+     "spawn.player",
+     "west_road_north",
+     "pump_east"
+    ],
+    "metres": 269.9,
+    "legs": [
+     {
+      "metres": 125.7,
+      "blocks": 32,
+      "road_blocks": 32
+     },
+     {
+      "metres": 144.3,
+      "blocks": 35,
+      "road_blocks": 13
+     }
+    ]
+   },
+   "infantry.pump_east_to_service_court": {
+    "waypoints": [
+     "pump_east",
+     "service_court"
+    ],
+    "metres": 38.6,
+    "legs": [
+     {
+      "metres": 38.6,
+      "blocks": 9,
+      "road_blocks": 0
+     }
+    ]
+   },
+   "infantry.pump_west_to_service_court": {
+    "waypoints": [
+     "pump_west",
+     "service_court"
+    ],
+    "metres": 116.6,
+    "legs": [
+     {
+      "metres": 116.6,
+      "blocks": 26,
+      "road_blocks": 7
+     }
+    ]
+   },
+   "enemy_a_to_pump_east": {
+    "waypoints": [
+     "spawn.enemy_a",
+     "pump_east"
+    ],
+    "metres": 93.0,
+    "legs": [
+     {
+      "metres": 93.0,
+      "blocks": 23,
+      "road_blocks": 16
+     }
+    ]
+   },
+   "enemy_a_to_service_court": {
+    "waypoints": [
+     "spawn.enemy_a",
+     "service_court"
+    ],
+    "metres": 129.3,
+    "legs": [
+     {
+      "metres": 129.3,
+      "blocks": 30,
+      "road_blocks": 16
+     }
+    ]
+   },
+   "enemy_a_to_clinic_zone": {
+    "waypoints": [
+     "spawn.enemy_a",
+     "clinic_zone"
+    ],
+    "metres": 136.3,
+    "legs": [
+     {
+      "metres": 136.3,
+      "blocks": 33,
+      "road_blocks": 24
+     }
+    ]
+   }
+  },
+  "unmeasured": [
+   "pad for a physical pump prop at pump_east",
+   "Unity reachability flood",
+   "health/damage model of a bound map building used as a protected site",
+   "repair-specialist roster binding (P0 roster ledger: unbound)"
+  ]
+ },
+ "graph": {
+  "PartialNodeIds": [
+   "repair_pump_west",
+   "repair_pump_east"
+  ],
+  "PartialMinimumComplete": 1,
+  "Nodes": [
+   {
+    "NodeId": "clear_pump_guards",
+    "Rule": "Clear",
+    "RoleIds": [
+     "role.hostile.pump_guard"
+    ]
+   },
+   {
+    "NodeId": "repair_pump_west",
+    "Rule": "Repair",
+    "TargetIds": [
+     "site.d01.pump_west"
+    ],
+    "DurationTicks": 18,
+    "RadiusMeters": 6,
+    "Prerequisites": [
+     "clear_pump_guards"
+    ],
+    "Activation": "Prerequisites"
+   },
+   {
+    "NodeId": "repair_pump_east",
+    "Rule": "Repair",
+    "TargetIds": [
+     "site.d01.pump_east"
+    ],
+    "DurationTicks": 18,
+    "RadiusMeters": 6,
+    "Prerequisites": [
+     "clear_pump_guards"
+    ],
+    "Activation": "Prerequisites"
+   },
+   {
+    "NodeId": "hold_service_court",
+    "Rule": "Hold",
+    "ZoneAnchorId": "anchor.operations.d01.service_court",
+    "DurationTicks": 60,
+    "RadiusMeters": 12,
+    "Prerequisites": [
+     "repair_pump_west",
+     "repair_pump_east"
+    ],
+    "Activation": "Prerequisites"
+   },
+   {
+    "NodeId": "protect_clinic_pumps",
+    "Rule": "Protect",
+    "TargetIds": [
+     "site.d01.clinic",
+     "site.d01.pump_west",
+     "site.d01.pump_east"
+    ]
+   }
+  ],
+  "Spawns": [
+   {
+    "ObjectId": "site.d01.clinic",
+    "RoleId": "role.neutral.clinic",
+    "Faction": "Neutral",
+    "Body": "Site",
+    "AnchorId": "anchor.operations.d01.clinic"
+   },
+   {
+    "ObjectId": "site.d01.pump_west",
+    "RoleId": "role.neutral.pump_west",
+    "Faction": "Neutral",
+    "Body": "Site",
+    "AnchorId": "anchor.operations.d01.pump_west",
+    "Health": 25
+   },
+   {
+    "ObjectId": "site.d01.pump_east",
+    "RoleId": "role.neutral.pump_east",
+    "Faction": "Neutral",
+    "Body": "Site",
+    "AnchorId": "anchor.operations.d01.pump_east",
+    "Health": 25
+   }
+  ],
+  "Waves": [
+   {
+    "Group": 1,
+    "Trigger": "NodeCompletion",
+    "TriggerNodeId": "clear_pump_guards",
+    "WarningSeconds": 30
+   },
+   {
+    "Group": 2,
+    "Trigger": "NodeActivation",
+    "TriggerNodeId": "hold_service_court",
+    "WarningSeconds": 45
+   }
+  ]
+ },
+ "groups": [
+  {
+   "count": 12,
+   "spawn": {
+    "ObjectId": "rifle",
+    "RoleId": "role.friendly.rifle",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "recon",
+    "RoleId": "role.friendly.recon",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "ReconInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 4,
+   "spawn": {
+    "ObjectId": "support",
+    "RoleId": "role.friendly.support",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "repair",
+    "RoleId": "role.friendly.repair",
+    "Faction": "Player",
+    "Body": "Infantry",
+    "RosterRole": "RepairSpecialist",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "apc",
+    "RoleId": "role.friendly.apc",
+    "Faction": "Player",
+    "Body": "Vehicle",
+    "RosterRole": "Apc",
+    "AnchorId": "anchor.operations.d01.player_spawn"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "guard.west",
+    "RoleId": "role.hostile.pump_guard",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.pump_west"
+   }
+  },
+  {
+   "count": 2,
+   "spawn": {
+    "ObjectId": "guard.east",
+    "RoleId": "role.hostile.pump_guard",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.pump_east"
+   }
+  },
+  {
+   "count": 5,
+   "spawn": {
+    "ObjectId": "raider.a",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.a.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a"
+   }
+  },
+  {
+   "count": 3,
+   "spawn": {
+    "ObjectId": "raider.b",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.b.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "raider.b.vehicle",
+    "RoleId": "role.hostile.light_vehicle",
+    "Faction": "Hostile",
+    "Body": "Vehicle",
+    "RosterRole": "LightVehicle",
+    "AnchorId": "anchor.operations.d01.enemy_b"
+   }
+  },
+  {
+   "count": 6,
+   "spawn": {
+    "ObjectId": "wave_a",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a",
+    "Group": 1
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_a.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_a",
+    "Group": 1
+   }
+  },
+  {
+   "count": 6,
+   "spawn": {
+    "ObjectId": "wave_b",
+    "RoleId": "role.hostile.rifle",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "RifleInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_b.support",
+    "RoleId": "role.hostile.support",
+    "Faction": "Hostile",
+    "Body": "Infantry",
+    "RosterRole": "SupportInfantry",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  },
+  {
+   "count": 1,
+   "spawn": {
+    "ObjectId": "wave_b.vehicle",
+    "RoleId": "role.hostile.light_vehicle",
+    "Faction": "Hostile",
+    "Body": "Vehicle",
+    "RosterRole": "LightVehicle",
+    "AnchorId": "anchor.operations.d01.enemy_b",
+    "Group": 2
+   }
+  }
+ ],
+ "cases": [
+  {
+   "name": "clear guards and split the specialists",
+   "expect": "Victory",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "guard.west.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "guard.west.02"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.03",
+     "target": "guard.east.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.04",
+     "target": "guard.east.02"
+    },
+    {
+     "at": 2,
+     "verb": "move",
+     "actor": "repair.01",
+     "target": "anchor.operations.d01.pump_west"
+    },
+    {
+     "at": 2,
+     "verb": "move",
+     "actor": "repair.02",
+     "target": "anchor.operations.d01.pump_east"
+    },
+    {
+     "at": 5,
+     "verb": "repair",
+     "actor": "repair.01",
+     "target": "site.d01.pump_west"
+    },
+    {
+     "at": 5,
+     "verb": "repair",
+     "actor": "repair.02",
+     "target": "site.d01.pump_east"
+    },
+    {
+     "at": 24,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 29,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 34,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 39,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 44,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 49,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 54,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 59,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 64,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 69,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 74,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 79,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    }
+   ]
+  },
+  {
+   "name": "clear guards and repair both pumps in turn",
+   "expect": "Victory",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "guard.west.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "guard.west.02"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.03",
+     "target": "guard.east.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.04",
+     "target": "guard.east.02"
+    },
+    {
+     "at": 2,
+     "verb": "move",
+     "actor": "repair.01",
+     "target": "anchor.operations.d01.pump_west"
+    },
+    {
+     "at": 2,
+     "verb": "move",
+     "actor": "repair.02",
+     "target": "anchor.operations.d01.pump_west"
+    },
+    {
+     "at": 5,
+     "verb": "repair",
+     "actor": "repair.01",
+     "target": "site.d01.pump_west"
+    },
+    {
+     "at": 23,
+     "verb": "move",
+     "actor": "repair.01",
+     "target": "anchor.operations.d01.pump_east"
+    },
+    {
+     "at": 23,
+     "verb": "move",
+     "actor": "repair.02",
+     "target": "anchor.operations.d01.pump_east"
+    },
+    {
+     "at": 25,
+     "verb": "repair",
+     "actor": "repair.01",
+     "target": "site.d01.pump_east"
+    },
+    {
+     "at": 44,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 49,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 54,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 59,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 64,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 69,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 74,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 79,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 84,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 89,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 94,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    },
+    {
+     "at": 99,
+     "verb": "hold",
+     "actor": "rifle.05",
+     "target": "anchor.operations.d01.service_court"
+    }
+   ]
+  },
+  {
+   "name": "restore the west pump and conclude",
+   "expect": "Partial",
+   "orders": [
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.01",
+     "target": "guard.west.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.02",
+     "target": "guard.west.02"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.03",
+     "target": "guard.east.01"
+    },
+    {
+     "at": 0,
+     "verb": "attack",
+     "actor": "rifle.04",
+     "target": "guard.east.02"
+    },
+    {
+     "at": 2,
+     "verb": "move",
+     "actor": "repair.01",
+     "target": "anchor.operations.d01.pump_west"
+    },
+    {
+     "at": 5,
+     "verb": "repair",
+     "actor": "repair.01",
+     "target": "site.d01.pump_west"
+    },
+    {
+     "at": 30,
+     "verb": "conclude"
+    }
+   ]
+  },
+  {
+   "name": "idle until deadline",
+   "expect": "Defeat",
+   "orders": []
+  },
+  {
+   "name": "withdraw before contact",
+   "expect": "Withdrawn",
+   "orders": [
+    {
+     "at": 3,
+     "verb": "withdraw"
+    }
+   ]
+  }
+ ]
+}

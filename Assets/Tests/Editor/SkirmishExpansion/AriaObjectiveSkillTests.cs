@@ -32,7 +32,8 @@ namespace Game.Tests.Editor
             t.ProgressRenewsInputWatchdogs();
             t.EscortRunsWhenNoObjectiveOrderIsWanted();
             t.FinishedObjectiveHandsBack();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=15");
+            t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=16");
         }
 
         // ---------- pure policy ----------
@@ -224,6 +225,35 @@ namespace Game.Tests.Editor
             var placement = Missing(41); placement.PlacementOpen = true; placement.PlacementCancel = T(72);
             Step(placement, ref p, ref t, out o);
             Assert.AreEqual(72, o.TargetId, "an unconfirmed preview is cancelled through its own control");
+        }
+
+        // W27 cause 1 (S061 Blocked 115): the Move control was pressed three times without arming move mode; the
+        // planner's own bound came one press too late, so the input layer stopped ARIA instead of the skill retrying.
+        [Test]
+        public void RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops()
+        {
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+            v.PublicObjective.Intent = AriaSkirmishIntent.OpenObjectiveCorridor; v.PublicObjective.ExclusiveGroupSelected = true;
+            v.PublicObjective.GoalInView = true; v.PublicObjective.MoveMode = false; v.PublicObjective.Move = T(7);
+            int presses = 0;
+            for (int frame = 0; frame < 6 && p.ObjectiveFailures == 0; frame++)
+            {
+                v.Frame++; v.Time += .5f;
+                Step(v, ref p, ref t, out var o);
+                Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase, "frame " + frame);
+                if (o.TargetId != 7) continue;
+                // Mirror of AriaPlayDecisionSystem: a fourth consecutive press of one target is Blocked 115.
+                if (t.TargetId != 7) { t.TargetId = 7; t.Attempts = 0; }
+                Assert.Less(t.Attempts, 3, "the planner must end the attempt before the input layer's 115");
+                t.Attempts++; t.Actions++; presses++;
+            }
+            Assert.AreEqual(3, presses, "three presses of the unresponsive Move control");
+            Assert.AreEqual(1, p.ObjectiveFailures, "absorbed as a retry, not a stop");
+            Assert.AreEqual(0, t.Attempts, "the retry starts a fresh input count");
+            Assert.AreEqual(0, t.TargetId);
+            Assert.AreEqual(2, AriaSkirmishPlanSystem.MaxRejectedObjectiveContacts);
         }
 
         [Test]

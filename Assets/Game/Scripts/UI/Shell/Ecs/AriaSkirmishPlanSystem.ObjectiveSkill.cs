@@ -134,6 +134,8 @@ namespace Game.UI.Shell.Ecs
             plan.ObjectiveFailures = state.Failures; plan.ObjectiveRetryAt = state.RetryAt;
             if (!retry) return;
             touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+            // W27 cause 1: the retry starts a fresh input count; a stale count of 3 would stop the next press (115).
+            touch.Attempts = 0; touch.TargetId = 0;
             plan.ObjectiveTouch = default;
             output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
         }
@@ -169,6 +171,7 @@ namespace Game.UI.Shell.Ecs
                 plan.EscortFailures++; plan.EscortRetryAt = view.Time + Game.Simulation.AriaObjectiveSkillPolicy.OrderRetrySeconds;
                 plan.ObjectiveOwner = 0; plan.EscortTouch = default;
                 touch.Phase = AriaPlayPhase.Observing; touch.GestureRequested = 0;
+                touch.Attempts = 0; touch.TargetId = 0;
                 output.Kind = AriaPlayObservationKind.Waiting; output.TargetId = 0;
             }
             return true;

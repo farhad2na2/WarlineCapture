@@ -11,7 +11,7 @@ namespace Game.UI.Shell.Ecs
             ref var p=ref plan.ObjectiveSupport.Aircraft;
             var facts=view.AircraftService;
             plan.Intent=AriaSkirmishIntent.ReturnAircraft;
-            if(view.DrawerOpen){Target(view.CloseDrawer,false,ref output);return true;}
+            if(view.DrawerOpen){return ServiceTarget(view,ref plan,view.CloseDrawer,ref output);}
             if(p.Bound)
             {
                 if(!facts.Presented||!facts.Actor.Equals(p.Actor)||facts.World!=p.World||facts.GroupId!=p.GroupId||facts.SetupHash!=p.SetupHash)
@@ -30,9 +30,9 @@ namespace Game.UI.Shell.Ecs
                     {touch.LastObjectiveProgressAt=view.Time;return EndExactAircraftService(view,ref plan,true);}
                     return true;
                 }
-                if(!view.ReturnAircraft.Available){Target(view.OpenAircraftActions,false,ref output);return true;}
+                if(!view.ReturnAircraft.Available){return ServiceTarget(view,ref plan,view.OpenAircraftActions,ref output);}
                 p.Stage=2;p.IssueFrame=view.Frame;p.Target=view.ReturnAircraft.Id;p.Actions=touch.Actions;
-                Target(view.ReturnAircraft,false,ref output);return true;
+                return ServiceTarget(view,ref plan,view.ReturnAircraft,ref output);
             }
             // Every normal non-infantry group is one actor. The actual selected
             // readout still validates that invariant rather than trusting a mask.
@@ -48,15 +48,27 @@ namespace Game.UI.Shell.Ecs
             if(view.ExpandedPageCount<=0||p.PagesVisited>view.ExpandedPageCount)return EndExactAircraftService(view,ref plan,false);
             if(p.NextPage>=view.ExpandedPageCount)p.NextPage=0;
             if(view.ExpandedPageIndex!=p.NextPage)
-            {Target(view.ExpandedPageIndex<p.NextPage?view.NextSquadPage:view.PreviousSquadPage,false,ref output);return true;}
+            {return ServiceTarget(view,ref plan,view.ExpandedPageIndex<p.NextPage?view.NextSquadPage:view.PreviousSquadPage,ref output);}
             for(int slot=p.NextSlot;slot<5;slot++)
                 if((view.ExpandedAirMask&(1<<slot))!=0&&view.Squad(slot).Available)
                 {
                     p.NextSlot=slot+1;if(p.NextSlot>=5){p.NextSlot=0;p.NextPage=(p.NextPage+1)%view.ExpandedPageCount;}
-                    Target(view.Squad(slot),false,ref output);return true;
+                    return ServiceTarget(view,ref plan,view.Squad(slot),ref output);
                 }
             p.NextSlot=0;p.NextPage=(p.NextPage+1)%view.ExpandedPageCount;p.PagesVisited++;
-            Target(view.NextSquadPage,false,ref output);return true;
+            return ServiceTarget(view,ref plan,view.NextSquadPage,ref output);
+        }
+        public const float MaxServiceTargetWaitSeconds=5f;
+        // W27b: a wanted control that is not shown is waited for briefly, then the service ends (its normal
+        // 15 s pause) instead of reporting Unavailable until AriaPlayDecisionSystem stops ARIA with 114.
+        static bool ServiceTarget(in AriaSkirmishObservation view,ref AriaSkirmishPlanComponent plan,in AriaTouchTarget target,
+            ref AriaPlayObservationComponent output)
+        {
+            ref var p=ref plan.ObjectiveSupport.Aircraft;
+            if(target.Available){p.UnavailableSince=0;Target(target,false,ref output);return true;}
+            if(p.UnavailableSince<=0)p.UnavailableSince=view.Time;
+            if(view.Time-p.UnavailableSince>MaxServiceTargetWaitSeconds)return EndExactAircraftService(view,ref plan,false);
+            output.Kind=AriaPlayObservationKind.Waiting;return true;
         }
         static bool EndExactAircraftService(in AriaSkirmishObservation view,ref AriaSkirmishPlanComponent plan,bool completed)
         {

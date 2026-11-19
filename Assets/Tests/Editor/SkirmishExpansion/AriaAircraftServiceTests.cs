@@ -35,6 +35,19 @@ namespace Game.Tests.Editor
             v.AircraftService.AtHome=true;Step(ref v,ref p,out _);Assert.IsTrue(p.ObjectiveSupport.ObservedAcceptance);
             Assert.AreEqual(4,p.ObjectiveTouch.Stage);
         }
+        // W27b (S059 Blocked 114): the bound aircraft's Return and action controls were not shown; the service kept
+        // reporting Unavailable until the input layer stopped ARIA after 15 s.
+        [Test]public void UnavailableServiceControlEndsTheServiceBeforeTheInputLayerStops()
+        {
+            var v=View();v.ReturnAircraft=default;v.OpenAircraftActions=default;var p=Plan();
+            Step(ref v,ref p,out _);Assert.IsTrue(p.ObjectiveSupport.Aircraft.Bound);
+            Step(ref v,ref p,out var wait);Assert.AreEqual(AriaPlayObservationKind.Waiting,wait.Kind,"waits, never Unavailable");
+            Assert.AreEqual(AriaObjectiveSupportAction.ReturnAircraft,p.ObjectiveSupport.Action);
+            v.Time+=AriaSkirmishPlanSystem.MaxServiceTargetWaitSeconds+.5f;Step(ref v,ref p,out var after);
+            Assert.AreNotEqual(AriaPlayObservationKind.Unavailable,after.Kind);
+            Assert.AreEqual(AriaObjectiveSupportAction.None,p.ObjectiveSupport.Action,"ended well inside the 15 s input-layer limit");
+            Assert.Less(AriaSkirmishPlanSystem.MaxServiceTargetWaitSeconds,15f);
+        }
         [Test]public void ReplacementAircraftCannotCompleteAnOldReturn()
         {
             var v=View();var p=Plan();Step(ref v,ref p,out _);Step(ref v,ref p,out _);

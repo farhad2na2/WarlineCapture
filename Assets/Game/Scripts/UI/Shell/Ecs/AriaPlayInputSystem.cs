@@ -46,7 +46,11 @@ namespace Game.UI.Shell.Ecs
             Debug.Log($"[AriaBlockedControl] target={id} control={control} intent={p.Intent} homeDefenseStage={p.HomeDefenseStage} supportStage={p.SupportStage} " +
                 $"coverageCurrent={p.CoverageCurrent} breacherStage={p.BreacherStage} attackMode={v.AttackMode} moveMode={v.MoveMode} scanMode={v.ScanMode} " +
                 $"homeThreat={v.PresentedHomeThreat} selectedGroups={v.ExpandedSelectedGroups} selectedMask={v.ExpandedSelectedMask} " +
-                $"selectedOffPage={v.ExpandedSelectedOffPage} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} t={v.Time:F1}");
+                $"selectedOffPage={v.ExpandedSelectedOffPage} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} " +
+                // W27b (S075 Blocked 101 Inspect): the map facts the inspection block decides on.
+                $"mapOpen={v.MapOpen} mapOwned={v.AssaultMap.ExpectedIdentity} fullMap={v.AssaultMap.FullMap} mapId={v.AssaultMap.Identity} " +
+                $"inspectMapId={p.AssaultInspectMapIdentity} inspectStage={p.AssaultInspectStage} closeMap={v.CloseMap.Available} " +
+                $"drawer={v.DrawerOpen} placement={v.PlacementOpen} t={v.Time:F1}");
         }
         private void TraceS002(string eventName, in AriaPlaySessionComponent session, in AriaPlayObservationComponent observation)
         {

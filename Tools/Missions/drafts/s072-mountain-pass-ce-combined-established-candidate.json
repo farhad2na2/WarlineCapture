@@ -1,7 +1,7 @@
 {
   "catalog_id": "S072",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "candidate=1, measured 2026-11-18 (Windows W10 r2 on Mountain Pass host S050 seed 130365 after moving both defense pads off the road band: ConvoyDestination inside playable (704 m2, all truck-reachable), convoy.origin.1-3 and defense.approach.a/b fit, three vehicle routes with no failed flood/native segment (223/292/322 m); Design/AgentReports/SkirmishExpansion/S067/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. Citywide Alert (CH05-M01), following S049 and the S050 salvage binding. S049 supplies the bases, staging, economy/service, spawn/rally anchors and pads, and seven Field instance pads per faction in compiler order. S019 supplies the CE roles, destination shape, pad sizes, structure footprints and pad slack. All three vehicle chains copy the W8 S055 draft and its r2 reference measurement on S050 (flood distances 223.0, 292.0 and 321.8 m, zero failed flood or native segments). They start at base.player and end at rally.enemy from S049/S050 (rally.enemy also S050 layout dump candidate #293). MainHighway uses S049/S050 basemove.route.1 waypoints .00-.04. The 6 m FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate #292. The 6 m FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates #31/#1/#37/#95 in route order. Dump indices are zero-based. MainHighway enters ConvoyDestination on its final leg. As in S019, delivery uses area occupancy independently of the route endpoint. The destination retains its 16 x 44 m rectangle from S049 basemove.route.1.waypoint.04 and basemove.route.2.waypoint.02. S067 r1 found all 704 m2 reachable for the truck footprint. Larger rectangles from the measured corners add overlap with the enemy vehicle spawn and north flank, or the enemy rally and base/staging. Truck bays 1-3 reuse S049 rally.player and basemove.route.1.waypoint.01/.02. Bay 1 shares the rally centre. Defense tower pads a/b reuse S051 provisional spawn.infantry.enemy and economy.enemy positions, respectively. The five CE pads fit in S067 r1. Native measurements of the revised CE drafts and convoy travel under normal input are pending. No separate supply expansion pads were available in the same-map drafts. Combined Established per missions.csv and InitialSetupMatrix.csv. Established approach watchtowers, satellite dishes and helipads (including both air role pads) come from S054. Those placements remain provisional in the CE layout. Both War and LargeWar second refinery module positions are unmeasured and left to derived pads. Airport/runway fit is unmeasured. The supplied BA variants have helipad pads only. Windows W10 fix 2026-11-19: before measurement, the S050 layout-dump bitmap showed both defense guard-tower spots on the road band z 412-436 (road + not level), which aborts startup with BlockedSpawn as in W9; moved defense.approach.a (1188.5,416.5) -> (1152,446); defense.approach.b (1209.5,441) -> (1209.5,446) onto clear S050 ground north of the road (bitmap flag 0, no pad overlap).",
+  "notes": "candidate=1, measured 2026-11-18 (Windows W10 r2 on Mountain Pass host S050 seed 130365 after moving both defense pads off the road band: ConvoyDestination inside playable (704 m2, all truck-reachable), convoy.origin.1-3 and defense.approach.a/b fit, three vehicle routes with no failed flood/native segment (223/292/322 m); Design/AgentReports/SkirmishExpansion/S067/area-measurement-r2.json; geometry still a candidate). Earlier: unmeasured. Citywide Alert (CH05-M01), following S049 and the S050 salvage binding. S049 supplies the bases, staging, economy/service, spawn/rally anchors and pads, and seven Field instance pads per faction in compiler order. S019 supplies the CE roles, destination shape, pad sizes, structure footprints and pad slack. All three vehicle chains copy the W8 S055 draft and its r2 reference measurement on S050 (flood distances 223.0, 292.0 and 321.8 m, zero failed flood or native segments). They start at base.player and end at rally.enemy from S049/S050 (rally.enemy also S050 layout dump candidate #293). MainHighway uses S049/S050 basemove.route.1 waypoints .00-.04. The 6 m FlankNorthRuins uses S049/S050 basemove.route.2 waypoints .00-.02 plus .03 from S050 dump candidate #292. The 6 m FlankSouthSweep uses basemove.route.3 waypoints .00-.03 from S050 dump candidates #31/#1/#37/#95 in route order. Dump indices are zero-based. MainHighway enters ConvoyDestination on its final leg. As in S019, delivery uses area occupancy independently of the route endpoint. The destination retains its 16 x 44 m rectangle from S049 basemove.route.1.waypoint.04 and basemove.route.2.waypoint.02. S067 r1 found all 704 m2 reachable for the truck footprint. Larger rectangles from the measured corners add overlap with the enemy vehicle spawn and north flank, or the enemy rally and base/staging. Truck bays 1-3 reuse S049 rally.player and basemove.route.1.waypoint.01/.02. Bay 1 shares the rally centre. Defense tower pads a/b reuse S051 provisional spawn.infantry.enemy and economy.enemy positions, respectively. The five CE pads fit in S067 r1. Native measurements of the revised CE drafts and convoy travel under normal input are pending. No separate supply expansion pads were available in the same-map drafts. Combined Established per missions.csv and InitialSetupMatrix.csv. Established approach watchtowers, satellite dishes and helipads (including both air role pads) come from S054. Those placements remain provisional in the CE layout. Both War and LargeWar second refinery module positions are unmeasured and left to derived pads. Airport/runway fit is unmeasured. The supplied BA variants have helipad pads only. Windows W10 fix 2026-11-19: before measurement, the S050 layout-dump bitmap showed both defense guard-tower spots on the road band z 412-436 (road + not level), which aborts startup with BlockedSpawn as in W9; moved defense.approach.a (1188.5,416.5) -> (1152,446); defense.approach.b (1209.5,441) -> (1209.5,446) onto clear S050 ground north of the road (bitmap flag 0, no pad overlap). Windows W24 2026-11-19: player satellite dish and approach watchtower at the S064 positions. With the S052 positions (904,462)/(919.5,448) the wider layout frame shifted the enemy helipad one cell west (392 vs 393) and the enemy TransportHeli failed to spawn (BlockedSpawn).",
   "anchors": {
     "base.player": [
       1002.0,
@@ -164,12 +164,12 @@
       446.0
     ],
     "s050.f1.watchtower.approach": [
-      919.5,
-      448.0
+      1067.0,
+      407.5
     ],
     "s050.f1.satellite_dish": [
-      904.0,
-      462.0
+      1092.0,
+      387.5
     ],
     "air.player": [
       947.0,
@@ -500,8 +500,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        919.5,
-        448.0
+        1067.0,
+        407.5
       ],
       "size": [
         3,
@@ -514,8 +514,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        904.0,
-        462.0
+        1092.0,
+        387.5
       ],
       "size": [
         10,

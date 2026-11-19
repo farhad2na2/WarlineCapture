@@ -331,12 +331,27 @@ S068, after 1/2 trucks delivered, repeats ServiceOriginalTruck Move/Hold -> Repa
 the planner gives up. Diagnose read-only meanwhile if idle; change code only with the owner's OK.
 
 ## W28 — S019 (Desert Base CE ground field): same latent vehicle-pad / convoy-bay overlap (2026-11-19)
-status: READY
+status: DONE (183429daa; S019 3/3 Victory non-counted, startup failure 0; Mac merges after lane 41)
 codex effort: medium
 W25 found S019's player vehicle pad (926,651.5, 14x12) still contains the convoy bays, as S021/S023 did before ae7034004. S019 has not aborted yet (lane 41
 won it at 130365 en), but one seeded opening spot can take a bay cell. Apply the W14/W25 anchor and pad (830,583.5, 22x20) to S019, then preflight, check_draft,
 authoring, containment, and non-counted menu runs at 155923 / 130365 / 104731 en with expandedStartupFailure 0. Branch `missions/win-w28-s019-pad`.
 
+## W29 — Industrial Basin Base Assault S074-S078: layout, measurement and authoring (2026-11-19)
+status: READY again (step 1 stopped: S073 is the legacy coded preset, not an expansion host). Program lead OKs option 1: bootstrap S074 as its own host (provisional author from the S073 deployment anchors + salvage binding, dump with WARLINE_SKIRMISH_CATALOG=S074, then rewrite S074 from the measured layout and re-author). Data only; the provisional S074 run is not evidence. Then steps 1-2 as written, using S074 as the IB host.
+codex effort: high
+Drafts `Tools/Missions/drafts/s07[4-8]-industrial-basin-ba-*.json` hold only partial S073 deployment anchors ("Layout incomplete"). Source: RefineryDistrict /
+`Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset`, which the map reuse policy names for Skirmish IB; S073 stays the coded preset, unchanged.
+Authoring input (not evidence): `Design/Orchestration/salvage/s074-logical-binding.json`. Templates for structure: S026 / S050 BA drafts.
+1. S074 (ground, established) first. Measure the real layout on an existing registered IB host (S073 if the layout dump and measurement accept it).
+   If no registered host runs on this source, stop and report, as in W26; do not change tooling. Then write the bases, staging, legal pads and routes from that
+   measurement. Run pad_preflight, check_draft, authoring, containment, and one non-counted menu run at 130365 en.
+2. S075-S078 (air/combined): first check for a legal Airport site or an existing airfield on this source, using the game's own placement check as lane 9 did for
+   CC/MP (`decisions_pending.md`, Airport entry). If there is none, author them with helipads and helicopters only (the owner decided this for S004),
+   say so in the results file, and do not place an Airport. Then sibling drafts from the S074 layout, the same checks, and one non-counted menu run each.
+Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `[StartingGrantPlacement] failed`; report result, % of deadline and `unused=` per row.
+Branch `missions/win-w29-ib-ba`. Per-task results file.
+
 ## Not yet (HOLD until the Mac lead decides)
-- Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
+- Industrial Basin FC/BT/CE (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
 - Counted ARIA runs on Windows (fps).

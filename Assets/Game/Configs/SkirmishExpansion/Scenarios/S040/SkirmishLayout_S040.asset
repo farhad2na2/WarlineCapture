@@ -1977,408 +1977,414 @@ MonoBehaviour:
   layoutId: layout.skirmish.s040
   operationMapId: opmap.skirmish.city_crossroads
   contentVersion: 1
-  contentHash: authored.s040.591f4d39a4355f5a
+  contentHash: authored.s040.c84c20507e2a2bfb
   worldWidthMetres: 491.54507
-  worldDepthMetres: 383.64218
+  worldDepthMetres: 385.9679
   originX: -538.0491
-  originZ: 993.06366
+  originZ: 993.0638
   cellSize: 1
   anchors:
   - AnchorId: anchor.skirmish.s040.air_enemy
     RoleId: air.enemy
     NormalizedU: 0.6601903
-    NormalizedV: 0.35156602
+    NormalizedV: 0.34944728
     WorldX: -213.5358
     WorldZ: 1127.9392
   - AnchorId: anchor.skirmish.s040.air_player
     RoleId: air.player
     NormalizedU: 0.27940556
-    NormalizedV: 0.46308228
+    NormalizedV: 0.4602916
     WorldX: -400.70865
     WorldZ: 1170.7216
   - AnchorId: anchor.skirmish.s040.base_enemy
     RoleId: base.enemy
     NormalizedU: 0.799953
-    NormalizedV: 0.43897828
+    NormalizedV: 0.43633282
     WorldX: -144.83614
     WorldZ: 1161.4742
   - AnchorId: anchor.skirmish.s040.base_player
     RoleId: base.player
     NormalizedU: 0.06954899
-    NormalizedV: 0.43897828
+    NormalizedV: 0.43633282
     WorldX: -503.8626
     WorldZ: 1161.4742
   - AnchorId: anchor.skirmish.s040.candidate_rally_variant0_faction_1
     RoleId: candidate.rally.variant0.faction_1
     NormalizedU: 0.14046447
-    NormalizedV: 0.43291616
+    NormalizedV: 0.43030724
     WorldX: -469.00446
     WorldZ: 1159.1486
   - AnchorId: anchor.skirmish.s040.candidate_rally_variant0_faction_2
     RoleId: candidate.rally.variant0.faction_2
     NormalizedU: 0.7786188
-    NormalizedV: 0.4305202
+    NormalizedV: 0.4279257
     WorldX: -155.32283
     WorldZ: 1158.2294
   - AnchorId: anchor.skirmish.s040.candidate_route_apc_armored_goal
     RoleId: candidate.route.apc_armored.goal
     NormalizedU: 0.7877418
-    NormalizedV: 0.44656515
+    NormalizedV: 0.44387397
     WorldX: -150.83847
     WorldZ: 1164.3849
   - AnchorId: anchor.skirmish.s040.candidate_route_apc_armored_start
     RoleId: candidate.route.apc_armored.start
     NormalizedU: 0.070427306
-    NormalizedV: 0.4614487
+    NormalizedV: 0.45866784
     WorldX: -503.43088
     WorldZ: 1170.0948
   - AnchorId: anchor.skirmish.s040.candidate_route_rifle_goal
     RoleId: candidate.route.rifle.goal
     NormalizedU: 0.799188
-    NormalizedV: 0.4405393
+    NormalizedV: 0.43788445
     WorldX: -145.21214
     WorldZ: 1162.0731
   - AnchorId: anchor.skirmish.s040.candidate_route_rifle_start
     RoleId: candidate.route.rifle.start
     NormalizedU: 0.068784036
-    NormalizedV: 0.4405393
+    NormalizedV: 0.43788445
     WorldX: -504.23862
     WorldZ: 1162.0731
   - AnchorId: anchor.skirmish.s040.candidate_route_shared_waypoint_00
     RoleId: candidate.route.shared.waypoint.00
     NormalizedU: 0.09326304
-    NormalizedV: 0.3905892
+    NormalizedV: 0.38823533
     WorldX: -492.2061
     WorldZ: 1142.9102
   - AnchorId: anchor.skirmish.s040.candidate_route_shared_waypoint_01
     RoleId: candidate.route.shared.waypoint.01
     NormalizedU: 0.11179231
-    NormalizedV: 0.34238183
+    NormalizedV: 0.34031844
     WorldX: -483.0981
     WorldZ: 1124.4158
   - AnchorId: anchor.skirmish.s040.candidate_route_shared_waypoint_02
     RoleId: candidate.route.shared.waypoint.02
     NormalizedU: 0.1547439
-    NormalizedV: 0.27900037
+    NormalizedV: 0.2773189
     WorldX: -461.98547
     WorldZ: 1100.1
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_goal
     RoleId: candidate.route.tank.goal
     NormalizedU: 0.7786188
-    NormalizedV: 0.4305202
+    NormalizedV: 0.4279257
     WorldX: -155.32283
     WorldZ: 1158.2294
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_00
     RoleId: candidate.route.tank.primary.waypoint.00
     NormalizedU: 0.06510085
-    NormalizedV: 0.45498696
+    NormalizedV: 0.45224503
     WorldX: -506.04907
     WorldZ: 1167.6158
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_01
     RoleId: candidate.route.tank.primary.waypoint.01
     NormalizedU: 0.1814895
-    NormalizedV: 0.4289229
+    NormalizedV: 0.42633805
     WorldX: -448.8388
     WorldZ: 1157.6166
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_02
     RoleId: candidate.route.tank.primary.waypoint.02
     NormalizedU: 0.28943515
-    NormalizedV: 0.3438337
+    NormalizedV: 0.3417616
     WorldX: -395.77866
     WorldZ: 1124.9728
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_03
     RoleId: candidate.route.tank.primary.waypoint.03
     NormalizedU: 0.39783412
-    NormalizedV: 0.2612856
+    NormalizedV: 0.25971085
     WorldX: -342.49567
     WorldZ: 1093.3038
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_04
     RoleId: candidate.route.tank.primary.waypoint.04
     NormalizedU: 0.5115029
-    NormalizedV: 0.21997525
+    NormalizedV: 0.21864943
     WorldX: -286.62234
     WorldZ: 1077.4554
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_05
     RoleId: candidate.route.tank.primary.waypoint.05
     NormalizedU: 0.6348613
-    NormalizedV: 0.31486556
+    NormalizedV: 0.312968
     WorldX: -225.98615
     WorldZ: 1113.8594
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_primary_waypoint_06
     RoleId: candidate.route.tank.primary.waypoint.06
     NormalizedU: 0.7786188
-    NormalizedV: 0.4305202
+    NormalizedV: 0.4279257
     WorldX: -155.32283
     WorldZ: 1158.2294
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_01
     RoleId: candidate.route.tank.south_sweep.waypoint.01
     NormalizedU: 0.136243
-    NormalizedV: 0.4969871
+    NormalizedV: 0.49399212
     WorldX: -471.0795
     WorldZ: 1183.7289
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_02
     RoleId: candidate.route.tank.south_sweep.waypoint.02
     NormalizedU: 0.23075922
-    NormalizedV: 0.46529657
+    NormalizedV: 0.46249253
     WorldX: -424.6205
     WorldZ: 1171.571
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_03
     RoleId: candidate.route.tank.south_sweep.waypoint.03
     NormalizedU: 0.27427745
-    NormalizedV: 0.7092385
+    NormalizedV: 0.7049646
     WorldX: -403.22934
     WorldZ: 1265.1575
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_04
     RoleId: candidate.route.tank.south_sweep.waypoint.04
     NormalizedU: 0.4552635
-    NormalizedV: 0.85810846
+    NormalizedV: 0.85293746
     WorldX: -314.26654
     WorldZ: 1322.2703
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_05
     RoleId: candidate.route.tank.south_sweep.waypoint.05
     NormalizedU: 0.66186184
-    NormalizedV: 0.9165892
+    NormalizedV: 0.9110658
     WorldX: -212.71414
     WorldZ: 1344.7059
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_06
     RoleId: candidate.route.tank.south_sweep.waypoint.06
     NormalizedU: 0.7026602
-    NormalizedV: 0.58378273
+    NormalizedV: 0.58026475
     WorldX: -192.65991
     WorldZ: 1217.0273
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_07
     RoleId: candidate.route.tank.south_sweep.waypoint.07
     NormalizedU: 0.6894291
-    NormalizedV: 0.4686725
+    NormalizedV: 0.46584815
     WorldX: -199.1636
     WorldZ: 1172.8662
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_start
     RoleId: candidate.route.tank.start
     NormalizedU: 0.06510085
-    NormalizedV: 0.45498696
+    NormalizedV: 0.45224503
     WorldX: -506.04907
     WorldZ: 1167.6158
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_bypass_waypoint_00
     RoleId: candidate.route.tank.west_refined.bypass.waypoint.00
     NormalizedU: 0.4367909
-    NormalizedV: 0.21645387
+    NormalizedV: 0.21514927
     WorldX: -323.34665
     WorldZ: 1076.1045
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_00
     RoleId: candidate.route.tank.west_refined.waypoint.00
     NormalizedU: 0.06510085
-    NormalizedV: 0.45498696
+    NormalizedV: 0.45224503
     WorldX: -506.04907
     WorldZ: 1167.6158
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_01
     RoleId: candidate.route.tank.west_refined.waypoint.01
     NormalizedU: 0.09326304
-    NormalizedV: 0.3905892
+    NormalizedV: 0.38823533
     WorldX: -492.2061
     WorldZ: 1142.9102
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_02
     RoleId: candidate.route.tank.west_refined.waypoint.02
     NormalizedU: 0.11179231
-    NormalizedV: 0.34238183
+    NormalizedV: 0.34031844
     WorldX: -483.0981
     WorldZ: 1124.4158
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_03
     RoleId: candidate.route.tank.west_refined.waypoint.03
     NormalizedU: 0.1547439
-    NormalizedV: 0.27900037
+    NormalizedV: 0.2773189
     WorldX: -461.98547
     WorldZ: 1100.1
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_04
     RoleId: candidate.route.tank.west_refined.waypoint.04
     NormalizedU: 0.2459169
-    NormalizedV: 0.09989176
+    NormalizedV: 0.09928953
     WorldX: -417.16983
     WorldZ: 1031.3864
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_05
     RoleId: candidate.route.tank.west_refined.waypoint.05
     NormalizedU: 0.3661021
-    NormalizedV: 0.08341122
+    NormalizedV: 0.082908295
     WorldX: -358.09338
     WorldZ: 1025.0637
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_06
     RoleId: candidate.route.tank.west_refined.waypoint.06
     NormalizedU: 0.4367626
-    NormalizedV: 0.14025836
+    NormalizedV: 0.1394129
     WorldX: -323.36057
     WorldZ: 1046.8727
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_07
     RoleId: candidate.route.tank.west_refined.waypoint.07
     NormalizedU: 0.50742304
-    NormalizedV: 0.1971055
+    NormalizedV: 0.19591749
     WorldX: -288.62778
     WorldZ: 1068.6816
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_08
     RoleId: candidate.route.tank.west_refined.waypoint.08
     NormalizedU: 0.64874405
-    NormalizedV: 0.31080008
+    NormalizedV: 0.308927
     WorldX: -219.16212
     WorldZ: 1112.2997
   - AnchorId: anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_09
     RoleId: candidate.route.tank.west_refined.waypoint.09
     NormalizedU: 0.7786188
-    NormalizedV: 0.4305202
+    NormalizedV: 0.4279257
     WorldX: -155.32283
     WorldZ: 1158.2294
   - AnchorId: anchor.skirmish.s040.candidate_spawn_variant0_faction_1_infantry
     RoleId: candidate.spawn.variant0.faction_1.infantry
     NormalizedU: 0.06592248
-    NormalizedV: 0.41864988
+    NormalizedV: 0.41612694
     WorldX: -505.6452
     WorldZ: 1153.6754
   - AnchorId: anchor.skirmish.s040.candidate_spawn_variant0_faction_1_vehicle
     RoleId: candidate.spawn.variant0.faction_1.vehicle
     NormalizedU: 0.07317556
-    NormalizedV: 0.459307
+    NormalizedV: 0.45653903
     WorldX: -502.08
     WorldZ: 1169.2732
   - AnchorId: anchor.skirmish.s040.candidate_spawn_variant0_faction_2_infantry
     RoleId: candidate.spawn.variant0.faction_2.infantry
     NormalizedU: 0.79632646
-    NormalizedV: 0.41864988
+    NormalizedV: 0.41612694
     WorldX: -146.61873
     WorldZ: 1153.6754
   - AnchorId: anchor.skirmish.s040.candidate_spawn_variant0_faction_2_vehicle
     RoleId: candidate.spawn.variant0.faction_2.vehicle
     NormalizedU: 0.8035795
-    NormalizedV: 0.459307
+    NormalizedV: 0.45653903
     WorldX: -143.05353
     WorldZ: 1169.2732
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_0
     RoleId: candidate.structure.standard.0
     NormalizedU: 0.09581293
-    NormalizedV: 0.2762051
+    NormalizedV: 0.27454045
     WorldX: -490.9527
     WorldZ: 1099.0276
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_1
     RoleId: candidate.structure.standard.1
     NormalizedU: 0.8383431
-    NormalizedV: 0.50794995
+    NormalizedV: 0.5048889
     WorldX: -125.96566
     WorldZ: 1187.9347
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_10
     RoleId: candidate.structure.standard.10
     NormalizedU: 0.25733477
-    NormalizedV: 0.34521306
+    NormalizedV: 0.34313262
     WorldX: -411.55743
     WorldZ: 1125.502
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_11
     RoleId: candidate.structure.standard.11
     NormalizedU: 0.8869895
-    NormalizedV: 0.2249848
+    NormalizedV: 0.2236288
     WorldX: -102.05377
     WorldZ: 1079.3773
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_14
     RoleId: candidate.structure.standard.14
     NormalizedU: 0.14610259
-    NormalizedV: 0.38848376
+    NormalizedV: 0.38614258
     WorldX: -466.23306
     WorldZ: 1142.1024
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_15
     RoleId: candidate.structure.standard.15
     NormalizedU: 0.8866495
-    NormalizedV: 0.34005842
+    NormalizedV: 0.33800903
     WorldX: -102.22089
     WorldZ: 1123.5244
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_16
     RoleId: candidate.structure.standard.16
     NormalizedU: 0.21761303
-    NormalizedV: 0.34481406
+    NormalizedV: 0.342736
     WorldX: -431.08246
     WorldZ: 1125.3489
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_17
     RoleId: candidate.structure.standard.17
     NormalizedU: 0.9348992
-    NormalizedV: 0.20694323
+    NormalizedV: 0.20569594
     WorldX: -78.503975
     WorldZ: 1072.4558
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_6
     RoleId: candidate.structure.standard.6
     NormalizedU: 0.2556065
-    NormalizedV: 0.6104275
+    NormalizedV: 0.60674894
     WorldX: -412.40695
     WorldZ: 1227.2494
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_7
     RoleId: candidate.structure.standard.7
     NormalizedU: 0.92605954
-    NormalizedV: 0.15739246
+    NormalizedV: 0.15644374
     WorldX: -82.84905
     WorldZ: 1053.446
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_8
     RoleId: candidate.structure.standard.8
     NormalizedU: 0.13023658
-    NormalizedV: 0.43992233
+    NormalizedV: 0.4372712
     WorldX: -474.03192
     WorldZ: 1161.8364
   - AnchorId: anchor.skirmish.s040.candidate_structure_standard_9
     RoleId: candidate.structure.standard.9
     NormalizedU: 0.8292484
-    NormalizedV: 0.42772526
+    NormalizedV: 0.4251476
     WorldX: -130.43608
     WorldZ: 1157.1571
   - AnchorId: anchor.skirmish.s040.defense_approach_a
     RoleId: defense.approach.a
     NormalizedU: 0.85180086
-    NormalizedV: 0.39037156
+    NormalizedV: 0.388019
     WorldX: -119.35055
     WorldZ: 1142.8267
   - AnchorId: anchor.skirmish.s040.defense_approach_b
     RoleId: defense.approach.b
     NormalizedU: 0.8667036
-    NormalizedV: 0.415419
+    NormalizedV: 0.4129155
     WorldX: -112.02518
     WorldZ: 1152.4359
   - AnchorId: anchor.skirmish.s040.economy_enemy
     RoleId: economy.enemy
     NormalizedU: 0.7660677
-    NormalizedV: 0.31922188
+    NormalizedV: 0.31729805
     WorldX: -161.49228
     WorldZ: 1115.5306
   - AnchorId: anchor.skirmish.s040.economy_player
     RoleId: economy.player
     NormalizedU: 0.1255334
-    NormalizedV: 0.37846497
+    NormalizedV: 0.37618417
     WorldX: -476.34375
     WorldZ: 1138.2588
+  - AnchorId: anchor.skirmish.s040.route_goal_exit
+    RoleId: route.goal.exit
+    NormalizedU: 0.77354735
+    NormalizedV: 0.91709137
+    WorldX: -157.81567
+    WorldZ: 1347.0316
   - AnchorId: anchor.skirmish.s040.service_enemy
     RoleId: service.enemy
     NormalizedU: 0.78462523
-    NormalizedV: 0.44079354
+    NormalizedV: 0.43813714
     WorldX: -152.37039
     WorldZ: 1162.1707
   - AnchorId: anchor.skirmish.s040.service_player
     RoleId: service.player
     NormalizedU: 0.11145233
-    NormalizedV: 0.31708017
+    NormalizedV: 0.31516922
     WorldX: -483.26523
     WorldZ: 1114.709
   - AnchorId: anchor.skirmish.s040.staging_enemy
     RoleId: staging.enemy
     NormalizedU: 0.84718275
-    NormalizedV: 0.22995776
+    NormalizedV: 0.22857179
     WorldX: -121.620575
     WorldZ: 1081.2852
   - AnchorId: anchor.skirmish.s040.staging_player
     RoleId: staging.player
     NormalizedU: 0.18488939
-    NormalizedV: 0.16722988
+    NormalizedV: 0.16622189
     WorldX: -447.1676
     WorldZ: 1057.2201
   - AnchorId: anchor.skirmish.s040.instance_d_1_refinery_module_0
     RoleId: instance.d_1_refinery_module_0
     NormalizedU: 0.1743591
-    NormalizedV: 0.37846497
+    NormalizedV: 0.37618417
     WorldX: -452.34372
     WorldZ: 1138.2588
   - AnchorId: anchor.skirmish.s040.instance_d_2_refinery_module_0
     RoleId: instance.d_2_refinery_module_0
-    NormalizedU: 0.8148934
-    NormalizedV: 0.31922188
-    WorldX: -137.49223
+    NormalizedU: 0.8148933
+    NormalizedV: 0.31729805
+    WorldX: -137.4923
     WorldZ: 1115.5306
   routes:
   - RouteId: route.skirmish.s040.main
@@ -2389,14 +2395,14 @@ MonoBehaviour:
     - anchor.skirmish.s040.candidate_route_tank_primary_waypoint_03
     - anchor.skirmish.s040.candidate_route_tank_primary_waypoint_04
     - anchor.skirmish.s040.candidate_route_tank_primary_waypoint_05
-    - anchor.skirmish.s040.candidate_route_tank_primary_waypoint_06
+    - anchor.skirmish.s040.route_goal_exit
     Kind: 1
-    LengthMetres: 394.6
-    InfantryTransitSeconds: 98.65
-    GroundTransitSeconds: 49.325
-    AirTransitSeconds: 24.6625
-    InfantryFirstContactSeconds: 49.325
-    GroundFirstContactSeconds: 24.6625
+    LengthMetres: 554.09454
+    InfantryTransitSeconds: 138.52364
+    GroundTransitSeconds: 69.26182
+    AirTransitSeconds: 34.63091
+    InfantryFirstContactSeconds: 69.26182
+    GroundFirstContactSeconds: 34.63091
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -2412,14 +2418,14 @@ MonoBehaviour:
     - anchor.skirmish.s040.candidate_route_tank_west_refined_bypass_waypoint_00
     - anchor.skirmish.s040.candidate_route_tank_primary_waypoint_04
     - anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_08
-    - anchor.skirmish.s040.candidate_route_tank_west_refined_waypoint_09
+    - anchor.skirmish.s040.route_goal_exit
     Kind: 2
-    LengthMetres: 475.65497
-    InfantryTransitSeconds: 118.91374
-    GroundTransitSeconds: 59.45687
-    AirTransitSeconds: 29.728436
-    InfantryFirstContactSeconds: 59.45687
-    GroundFirstContactSeconds: 29.728436
+    LengthMetres: 639.62616
+    InfantryTransitSeconds: 159.90654
+    GroundTransitSeconds: 79.95327
+    AirTransitSeconds: 39.976635
+    InfantryFirstContactSeconds: 79.95327
+    GroundFirstContactSeconds: 39.976635
     ProvisionalTimes: 1
     WidthMetres: 6
     AllowsVehicles: 1
@@ -2432,16 +2438,14 @@ MonoBehaviour:
     - anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_03
     - anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_04
     - anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_05
-    - anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_06
-    - anchor.skirmish.s040.candidate_route_tank_south_sweep_waypoint_07
-    - anchor.skirmish.s040.candidate_route_tank_goal
+    - anchor.skirmish.s040.route_goal_exit
     Kind: 3
-    LengthMetres: 612.3467
-    InfantryTransitSeconds: 153.08667
-    GroundTransitSeconds: 76.543335
-    AirTransitSeconds: 38.271667
-    InfantryFirstContactSeconds: 76.543335
-    GroundFirstContactSeconds: 38.271667
+    LengthMetres: 447.19336
+    InfantryTransitSeconds: 111.79834
+    GroundTransitSeconds: 55.89917
+    AirTransitSeconds: 27.949585
+    InfantryFirstContactSeconds: 55.89917
+    GroundFirstContactSeconds: 27.949585
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -2802,25 +2806,25 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s040.instance_d_2_refinery_module_0
     RoleId: instance.d_2_refinery_module_0
     Kind: 7
-    CenterX: -137.49223
+    CenterX: -137.4923
     CenterZ: 1115.5306
     WidthMetres: 51.393147
     DepthMetres: 58.913486
     FactionId: 2
   worldBinding:
-    OriginX: 1035.2043
-    OriginZ: 788.5434
+    OriginX: 1036.338
+    OriginZ: 788.80255
     ForwardX: 0.2228248
     ForwardZ: -0.9748585
     AcrossX: 0.9748585
     AcrossZ: 0.2228248
     ForwardMetres: 491.54507
-    AcrossMetres: 383.64218
+    AcrossMetres: 385.9679
     PlayerAnchorId: anchor.skirmish.s040.base_player
     EnemyAnchorId: anchor.skirmish.s040.base_enemy
     SourceHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
     HasMeasuredDeployments: 1
-    PlayerDeployment: {x: 1020, y: 750}
-    EnemyDeployment: {x: 1100, y: 399.99997}
+    PlayerDeployment: {x: 1019.99994, y: 750}
+    EnemyDeployment: {x: 1099.9999, y: 399.99997}
     BindAllConfigurations: 1
   bindingValueFormat: 0

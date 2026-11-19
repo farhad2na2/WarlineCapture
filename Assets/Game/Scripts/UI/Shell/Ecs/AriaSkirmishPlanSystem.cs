@@ -970,6 +970,11 @@ namespace Game.UI.Shell.Ecs
                     // The labelled objective is public; a hidden base is not a precision target.
                     // Offer the already presented terrain approach for a separate normal Attack Move touch.
                     // Camera focus alone cannot reveal a contact and must never issue this order.
+                    // W27 cause 1 (S075 Blocked 115): the same approach re-offered every frame ran into the input
+                    // layer's press limit. After MaxSameAttempts presses of it, give the assault up exactly like an
+                    // exhausted base search (bounded Attack-off recovery) instead of a fourth press.
+                    if (Game.Simulation.AriaFindBasePolicy.SameControlExhausted(touch.TargetId, touch.Attempts, view.AdvanceGround.Id))
+                    { GiveUpAssaultSearch(view, ref plan, ref touch, ref output); return; }
                     ClearFindBase(ref plan);
                     plan.Intent = AriaSkirmishIntent.Advance;
                     Target(view.AdvanceGround, true, ref output);
@@ -988,20 +993,7 @@ namespace Game.UI.Shell.Ecs
                         Game.Simulation.AriaFindBasePolicy.SameControlExhausted(touch.TargetId, touch.Attempts, nextFind);
                     plan.FindBaseActive = find.Active; plan.FindBaseTaps = find.Taps; plan.FindBaseRun = find.Run;
                     plan.FindBaseActions = find.Actions; plan.FindBaseLastTarget = find.LastTarget;
-                    if (giveUp)
-                    {
-                        // Bounded search: turn Attack off, keep the orders already accepted, and let the
-                        // other steps act instead of searching with Attack armed indefinitely.
-                        Game.Simulation.AriaFindBasePolicy.LatchGivenUp(ref plan.ColumnSkipKeyA, ref plan.ColumnSkipKeyB, ref plan.ColumnSkips,
-                            view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
-                        plan.AssaultIssued = 1; plan.StructureOrdered = 1; plan.FindBaseGiveUps++;
-                        ClearFindBase(ref plan);
-                        var recovery = new Game.Simulation.AriaFindBaseRecovery();
-                        Game.Simulation.AriaFindBasePolicy.BeginRecovery(ref recovery, view.Time);
-                        plan.FindBaseRetryAt = recovery.RetryAt; plan.FindBaseDisarms = 0; plan.FindBaseDisarmActions = 0; plan.FindBaseDisarmAt = 0;
-                        StepFindBaseRecovery(view, ref plan, ref touch, ref output);
-                        return;
-                    }
+                    if (giveUp) { GiveUpAssaultSearch(view, ref plan, ref touch, ref output); return; }
                     if (view.FocusAdvance.Available &&
                         (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011))
                     {

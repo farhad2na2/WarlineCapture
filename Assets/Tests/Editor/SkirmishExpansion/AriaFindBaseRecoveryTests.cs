@@ -174,13 +174,34 @@ namespace Game.Tests.Editor
             Assert.AreEqual(order.Action, attack.Action);
         }
 
+        // W27 cause 1 (S075 Blocked 115): the Advance branch re-offered the same public terrain approach every
+        // frame. Like the base search, it now gives up after MaxSameAttempts presses instead of a fourth press.
+        [Test]
+        public void AdvanceGroundIsGivenUpBeforeAFourthPress()
+        {
+            const int AdvanceGround = -20006;
+            var input = new InputLayer(); int presses = 0, giveUps = 0;
+            for (int frame = 0; frame < 10; frame++)
+            {
+                bool exhausted = AriaFindBasePolicy.SameControlExhausted(input.Target, input.Attempts, AdvanceGround);
+                if (exhausted) { giveUps++; break; }
+                input.Press(AdvanceGround); presses++;
+                Assert.IsFalse(input.Blocked, "Blocked 115 at press " + presses);
+            }
+            Assert.AreEqual(1, giveUps); Assert.AreEqual(AriaFindBasePolicy.MaxSameAttempts, presses);
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(ThisFile(), "..", "..", "..", ".."));
+            string generic = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs"));
+            Assert.IsTrue(generic.Contains("AriaFindBasePolicy.SameControlExhausted(touch.TargetId, touch.Attempts, view.AdvanceGround.Id)"),
+                "the expanded planner bounds the Advance re-offer");
+        }
+
         [Test]
         public void BothPlannersRecoverAndTheTouchDriverIgnoresItsOwnDevices()
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(ThisFile(), "..", "..", "..", ".."));
             string Read(string relative) => System.IO.File.ReadAllText(System.IO.Path.Combine(root, relative));
             string s002 = Read("Game/Scripts/Simulation/AriaGroundBaseAssaultPolicy.cs");
-            string generic = Read("Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs");
+            string generic = Read("Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs") + Read("Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.Coverage.cs");
             foreach (var source in new[] { s002, generic })
             {
                 Assert.IsTrue(source.Contains("StepFindBaseRecovery(view, ref plan, ref touch, ref output)) return;"), "StepFindBaseRecovery(view, ref plan, ref touch, ref output)) return;");

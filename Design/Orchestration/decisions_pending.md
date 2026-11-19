@@ -198,3 +198,25 @@ CE family meet the band, and should City Crossroads BT be retuned?
 decide after its Mac counted runs (the CC BT merge is pending the Mac Editor); if they stay under 20%, apply the same treatment (Standard ~900 s).
 
 **Meanwhile.** No deadline change. CE rows keep running; their wins are recorded with their percentages and the rows stay not accepted on gate 2.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-19): program-lead recommendations 1, 2, 4, 5 and the workflow changes; Airport rule changed
+
+Owner's words: "regarding my decisions and recommended workflow, do your recommendations. But for number 3 \"apply your S004 rule (helipads and
+helicopters only) to every map.\" I prefer we have Airport. Investigate if we can change the map to add the airport or even expand the map to add the airport."
+
+1. **Gate 3 on objective missions (FC/BT/CE):** ARIA must use every unit type in the player's starting force, plus any type the objective requires.
+   Production-only types, Airport and aircraft that the start does not include do not count. Base Assault keeps the full rule.
+   Evaluator: `Tools/Missions/gate3_objective.py` (program lead, Mac), applied to the logged `[SkirmishGateUnits]` lines.
+2. **Pacing:** agents set a per-family deadline so measured wins land at 25-50%, under the 2026-11-06 budget-revision rule
+   (record old/new values, update the mission data and the matrices together). First: Desert Base CE and City Crossroads BT (W31).
+3. **Airport: NOT the S004 helipad rule.** The owner prefers an Airport. Investigate changing the map, or expanding it, to fit an Airport on City Crossroads,
+   Mountain Pass and Industrial Basin. This is the explicit owner request that `CAMPAIGN_MAP_REUSE_POLICY.md` requires for physical map work, and it
+   covers investigation now. Building it waits for the findings. S004 keeps its earlier decision.
+   Owner follow-up (same chat): "its acceptable a map without airport but not all without". So one of CC/MP/IB may go without an Airport,
+   but not all of them: the study ranks the three by Airport feasibility and recommends which to change. Rows on a map that stays without one use helipads.
+4. **Standing OK for shared ARIA and test-tool fixes** that come with passing tests and change no unit stats or game rules. Windows' own rules require the owner's
+   words in the Windows session; the program lead forwards this quote, and Windows confirms with the owner there.
+5. **Map fallback:** when the named Campaign source cannot fit a mission, use an existing map that already works (Desert Base or City Crossroads) and keep the
+   theater name. Record the fit evidence.
+Workflow: Mac counted runs only after Windows' non-counted runs land in the pacing band; merges only when the lane is idle and its commit is in; one
+combined owner list for shared-code requests. Certify-by-family (fewer counted runs per sibling) was offered as optional and is not adopted.

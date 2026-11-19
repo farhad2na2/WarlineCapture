@@ -155,6 +155,18 @@ or enemy structure-defender targeting is wrong; fix the right side minimally, ne
 `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation` → `[SkirmishExpandedAriaTests] result=Passed` on Windows, cut from
 missions/integration after W11/W12 are merged. Branch `missions/win-w15-structure-defenders`.
 
+## W31 — Pacing: per-family deadlines for Desert Base CE S019-S024 and City Crossroads BT S037-S042 (2026-11-19)
+status: READY (first; owner decision 2 of 2026-11-19 in decisions_pending.md)
+codex effort: medium
+Measured Mac counted wins (match clock): DB CE 123-155 s (11.42-14.34% of 1080, lane41/a); CC BT 160-225 s (14.85-20.79%, lane42/a). The gate-2 floor is 20%.
+Budget revision under CAMPAIGN_MAP_REUSE_POLICY "Budget revisions": intended improvement = a clock that actually pressures the escort/breakthrough.
+- DB CE S019-S024: standardDeadlineSeconds 1080 -> 420, war 1500 -> 583, large war 1800 -> 700 (expected wins 29-37%).
+- CC BT S037-S042: 1080 -> 540, war 1500 -> 750, large war 1800 -> 900 (expected wins 30-42%).
+Change the authoritative data together: the drafts, the per-mission `SkirmishObjective_SNNN.asset`, both `InitialSetupMatrix.csv` copies and any test that
+pins those rows' values (check which other missions share each value; change none of them). Record the old and new values in the results file. Re-author, then run
+non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept if each win lands at 25-50% and nothing else changes (no TimeLimit draws).
+Branch `missions/win-w31-pacing-ce-bt`. No shared code.
+
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
 status: READY
 codex effort: xhigh
@@ -356,7 +368,7 @@ Acceptance: all checks pass, menu journey Passed, expandedStartupFailure 0, no `
 Branch `missions/win-w29-ib-ba`. Per-task results file.
 
 ## W30 — Industrial Basin air/combined S075-S078: offer no Airport or fixed-wing, as S004 does (2026-11-19)
-status: HOLD (fec08368d: S004's exclusion is hard-coded in SkirmishExpansionCatalogFactory.cs:67-104 SkirmishMissionRoleExclusions; extending it to S075-S078, and later the CC/MP air rows, is shared code and needs the owner's OK in the Windows session)
+status: HOLD (superseded: the owner wants an Airport, not the S004 exclusion, on CC/MP/IB air rows; a map investigation is running on the Mac. Keep fec08368d unmerged.)
 codex effort: medium
 W29 S077 lists `unused=` building.airport, fighter, strike, transport_plane, so the mission still offers them, although no Airport site exists (0/62 valid).
 Apply the owner's S004 decision the way S004 does it: find how S004 removes the Airport and fixed-wing from what the mission offers (data in its

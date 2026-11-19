@@ -235,6 +235,9 @@ objective, defense and convoy pad that spawns a structure against the bitmap's B
 report which pad failed and where. Then run it over every merged draft (`git ls-files Tools/Missions/drafts`) and list any failure, without
 fixing drafts in this task. Tooling only; prove with new Python tests (a known-bad W9 r2 pad must fail, the W9 fix must pass) and the full
 `Tools/Missions` unittest run. Branch `missions/win-w22-preflight-objective-pads`. Per-task results file.
+Update 2026-11-19: Windows' interim checker `notes/objective_pad_surface.py` (defense.* 3x4 tower and 10x10 pad vs bitmap flags and instance
+pads) is the starting point. Bitmap origin = gridOrigin + bitmapOriginCell x cellSize. S026's gridOrigin is (0,0), which hides an origin bug, so
+test on S050 (gridOrigin 860,300) too. It already caught road + not-level towers (flag 17) on all 12 W10 Mountain Pass drafts.
 
 ## W23 — City Crossroads BT exit next to the enemy base: S038/S039/S040/S042 BreakthroughImpossible (2026-11-19)
 status: READY (W9 BT merged first)

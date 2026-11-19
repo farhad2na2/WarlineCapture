@@ -40,6 +40,7 @@ namespace Game.Rendering
         private Shader traceShader;
         private int _renderLayer;
 
+        private readonly System.Collections.Generic.Dictionary<GameObject, bool> _rocketMuzzles = new();
         private Mesh _traceMesh;
         private Material _traceMaterial;
         private MaterialPropertyBlock _propertyBlock;
@@ -74,6 +75,7 @@ namespace Game.Rendering
 
         public void Dispose()
         {
+            _rocketMuzzles.Clear();
             DisposeRenderResources();
         }
 
@@ -107,14 +109,11 @@ namespace Game.Rendering
                 if (trace.TimeRemaining <= 0f)
                     continue;
 
-                EngageTarget engage = em.GetComponentData<EngageTarget>(entity);
-                if (engage.Target == Entity.Null || !em.Exists(engage.Target) || !em.HasComponent<LocalTransform>(engage.Target))
-                    continue;
-
-                if (!SkirmishFogRenderVisibility.PlayerVisible(em, engage.Target)) continue;
                 LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(entity);
-                LocalTransform targetTransform = em.GetComponentData<LocalTransform>(engage.Target);
                 UnitAttack attack = em.GetComponentData<UnitAttack>(entity);
+                // Unarmed contact attacks have no authored weapon effect.
+                if (attack.Range <= 8f && !em.HasComponent<UnitMuzzleFlashVfxReference>(entity))
+                    continue;
                 float3 sourcePosition = sourceTransform.Position;
                 if (em.HasComponent<UnitTurretReference>(entity))
                 {
@@ -123,12 +122,43 @@ namespace Game.Rendering
                         sourcePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
                 }
 
-                float resolvedSourceHeightOffset = sourceHeightOffset;
+                float height = sourceHeightOffset;
+                float forward = sourceForwardOffset;
+                bool rocket = false;
                 if (em.HasComponent<UnitMuzzleFlashVfxReference>(entity))
-                    resolvedSourceHeightOffset = Mathf.Max(resolvedSourceHeightOffset, em.GetComponentData<UnitMuzzleFlashVfxReference>(entity).HeightOffset);
-
-                Vector3 baseStart = (Vector3)sourcePosition + new Vector3(0f, resolvedSourceHeightOffset, 0f);
-                Vector3 baseEnd = (Vector3)targetTransform.Position + new Vector3(0f, targetHeightOffset, 0f);
+                {
+                    var muzzle = em.GetComponentData<UnitMuzzleFlashVfxReference>(entity);
+                    height = muzzle.HeightOffset;
+                    forward = muzzle.ForwardOffset;
+                    var prefab = muzzle.Prefab.Value;
+                    if (prefab != null && !_rocketMuzzles.TryGetValue(prefab, out rocket))
+                    {
+                        rocket = prefab.name == "Vfx_MuzzleFlash_Rocket";
+                        _rocketMuzzles.Add(prefab, rocket);
+                    }
+                }
+                Vector3 baseStart = (Vector3)sourcePosition + Vector3.up * height;
+                if (em.HasBuffer<BuildingDefenseAttackSlot>(entity))
+                {
+                    // A heavy tower can fire on four targets in one update.
+                    // EngageTarget only retains one of them.
+                    var slots = em.GetBuffer<BuildingDefenseAttackSlot>(entity, true);
+                    for (int slotIndex = 0; slotIndex < slots.Length; slotIndex++)
+                    {
+                        var slot = slots[slotIndex];
+                        if (slot.ShotCounter <= 0 || slot.ShotCounter % math.max(1, attack.TracerEveryNthShot) != 0 ||
+                            !TryGetVisibleEnd(em, slot.Target, out Vector3 slotEnd))
+                            continue;
+                        var slotTrace = trace;
+                        slotTrace.TimeRemaining = attack.TraceVisibleSeconds - (attack.CooldownSeconds - slot.CooldownRemaining);
+                        if (slotTrace.TimeRemaining > 0f)
+                            QueueTraceInstance(ref batchCount, baseStart, slotEnd, attack, slotTrace, forward, false, slotIndex * 0.071f);
+                    }
+                    continue;
+                }
+                EngageTarget engage = em.GetComponentData<EngageTarget>(entity);
+                if (!TryGetVisibleEnd(em, engage.Target, out Vector3 baseEnd))
+                    continue;
                 UnitAttackTraceOriginPattern originPattern = em.HasComponent<UnitAttackTraceOriginPattern>(entity)
                     ? em.GetComponentData<UnitAttackTraceOriginPattern>(entity)
                     : default;
@@ -145,12 +175,23 @@ namespace Game.Rendering
                         baseEnd + targetSideOffset,
                         attack,
                         trace,
+                        forward, rocket,
                         sideSign * 0.071f);
                 }
             }
 
             if (batchCount > 0)
                 DrawBatch(batchCount);
+        }
+
+        private bool TryGetVisibleEnd(EntityManager em, Entity target, out Vector3 end)
+        {
+            end = default;
+            if (target == Entity.Null || !em.Exists(target) || !em.HasComponent<LocalTransform>(target) ||
+                !SkirmishFogRenderVisibility.PlayerVisible(em, target))
+                return false;
+            end = (Vector3)em.GetComponentData<LocalTransform>(target).Position + Vector3.up * targetHeightOffset;
+            return true;
         }
 
         private bool EnsureQuery(out EntityManager entityManager)
@@ -180,6 +221,8 @@ namespace Game.Rendering
             Vector3 end,
             UnitAttack attack,
             UnitAttackTraceComponent trace,
+            float muzzleForward,
+            bool rocket,
             float phaseOffset)
         {
             float phase = Mathf.Repeat(trace.Phase + phaseOffset, 1f);
@@ -207,7 +250,7 @@ namespace Game.Rendering
             direction /= length;
 
             // Start the tracer at the gun muzzle instead of the body center.
-            float forwardOffset = Mathf.Min(sourceForwardOffset, length * 0.4f);
+            float forwardOffset = Mathf.Min(muzzleForward, length * 0.4f);
             if (forwardOffset > 0f)
             {
                 start += direction * forwardOffset;
@@ -222,13 +265,26 @@ namespace Game.Rendering
             Vector3 up = Vector3.Cross(direction, right).normalized;
 
             Quaternion rotation = Quaternion.LookRotation(direction, up);
-            _matrices[batchCount] = Matrix4x4.TRS(start, rotation, new Vector3(math.max(0.01f, attack.TraceWidth), 1f, length));
+            // A thin tracer needs a few pixels of silhouette even on pale desert roads.
+            float depth = Mathf.Max(0.1f, Vector3.Dot(start - worldCamera.transform.position, cameraForward));
+            float viewHeight = worldCamera.orthographic ? 2f * worldCamera.orthographicSize :
+                2f * depth * Mathf.Tan(worldCamera.fieldOfView * Mathf.Deg2Rad * 0.5f);
+            float pixelSize = viewHeight / Mathf.Max(1, worldCamera.pixelHeight);
+            float width = Mathf.Max(attack.TraceWidth * 4.8f, pixelSize * (3.0f + 4f * attack.TraceWidth));
+            float progress = 1f - Mathf.Clamp01(trace.TimeRemaining / Mathf.Max(0.01f, attack.TraceVisibleSeconds));
+            float density = Mathf.Max(1f, attack.TraceDashDensity);
+            float segment = length / density;
+            // The authored dash count and scroll rate still control the train of projectiles.
+            // Single shells cross the shot once and never wrap back to the muzzle.
+            float scroll = density <= 1f ? progress : Mathf.Repeat(phase + progress *
+                attack.TraceVisibleSeconds * attack.TraceScrollSpeed, 1f);
+            float streakLength = Mathf.Clamp(0.9f + 12f * attack.TraceWidth + 4f * attack.TraceVisibleSeconds,
+                pixelSize * 9f, Mathf.Max(pixelSize * 9f, segment * 0.65f));
+            float fraction = Mathf.Clamp(streakLength / Mathf.Max(0.01f, segment), 0.07f, 0.88f);
+            _matrices[batchCount] = Matrix4x4.TRS(start, rotation, new Vector3(width, 1f, length));
             _colors[batchCount] = attack.TraceColor;
-            _traceParams[batchCount] = new Vector4(
-                math.max(1f, attack.TraceDashDensity),
-                phase + (UnityEngine.Time.time * math.max(0.1f, attack.TraceScrollSpeed)),
-                0f,
-                0f);
+            _traceParams[batchCount] = new Vector4(density, scroll, fraction,
+                rocket ? 1f : 0f);
 
             batchCount++;
             if (batchCount == MaxBatchSize)

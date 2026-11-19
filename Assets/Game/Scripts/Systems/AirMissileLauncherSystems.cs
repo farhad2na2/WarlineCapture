@@ -610,7 +610,9 @@ namespace Game.Runtime
                          .WithEntityAccess())
             {
                 float3 direction = math.normalizesafe(projectile.ValueRO.Velocity, math.rotate(transform.ValueRO.Rotation, new float3(0f, 0f, 1f)));
-                MissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction);
+                if (SkirmishFogConsumerUtility.PlayerImpactVisible(state.EntityManager, projectile.ValueRO.Source,
+                    Entity.Null, transform.ValueRO.Position, 2))
+                    MissileTrailVfxView.Sync(entity, transform.ValueRO.Position, direction, interceptor: true);
             }
         }
     }

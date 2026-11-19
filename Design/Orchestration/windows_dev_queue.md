@@ -225,7 +225,7 @@ the shared world surface/grid and all Campaign assets must stay unchanged. Name 
 (enemy x 1120-1240 z 156-196; player x 804-844 z 644-764). EditMode test: original bounds unchanged, clone bounds as specified. Branch `missions/win-w35-cc-air-window`.
 
 ## W27b — Two new ARIA stops after the W27 fixes: S059 reason 114 (ReturnAircraft recruit target unavailable), S075 101 Inspect (foreign popup) (2026-11-19)
-status: DONE, accepted (5d35eb4d9: S059 Victory no 114; S075 no stop, Defeat 342 s; 164/164 EditMode); merge after lane 45. Was: READY after W32 (shared ARIA code under the owner's standing OK)
+status: DONE, accepted (5d35eb4d9: S059 Victory no 114; S075 no stop, Defeat 342 s; 164/164 EditMode); merged 2026-11-19 (8cfe3c956 / 76c95c4c5 / 2f041947d). Was: READY after W32 (shared ARIA code under the owner's standing OK)
 codex effort: xhigh
 From the W27 cause 1+3 runs (15e5bbe02; results 2026-11-18-w27-aria-stop-fixes.md): S059 104731 aborts with reason 114, a ReturnAircraft recruit target Unavailable for 15 s (log :55463);
 S075 130365 aborts with 101 intent=Inspect on the foreign-popup path (AriaSkirmishPlanSystem.cs:824) at 430 s. Also: S043/S047 now end Defeat ConvoyImpossible (trucks lost after the
@@ -445,11 +445,11 @@ gone from `unused=`. If S004 needs shared code for this, stop and report. Branch
 - Counted ARIA runs on Windows (fps).
 
 ## W31d — Dam Bridge CE family deadline 525 s (2026-11-19)
-status: DONE, accepted (c6913f307: matrix deadline column only, authoring/containment 6/6, 6/6 Victory at 33-45% of 525 s); merge after lane 45. Earlier: Windows W32 pacing sweep (8983b34be, 2026-11-18-w32-db-ce-pacing-sweep.md): 12/12 Victory, median 50.09% of 420 s; established rows S020/S022/S024 at ~57%.
+status: DONE, accepted (c6913f307: matrix deadline column only, authoring/containment 6/6, 6/6 Victory at 33-45% of 525 s); merged 2026-11-19 (8cfe3c956 / 76c95c4c5 / 2f041947d). Earlier: Windows W32 pacing sweep (8983b34be, 2026-11-18-w32-db-ce-pacing-sweep.md): 12/12 Victory, median 50.09% of 420 s; established rows S020/S022/S024 at ~57%.
 Program-lead choice: family option 525/729/875 s for S019-S024 (sweep projects 33.4-46.2%, median 40.1%). Branch `missions/win-w31d-db-ce-deadline` off 65b1808de; authoring/matrix only, authoring 6/6 and containment 6/6. Then Mac re-count S019-S024.
 
 ## W32b — ARIA air-transport escort gets a presented objective target (2026-11-19)
-status: DONE, accepted (2c86d7acc: own TransportHeli gets CanMove, escort only; 139/139 EditMode; S022/S024/S042 Victory, gate 3 PASS 4/4, pacing 48-52% of 525 / 50.5% of 540); merge after lane 45
+status: DONE, accepted (2c86d7acc: own TransportHeli gets CanMove, escort only; 139/139 EditMode; S022/S024/S042 Victory, gate 3 PASS 4/4, pacing 48-52% of 525 / 50.5% of 540); merged 2026-11-19 (8cfe3c956 / 76c95c4c5 / 2f041947d)
 Gate 3 FAIL on S022/S024 (and lane 43 S040/S042): role.transport_heli eligible since W32 but never offered; candidates need a presented target and
 SkirmishMatchView.PublicObjectiveHud.cs:196-199 builds targets only for Dismounted/UnloadCarrierGroupId groups with an expanded tray card. Give own air-transport groups a presented
 objective target, prove the Move receipt with EditMode tests and non-counted runs on S022, S024 and S040 or S042. Note S047 (truck group 15 service detour 126.6-268.4 s, then ConvoyImpossible 339.2 s) as a candidate cause; no change yet.
@@ -460,3 +460,16 @@ Next: (1) finish S042@130365 + FC S009/S011/S031/S033/S035 @130365 on the same s
 Non-counted, local merge of integration + W31d + W27b + W32b: DB CE S019-S024 (525 s) and CC BT S037-S042 (540 s) on 155923 + 130365; FC S009/S011/S031/S033/S035 on 130365.
 Report deadlinePct and gate 3 per run, then propose one deadline per family with the median near 40% (owner target 25-50%). Escort turns (W32/W32b) add 10-90 s per run.
 Then W16 (FC established losses), then W34/W35/W33 (Airport plan).
+
+## W27c — S038 (CC BT field) ARIA stop 115 EvacuateOriginals on Squad0 (2026-11-19)
+status: READY after W16 (shared ARIA code under the owner's standing OK)
+Mac lane 45 (7de2a3c79, contains W27+W32): S038 130365 en Abort ariaStopped:Blocked at 225 s (41.7%), 6/8 evacuated:
+`[AriaBlocked] reason=115 kind=Control intent=EvacuateOriginals` program-logs/2026-11-19/lane45/a/unity.log:630729, `[AriaBlockedControl] control=Squad0` :630745.
+The other 3 S038 jobs and all S039 jobs won. Diagnose (is this W27 cause 1 again, a squad slot off page?), fix with an EditMode test, prove on S038 130365.
+
+## W37 — City Crossroads CE S045-S048: convoy losses and slow wins (2026-11-19)
+status: READY after W27c
+Mac lane 45 (450 s, W32 build): S043/S044 auto-accepted (33-50%). S045: 36.9/77.8/LOSS/96.8%; S046: 58.0/51.3/53.9/LOSS ObjectiveDeadline 1/2;
+S047: 33.0/71.4/LOSS/60.5%; S048: 50.9/53.8/LOSS/53.4%. Losses are ConvoyImpossible (all trucks lost: lane45 :334020, :531906, :600862) and one deadline (:504203).
+Read-only first: why do the trucks die (route through enemy fire, escorts late, the service detour seen on S047), and is it ARIA or the layout? Then a fix without stat/rule changes.
+W32b (transport heli) is merged, so S046/S048 gate 3 should now pass; re-check it in the proof runs.

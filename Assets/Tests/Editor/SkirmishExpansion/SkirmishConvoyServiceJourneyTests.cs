@@ -124,6 +124,7 @@ namespace Game.Tests.Editor
             }
             if(mutation==21)
             {
+                selected.Eligible=false; // W37b: an eligible quote alone starts the repair; this case pins the Hold-revision gate.
                 model.Order=new UiSkirmishPublicOrderReadout{Present=true,Accepted=true,Action=AriaObjectiveAction.Hold,GroupId=7,Revision=4};
                 journey.Tick(model,null,false,false);AtPad(model);journey.Tick(model,selected,false,false);
                 Assert.That(journey.Tick(model,selected,true,false),Is.EqualTo(ConvoyServiceStage.Hold));

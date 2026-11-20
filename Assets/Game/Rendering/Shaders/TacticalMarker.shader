@@ -40,6 +40,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
             struct Attributes
             {
                 float3 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -79,7 +80,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
                     }
                 }
                 output.positionHCS = TransformObjectToHClip(position);
-                output.markerPosition = input.positionOS.xy * 1.25;
+                output.markerPosition = (input.uv - 0.5) * 1.25;
                 return output;
             }
 
@@ -94,7 +95,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
                 float2 quadrant = abs(p);
                 float2 sector = float2(max(quadrant.x, quadrant.y), min(quadrant.x, quadrant.y));
                 float ring = abs(length(p) - 0.39);
-                float ticks = SegmentDistance(sector, float2(0.35, 0), float2(0.47, 0));
+                float ticks = SegmentDistance(sector, float2(0.39, 0), float2(0.49, 0));
                 return min(ring, ticks);
             }
 
@@ -134,6 +135,13 @@ Shader "WarlineCapture/Markers/TacticalMarker"
                 float pixelDistance = distance / localUnitsPerPixel;
                 float ink = saturate(halfStroke + 0.5 - pixelDistance);
                 float coverage = saturate(halfStroke + keyline + 0.5 - pixelDistance);
+                if (_MarkerShape < 0.5)
+                {
+                    // Keep a clear center and clean corners even when the projected ring is very small.
+                    float shapeCoverage = 1.0 - smoothstep(0.10, 0.15, distance);
+                    ink *= shapeCoverage;
+                    coverage *= shapeCoverage;
+                }
                 clip(coverage - 0.001);
                 half3 keylineColor = half3(0.008, 0.013, 0.019);
                 return half4((keylineColor * (coverage - ink) + _BaseColor.rgb * ink) * _BaseColor.a,

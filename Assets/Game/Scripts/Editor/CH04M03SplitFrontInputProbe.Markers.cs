@@ -6,13 +6,18 @@ using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
 using Game.Tactical.Contracts;
+using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
+using Unity.Entities.Graphics;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Game.Editor
 {
@@ -28,6 +33,7 @@ namespace Game.Editor
         private static int markerMoveAttempt;
         private static int markerShots;
         private static string markerProjectionFailure;
+        private static string markerTapDiagnostic;
         private static readonly List<RaycastResult> MarkerUiHits = new();
 
         public static void RunMarkerCapture()
@@ -51,7 +57,7 @@ namespace Game.Editor
                 markerStageStarted = now;
             if (now - markerStageStarted > 35)
             {
-                string failure = $"Marker capture stalled at stage {markerStage} actor={markerActor}.";
+                string failure = $"Marker capture stalled at stage {markerStage} actor={markerActor}. {markerTapDiagnostic}";
                 if (markerStage < 4)
                     throw new TimeoutException(failure);
 
@@ -96,8 +102,13 @@ namespace Game.Editor
                         NextMarkerStage(0.8);
                     break;
                 case 1:
-                    if (SelectMarkerActor(em, command.ActiveCommandMode) && WriteMarkerShot("infantry-selected", width))
-                        NextMarkerStage(0.3);
+                    if (SelectMarkerActor(em, command.ActiveCommandMode))
+                    {
+                        if (markerFile == null)
+                            LogMarkerRenderers(em);
+                        if (WriteMarkerShot("infantry-selected", width))
+                            NextMarkerStage(0.3);
+                    }
                     break;
                 case 2:
                     markerActor = FindMarkerActor(em, root, mission.Launcher, vehicle: true);
@@ -110,19 +121,25 @@ namespace Game.Editor
                     break;
                 case 4:
                     markerActor = mission.Launcher;
-                    var launcherTutorial = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
                     var launcherGuidance = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
                     if ((launcherGuidance.AcknowledgedGuidanceMask & 1) == 0)
-                        SmokeTap(launcherTutorial?.ContinueButton);
-                    else if (SmokeTap(launcherTutorial?.ShowMeButton) || FocusMarkerActor(em, markerActor))
-                        NextMarkerStage(2);
+                        TapMarkerGuideControl(em, 401);
+                    else if (command.ActiveCommandMode != TacticalCommandMode.Select)
+                        SmokeTapNamed("SelectCommand");
+                    else
+                        NextMarkerStage(0);
                     break;
                 case 5:
+                    if (!em.HasComponent<SelectedUnitTag>(markerActor))
+                    {
+                        TapMarkerGuideWorld(em, markerActor, 402);
+                        break;
+                    }
                     if (SelectMarkerActor(em, command.ActiveCommandMode) && WriteMarkerShot("large-unit-selected", width))
                         NextMarkerStage(0.3);
                     break;
                 case 6:
-                    if (MarkerHudCamera()?.RequestZoomInLevel() == true)
+                    if (SmokeTapMarkerZoom(zoomIn: true))
                         NextMarkerStage(2);
                     break;
                 case 7:
@@ -130,27 +147,30 @@ namespace Game.Editor
                         NextMarkerStage(0.3);
                     break;
                 case 8:
-                    var zoom = MarkerHudCamera();
-                    if (zoom != null && zoom.RequestZoomOutLevel() && zoom.RequestZoomOutLevel())
+                    if (MarkerHudCamera()?.ReadZoomControlState().ZoomOutEnabled == false)
                         NextMarkerStage(2);
+                    else if (SmokeTapMarkerZoom(zoomIn: false))
+                        markerDue = now + 0.8;
                     break;
                 case 9:
                     if (WriteMarkerShot("zoom-out", width))
                         NextMarkerStage(0.3);
                     break;
                 case 10:
-                    var tutorial = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
                     if (command.ActiveCommandMode != TacticalCommandMode.Attack)
                         SmokeTapNamed("AttackCommand");
-                    else if (SmokeTap(tutorial?.ShowMeButton) || FocusMarkerActor(em, mission.Battery))
-                        NextMarkerStage(2);
+                    else if (TryReadMarkerGuide(em, out var attackGuide) &&
+                             attackGuide.Kind == AriaPlayObservationKind.WorldTarget)
+                        NextMarkerStage(0);
+                    else
+                        SmokeTapMarkerShowMe();
                     break;
                 case 11:
                     if (GameObject.Find("AttackTargetPreviewMarkerRuntime") != null && WriteMarkerShot("attack-preview", width))
                         NextMarkerStage(0.3);
                     break;
                 case 12:
-                    if (TapLauncherWorld(em, mission.Battery))
+                    if (TapMarkerGuideWorld(em, mission.Battery, 0))
                         NextMarkerStage(0);
                     break;
                 case 13:
@@ -203,10 +223,72 @@ namespace Game.Editor
             markerStageStarted = EditorApplication.timeSinceStartup;
             markerDue = markerStageStarted + wait;
             markerFile = null;
+            markerTapDiagnostic = null;
         }
 
         private static SelectionUiCameraSystemHelper MarkerHudCamera() =>
             UnityEngine.Object.FindAnyObjectByType<MatchSceneView>()?.MatchBootstrap?.SelectionUiCamera;
+
+        private static bool SmokeTapMarkerZoom(bool zoomIn)
+        {
+            var minimap = UnityEngine.Object.FindAnyObjectByType<MatchHudMinimapView>();
+            return SmokeTap(zoomIn ? minimap?.ZoomInButton : minimap?.ZoomOutButton) ||
+                   SmokeTapNamed(zoomIn ? "ZoomInButton" : "ZoomOutButton");
+        }
+
+        private static bool TryReadMarkerGuide(EntityManager em, out AriaPlayObservationComponent guide)
+        {
+            using var query = em.CreateEntityQuery(typeof(UiShellStateComponent), typeof(AriaPlayObservationComponent));
+            return query.TryGetSingleton(out guide);
+        }
+
+        private static bool TapMarkerGuideControl(EntityManager em, int goal)
+        {
+            if (!TryReadMarkerGuide(em, out var guide) || guide.GoalId != goal ||
+                guide.Kind != AriaPlayObservationKind.Control)
+                return false;
+
+            foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude))
+                if (button.GetEntityId().GetHashCode() == guide.TargetId)
+                    return SmokeTap(button);
+            return false;
+        }
+
+        private static bool SmokeTapMarkerShowMe()
+        {
+            foreach (var view in UnityEngine.Object.FindObjectsByType<AriaTutorialBriefingView>(FindObjectsInactive.Exclude))
+                if (view.IsPresentationVisible && SmokeTap(view.ShowMeButton))
+                    return true;
+            return false;
+        }
+
+        private static bool TapMarkerGuideWorld(EntityManager em, Entity target, int goal)
+        {
+            bool guideVisible = TryReadMarkerGuide(em, out var guide) &&
+                (goal == 0 || guide.GoalId == goal) && guide.Kind == AriaPlayObservationKind.WorldTarget;
+            Vector3 point = Camera.main.WorldToScreenPoint(em.GetComponentData<LocalTransform>(target).Position);
+            Vector2 touch = guideVisible ? guide.Position : (Vector2)point;
+            bool inFrame = point.z > 0 && Camera.main.pixelRect.Contains(touch) && Screen.safeArea.Contains(touch);
+            MarkerUiHits.Clear();
+            if (inFrame)
+                EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = touch }, MarkerUiHits);
+
+            if (markerTapDiagnostic == null)
+            {
+                string topUi = MarkerUiHits.Count == 0 ? "none" : MarkerUiHits[0].gameObject.name;
+                markerTapDiagnostic = $"target={target} projected={point:F1} touch={touch:F1} guide={guide.GoalId}/{guide.Kind} " +
+                    $"inFrame={inFrame} topUi={topUi}";
+                Debug.Log($"[SelectionMarkerNativeTarget] stage={markerStage} {markerTapDiagnostic}");
+            }
+
+            if (!guideVisible && SmokeTapMarkerShowMe())
+            {
+                markerDue = EditorApplication.timeSinceStartup + 3;
+                return false;
+            }
+
+            return inFrame && MarkerUiHits.Count == 0 && SmokeGesture(touch);
+        }
 
         private static Entity FindMarkerActor(EntityManager em, Entity root, Entity exclude, bool vehicle)
         {
@@ -229,9 +311,13 @@ namespace Game.Editor
             if (actor == Entity.Null || !em.HasComponent<LocalTransform>(actor))
                 return false;
 
-            var camera = em.World.GetExistingSystemManaged<RtsCameraRequestSystem>();
             Vector3 position = em.GetComponentData<LocalTransform>(actor).Position;
-            return camera != null && camera.QueueMoveGroundCenterTo(em, position);
+            var hudCamera = MarkerHudCamera();
+            if (hudCamera == null)
+                return false;
+
+            hudCamera.MoveCameraGroundCenterTo(position);
+            return true;
         }
 
         private static bool SelectMarkerActor(EntityManager em, TacticalCommandMode mode)
@@ -249,6 +335,26 @@ namespace Game.Editor
             return em.HasComponent<UnitSelectionMarkerInstanceReference>(markerActor);
         }
 
+        private static void LogMarkerRenderers(EntityManager em)
+        {
+            Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(markerActor).Instance;
+            if (!em.HasBuffer<LinkedEntityGroup>(marker))
+                return;
+
+            foreach (var link in em.GetBuffer<LinkedEntityGroup>(marker, true))
+            {
+                Entity visual = link.Value;
+                if (!em.HasComponent<MaterialMeshInfo>(visual) || !em.HasComponent<RenderMeshArray>(visual))
+                    continue;
+
+                var array = em.GetSharedComponentManaged<RenderMeshArray>(visual);
+                var info = em.GetComponentData<MaterialMeshInfo>(visual);
+                Debug.Log($"[SelectionMarkerNativeRenderer] actor={markerActor} visual={em.GetName(visual)} " +
+                    $"active={!em.HasComponent<DisableRendering>(visual)} mesh={array.GetMesh(info)?.name} " +
+                    $"shader={array.GetMaterial(info)?.shader?.name} material={array.GetMaterial(info)?.name}");
+            }
+        }
+
         private static bool TapMoveDestination(EntityManager em)
         {
             using var grids = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable), typeof(DynamicBlockerComponent));
@@ -262,7 +368,7 @@ namespace Game.Editor
             var walkable = em.GetBuffer<GridWalkable>(gridEntity, true);
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
             int distance = 12 + markerMoveAttempt * 3;
-            foreach (int2 delta in new[] { new int2(distance, 0), new int2(-distance, 0), new int2(0, distance), new int2(0, -distance) })
+            foreach (int2 delta in new[] { new int2(0, -distance), new int2(0, distance), new int2(distance, 0), new int2(-distance, 0) })
             {
                 int2 cell = center + delta;
                 if (!GridUtils.InBounds(cell, grid.Width, grid.Height))

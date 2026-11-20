@@ -152,6 +152,17 @@ namespace Game.UI.Shell.Ecs
         public static bool ConvoyEscortCadence(in AriaSkirmishObservation view) =>
             view.ObjectiveType == (byte)Game.Simulation.AriaObjectiveType.ConvoyEscort;
 
+        // The objective order would act this frame (the same wants/ready test StepObjectiveSkill uses).
+        public static bool ObjectiveOrderWaiting(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
+        {
+            var objective = view.PublicObjective; var current = plan.ObjectiveTouch;
+            if (current.CommandPending || current.Stage == 3) return true;
+            bool sameGoal = current.GroupId == objective.GroupId && current.PublicKey == objective.PublicKey &&
+                current.Action == objective.Action && current.PresentationEpoch == objective.PresentationEpoch;
+            return objective.GroupId != 0 && objective.PublicKey != 0 && objective.Action != AriaObjectiveAction.None &&
+                !(sameGoal && current.Stage == 4) && view.Time >= plan.ObjectiveRetryAt;
+        }
+
         static bool StepObjectiveEscort(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
@@ -168,7 +179,9 @@ namespace Game.UI.Shell.Ecs
             // the objective order. A changed offer ends the in-flight escort (its displayed receipt counts as accepted) and
             // hands the turn back; the next escort starts from the escort turn or an idle frame.
             // W37b (lead): CE convoys only. FC/BT/BA keep the cf5f53bd1 path (S010 lost once with this cadence on FC).
-            if (inFlight && !same && plan.EscortTouch.GroupId != 0 && ConvoyEscortCadence(view))
+            // And only while a truck order is waiting: otherwise escorts keep running back to back (W37 S020: a 167 s win
+            // left four starting groups unused, gate 3 FAIL, with one escort turn per accepted truck order).
+            if (inFlight && !same && plan.EscortTouch.GroupId != 0 && ConvoyEscortCadence(view) && ObjectiveOrderWaiting(view, plan))
             {
                 var last = plan.EscortTouch;
                 if ((last.CommandPending || last.Stage == 3) && escort.AcceptedOrderRevision > last.OrderRevisionAtIssue &&

@@ -485,6 +485,20 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(receipt ? 1 : 0, p.EscortAccepted, "only a displayed receipt for the prior escort counts");
                 Assert.AreEqual(0u, p.EscortTouch.GroupId);
             }
+            // W37b: CE with no truck order waiting keeps the escort running to the next offer (gate 3 coverage).
+            {
+                var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2,
+                    EscortTouch = new AriaObjectiveTouchPlan { GroupId = 7, PublicKey = 33, PresentationEpoch = 1, Action = AriaObjectiveAction.Move,
+                        Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 200 } };
+                var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+                var v = Presented(100); v.ObjectiveType = 3;
+                v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                    GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+                Assert.IsFalse(AriaSkirmishPlanSystem.ObjectiveOrderWaiting(v, p));
+                Step(v, ref p, ref t, out var o);
+                Assert.AreEqual(8, o.TargetId, "no truck order waits: the next escort goes on");
+                Assert.AreEqual(2, p.ObjectiveOwner);
+            }
             // The same offer in flight still finishes first (unchanged).
             var q = new AriaSkirmishPlanComponent(); var s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             var w = Presented(100);

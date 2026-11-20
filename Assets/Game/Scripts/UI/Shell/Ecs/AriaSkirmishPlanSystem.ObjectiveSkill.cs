@@ -124,7 +124,7 @@ namespace Game.UI.Shell.Ecs
                 // Once released, this truck order is not put back behind escorts while its touch sequence runs (a reason-6
                 // release would otherwise see TruckReleases > 0 on the next frame and wait again).
                 if (plan.TruckReleased == 0 && !bound && !first && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
-                ReleaseTruck(view, ref plan, bound ? (byte)2 : first ? (byte)6 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : (byte)3);
+                ReleaseTruck(view, ref plan, bound ? (byte)2 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : first ? (byte)6 : (byte)3);
             }
             if (pending || wants && ready)
             {

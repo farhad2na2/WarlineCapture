@@ -118,17 +118,22 @@ public sealed class MatchHudPolishTests
             Canvas.ForceUpdateCanvases();
             var value = (TMP_Text)typeof(SkirmishMatchView).GetField("clock", Private).GetValue(view);
             var heading = (TMP_Text)typeof(SkirmishMatchView).GetField("clockHeading", Private).GetValue(view);
+            // W40: the score is its own status cell in the objective card; the countdown keeps its caption.
+            var score = (TMP_Text)typeof(SkirmishMatchView).GetField("objectiveScore", Private).GetValue(view);
             Assert.AreEqual("17:53", value.text);
             Assert.IsFalse(heading.text.Contains("17:53"));
             Assert.IsFalse(string.IsNullOrWhiteSpace(heading.text));
-            heading.ForceMeshUpdate(true, true);
-            Assert.That(heading.preferredHeight, Is.LessThanOrEqualTo(heading.rectTransform.rect.height + 1), "Score and survivor rows must fit above the countdown. fa=" + persian);
-            Assert.That(heading.fontSize, Is.EqualTo(persian ? 18 : 20).Within(.01f), "Locale refresh must preserve the score typography.");
-            Assert.AreEqual(heading.fontSizeMin, heading.fontSizeMax, "Score rows cannot shrink below their readable size.");
+            Assert.IsFalse(score.text.Contains("17:53"));
+            Assert.IsTrue(score.transform.parent.gameObject.activeSelf, "the score cell is shown with a public objective");
+            score.ForceMeshUpdate(true, true);
+            Assert.AreEqual(2, score.textInfo.lineCount, "score and survivor rows, one line each. fa=" + persian);
+            Assert.That(score.textBounds.size.y, Is.LessThanOrEqualTo(score.rectTransform.rect.height + 1), "Score and survivor rows fit their cell. fa=" + persian);
+            Assert.That(score.fontSizeMax, Is.EqualTo(SkirmishObjectiveCardLayout.ScoreSize).Within(.01f), "Locale refresh must preserve the score typography.");
             typeof(SkirmishMatchView).GetField("previousPublicApplicable", Private).SetValue(view, false);
             typeof(SkirmishMatchView).GetMethod("RestoreClockCaption", Private).Invoke(view, null);
-            Assert.AreEqual(32, value.fontSize);
+            Assert.AreEqual(SkirmishObjectiveCardLayout.TimerSize, value.fontSize);
             Assert.IsFalse(heading.text.Contains("ALIVE"));
+            Assert.IsFalse(score.transform.parent.gameObject.activeSelf, "Base Assault has no score cell");
         }
         finally { UnityEngine.Object.DestroyImmediate(view.gameObject); GameLocalization.SetLocale(previous, false); }
     }

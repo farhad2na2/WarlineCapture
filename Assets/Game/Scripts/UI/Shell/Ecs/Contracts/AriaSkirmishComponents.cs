@@ -119,12 +119,10 @@ namespace Game.UI.Shell.Contracts.Ecs
         // ready (0 = none waiting). TruckReleased: this order was released (TruckReleaseReason 1 all escorts accepted,
         // 2 the 45 s bound, 3 no escort offer left); TruckReleases counts releases for the evidence trace.
         public float TruckWaitSince, TruckReleaseWaited;
-        // W37d: TruckReleaseReason 4 = a later truck order (escort-first only for the first); TruckReleaseEscortsOld is the
+        // W37f: TruckReleaseReason 5 = a truck Hold (never behind escorts); 4 (W37d/e truck-first) is no longer used. TruckReleaseEscortsOld is the
         // W37c count (accepted order already at the goal) beside the fresh-Move count, for the evidence trace.
         public byte TruckReleased, TruckReleaseReason, TruckReleaseEscorts, TruckReleaseCapable, TruckReleaseEscortsOld;
         public int TruckReleases;
-        // W37e: 1 while the escort started by the escort turn after an accepted CE truck order is in flight.
-        public byte EscortTurnGuard;
         // W37e: CE finished-objective latches released because the observer's choice moved away (evidence count).
         public int ObjectiveLatchReleases;
     }

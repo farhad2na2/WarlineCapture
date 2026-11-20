@@ -37,7 +37,7 @@ namespace Game.Tests.Editor
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
             t.ChangedEscortOfferEndsTheInFlightEscort();
             t.ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound();
-            t.LaterTruckOrdersAndServiceOrdersGoFirst();
+            t.EveryTruckOrderWaitsButServiceOrdersAndTruckHoldGoFirst();
             t.ReofferedMoveAfterTheChoiceMovedAwayIsANewOrder();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
@@ -584,10 +584,11 @@ namespace Game.Tests.Editor
             }
         }
 
-        // W37d (lead): escort-first only for the first truck order; later truck orders and every service order (Move/Hold to
-        // the pad, emergency Hold, Repair) go first, and a held truck is not re-selected away by escort/support/coverage turns.
+        // W37f (lead, option 3): escort-first for every truck order (W37c cadence) with the exact bound; every service order
+        // (Move/Hold to the pad, emergency Hold, Repair) and a truck Hold go first, and a held truck is not re-selected away
+        // by escort/support/coverage turns.
         [Test]
-        public void LaterTruckOrdersAndServiceOrdersGoFirst()
+        public void EveryTruckOrderWaitsButServiceOrdersAndTruckHoldGoFirst()
         {
             AriaSkirmishObservation View(float time, AriaSkirmishIntent intent, AriaObjectiveAction action)
             {
@@ -601,15 +602,21 @@ namespace Game.Tests.Editor
             AriaObjectiveTouchPlan InFlight() => new AriaObjectiveTouchPlan { GroupId = 9, PublicKey = 33, PresentationEpoch = 1,
                 Action = AriaObjectiveAction.Move, Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 300 };
             var observing = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
-            // A later truck order (one was already released) goes first with escorts still offered.
+            // A later truck Move (one was already released) still waits behind the offered escorts (W37c cadence) ...
             var p = new AriaSkirmishPlanComponent { TruckReleases = 1 }; var t = observing;
             Step(View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Move), ref p, ref t, out var o);
-            Assert.AreEqual(5, o.TargetId, "later truck order first");
-            Assert.AreEqual(2, p.TruckReleases); Assert.AreEqual(4, p.TruckReleaseReason); Assert.AreEqual(0f, p.TruckReleaseWaited, 0.01f);
-            // ... and an escort already in flight (same offer) hands back at once.
+            Assert.AreEqual(8, o.TargetId, "later truck order: escorts first"); Assert.AreEqual(1, p.TruckReleases); Assert.AreEqual(200f, p.TruckWaitSince);
+            // ... and an escort already in flight inside the bound keeps going.
             p = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveOwner = 2, EscortTouch = InFlight() }; t = observing;
             Step(View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Move), ref p, ref t, out o);
-            Assert.AreEqual(5, o.TargetId); Assert.AreEqual(0, p.ObjectiveOwner); Assert.AreEqual(4, p.TruckReleaseReason);
+            Assert.AreNotEqual(5, o.TargetId); Assert.AreEqual(2, p.ObjectiveOwner); Assert.AreEqual(1, p.TruckReleases);
+            // A truck Hold (dwell at the destination) is never put behind escorts and ends an escort in flight.
+            p = new AriaSkirmishPlanComponent(); t = observing;
+            Step(View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Hold), ref p, ref t, out o);
+            Assert.AreEqual(5, o.TargetId, "truck Hold first"); Assert.AreEqual(1, p.TruckReleases); Assert.AreEqual(5, p.TruckReleaseReason);
+            p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2, EscortTouch = InFlight() }; t = observing;
+            Step(View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Hold), ref p, ref t, out o);
+            Assert.AreEqual(5, o.TargetId, "truck Hold ends the escort in flight"); Assert.AreEqual(0, p.ObjectiveOwner); Assert.AreEqual(5, p.TruckReleaseReason);
             // Service orders, even before any truck order was released: never behind escorts, no cadence release.
             var services = new[] { (AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Move),
                 (AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Hold), (AriaSkirmishIntent.StopDamagedTruck, AriaObjectiveAction.Hold) };
@@ -635,28 +642,6 @@ namespace Game.Tests.Editor
                 Assert.AreNotEqual(8, o.TargetId, "no escort while the truck is held"); Assert.AreEqual(0, s.ObjectiveOwner);
                 Assert.AreEqual(1, s.ObjectiveEscortTurn, "the escort turn waits for the end of the service");
                 Assert.IsTrue(AriaSkirmishPlanSystem.ConvoyServiceHolding(v));
-            }
-            // W37e (gate 3): the escort turn after an accepted truck order starts a guarded escort ...
-            {
-                var v = View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Move);
-                var s = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveEscortTurn = 1,
-                    ObjectiveTouch = new AriaObjectiveTouchPlan { GroupId = 11, PublicKey = 22, Action = AriaObjectiveAction.Move, PresentationEpoch = 1, Stage = 4 } };
-                t = observing;
-                Step(v, ref s, ref t, out o);
-                Assert.AreEqual(8, o.TargetId, "escort turn after the accepted truck order"); Assert.AreEqual(1, s.EscortTurnGuard);
-                // ... that a later truck Move does not interrupt ...
-                v.PublicObjective.GroupId = 12; v.PublicObjective.SelectGroup = T(6); v.Frame++;
-                Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(v, s));
-                Step(v, ref s, ref t, out o);
-                Assert.AreNotEqual(6, o.TargetId, "guarded escort keeps the turn"); Assert.AreEqual(2, s.ObjectiveOwner); Assert.AreEqual(1, s.TruckReleases);
-                // ... but a truck Hold or a service order does.
-                foreach (var (intent, action) in new[] { (AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Hold), (AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Move) })
-                {
-                    var g = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveOwner = 2, EscortTurnGuard = 1, EscortTouch = InFlight() }; t = observing;
-                    var w = View(200, intent, action);
-                    Step(w, ref g, ref t, out o);
-                    Assert.AreEqual(5, o.TargetId, intent + "/" + action + " pre-empts the guarded escort"); Assert.AreEqual(0, g.ObjectiveOwner); Assert.AreEqual(0, g.EscortTurnGuard);
-                }
             }
             // FC/BT: no service/cadence rule (cf5f53bd1 path).
             {

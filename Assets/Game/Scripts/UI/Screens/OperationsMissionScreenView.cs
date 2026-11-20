@@ -47,7 +47,9 @@ namespace Game.UI.Runtime
         public bool IsHud => hud;
         public Button IntroductionButton => introButton;
         public Button SkipButton => skipButton;
-        public Button ObjectiveButton => focusButton;
+        // Watch can ask the camera to show an objective. While it pans, the
+        // same button is Return to Squad and must stay a player-only action.
+        public Button ObjectiveButton => current.ViewingObjective ? null : focusButton;
         public Button RecoverButton => recoverButton;
         public Button ScanButton(int index) => commandControls != null ? commandControls.ScanButton : null;
         public Button GuideButton => focusButton;
@@ -87,16 +89,16 @@ namespace Game.UI.Runtime
         }
         private void BuildMenu()
         {
-            // DailyBriefing leaves 252 points below its existing theater/day header.
+            // DailyBriefing leaves 446 points below its existing theater/day header.
             // Keep every action inside that space, above the warnings panel.
             var card = Surface("MissionCard", transform); Stretch(card); Vertical(card,6,8);
             title = Label(card,"",30,86); description = Label(card,"",30,154);
             status = Label(card,"",30,80);
-            var actions = Row(card,102);
+            var actions = Row(card,84);
             actions.GetComponent<HorizontalLayoutGroup>().childForceExpandWidth = true;
-            deploy = Button(actions,Text("operations.deploy","DEPLOY"),() => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy),Green);
-            resume = Button(actions,T("resume_attempt","RESUME ATTEMPT"),() => Send(UiOperationsMissionAction.ResumeAttempt),Green);
-            withdrawInterrupted = Button(actions,Text("operations.withdraw","WITHDRAW"),() => confirmation.SetActive(true),Muted);
+            deploy = Button(actions,Text("operations.deploy","DEPLOY"),() => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy),Green, compact: true);
+            resume = Button(actions,T("resume_attempt","RESUME ATTEMPT"),() => Send(UiOperationsMissionAction.ResumeAttempt),Green, compact: true);
+            withdrawInterrupted = Button(actions,Text("operations.withdraw","WITHDRAW"),() => confirmation.SetActive(true),Muted, compact: true);
             BuildConfirmation();
         }
         private void BuildHud()

@@ -32,18 +32,25 @@ namespace Game.Editor
         private static int stoppedActions;
         private static int resultCaptureFrames;
         private static double resumeRecapAt;
+        private static int tracedResumeStage = -1;
         private static bool wideLayout;
-        private static bool withdrawalCancelChecked;
+        private static bool withdrawalCancelRequested, withdrawalCancelChecked;
+        private static bool withdrawalReopenRendered;
         private static double withdrawalPromptAt;
         private static float withdrawalElapsed;
         private static double checkpointPauseAt;
         private static InputSettings originalInputSettings, validationInputSettings;
+        private static AriaTouchInputUiSystemHelper buttonTouch;
         private static readonly System.Collections.Generic.List<InputDevice> isolatedNativeDevices = new();
         public static void RunFirstScan() { firstScanOnly = true; RunAriaVictory(); }
         private static int menuCaptureFrames;
         private static int menuReturnFrames;
+        private static int resumeCaptureFrame = -1;
         private static int ariaTraceBucket;
         private static bool ariaWasActive;
+        private static int tracedAriaActions;
+        private static readonly System.Collections.Generic.HashSet<int> tracedCasualties = new();
+        private static readonly System.Collections.Generic.Dictionary<int, Unity.Mathematics.float3> lastActorPositions = new();
         private static string capturePath;
         private static int exitCode;
         private static string loadFailure;
@@ -223,6 +230,7 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying) return;
             Application.runInBackground = true;
+            buttonTouch?.Tick(Time.unscaledTime);
             if (ariaVictory) SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = true;
             if (AriaTouchInputUiSystemHelper.AllowBackgroundValidation && validationInputSettings == null)
             {
@@ -389,7 +397,23 @@ namespace Game.Editor
                     int original = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root).Length;
                     using var units = world.EntityManager.CreateEntityQuery(new EntityQueryDesc
                     { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
-                    if (original != 16 || captureFrames == 0 && units.CalculateEntityCount() != 36) throw new InvalidOperationException("Finite roster mismatch.");
+                    if (captureFrames == 0)
+                    {
+                        var roster = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root);
+                        int recon = 0, factionOne = 0, factionTwo = 0;
+                        foreach (var member in roster) if (member.Recon != 0) recon++;
+                        using var actors = units.ToEntityArray(Unity.Collections.Allocator.Temp);
+                        foreach (var actor in actors)
+                        {
+                            int faction = world.EntityManager.GetComponentData<Faction>(actor).Id;
+                            if (faction == 1) factionOne++;
+                            if (faction == 2) factionTwo++;
+                        }
+                        Debug.Log($"[OperationsRoster] phase=Handoff original={original} records={world.EntityManager.GetBuffer<OperationsReconSpawnRecord>(root).Length} " +
+                            $"live={actors.Length} player={factionOne} enemy={factionTwo} recon={recon}");
+                        if (actors.Length != 36) throw new InvalidOperationException("Finite roster mismatch.");
+                    }
+                    if (original != 16) throw new InvalidOperationException("Finite roster mismatch.");
                     captureFrames++;
                     // Editor update callbacks can outpace game frames. Require actual
                     // simulation progress so a frozen world cannot pass the launch gate.
@@ -431,6 +455,16 @@ namespace Game.Editor
                             var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
                             foreach (var button in tray.GetComponentsInChildren<Button>(true))
                             { var observedButton = button; observedButton.onClick.AddListener(() => Debug.Log("[OperationsInputTrace] squadCardClick=" + observedButton.name)); }
+                            foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                            {
+                                if (!view.IsHud) continue;
+                                TraceAriaControl(view.GuideButton, "camera");
+                                TraceAriaControl(view.ScanButton(0), "scan");
+                                TraceAriaControl(view.RecoverButton, "recover");
+                                break;
+                            }
+                            var commandControls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                            TraceAriaControl(commandControls?.AttackButton, "attack");
                             selectionDiagnosticsAttached = true;
                         }
                         if (Click("ARIA PLAY")) { stage = 20; ariaRequestedAt = EditorApplication.timeSinceStartup; }
@@ -579,7 +613,8 @@ namespace Game.Editor
                 {
                     if (!withdrawalCancelChecked)
                     {
-                        if (GameObject.Find("ConfirmWithdraw") == null) return;
+                        bool confirmationActive = GameObject.Find("ConfirmWithdraw") != null;
+                        if (!withdrawalCancelRequested && !confirmationActive) return;
                         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
                         using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
                         float elapsed = roots.GetSingleton<OperationsReconMissionComponent>().ElapsedSeconds;
@@ -592,9 +627,23 @@ namespace Game.Editor
                         if (EditorApplication.timeSinceStartup - withdrawalPromptAt < 2) return;
                         if (elapsed != withdrawalElapsed || Time.timeScale != 0)
                             throw new InvalidOperationException("Withdrawal confirmation resumed the mission underneath the modal.");
-                        if (!Click("CANCEL", "ConfirmWithdraw")) throw new InvalidOperationException("Withdrawal confirmation has no usable Cancel.");
+                        if (!withdrawalCancelRequested)
+                        {
+                            if (!Click("CANCEL", "ConfirmWithdraw")) throw new InvalidOperationException("Withdrawal confirmation has no usable Cancel.");
+                            withdrawalCancelRequested = true;
+                            return;
+                        }
+                        if (confirmationActive) return;
                         withdrawalCancelChecked = true; stage = 3;
-                        Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed missionRemainedPaused=1");
+                        Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed input=visible-touch missionRemainedPaused=1");
+                        return;
+                    }
+                    if (GameObject.Find("ConfirmWithdraw") == null) return;
+                    // Give the reactivated confirmation canvas a rendered frame
+                    // before raycasting its button over the Pause popup.
+                    if (!withdrawalReopenRendered)
+                    {
+                        withdrawalReopenRendered = true;
                         return;
                     }
                     if (Click("WITHDRAW", "ConfirmWithdraw")) stage = 5;
@@ -602,6 +651,7 @@ namespace Game.Editor
                 }
                 if (stage == 5 && UiShellRuntimeGateway.TryReadOperationsMission(out var result) && result.Finished && result.Saved)
                 {
+                    if (resultCaptureFrames++ < 30) return;
                     var saved = SaveService.CreateDefault().LoadProfile().operations;
                     if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Withdrawal did not durably settle the single AP reservation.");
@@ -642,7 +692,7 @@ namespace Game.Editor
                     Complete(true, "journey=" + (recovery ? "deploy-failed-startup-refund-return-redeploy" : (interrupted ? "interrupted-restart-withdraw-save-return-redeploy" : "deploy-withdraw-save-return-redeploy")) +
                         " input=button-event-smoke original=16 total=36 ap=" + expectedAp);
                 }
-                if (stage == 10 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu &&
+                if (stage == 10 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu && !shell.IsTransitionRunning &&
                     UiShellRuntimeGateway.TryReadOperationsMission(out var resumable) && resumable.CanResume)
                 {
                     var save = SaveService.CreateDefault();
@@ -663,6 +713,7 @@ namespace Game.Editor
                             " ap=2 marker=" + ProcessCheckpointMarker);
                         return;
                     }
+                    if (!CaptureResumeIfRequested()) return;
                     if (Click("RESUME ATTEMPT")) stage = 11;
                     return;
                 }
@@ -684,7 +735,7 @@ namespace Game.Editor
                                 " after=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds));
                     }
                     if (!ResumeRecapHasHandedBackControl()) return;
-                    Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
+                    Complete(true, "journey=save-exit-resume resumeInput=visible-touch session=" + checkpointSession +
                         " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds +
                         " scanBefore=" + checkpointScanSeconds + " ap=2");
                 }
@@ -700,6 +751,7 @@ namespace Game.Editor
                         return;
                     }
                     stoppedActions = state.Actions;
+                    TraceCasualties();
                     stoppedAt = EditorApplication.timeSinceStartup;
                     ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001AriaStopped.png"));
                     stage = 41;
@@ -707,6 +759,7 @@ namespace Game.Editor
                 }
                 if (stage == 41)
                 {
+                    TraceCasualties();
                     var state = UiShellRuntimeGateway.ReadAriaPlay();
                     if (state.Active || state.Actions != stoppedActions)
                         throw new InvalidOperationException("ARIA continued issuing input after STOP ARIA.");
@@ -719,6 +772,7 @@ namespace Game.Editor
                         throw new InvalidOperationException("The mission clock stopped with ARIA.");
                     if (!Click("ARIA PLAY")) throw new InvalidOperationException("Visible ARIA PLAY was not restored after stopping.");
                     stopResumeVerified = true; ariaWasActive = false;
+                    tracedAriaActions = 0;
                     ariaRequestedAt = EditorApplication.timeSinceStartup; stage = 20;
                     Debug.Log("[OperationsReconLaunchSmokeValidation] ariaStopResume=Passed input=visible-button-events missionContinued=1");
                     return;
@@ -750,6 +804,12 @@ namespace Game.Editor
                     if (ariaState.Active) ariaWasActive = true;
                     using var sessions = world.EntityManager.CreateEntityQuery(typeof(AriaPlaySessionComponent));
                     var session = sessions.IsEmptyIgnoreFilter ? default : sessions.GetSingleton<AriaPlaySessionComponent>();
+                    if (session.Actions > tracedAriaActions)
+                    {
+                        tracedAriaActions = session.Actions;
+                        Debug.Log(FormattableString.Invariant($"[OperationsAriaAction] elapsed={operation.ElapsedSeconds:F2} action={session.Actions} goal={session.GoalId} target={session.LastCompletedTargetId} point={session.LastCompletedPosition} frame={session.LastCompletedFrame}"));
+                    }
+                    TraceCasualties(world.EntityManager, root, operation);
                     if (traceBucket > ariaTraceBucket)
                     {
                         ariaTraceBucket = traceBucket;
@@ -872,6 +932,11 @@ namespace Game.Editor
         private static bool ResumeRecapHasHandedBackControl()
         {
             if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model) || !model.Resumed) return false;
+            if (tracedResumeStage != model.IntroductionStage)
+            {
+                tracedResumeStage = model.IntroductionStage;
+                Debug.Log($"[OperationsResumeRecap] stage={tracedResumeStage} introduction={model.Introduction} paused={model.Paused} timeScale={Time.timeScale}");
+            }
             if (resumeRecapAt == 0)
             {
                 if (!model.Introduction) throw new InvalidOperationException("Saved mission skipped its resume recap.");
@@ -907,6 +972,60 @@ namespace Game.Editor
             }
         }
 
+        private static bool CaptureResumeIfRequested()
+        {
+            string path = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_O001_RESUME_CAPTURE");
+            if (string.IsNullOrEmpty(path)) return true;
+            if (resumeCaptureFrame < 0)
+            {
+                if (UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>() == null || menuReturnFrames++ < 3)
+                    return false;
+                resumeCaptureFrame = Time.frameCount;
+                ScreenCapture.CaptureScreenshot(path);
+                return false;
+            }
+            if (Time.frameCount - resumeCaptureFrame < 10) return false;
+            if (!File.Exists(path)) throw new InvalidOperationException("Missing resume screenshot: " + path);
+            Debug.Log("[OperationsReconLaunchSmokeValidation] resumeCapture=" + path);
+            return true;
+        }
+
+        private static void TraceAriaControl(Button button, string action)
+        {
+            if (button == null) return;
+            button.onClick.AddListener(() =>
+            {
+                if (!UiShellRuntimeGateway.TryReadOperationsMission(out var mission)) return;
+                Debug.Log($"[OperationsAriaControl] action={action} label={button.GetComponentInChildren<TMPro.TMP_Text>()?.text} " +
+                    $"site={mission.NextSite} scans={mission.CompletedScans} frame={Time.frameCount}");
+            });
+        }
+
+        private static void TraceCasualties()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world != null && world.IsCreated && OperationsReconLaunchProjection.TryGet(world.EntityManager, out var root, out var mission))
+                TraceCasualties(world.EntityManager, root, mission);
+        }
+
+        private static void TraceCasualties(EntityManager em, Entity root, OperationsReconMissionComponent mission)
+        {
+            var records = em.GetBuffer<OperationsReconSpawnRecord>(root);
+            int original = em.GetBuffer<OperationsReconRosterElement>(root).Length;
+            foreach (var record in records)
+            {
+                if (tracedCasualties.Contains(record.StableIndex)) continue;
+                bool exists = em.Exists(record.Unit);
+                if (exists && em.HasComponent<Unity.Transforms.LocalTransform>(record.Unit))
+                    lastActorPositions[record.StableIndex] = em.GetComponentData<Unity.Transforms.LocalTransform>(record.Unit).Position;
+                if (exists && em.HasComponent<UnitHealth>(record.Unit) && em.GetComponentData<UnitHealth>(record.Unit).Current > 0) continue;
+                tracedCasualties.Add(record.StableIndex);
+                lastActorPositions.TryGetValue(record.StableIndex, out var position);
+                string side = record.StableIndex <= original ? "player" : "enemy";
+                Debug.Log(FormattableString.Invariant($"[OperationsCasualty] elapsed={mission.ElapsedSeconds:F2} side={side} unit={record.StableIndex} exists={exists} lastPosition={position} scans={mission.CompletedScans}"));
+            }
+        }
+
         private static bool Click(string name, string ancestor = null)
         {
             if (name is "ARIA PLAY" or "STOP ARIA")
@@ -929,14 +1048,25 @@ namespace Game.Editor
                         if (parent.name == ancestor) { found = true; break; }
                     if (!found) continue;
                 }
-                AssertButtonReachable(button); button.onClick.Invoke(); return true;
+                Vector2 point = AssertButtonReachable(button);
+                if ((name == "RESUME ATTEMPT" && checkpointResume && !processRestore) ||
+                    (name == "CANCEL" && ancestor == "ConfirmWithdraw"))
+                {
+                    buttonTouch ??= new AriaTouchInputUiSystemHelper();
+                    if ((!buttonTouch.IsRunning && !buttonTouch.Start()) ||
+                        !buttonTouch.TryGesture(point, point, .08f, 0f, Time.unscaledTime))
+                        throw new InvalidOperationException("Could not send touch to " + button.name);
+                    Debug.Log($"[OperationsReconLaunchSmokeValidation] visibleTouch={button.name} point={point}");
+                }
+                else button.onClick.Invoke();
+                return true;
             }
             if (name is "ARIA PLAY" or "SAVE & EXIT" or "WITHDRAW")
                 UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.Pause);
             return false;
         }
 
-        private static void AssertButtonReachable(Button button)
+        private static Vector2 AssertButtonReachable(Button button)
         {
             Canvas.ForceUpdateCanvases();
             var rect = (RectTransform)button.transform;
@@ -962,6 +1092,7 @@ namespace Game.Editor
             if (hits.Count == 0 || !hits[0].gameObject.transform.IsChildOf(button.transform))
                 throw new InvalidOperationException("Visible button is covered or clipped: " + button.name + " hit=" +
                     (hits.Count == 0 ? "none" : hits[0].gameObject.name));
+            return center;
         }
 
         private static string Visible(string name) => name switch
@@ -981,6 +1112,8 @@ namespace Game.Editor
         {
             Canvas.willRenderCanvases -= TickInGameView;
             Application.logMessageReceived -= ObserveLog;
+            buttonTouch?.Dispose();
+            buttonTouch = null;
             foreach (var device in isolatedNativeDevices) if (device.added) InputSystem.EnableDevice(device);
             isolatedNativeDevices.Clear();
             if (validationInputSettings != null)

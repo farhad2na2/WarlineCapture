@@ -53,8 +53,9 @@ namespace Game.Composition
             }
             if (request.Action is UiOperationsMissionAction.FocusObjective or UiOperationsMissionAction.FocusSquad)
             {
-                viewingObjective = request.Action == UiOperationsMissionAction.FocusObjective;
-                Focus(viewingObjective ? NextObjectivePosition(root, mission, out _) : SquadPosition(root, mission.ExitPosition));
+                viewedObjective = request.Action == UiOperationsMissionAction.FocusObjective
+                    ? NextObjectivePosition(root, mission, out _) : null;
+                Focus(viewedObjective ?? SquadPosition(root, mission.ExitPosition));
                 return true;
             }
             return false;
@@ -153,10 +154,10 @@ namespace Game.Composition
             model.Touring = model.Introduction && intro.Stage > 0;
             model.Resumed = intro.Resumed != 0;
             model.Paused = !CanIssueMissionOrder(root);
-            model.ViewingObjective = viewingObjective;
             model.CompletedScans = mission.CompletedScans;
             model.InfantryAtExit = mission.InfantryAtExit;
             model.ObjectivePosition = NextObjectivePosition(root, mission, out model.NextSite);
+            model.ViewingObjective = viewedObjective.HasValue && viewedObjective.Value.Equals((float3)model.ObjectivePosition);
             ObserveInteractionFeedback(mission, ref model);
             model.Progress = string.Empty;
             model.Guidance = Copy("move_hint", "Move into a blue ring on open ground. Scan sites in any order.");

@@ -32,15 +32,18 @@ namespace Game.Composition
         private bool restartAfterResult;
         private double nextRefresh, nextSaveRetry;
         private string settlementCommand;
-        private string startupSession, rollbackCommand;
+        private Entity startupRoot;
+        private string rollbackCommand;
         private double startupBeganAt, nextRollbackRetry;
+        private MatchStartStatusKind? startupStatus;
+        private Unity.Collections.FixedString64Bytes startupDetail;
         private OperationsReconCheckpointCodec.Image pendingResume;
         private double nextCheckpointAt, nextCheckpointRetry;
         private int checkpointScans = -1;
         private bool checkpointEvidence, checkpointTerminal;
         private readonly Vector3[] markerScreenPositions = new Vector3[5];
         private double noticeExpires;
-        private bool viewingObjective;
+        private float3? viewedObjective;
 
         protected override void OnCreate()
         {
@@ -66,7 +69,7 @@ namespace Game.Composition
             saves ??= SaveService.CreateDefault();
             commands ??= new OperationsProfileCommandService(saves);
             definition ??= Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
-            if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root, mission)) return;
+            if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root)) return;
             var requests = EntityManager.GetBuffer<UiOperationsMissionRequest>(boundary);
             if (requests.Length > 0)
             {
@@ -101,7 +104,8 @@ namespace Game.Composition
                         if (EntityManager.HasComponent<OperationsReconIntroduction>(root))
                             EntityManager.SetComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
                         else EntityManager.AddComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
-                        viewingObjective = false;
+                        Debug.Log(FormattableString.Invariant($"[OperationsStartup] phase=Playing elapsed={UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt:F3}"));
+                        viewedObjective = null;
                         Focus(definition.exitPosition);
                         checkpointScans = -1;
                         nextCheckpointAt = 0;
@@ -110,7 +114,11 @@ namespace Game.Composition
                     { EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = exception.Message; }
                 }
                 else if (!string.IsNullOrEmpty(error))
+                {
+                    // ObserveFailedStartup consumes this failure before another spawn attempt.
+                    Debug.LogWarning($"[OperationsStartup] spawnError={error}");
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
+                }
             }
             if (live && view == null && shell.CurrentMode == UiShellMode.MatchHud && !shell.IsTransitionRunning &&
                 UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>() != null &&
@@ -342,17 +350,37 @@ namespace Game.Composition
             return true;
         }
 
-        private bool ObserveFailedStartup(Entity root, OperationsReconMissionComponent mission)
+        private bool ObserveFailedStartup(Entity root)
         {
-            string session = mission.SessionId.ToString();
-            if (startupSession != session)
-            { startupSession = session; startupBeganAt = UnityEngine.Time.realtimeSinceStartupAsDouble; rollbackCommand = null; nextRollbackRetry = 0; }
+            // A checkpoint relaunch preserves the session ID and creates a new root.
+            if (startupRoot != root)
+            {
+                startupRoot = root;
+                startupBeganAt = UnityEngine.Time.realtimeSinceStartupAsDouble;
+                startupStatus = null;
+                rollbackCommand = null;
+                nextRollbackRetry = 0;
+            }
             var launch = EntityManager.GetComponentObject<OperationsReconLaunchReference>(root);
             using var starts = EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
-            bool failed = !string.IsNullOrEmpty(launch.StartupFailure) ||
-                starts.CalculateEntityCount() == 1 && starts.GetSingleton<MatchStartQueueComponent>().LastStatus == MatchStartStatusKind.Failed ||
-                UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt >= 180;
+            bool hasStart = starts.CalculateEntityCount() == 1;
+            var lastStatus = hasStart
+                ? starts.GetSingleton<MatchStartQueueComponent>().LastStatus : MatchStartStatusKind.None;
+            var startEntity = hasStart ? starts.GetSingletonEntity() : Entity.Null;
+            var detail = hasStart && EntityManager.HasComponent<MatchStartProgressComponent>(startEntity)
+                ? EntityManager.GetComponentData<MatchStartProgressComponent>(startEntity).Status : default;
+            double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt;
+            if (startupStatus != lastStatus || !startupDetail.Equals(detail))
+            {
+                startupStatus = lastStatus;
+                startupDetail = detail;
+                Debug.Log(FormattableString.Invariant($"[OperationsStartup] phase={lastStatus} elapsed={elapsed:F3} detail={detail}"));
+            }
+            bool timeout = elapsed >= 180;
+            bool failed = !string.IsNullOrEmpty(launch.StartupFailure) || lastStatus == MatchStartStatusKind.Failed || timeout;
             if (!failed) return false;
+            if (nextRollbackRetry == 0)
+                Debug.LogWarning(FormattableString.Invariant($"[OperationsStartup] failed reason={(string.IsNullOrEmpty(launch.StartupFailure) ? "none" : launch.StartupFailure)} matchStart={lastStatus} elapsed={elapsed:F3} timeout={(timeout ? 1 : 0)}"));
             StopSimulation();
             if (UnityEngine.Time.realtimeSinceStartupAsDouble < nextRollbackRetry) return true;
             nextRollbackRetry = UnityEngine.Time.realtimeSinceStartupAsDouble + 5;

@@ -29,12 +29,18 @@ namespace Game.Editor
             try
             {
                 Vector3 start = FindOpen(ref blob.Value, new int2(1690, 700));
-                // C sits in the southern forecourt. The old roof-side point (1870,815)
-                // passed the surface bake but lies inside the runtime building blockers.
-                Vector3[] scans = { FindOpen(ref blob.Value, new int2(1705, 805)), FindOpen(ref blob.Value, new int2(1790, 790)), FindOpen(ref blob.Value, new int2(1882, 796)) };
-                Vector3 evidence = FindOpen(ref blob.Value, new int2(1860, 710));
-                Vector3 guard = FindOpen(ref blob.Value, new int2(1825, 755));
-                Vector3 patrol = FindOpen(ref blob.Value, new int2(1745, 760));
+                // Pin the cells measured against the runtime building blockers. A surface-only
+                // clearance search can shift an anchor back into a blocked footprint.
+                Vector3[] scans =
+                {
+                    AtWalkableCell(ref blob.Value, new int2(1703, 803)),
+                    AtWalkableCell(ref blob.Value, new int2(1749, 749)),
+                    AtWalkableCell(ref blob.Value, new int2(1882, 796))
+                };
+                Vector3 evidence = AtWalkableCell(ref blob.Value, new int2(1855, 705));
+                Vector3 guard = AtWalkableCell(ref blob.Value, new int2(1819, 749));
+                Vector3 guardSupport = AtWalkableCell(ref blob.Value, new int2(1815, 749));
+                Vector3 patrol = AtWalkableCell(ref blob.Value, new int2(1738, 753));
                 Vector3[] patrolRoute = { patrol, FindOpen(ref blob.Value, new int2(1745, 800)), FindOpen(ref blob.Value, new int2(1785, 760)) };
                 Vector3 waveA = FindOpen(ref blob.Value, new int2(1900, 825));
                 Vector3 waveB = FindOpen(ref blob.Value, new int2(1900, 695));
@@ -91,7 +97,7 @@ namespace Game.Editor
                     Force("Unit_Chr_Soldier_Male_02_Alt_04", start + new Vector3(0,0,4), 2, 1, 0, true),
                     Force("Unit_Chr_Soldier_Female_01_Alt_01", start + new Vector3(0,0,-4), 2, 1),
                     Force("Unit_Chr_Insurgent_Male_03", guard, 6, 2),
-                    Force("Unit_Chr_Insurgent_Female_01", guard + new Vector3(0,0,4), 2, 2),
+                    Force("Unit_Chr_Insurgent_Female_01", guardSupport, 2, 2),
                     Force("Unit_Chr_Insurgent_Male_03", patrol, 4, 2, patrol: true),
                     Force("Unit_Chr_Insurgent_Male_03", waveA, 4, 2, 1),
                     Force("Unit_Chr_Insurgent_Male_03", waveB, 4, 2, 2)
@@ -139,6 +145,13 @@ namespace Game.Editor
             anchor.FindPropertyRelative("laneIndex").intValue = -1;
         }
 
+        private static Vector3 AtWalkableCell(ref MapSurfaceBlob blob, int2 cell)
+        {
+            if (!TryGetWalkableSurface(ref blob, cell, out var sample))
+                throw new InvalidOperationException("Authored cell is outside the window or lacks walkable ground: " + cell);
+            return new Vector3(cell.x + .5f, sample.Height, cell.y + .5f);
+        }
+
         private static Vector3 FindOpen(ref MapSurfaceBlob blob, int2 near)
         {
             for (int radius = 0; radius <= 24; radius++)
@@ -156,8 +169,14 @@ namespace Game.Editor
         }
 
         private static bool Walkable(ref MapSurfaceBlob blob, int2 cell) =>
-            Window.Contains(new Vector2Int(cell.x, cell.y)) && MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, cell, out var sample) &&
-            sample.SurfaceType != MapSurfaceType.Blocked && (sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0;
+            TryGetWalkableSurface(ref blob, cell, out _);
+
+        private static bool TryGetWalkableSurface(ref MapSurfaceBlob blob, int2 cell, out MapSurfaceSample sample)
+        {
+            sample = default;
+            return Window.Contains(new Vector2Int(cell.x, cell.y)) && MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, cell, out sample) &&
+                sample.SurfaceType != MapSurfaceType.Blocked && (sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0;
+        }
 
         private static void RequireReachable(ref MapSurfaceBlob blob, Vector3 start, Vector3[] destinations)
         {

@@ -44,13 +44,14 @@ namespace Game.UI.Runtime
                 label.GetComponent<V3LocalizedTextBindingView>().SetFontBounds(size*.8f,size);
             return label;
         }
-        private Button Button(Transform parent,string label,Action action,Color accent)
+        private Button Button(Transform parent,string label,Action action,Color accent,bool compact=false)
         {
-            var rect = Surface(label,parent); Height(rect,hud ? 76 : 102);
+            var rect = Surface(label,parent); Height(rect,compact ? 84 : hud ? 76 : 102);
             Color upper = accent*.65f, lower = accent*.25f; upper.a=lower.a=1;
             rect.GetComponent<V3GradientGraphic>().Configure(upper,lower,accent,3);
             var button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = rect.GetComponent<V3GradientGraphic>(); button.onClick.AddListener(() => action());
-            var text = Label(rect,label,hud ? 28 : 30,0,TextAlignmentOptions.Center); Stretch(text.rectTransform,14); return button;
+            var text = Label(rect,label,compact ? 26 : hud ? 28 : 30,0,TextAlignmentOptions.Center);
+            Stretch(text.rectTransform,compact ? 10 : 14); return button;
         }
         private void Portrait(Transform parent,float width,float height)
         {
@@ -72,6 +73,7 @@ namespace Game.UI.Runtime
         private RectTransform Modal(string name,out GameObject root)
         {
             var shade=Surface(name,hud ? safeRoot : GetComponentInParent<Canvas>().rootCanvas.transform,new Color(0,0,0,.75f)); Stretch(shade);
+            UiChromeStack.RaiseAboveTutorial(shade.gameObject, UiChromeStack.ConfirmationChrome);
             root=shade.gameObject; var card=Surface("Card",shade); Center(card,900,540); Vertical(card,20,36); return card;
         }
         private static void Height(RectTransform rect,float height)

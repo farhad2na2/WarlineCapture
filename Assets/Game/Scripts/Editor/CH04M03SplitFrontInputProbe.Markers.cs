@@ -52,7 +52,7 @@ namespace Game.Editor
             if (now - markerStageStarted > 35)
             {
                 string failure = $"Marker capture stalled at stage {markerStage} actor={markerActor}.";
-                if (markerStage < 10)
+                if (markerStage < 4)
                     throw new TimeoutException(failure);
 
                 // A command capture failure should still leave the selection and
@@ -110,8 +110,12 @@ namespace Game.Editor
                     break;
                 case 4:
                     markerActor = mission.Launcher;
-                    if (FocusMarkerActor(em, markerActor))
-                        NextMarkerStage(0.8);
+                    var launcherTutorial = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
+                    var launcherGuidance = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
+                    if ((launcherGuidance.AcknowledgedGuidanceMask & 1) == 0)
+                        SmokeTap(launcherTutorial?.ContinueButton);
+                    else if (SmokeTap(launcherTutorial?.ShowMeButton) || FocusMarkerActor(em, markerActor))
+                        NextMarkerStage(2);
                     break;
                 case 5:
                     if (SelectMarkerActor(em, command.ActiveCommandMode) && WriteMarkerShot("large-unit-selected", width))
@@ -136,10 +140,7 @@ namespace Game.Editor
                     break;
                 case 10:
                     var tutorial = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-                    var defense = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
-                    if ((defense.AcknowledgedGuidanceMask & 1) == 0)
-                        SmokeTap(tutorial?.ContinueButton);
-                    else if (command.ActiveCommandMode != TacticalCommandMode.Attack)
+                    if (command.ActiveCommandMode != TacticalCommandMode.Attack)
                         SmokeTapNamed("AttackCommand");
                     else if (SmokeTap(tutorial?.ShowMeButton) || FocusMarkerActor(em, mission.Battery))
                         NextMarkerStage(2);

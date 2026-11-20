@@ -5,6 +5,15 @@ namespace Game.UI.Shell.Ecs
 {
     public partial struct AriaSkirmishPlanSystem
     {
+        // W27c: a squad-card press that does not take is never pressed until the input layer's Blocked 115.
+        // Give the boarding turn up for the ordinary 30 s pause with a fresh input count; an accepted boarding or
+        // carrier move is kept (a mounted group resumes at Stage 2 through AlreadyMounted).
+        static bool GiveUpSelection(ref AriaPublicBoardingPlan p,ref AriaPlaySessionComponent touch,float now)
+        {
+            p.Active=false;p.NextAt=now+30;
+            touch.Attempts=0;touch.TargetId=0;
+            return false;
+        }
         public static bool StepPublicBoarding(in AriaSkirmishObservation v,ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch,ref AriaPlayObservationComponent output)
         {
@@ -43,14 +52,21 @@ namespace Game.UI.Shell.Ecs
             if(p.Stage>=2)
             {
                 if(!f.Presented||!f.CarrierSelected)
-                {if(v.ExpandedSelectedGroups>0){TryDeselectSquads(v,ref output);return true;}Target(f.SelectCarrier,false,ref output);return true;}
+                {if(v.ExpandedSelectedGroups>0){TryDeselectSquads(v,ref output);return true;}
+                 if(InputPressesExhausted(touch,f.SelectCarrier.Id))return GiveUpSelection(ref p,ref touch,now);
+                 Target(f.SelectCarrier,false,ref output);return true;}
             }
             if(f.Presented&&(!f.Carrier.Equals(p.Carrier)||f.World!=p.World||f.SetupHash!=p.SetupHash||f.GroupId!=p.GroupId||f.CarrierGroupId!=p.CarrierGroupId))
             {touch.Phase=AriaPlayPhase.Blocked;touch.GestureRequested=0;p.Active=false;return true;}
             if(p.Stage==0)
             {
                 if(!f.Presented)return true;
-                if(!goal.ExclusiveGroupSelected){Target(goal.ClearOtherSelection.Available?goal.ClearOtherSelection:goal.SelectGroup,false,ref output);return true;}
+                if(!goal.ExclusiveGroupSelected)
+                {
+                    var select=goal.ClearOtherSelection.Available?goal.ClearOtherSelection:goal.SelectGroup;
+                    if(InputPressesExhausted(touch,select.Id))return GiveUpSelection(ref p,ref touch,now);
+                    Target(select,false,ref output);return true;
+                }
                 if(!goal.CameraSettled)return true;
                 if(!f.CarrierInView){Target(f.FocusCarrier,false,ref output);return true;}
                 if(!f.BoardMode){Target(f.Board,false,ref output);return true;}

@@ -33,9 +33,10 @@ namespace Game.Tests.Editor
             t.EscortRunsWhenNoObjectiveOrderIsWanted();
             t.FinishedObjectiveHandsBack();
             t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
+            t.RosterChangeBetweenSelectPressesKeepsTheInputBound();
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=18");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=19");
         }
 
         // ---------- pure policy ----------
@@ -256,6 +257,35 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0, t.Attempts, "the retry starts a fresh input count");
             Assert.AreEqual(0, t.TargetId);
             Assert.AreEqual(2, AriaSkirmishPlanSystem.MaxRejectedObjectiveContacts);
+        }
+
+        [Test]
+        public void RosterChangeBetweenSelectPressesKeepsTheInputBound()
+        {
+            // W27c (S038 lane 45: Blocked 115 intent=EvacuateOriginals control=Squad0 selectedGroups=0 after 4/8 evacuated):
+            // an evacuation bumps the public roster revision, which resets the objective touch plan and its rejected
+            // count, while the input layer keeps counting presses of the same squad card.
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var v = Presented(100);
+            v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+            v.PublicObjective.Intent = AriaSkirmishIntent.EvacuateOriginals; v.PublicObjective.SelectGroup = T(5);
+            int presses = 0; bool bumped = false;
+            for (int frame = 0; frame < 10 && p.ObjectiveFailures == 0; frame++)
+            {
+                v.Frame++; v.Time += .5f;
+                if (presses == 2 && !bumped) { v.PublicObjective.RosterRevision++; bumped = true; }
+                Step(v, ref p, ref t, out var o);
+                Assert.AreNotEqual(AriaPlayPhase.Blocked, t.Phase, "frame " + frame);
+                if (o.TargetId != 5) continue;
+                // Mirror of AriaPlayDecisionSystem: a fourth consecutive press of one target is Blocked 115.
+                if (t.TargetId != 5) { t.TargetId = 5; t.Attempts = 0; }
+                Assert.Less(t.Attempts, AriaSkirmishPlanSystem.InputPressLimit, "the planner must end the attempt before the input layer's 115");
+                t.Attempts++; t.Actions++; presses++;
+            }
+            Assert.IsTrue(bumped);
+            Assert.AreEqual(3, presses, "three presses of the card that does not select, across the roster change");
+            Assert.AreEqual(1, p.ObjectiveFailures, "absorbed as a retry, not a stop");
+            Assert.AreEqual(0, t.Attempts, "the retry starts a fresh input count");
         }
 
         [Test]

@@ -35,7 +35,8 @@ namespace Game.Tests.Editor
             t.TidyTransportFocusSurvivesAimAndRequiresAcceptedGroundOrder();
             t.AirOpeningPrioritizesRadarAndKeepsFreedAirSlotsForCoverage();
             t.AirOpeningPagesToTransportAndCoversTheStartingArmoredApc();
-            UnityEngine.Debug.Log("[AriaAirCoverage] result=Passed controls=18 normalMissionAcceptance=Pending");
+            t.LostSupportSelectionIsReselectedAndCardPressesAreBounded();
+            UnityEngine.Debug.Log("[AriaAirCoverage] result=Passed controls=19 normalMissionAcceptance=Pending");
         }
 
         static AriaCoverageView Ready(float time, int afford, int fielded) => new AriaCoverageView
@@ -300,6 +301,43 @@ namespace Game.Tests.Editor
             Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out d), "one disarm press, then released");
             Assert.AreEqual(3, d.Trace);
             Assert.AreEqual(0, plan.Stage);
+        }
+
+        [Test]
+        public void LostSupportSelectionIsReselectedAndCardPressesAreBounded()
+        {
+            // W27c (W16 proof S010 130365: Blocked 115 on Move, intent Advance, supportStage=2, selectedGroups=0).
+            var plan = default(AriaSupportState);
+            var view = new AriaSupportView
+            {
+                FieldedMask = AriaSupportOrderPolicy.KindBit(AriaSupportKind.AntiAir), ArmyMoving = true, EnemyAlive = true,
+                ToggleAvailable = true, MoveAvailable = true, AttackAvailable = true, ScanAvailable = true, RearAvailable = true, FrontAvailable = true,
+                SupportSlots = AriaSupportOrderPolicy.Slots(AriaSupportKind.None, AriaSupportKind.AntiAir, AriaSupportKind.None, AriaSupportKind.None, AriaSupportKind.None),
+                AvailableSquadMask = 0b11111, Time = 90f
+            };
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
+            Assert.AreEqual(AriaSupportAction.SelectSlot, d.Action);
+            view.SelectedMask = 0b00010; view.SelectedGroups = 1; view.CompletedContacts = 1; view.Time = 91f;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.ArmMove, d.Action);
+            Assert.AreEqual(2, plan.Stage);
+            // The selection is lost before Move arms: select the unit again instead of pressing Move with nothing selected.
+            view.SelectedMask = 0; view.SelectedGroups = 0; view.CompletedContacts = 2; view.Time = 92f;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.SelectSlot, d.Action, "re-select, never Move with selectedGroups=0");
+            Assert.AreEqual(1, d.Slot);
+            // Card presses that never select the unit end the order before the input layer's fourth press.
+            int selects = 1;
+            for (int contacts = 3; contacts < 10; contacts++)
+            {
+                view.CompletedContacts = contacts; view.Time += 1f;
+                bool handled = AriaSupportOrderPolicy.Step(view, ref plan, out d);
+                if (!handled || d.Action != AriaSupportAction.SelectSlot) break;
+                selects++;
+            }
+            Assert.LessOrEqual(selects, 3, "at most three consecutive presses of the card");
+            Assert.AreNotEqual(AriaSupportAction.ArmMove, d.Action);
+            Assert.AreEqual(0, plan.Stage, "released for the ordinary cooldown");
         }
 
         [Test]

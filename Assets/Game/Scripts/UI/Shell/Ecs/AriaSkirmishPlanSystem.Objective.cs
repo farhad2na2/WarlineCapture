@@ -101,11 +101,21 @@ namespace Game.UI.Shell.Ecs
         }
 
         public const int MaxRejectedObjectiveContacts = 2;
+        // AriaPlayDecisionSystem refuses a press of one target once it already has this many (Blocked 115).
+        public const int InputPressLimit = 3;
+        // W27c: true when the input layer would refuse one more press of this target.
+        public static bool InputPressesExhausted(in AriaPlaySessionComponent touch, int targetId) =>
+            targetId != 0 && touch.TargetId == targetId && touch.Attempts >= InputPressLimit;
 
         static void Publish(in AriaTouchTarget target, bool world, ref AriaObjectiveTouchPlan plan,
             in AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
             if (!target.Available || target.Id == 0) return;
+            // W27c (S038 lane 45, Blocked 115 on Squad0 after 4/8 evacuated): RejectedAttempts lives in this plan,
+            // which a roster/epoch change resets, while the input layer keeps counting presses of the same card.
+            // Never ask for a press it would refuse: end the attempt so the caller's retry (or escort failure)
+            // starts a fresh input count.
+            if (InputPressesExhausted(touch, target.Id)) { plan.RejectedAttempts = MaxRejectedObjectiveContacts; return; }
             if (plan.LastTarget == target.Id && touch.Actions > plan.LastContactActions)
             {
                 bool scrollProgress = target.Drag && target.ScrollTargetId != 0 && plan.ScrollTargetId == target.ScrollTargetId &&

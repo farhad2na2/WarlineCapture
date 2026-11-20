@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
@@ -28,7 +29,12 @@ namespace Game.Composition
             var walkable = em.GetBuffer<GridWalkable>(gridQuery.GetSingletonEntity(), true);
             var objectives = new List<float3> { definition.exitPosition, definition.evidencePosition };
             foreach (var point in definition.scanPositions) objectives.Add(point);
-            if (!ValidateNavigation(grid, walkable, blockers, objectives, out error)) return false;
+            if (!ValidateNavigation(grid, walkable, blockers, objectives, out error))
+            {
+                if (error.Contains("blocked") || error.Contains("no ground route"))
+                    DescribeNavigation(grid, walkable, blockers, ref surface, definition, objectives);
+                return false;
+            }
             var registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryQuery.GetSingletonEntity(), true);
             var prefabs = new Dictionary<string, Entity>();
             foreach (var entry in registry)
@@ -100,17 +106,108 @@ namespace Game.Composition
             error = string.Empty;
             if (objectives == null || objectives.Count == 0 || walkable.Length != grid.Width * grid.Height || !blockers.Blocked.IsCreated)
             { error = "Mission navigation is not ready."; return false; }
-            var cells = new List<int2>();
-            int2 min = new(grid.Width - 1, grid.Height - 1), max = int2.zero;
+            var cells = new List<int2>(objectives.Count);
             foreach (var point in objectives)
             {
                 int2 cell = GridUtils.WorldToCell(grid, point);
                 if (!IsOpen(grid, walkable, blockers, cell))
                 { error = "Mission objective is blocked at " + cell; return false; }
-                cells.Add(cell); min = math.min(min, cell); max = math.max(max, cell);
+                cells.Add(cell);
+            }
+            var seen = FindConnectedCells(grid, walkable, blockers, cells, cells[0]);
+            foreach (var cell in cells)
+                if (!seen.Contains(cell)) { error = "Mission objective has no ground route at " + cell; return false; }
+            return true;
+        }
+
+        internal static void DescribeNavigation(GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBlockerComponent blockers, ref MapSurfaceComponent surface, OperationsReconMissionConfig definition,
+            List<float3> objectives)
+        {
+            var cells = new List<int2>(objectives.Count);
+            foreach (var point in objectives) cells.Add(GridUtils.WorldToCell(grid, point));
+            // Use the exit as in validation, or the first open objective if the exit is blocked.
+            int reference = cells.FindIndex(cell => IsOpen(grid, walkable, blockers, cell));
+            var connected = reference >= 0
+                ? FindConnectedCells(grid, walkable, blockers, cells, cells[reference])
+                : new HashSet<int2>();
+            UnityEngine.Debug.LogWarning($"[OperationsStartup] nav reference={(reference >= 0 ? cells[reference].ToString() : "none")}");
+            LogNavigationPoint("exit", definition.exitPosition, grid, walkable, blockers, ref surface, connected);
+            LogNavigationPoint("evidence", definition.evidencePosition, grid, walkable, blockers, ref surface, connected);
+            for (int i = 0; i < definition.scanPositions.Length; i++)
+                LogNavigationPoint($"scan[{i}]", definition.scanPositions[i], grid, walkable, blockers, ref surface, connected);
+            for (int i = 0; i < definition.forces.Length; i++)
+            {
+                var force = definition.forces[i];
+                LogNavigationPoint($"force[{i}] {force.sourceKey}", force.position, grid, walkable, blockers, ref surface, connected);
+            }
+        }
+
+        private static void LogNavigationPoint(string role, float3 position, GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBlockerComponent blockers, ref MapSurfaceComponent surface, HashSet<int2> connected)
+        {
+            int2 center = GridUtils.WorldToCell(grid, position);
+            string nearest = "nearest=none";
+            if (TryFindNearestConnectedCell(center, connected, out int2 cell))
+                nearest = $"nearest={cell} nearestWorld={FormatWorld(GetNavigationWorld(grid, ref surface, cell))}";
+            else if (TryFindExtendedConnectedCell(center, connected, out cell))
+                nearest += $" extendedNearest={cell} extendedNearestWorld={FormatWorld(GetNavigationWorld(grid, ref surface, cell))}";
+            UnityEngine.Debug.LogWarning($"[OperationsStartup] nav {role} cell={center} world={FormatWorld(position)} " +
+                $"open={(IsOpen(grid, walkable, blockers, center) ? 1 : 0)} groundConnected={(connected.Contains(center) ? 1 : 0)} {nearest}");
+        }
+
+        private static float3 GetNavigationWorld(GridConfig grid, ref MapSurfaceComponent surface, int2 cell)
+        {
+            float3 world = GridUtils.CellToWorldCenter(grid, cell);
+            if (MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface.SurfaceBlob.Value, Cell(surface, world), out var sample))
+                world.y = sample.Height;
+            return world;
+        }
+
+        private static bool TryFindExtendedConnectedCell(int2 center, HashSet<int2> connected, out int2 nearest)
+        {
+            nearest = default;
+            int nearestDistance = int.MaxValue;
+            foreach (var cell in connected)
+            {
+                int distance = math.cmax(math.abs(cell - center));
+                if (distance > nearestDistance || (distance == nearestDistance &&
+                    (cell.y > nearest.y || (cell.y == nearest.y && cell.x >= nearest.x)))) continue;
+                nearest = cell;
+                nearestDistance = distance;
+            }
+            return nearestDistance < int.MaxValue;
+        }
+
+        private static string FormatWorld(float3 position) =>
+            FormattableString.Invariant($"({position.x:R}, {position.y:R}, {position.z:R})");
+
+        private static bool TryFindNearestConnectedCell(int2 center, HashSet<int2> connected, out int2 cell)
+        {
+            // Chebyshev rings, with ascending grid row then column within each ring.
+            for (int radius = 0; radius <= 16; radius++)
+            for (int z = -radius; z <= radius; z++)
+            for (int x = -radius; x <= radius; x++)
+            {
+                if (math.max(math.abs(x), math.abs(z)) != radius) continue;
+                cell = center + new int2(x, z);
+                if (connected.Contains(cell)) return true;
+            }
+            cell = default;
+            return false;
+        }
+
+        private static HashSet<int2> FindConnectedCells(GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBlockerComponent blockers, List<int2> objectives, int2 reference)
+        {
+            int2 min = new(grid.Width - 1, grid.Height - 1), max = int2.zero;
+            foreach (var cell in objectives)
+            {
+                min = math.min(min, cell);
+                max = math.max(max, cell);
             }
             min = math.max(int2.zero, min - 32); max = math.min(new int2(grid.Width - 1, grid.Height - 1), max + 32);
-            var seen = new HashSet<int2> { cells[0] }; var pending = new Queue<int2>(); pending.Enqueue(cells[0]);
+            var seen = new HashSet<int2> { reference }; var pending = new Queue<int2>(); pending.Enqueue(reference);
             int2[] steps = { new(1,0), new(-1,0), new(0,1), new(0,-1) };
             while (pending.Count > 0)
             {
@@ -122,9 +219,7 @@ namespace Game.Composition
                     seen.Add(next); pending.Enqueue(next);
                 }
             }
-            foreach (var cell in cells)
-                if (!seen.Contains(cell)) { error = "Mission objective has no ground route at " + cell; return false; }
-            return true;
+            return seen;
         }
 
         private static bool IsOpen(GridConfig grid, DynamicBuffer<GridWalkable> walkable, DynamicBlockerComponent blockers, int2 cell)

@@ -232,7 +232,7 @@ S075 130365 aborts with 101 intent=Inspect on the foreign-popup path (AriaSkirmi
 handback), which is an escort skill/balance question; look at it together with W32's escort changes. Diagnose and fix with EditMode tests; prove with non-counted runs.
 
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
-status: READY
+status: IN PROGRESS, attempt 2 (2026-11-20). Attempt 1 (79d93b2eb, garrison the thinner owned zone) FAILED proof (b3a3b9fcd): DB S008/S012 Defeat, S010 Blocked 115 (fixed by W27c), S060 Victory->Defeat. Keep it unmerged. Attempt 2 (976876e4f): the garrison goal stays chosen until the zone is lost or held, holders are never sent, uncommitted groups go first. Built on W27c, proved on 1690 s with S008/S010/S012/S055/S056/S058/S060 @130365. If the DB second zone still falls by ~145 s, stop and report.
 codex effort: xhigh
 Mac lane 33 (full fps, seed 130365 en, `program-logs/2026-11-18/lane33/q/unity.log`): S009/S011 (field) Victory at 49% of deadline;
 S008 Defeat on tickets 614.8 s zones 1/2 (:11332), S010 Defeat 863.2 s zones 0/3 (:36088), S012 Defeat 617.8 s (:54188). Windows W6 saw
@@ -455,20 +455,20 @@ SkirmishMatchView.PublicObjectiveHud.cs:196-199 builds targets only for Dismount
 objective target, prove the Move receipt with EditMode tests and non-counted runs on S022, S024 and S040 or S042. Note S047 (truck group 15 service detour 126.6-268.4 s, then ConvoyImpossible 339.2 s) as a candidate cause; no change yet.
 
 ## W36 — Combined pacing sweep on the full ARIA stack, then one deadline per family (2026-11-19)
-status: RESUME (owner: Windows updated, resume 2026-11-19). Paused at 23/29 on local stack 9dfde3121 (missions/win-pacing-stack-sweep f3c7f1afb): all 23 Victory, gate 3 PASS; CE median 39.7% of 525 (keep 525), BT median 49.6% of 540 (proposed 670, accepted in principle).
+status: DONE, decisions taken (f9678edb9): FC 1690/2113/2535 s, BT 540 and CE 525 unchanged. FC deadline branch d0136473a merged 3bf82f16f (2026-11-20).
 Next: (1) finish S042@130365 + FC S009/S011/S031/S033/S035 @130365 on the same stack, push the results file; (2) one data branch off current integration with BT S037-S042 670 s (War/LargeWar scaled as before) and FC only if its median is >50%; authoring + containment, then report the commit; (3) W16. The Mac stays paused; it merges W31d/W27b/W32b + the deadline data on resume.
 Non-counted, local merge of integration + W31d + W27b + W32b: DB CE S019-S024 (525 s) and CC BT S037-S042 (540 s) on 155923 + 130365; FC S009/S011/S031/S033/S035 on 130365.
 Report deadlinePct and gate 3 per run, then propose one deadline per family with the median near 40% (owner target 25-50%). Escort turns (W32/W32b) add 10-90 s per run.
 Then W16 (FC established losses), then W34/W35/W33 (Airport plan).
 
 ## W27c — S038 (CC BT field) ARIA stop 115 EvacuateOriginals on Squad0 (2026-11-19)
-status: READY after W16 (shared ARIA code under the owner's standing OK)
+status: DONE, accepted (579de5136 + results 471779260: Publish never presents a press the input layer would refuse; support stage 2 re-selects, max 3 presses; boarding selects pause 30 s; 210/210 EditMode; S038/S010 Victory @130365); merged e0932ab6c 2026-11-20
 Mac lane 45 (7de2a3c79, contains W27+W32): S038 130365 en Abort ariaStopped:Blocked at 225 s (41.7%), 6/8 evacuated:
 `[AriaBlocked] reason=115 kind=Control intent=EvacuateOriginals` program-logs/2026-11-19/lane45/a/unity.log:630729, `[AriaBlockedControl] control=Squad0` :630745.
 The other 3 S038 jobs and all S039 jobs won. Diagnose (is this W27 cause 1 again, a squad slot off page?), fix with an EditMode test, prove on S038 130365.
 
 ## W37 — City Crossroads CE S045-S048: convoy losses and slow wins (2026-11-19)
-status: READY after W27c
+status: READY after W16 attempt 2
 Mac lane 45 (450 s, W32 build): S043/S044 auto-accepted (33-50%). S045: 36.9/77.8/LOSS/96.8%; S046: 58.0/51.3/53.9/LOSS ObjectiveDeadline 1/2;
 S047: 33.0/71.4/LOSS/60.5%; S048: 50.9/53.8/LOSS/53.4%. Losses are ConvoyImpossible (all trucks lost: lane45 :334020, :531906, :600862) and one deadline (:504203).
 Read-only first: why do the trucks die (route through enemy fire, escorts late, the service detour seen on S047), and is it ARIA or the layout? Then a fix without stat/rule changes.

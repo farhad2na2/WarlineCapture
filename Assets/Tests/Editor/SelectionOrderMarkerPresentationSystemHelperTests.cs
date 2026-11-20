@@ -54,7 +54,8 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
             RunCase(test => test.EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds());
             RunCase(test => test.ShowAttackOrderMarker_FallbackUsesCappedReticleAndHidesWithTargetDeath());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=18");
+            RunCase(test => test.SelectionGlyph_RendersAnOpenCenterAndVisibleStroke());
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=19");
         }
         catch (System.Exception ex)
         {
@@ -691,6 +692,9 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
     public void MarkerPrefabs_UseDistinctKeylinedGlyphs()
     {
         AssertGlyph(VehicleSelectionMarkerPrefabPath, 0, new Color32(54, 216, 228, 255), 0f, 2);
+        var selection = AssetDatabase.LoadAssetAtPath<GameObject>(VehicleSelectionMarkerPrefabPath);
+        Assert.IsNotNull(selection.transform.Find("Model/InfantryGroundRing"));
+        Assert.IsNotNull(selection.transform.Find("Model/VehicleCornerBrackets"));
         AssertGlyph(MoveMarkerPrefabPath, 1, new Color32(85, 207, 98, 255), 0f, 1);
         AssertGlyph(AttackMarkerPrefabPath, 2, new Color32(255, 85, 54, 255), 0.20f, 1);
         AssertGlyph(AttackTargetMarkerPrefabPath, 2, new Color32(255, 85, 54, 255), 0.20f, 1);
@@ -726,6 +730,54 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
         {
             markers.Dispose();
             Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void SelectionGlyph_RendersAnOpenCenterAndVisibleStroke()
+    {
+        const int size = 256;
+        const int captureLayer = 31;
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(VehicleSelectionMarkerPrefabPath);
+        GameObject marker = Object.Instantiate(prefab);
+        GameObject cameraObject = new("Marker Test Camera");
+        var texture = new RenderTexture(size, size, 24, RenderTextureFormat.ARGB32);
+        var pixels = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        RenderTexture previous = RenderTexture.active;
+        try
+        {
+            Transform glyph = marker.transform.Find("Model/InfantryGroundRing");
+            glyph.gameObject.layer = captureLayer;
+            marker.transform.Find("Model/VehicleCornerBrackets").gameObject.SetActive(false);
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.cullingMask = 1 << captureLayer;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.orthographic = true;
+            camera.orthographicSize = 1f;
+            camera.transform.SetPositionAndRotation(new Vector3(0f, 10f, 0f), Quaternion.Euler(90f, 0f, 0f));
+            camera.targetTexture = texture;
+            camera.Render();
+            RenderTexture.active = texture;
+            pixels.ReadPixels(new Rect(0, 0, size, size), 0, 0);
+            pixels.Apply();
+
+            Assert.Less(pixels.GetPixel(size / 2, size / 2).maxColorComponent, 0.05f, "Glyph center must be clear");
+            int cyanPixels = 0;
+            foreach (Color32 pixel in pixels.GetPixels32())
+            {
+                if (pixel.g > pixel.r + 15 && pixel.b > pixel.r + 15)
+                    cyanPixels++;
+            }
+            Assert.Greater(cyanPixels, 60, "The selection stroke must be visible");
+        }
+        finally
+        {
+            RenderTexture.active = previous;
+            Object.DestroyImmediate(cameraObject);
+            Object.DestroyImmediate(texture);
+            Object.DestroyImmediate(pixels);
+            Object.DestroyImmediate(marker);
         }
     }
 

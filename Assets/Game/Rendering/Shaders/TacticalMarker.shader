@@ -40,14 +40,13 @@ Shader "WarlineCapture/Markers/TacticalMarker"
             struct Attributes
             {
                 float3 positionOS : POSITION;
-                float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
             {
                 float4 positionHCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
+                float2 markerPosition : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -80,7 +79,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
                     }
                 }
                 output.positionHCS = TransformObjectToHClip(position);
-                output.uv = input.uv;
+                output.markerPosition = input.positionOS.xy * 1.25;
                 return output;
             }
 
@@ -119,7 +118,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
 
             half4 Frag(Varyings input) : SV_Target
             {
-                float2 p = (input.uv - 0.5) * 1.25;
+                float2 p = input.markerPosition;
                 float distance = _MarkerShape < 0.5 ? SelectionDistance(p)
                     : _MarkerShape < 1.5 ? MoveDistance(p)
                     : AttackDistance(p);
@@ -135,6 +134,7 @@ Shader "WarlineCapture/Markers/TacticalMarker"
                 float pixelDistance = distance / localUnitsPerPixel;
                 float ink = saturate(halfStroke + 0.5 - pixelDistance);
                 float coverage = saturate(halfStroke + keyline + 0.5 - pixelDistance);
+                clip(coverage - 0.001);
                 half3 keylineColor = half3(0.008, 0.013, 0.019);
                 return half4((keylineColor * (coverage - ink) + _BaseColor.rgb * ink) * _BaseColor.a,
                     coverage * _BaseColor.a);

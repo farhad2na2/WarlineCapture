@@ -232,7 +232,7 @@ S075 130365 aborts with 101 intent=Inspect on the foreign-popup path (AriaSkirmi
 handback), which is an escort skill/balance question; look at it together with W32's escort changes. Diagnose and fix with EditMode tests; prove with non-counted runs.
 
 ## W16 — Frontline Control established starts lose: S008/S010/S012 (2026-11-18)
-status: IN PROGRESS, attempt 2 (2026-11-20). Attempt 1 (79d93b2eb, garrison the thinner owned zone) FAILED proof (b3a3b9fcd): DB S008/S012 Defeat, S010 Blocked 115 (fixed by W27c), S060 Victory->Defeat. Keep it unmerged. Attempt 2 (976876e4f): the garrison goal stays chosen until the zone is lost or held, holders are never sent, uncommitted groups go first. Built on W27c, proved on 1690 s with S008/S010/S012/S055/S056/S058/S060 @130365. If the DB second zone still falls by ~145 s, stop and report.
+status: DONE, accepted (attempt 2: f97366308 + results 5b575b363; 213/213 EditMode; non-counted proof 7/9 Victory, DB ~35% of 1690, flicker ~0; S008/S060 lost once and won once each, left to the counted lane); merged 9046869ca 2026-11-20. Attempt 1 79d93b2eb is superseded.
 codex effort: xhigh
 Mac lane 33 (full fps, seed 130365 en, `program-logs/2026-11-18/lane33/q/unity.log`): S009/S011 (field) Victory at 49% of deadline;
 S008 Defeat on tickets 614.8 s zones 1/2 (:11332), S010 Defeat 863.2 s zones 0/3 (:36088), S012 Defeat 617.8 s (:54188). Windows W6 saw

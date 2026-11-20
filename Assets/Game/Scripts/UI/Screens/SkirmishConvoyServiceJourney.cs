@@ -103,7 +103,10 @@ namespace Game.UI.Runtime
             bool exact=selected!=null&&selected.SingleOwnVehicle&&selected.ActorPublicId==OriginalId&&selected.AttemptId==Attempt&&selected.GroupId==GroupId;
             if(Stage==ConvoyServiceStage.Hold&&acceptedServiceHold&&NewHold(model)&&own.HoldActive&&exact)
             {Stage=ConvoyServiceStage.Repair;Epoch++;LastProgress=model.SimulationSeconds;}
-            if(Stage==ConvoyServiceStage.Hold&&model.SimulationSeconds-LastProgress>20)Retry(model.SimulationSeconds,"The truck could not stop safely at the service pad.");
+            // W37b bound (lead): a truck not stopped and quoted within one Hold attempt skips the service detour (was up to 3
+            // destination retries; W37 proof: 0 accepted Holds of 11 detours, each costing 100-130 s). Repair rules unchanged.
+            if(Stage==ConvoyServiceStage.Hold&&model.SimulationSeconds-LastProgress>20)
+            {Failures++;Failure="The truck could not stop safely at the service pad.";Stage=ConvoyServiceStage.Handback;Epoch++;}
             if(Stage==ConvoyServiceStage.Repair&&exact)
             {
                 if(selected.Working||selected.RequestPending){LastProgress=model.SimulationSeconds;LastRepairRequest=selected.IssuedRequestId;}

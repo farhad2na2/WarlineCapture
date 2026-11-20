@@ -457,13 +457,14 @@ namespace Game.Tests.Editor
         [Test]
         public void ChangedEscortOfferEndsTheInFlightEscort()
         {
+            foreach (byte type in new byte[] { 3, 0, 1, 2 })
             foreach (bool receipt in new[] { true, false })
             {
                 var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2,
                     EscortTouch = new AriaObjectiveTouchPlan { GroupId = 7, PublicKey = 33, PresentationEpoch = 1, Action = AriaObjectiveAction.Move,
                         Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 200 } };
                 var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
-                var v = Presented(100);
+                var v = Presented(100); v.ObjectiveType = type;
                 v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
                 v.PublicObjective.Intent = AriaSkirmishIntent.EscortOriginalTruck; v.PublicObjective.SelectGroup = T(5);
                 v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
@@ -471,6 +472,14 @@ namespace Game.Tests.Editor
                     AcceptedOrderRevision = receipt ? 5u : 4u, AcceptedGroupId = receipt ? 7u : 0u, AcceptedPublicKey = receipt ? 33ul : 0ul,
                     AcceptedAction = receipt ? AriaObjectiveAction.Move : AriaObjectiveAction.None };
                 Step(v, ref p, ref t, out var o);
+                if (type != 3)
+                {
+                    // W37b: FC/BT/BA keep the cf5f53bd1 path byte for byte: the in-flight escort moves on to the new offer.
+                    Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyEscortCadence(v));
+                    Assert.AreEqual(8, o.TargetId, "non-CE: the new escort's card, as before W37 (type=" + type + ")");
+                    Assert.AreEqual(2, p.ObjectiveOwner); Assert.AreEqual(0, p.EscortAccepted); Assert.AreEqual(9u, p.EscortTouch.GroupId);
+                    continue;
+                }
                 Assert.AreEqual(5, o.TargetId, "the truck's card: the objective order gets the turn (receipt=" + receipt + ")");
                 Assert.AreEqual(0, p.ObjectiveOwner, "no escort is left in flight");
                 Assert.AreEqual(receipt ? 1 : 0, p.EscortAccepted, "only a displayed receipt for the prior escort counts");

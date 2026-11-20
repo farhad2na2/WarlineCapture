@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
     {
         readonly SkirmishConvoyServiceJourney convoyServiceJourney=new SkirmishConvoyServiceJourney();
         readonly System.Collections.Generic.HashSet<uint> convoyDelivering=new System.Collections.Generic.HashSet<uint>();
+        string convoyHoldTraced;
         bool ConvoyServiceOwnsRepair=>watchSkirmish!=null&&watchSkirmish.TryReadPublicObjectiveForAria(Time.frameCount,out var frame)&&
             frame.Goal?.Perspective==SkirmishPublicGoalPerspective.Escort;
         void ResetConvoyServiceJourney(){convoyServiceJourney.Reset();publicRepairScope=null;}
@@ -30,7 +31,9 @@ namespace Game.UI.Runtime
                 if(frame.Goal.Node(i).Kind==SkirmishPublicGoalNodeKind.DeliveryDestination)
                     foreach(var approach in frame.Approaches)
                         if(approach.InsideGoalFootprint&&approach.GoalId==frame.Goal.Node(i).PublicId)convoyDelivering.Add(approach.GroupId);
+            uint holdRevision=convoyServiceJourney.HoldRevisionAtStart;
             var stage=convoyServiceJourney.Tick(model,selected,acceptedHold,repairButton!=null&&SkirmishPresentedRepairPolicy.HasAcceptedContact(selected,repairButton.GetEntityId().GetHashCode()),convoyDelivering);
+            if(oldStage==ConvoyServiceStage.Hold||stage==ConvoyServiceStage.Hold)TraceConvoyServiceHold(frame,model,selected,holdGoal,holdRevision,oldStage,stage);
             if(oldStage==ConvoyServiceStage.Repair&&stage==ConvoyServiceStage.Hold)publicRepairScope=null;
             if(oldStage==ConvoyServiceStage.None&&(stage==ConvoyServiceStage.Travel||stage==ConvoyServiceStage.EmergencyHold))watchSkirmish.PresentConvoyServiceDiagnosis(null);
             if(stage==ConvoyServiceStage.None)return;
@@ -81,7 +84,9 @@ namespace Game.UI.Runtime
                 Action=stage==ConvoyServiceStage.Hold?AriaObjectiveAction.Hold:AriaObjectiveAction.Move,Intent=AriaSkirmishIntent.ServiceOriginalTruck,
                 ExclusiveGroupSelected=exclusive,SelectGroup=MatchHudSquadTouchNavigation.GroupTarget(watchSquads,group),
                 ClearOtherSelection=view.ExpandedSelectedGroups>0&&!exclusive?MatchHudSquadTouchNavigation.SelectedCardTarget(watchSquads):default,
-                CameraSettled=frame.CameraSettled,GoalInView=service.GroundVisible[destination],GroundFitsPublicGoal=true,
+                // W37b: Hold stops the selected truck where it is (inside the pad radius); like EmergencyHold it needs no
+                // camera focus. W37 proof: 13 of 17 service Holds waited on focus (inView=False) and the 20 s Hold stage expired.
+                CameraSettled=stage==ConvoyServiceStage.Hold||frame.CameraSettled,GoalInView=stage==ConvoyServiceStage.Hold||service.GroundVisible[destination],GroundFitsPublicGoal=true,
                 Focus=ObserveWatchButton(service.FocusButton),Ground=ground,MoveMode=frame.MoveMode,
                 Move=ObserveWatchButton(_commandControlsView?.MoveButton),Hold=ObserveWatchButton(_commandControlsView?.HoldButton),
                 AcceptedOrderRevision=frame.AcceptedOrderRevision,AcceptedGroupId=frame.AcceptedGroup,AcceptedAction=frame.AcceptedAction,
@@ -90,6 +95,26 @@ namespace Game.UI.Runtime
                 ProgressKnown=true,PublicProgressRevision=convoyServiceJourney.ProgressRevision};
             if(!result.Focus.Available)result.Focus=ObservePublicObjectiveMapFocus(service.Model.Service.Destinations[destination].World,view);
             view.PublicObjective=result;
+        }
+
+        // W37b evidence only: why a service Hold does not become a Repair (first failing receipt condition), traced on change.
+        void TraceConvoyServiceHold(AriaPresentedObjectiveFrame frame,UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected,string holdGoal,
+            uint holdRevision,ConvoyServiceStage oldStage,ConvoyServiceStage stage)
+        {
+            if(!Game.Runtime.AriaCommandEvidence.Active&&!Debug.isDebugBuild)return;
+            uint group=convoyServiceJourney.GroupId;var order=model.Order;
+            var own=Array.Find(model.OwnGroups,row=>row.Policy.GroupId==group);
+            var service=model.Service;int holdButton=_commandControlsView?.HoldButton!=null?_commandControlsView.HoldButton.GetEntityId().GetHashCode():0;
+            bool exact=selected!=null&&selected.SingleOwnVehicle&&selected.GroupId==group&&selected.ActorPublicId==convoyServiceJourney.OriginalId;
+            bool inside=own!=null&&SkirmishPublicServiceAcceptance.AllInside(service,own.OwnMemberPositions);
+            string why=!order.Present?"no_order":order.GroupId!=group?"order_group="+order.GroupId:order.Action!=AriaObjectiveAction.Hold?"order_action="+order.Action:
+                order.Revision<=holdRevision?"no_new_hold":!order.Accepted?"hold_refused":frame.AcceptedGoalId!=holdGoal?"goal="+(frame.AcceptedGoalId??"null"):
+                frame.AcceptedContactTargetId!=holdButton?"contact":own==null||!own.HoldActive?"hold_inactive":!exact?"not_exact":"ok";
+            string key=group+"|"+oldStage+">"+stage+"|"+why+"|"+inside+"|"+(own!=null&&own.MoveActive)+"|"+(own!=null&&own.HoldActive)+"|"+exact+"|"+(selected!=null&&selected.Eligible);
+            if(key==convoyHoldTraced)return;
+            convoyHoldTraced=key;
+            float distance=own==null||service==null?-1:Vector2.Distance(new Vector2(own.Policy.WorldX,own.Policy.WorldZ),new Vector2(service.World.x,service.World.z));
+            Debug.Log($"[ConvoyServiceHold] group={group} stage={oldStage}>{stage} why={why} orderRev={order.Revision}>{holdRevision} allInside={inside} moveActive={own!=null&&own.MoveActive} holdActive={own!=null&&own.HoldActive} exact={exact} quoteEligible={selected!=null&&selected.Eligible} distance={distance:F1} failure={convoyServiceJourney.Failure??"-"} t={model.SimulationSeconds:F2}");
         }
     }
 }

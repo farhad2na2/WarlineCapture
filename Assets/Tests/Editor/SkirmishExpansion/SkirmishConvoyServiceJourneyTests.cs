@@ -8,7 +8,7 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishConvoyServiceJourneyTests
     {
-        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();t.TruckInsideTheDestinationIsNotSentToService();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=25 nativeMissionPending=1");}
+        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();t.TruckInsideTheDestinationIsNotSentToService();t.HoldThatNeverStopsTheTruckSkipsTheDetour();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=26 nativeMissionPending=1");}
         static UiSkirmishPublicObjectiveModel Model(int health=60,float x=0)
         {
             var node=new SkirmishPublicGoalNode{PublicId="original.truck",Kind=SkirmishPublicGoalNodeKind.OwnDesignatedSubject,Provenance=SkirmishPublicGoalProvenance.OwnRoster,
@@ -30,6 +30,24 @@ namespace Game.Tests.Editor
         static void AtPad(UiSkirmishPublicObjectiveModel model){model.OwnGroups[0].Policy.WorldX=100;model.OwnGroups[0].OwnMemberPositions=new[]{new Vector2(100,100)};model.OwnGroups[0].HoldActive=true;}
         static void BeginRepair(SkirmishConvoyServiceJourney journey,UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected)
         {journey.Tick(model,null,false,false);AtPad(model);Assert.That(journey.Tick(model,selected,false,false),Is.EqualTo(ConvoyServiceStage.Hold));model.Order=new UiSkirmishPublicOrderReadout{Present=true,Accepted=true,GroupId=7,Action=AriaObjectiveAction.Hold,Revision=1};Assert.That(journey.Tick(model,selected,true,false),Is.EqualTo(ConvoyServiceStage.Repair));}
+        // W37b (lead bound; W37 proof: 0 of 11 service Holds accepted, each detour 100-130 s): one Hold attempt, then the
+        // detour is skipped (Handback, latched) instead of retrying the other service destinations.
+        [Test]
+        public void HoldThatNeverStopsTheTruckSkipsTheDetour()
+        {
+            var model=Model();var journey=new SkirmishConvoyServiceJourney();
+            Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Travel));
+            AtPad(model);model.SimulationSeconds=10;
+            Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Hold));
+            model.SimulationSeconds=29;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Hold),"inside the 20 s Hold budget");
+            model.SimulationSeconds=31;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Handback),"not stopped within one attempt: no retry");
+            Assert.That(journey.Failure,Does.Contain("could not stop"));Assert.That(journey.Failures,Is.EqualTo(1));
+            model.SimulationSeconds=200;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Handback),"latched");
+            // An accepted Hold within the budget still starts the repair (unchanged).
+            var ok=Model();var j2=new SkirmishConvoyServiceJourney();var shown=Selected();BeginRepair(j2,ok,shown);
+            Assert.That(j2.Stage,Is.EqualTo(ConvoyServiceStage.Repair));
+        }
+
         // W27 cause 3 (S068, S043/S045/S047): a handed-back service kept ARIA on a blank objective until the 20 s frame
         // Block. The handback stays latched (no retried service) while the escort objective stays presented.
         [Test]

@@ -149,6 +149,9 @@ namespace Game.UI.Shell.Ecs
 
         // One own vehicle group's ordinary Move to the current objective (view.ObjectiveEscort), through the
         // same select/focus/Move/ground-tap sequence and accepted-order receipt as objective orders.
+        public static bool ConvoyEscortCadence(in AriaSkirmishObservation view) =>
+            view.ObjectiveType == (byte)Game.Simulation.AriaObjectiveType.ConvoyEscort;
+
         static bool StepObjectiveEscort(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
@@ -164,7 +167,8 @@ namespace Game.UI.Shell.Ecs
             // never saw its own receipt and ObjectiveOwner stayed 2 while offers lasted; escorts ran back to back ahead of
             // the objective order. A changed offer ends the in-flight escort (its displayed receipt counts as accepted) and
             // hands the turn back; the next escort starts from the escort turn or an idle frame.
-            if (inFlight && !same && plan.EscortTouch.GroupId != 0)
+            // W37b (lead): CE convoys only. FC/BT/BA keep the cf5f53bd1 path (S010 lost once with this cadence on FC).
+            if (inFlight && !same && plan.EscortTouch.GroupId != 0 && ConvoyEscortCadence(view))
             {
                 var last = plan.EscortTouch;
                 if ((last.CommandPending || last.Stage == 3) && escort.AcceptedOrderRevision > last.OrderRevisionAtIssue &&

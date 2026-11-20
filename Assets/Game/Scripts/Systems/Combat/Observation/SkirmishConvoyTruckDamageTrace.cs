@@ -5,7 +5,6 @@ using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 namespace Game.Runtime.Combat
 {
@@ -44,7 +43,7 @@ namespace Game.Runtime.Combat
         private static void Log(EntityManager em, Entity session, Entity source, Entity target, string kind, int before, int after, float now)
         {
             byte slot = em.GetComponentData<SkirmishConvoyObjectiveTruckComponent>(target).Slot;
-            float3 truckPos = em.HasComponent<LocalTransform>(target) ? em.GetComponentData<LocalTransform>(target).Position : float3.zero;
+            float3 truckPos = Cell(em, target);
             string truckKey = target.Index + ":" + target.Version;
             // Speed from the previous hit sample on this truck (hits arrive about once a second while under fire).
             string speed = "-";
@@ -64,7 +63,7 @@ namespace Game.Runtime.Combat
                 if (em.HasComponent<Faction>(source)) faction = em.GetComponentData<Faction>(source).Id.ToString();
                 if (em.HasComponent<SkirmishAttemptOwnedComponent>(source)) stable = em.GetComponentData<SkirmishAttemptOwnedComponent>(source).StableObjectId.ToString();
                 if (em.HasComponent<SkirmishArmyGroupMembershipComponent>(source)) attackerGroup = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(source).GroupId.ToString();
-                if (em.HasComponent<LocalTransform>(source)) attackerDist = math.distance(em.GetComponentData<LocalTransform>(source).Position, truckPos).ToString("F1");
+                if (em.HasComponent<UnitGrid>(source)) attackerDist = math.distance(Cell(em, source), truckPos).ToString("F1");
             }
 
             uint truckGroup = em.HasComponent<SkirmishArmyGroupMembershipComponent>(target) ? em.GetComponentData<SkirmishArmyGroupMembershipComponent>(target).GroupId : 0u;
@@ -86,10 +85,17 @@ namespace Game.Runtime.Combat
                 " escorts=" + Escorts(em, target, truckGroup, truckPos) + (first ? " first=1" : "") + (kill ? " kill=1" : "") + " t=" + now.ToString("F2"));
         }
 
+        // Positions are grid cells (Game.Runtime.Combat does not reference Unity.Transforms); distances are in cells.
+        private static float3 Cell(EntityManager em, Entity e)
+        {
+            if (!em.HasComponent<UnitGrid>(e)) return float3.zero;
+            int2 c = em.GetComponentData<UnitGrid>(e).Cell; return new float3(c.x, 0f, c.y);
+        }
+
         // Player (faction 1) groups other than the convoy trucks: nearest living member's distance to the hit truck.
         private static string Escorts(EntityManager em, Entity truck, uint truckGroup, float3 truckPos)
         {
-            using var query = em.CreateEntityQuery(typeof(SkirmishArmyGroupMembershipComponent), typeof(Faction), typeof(LocalTransform), typeof(SkirmishUnitRoleComponent));
+            using var query = em.CreateEntityQuery(typeof(SkirmishArmyGroupMembershipComponent), typeof(Faction), typeof(UnitGrid), typeof(SkirmishUnitRoleComponent));
             using var units = query.ToEntityArray(Allocator.Temp);
             var nearest = new Dictionary<uint, (float dist, string role, int alive)>();
             foreach (var unit in units)
@@ -98,7 +104,7 @@ namespace Game.Runtime.Combat
                 if (em.HasComponent<UnitHealth>(unit) && em.GetComponentData<UnitHealth>(unit).Current <= 0) continue;
                 uint group = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId;
                 if (group == 0 || group == truckGroup) continue;
-                float d = math.distance(em.GetComponentData<LocalTransform>(unit).Position, truckPos);
+                float d = math.distance(Cell(em, unit), truckPos);
                 string r = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role.ToString();
                 nearest[group] = nearest.TryGetValue(group, out var v) ? (math.min(v.dist, d), v.role, v.alive + 1) : (d, r, 1);
             }

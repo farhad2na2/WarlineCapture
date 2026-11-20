@@ -1,0 +1,47 @@
+# Board 6 · Selection and target markers
+
+Implementation commits `61e4aa19b` and `3569242f8` on `missions/ui-c-selection-markers`. [Native comparison and art paths](../../AgentReports/MatchUiPolish/Implemented/ui-c-selection-markers/compare.md). The owner approved the visual direction on November 20, 2026.
+
+Evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c-selection-markers/`.
+
+## Compile and EditMode
+
+| Check | Result and evidence |
+| --- | --- |
+| C# compile | 0 `error CS`. Tundra build succeeded at `editmode-final.log:728` and rebuilt the final capture probe at `native-2400.log:708`. |
+| EditMode marker fixture | Passed 19, failed 0 at `editmode-final.log:1538`, including an open-centre pixel check. The intermediate run passed 18 at `editmode-retry.log:1581`. First run failed one old sizing expectation at `editmode.log:1863`, with 17 passed at `editmode.log:2000`. The updated test verifies the rotated building's rendered bounds. |
+
+The existing ARIA Burst diagnostic `BC1016` logged at `editmode-final.log:1257`. The C# error count is zero.
+
+## Native captures
+
+| Capture | Result and evidence |
+| --- | --- |
+| EN 1920×1080, first | The touch actuator declined start at `native-1920.log:2478`. Harness failed at `:2502`. |
+| EN 1920×1080, retry | Infantry selected at `native-1920-retry.log:3049`. The Move marker was missing after a touch and the probe timed out at `:3936`. Harness failed at `:3960`. |
+| EN 1920×1080, corrected glyph assets | Infantry and tank selected at `native-1920-final.log:2150` and `:2345`. Launcher selection timed out at `:3074`. Harness failed at `:3098`. |
+| EN 2400×1080 | Infantry and tank selected at `native-2400.log:3053` and `:3245`. Move accepted at `:4792`, with a frame at `:4907`. Launcher selection stalled again at `:4000`, with result Failed at `:5062`. The first launcher failure is `native-1920-final.log:3074`. |
+| EN 1920×1080, Move follow-up | Move accepted at `native-1920-move.log:3831`, frame at `:3945`. Launcher selection stalled at `:2963` and the overall capture result failed at `:4019`. |
+
+The 1920×1080 infantry mark looked filled in both frames. The first visual evidence is `native-1920-retry.log:3049`, and the repeated evidence is `native-1920-final.log:2150`. Both frames and their run logs are retained. The green Move endpoint is partially visible in the 1920×1080 frame and obscured in the 2400×1080 frame. The capture gate remains open for the launcher, both zooms and Attack.
+
+## Counted-style ARIA regression
+
+The first queue was interrupted during its unjudged warm-up, after the menu journey passed at `aria-warmup-interrupted/unity.log:1208`. PID 2654 was the verified lab Editor and was 3 minutes 50 seconds old. Its exact PID received TERM after the capture revealed art issues. The runner parsed zero jobs at `aria-warmup-interrupted/wrapper.log:7`. The Completed marker was missing at `:8`. The stop record is `aria-warmup-interrupted/stop.txt:1`.
+
+The final queue recorded all six jobs and four wins, with an unchanged source fingerprint at `aria/unity.log:180392`. The launcher reported zero mission table updates at `aria-wrapper.log:13`. There were zero `AriaBlocked` lines.
+
+| Job | Outcome and deadline fraction | Menu journey | Return to MAIN MENU | Gate 3 |
+| --- | --- | --- | --- | --- |
+| Warm-up S031 / 130366 / en | Abort during startup at `aria/unity.log:1439`, summary `:180302` | Passed `:1270` | — | Unjudged |
+| S002 / 130365 / en | Victory `aria/unity.log:151804`, 21.92% `aria-wrapper.log:8` | Passed `aria/unity.log:2299` | Passed `:152062` | **FAIL** `aria/gate3.log:1` |
+| S020 / 130365 / en | Victory, 52.35% `aria/unity.log:159146` | Passed `:152817` | Passed `:159400` | PASS `aria/gate3.log:2` |
+| S031 / 130365 / en | Victory, 46.14% `aria/unity.log:171249` | Passed `:160119` | Passed `:171575` | PASS `aria/gate3.log:3` |
+| S037 / 130365 / en | Victory, 54.19% `aria/unity.log:178966` | Passed `:172372` | Passed `:179220` | PASS `aria/gate3.log:4` |
+| S043 / 130365 / fa-IR | **Abort** `aria/unity.log:180377`, startup timeout `:180092` | Passed `:179924` | No marker | No row |
+
+S002's first Gate 3 failure evidence is `aria/unity.log:151790`. Base Assault logged four unused roles, `role.apc_fast`, `role.breacher`, `role.marksman` and `role.radar`. S043's SubScene import took 460.23 seconds at `aria/unity.log:180058`. The first startup failure is `:180092`.
+
+The queue's generated evidence is archived under `aria/generated/` in the log folder. `SkirmishS002AriaRunHarness.cs:997` rewrote the tracked S002 ARIA-controls screenshot. The generated screenshot was archived and the tracked copy was restored.
+
+Real-player and device acceptance are pending.

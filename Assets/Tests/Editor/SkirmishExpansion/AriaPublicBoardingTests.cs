@@ -63,6 +63,18 @@ namespace Game.Tests.Editor
             m.Presented=true;m.CompletedFrame=23;Assert.IsFalse(SkirmishPresentedBoardingPolicy.AcceptedContact(m));
             m.CompletedFrame=21;m.CompletedScreen=new UnityEngine.Vector2(3,0);Assert.IsFalse(SkirmishPresentedBoardingPolicy.AcceptedContact(m));
         }
+        [Test]public void CarrierCardThatDoesNotSelectIsGivenUpBeforeTheInputLayerStops()
+        {
+            // W27c: a squad-card press that does not take is never presented a fourth time (Blocked 115).
+            var v=View();v.PublicObjective.Action=AriaObjectiveAction.Unload;v.PublicBoarding.Eligible=false;v.ExpandedSelectedGroups=0;
+            v.PublicBoarding.AlreadyMounted=true;v.PublicBoarding.AllMounted=true;v.PublicBoarding.CarrierSelected=false;
+            var p=new AriaSkirmishPlanComponent();var t=Touch();
+            Assert.IsTrue(Step(ref v,ref p,ref t,out var output));Assert.AreEqual(77,output.TargetId,"select the carrier card");
+            t.TargetId=77;t.Attempts=AriaSkirmishPlanSystem.InputPressLimit;
+            Assert.IsFalse(Step(ref v,ref p,ref t,out output));
+            Assert.AreEqual(0,output.TargetId);Assert.IsFalse(p.PublicBoarding.Active);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked,t.Phase);Assert.AreEqual(0,t.Attempts);Assert.AreEqual(0,t.TargetId);
+        }
         [Test]public void StopPreservesAcceptedOrdersAndTimeoutCannotUnloadOutsideExit()
         {
             var v=View();var p=new AriaSkirmishPlanComponent();var t=Touch();Step(ref v,ref p,ref t,out _);

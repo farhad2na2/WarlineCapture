@@ -167,15 +167,13 @@ namespace Game.Editor
             Mesh targetBrackets = SaveMesh("Premium_TargetLock_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.24f, 0.046f, 0.38f));
 
             BuildBuildingSelectionPrefab(selectionMaterial, selectionFillMaterial, rectFrame, rectFill, rectBrackets);
-            BuildVehicleSelectionPrefab(
-                selectionMaterial,
-                unitCapsuleAura,
-                vehicleMaterial,
-                vehicleFillMaterial,
-                vehicleFill,
-                vehiclePlate,
-                vehicleBrackets);
-            BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, moveFill, moveOuterRing, moveInnerRing, moveCenterDot);
+            // The tactical glyph prefabs carry hand-authored art. Keep the legacy
+            // rebuild available for projects still using the old hologram materials.
+            if (!UsesTacticalGlyph(VehicleSelectionPrefabPath))
+                BuildVehicleSelectionPrefab(selectionMaterial, unitCapsuleAura, vehicleMaterial,
+                    vehicleFillMaterial, vehicleFill, vehiclePlate, vehicleBrackets);
+            if (!UsesTacticalGlyph(MoveMarkerPrefabPath))
+                BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, moveFill, moveOuterRing, moveInnerRing, moveCenterDot);
 
 
 
@@ -184,6 +182,13 @@ namespace Game.Editor
             Debug.Log("[PremiumWorldMarkerPrefabBuilder] rebuilt premium world marker prefabs.");
             if (Application.isBatchMode)
                 EditorApplication.Exit(0);
+        }
+
+        private static bool UsesTacticalGlyph(string prefabPath)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            return prefab != null && prefab.GetComponentInChildren<MeshRenderer>(true)?.sharedMaterial?.shader?.name ==
+                "WarlineCapture/Markers/TacticalMarker";
         }
 
         private static void BuildBuildingSelectionPrefab(Material material, Material fillMaterial, Mesh frame, Mesh fill, Mesh brackets)

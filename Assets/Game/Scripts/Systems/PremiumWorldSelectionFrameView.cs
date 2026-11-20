@@ -30,6 +30,37 @@ namespace Game.Runtime
         private float _lastDiagnosticSurfaceY;
         private float _lastDiagnosticTargetHeight;
 
+        internal static GameObject CreateAttackTargetReticle(Transform parent)
+        {
+            Material material = Resources.Load<Material>("TacticalMarkerAttackTarget");
+            if (material == null)
+                return null;
+
+            GameObject reticle = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            reticle.name = "AttackTargetFallbackReticleRuntime";
+            reticle.SetActive(false);
+            reticle.transform.SetParent(parent, false);
+            reticle.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            // The primitive supplies Unity's built-in quad mesh. It is presentation only.
+            Collider collider = reticle.GetComponent<Collider>();
+            collider.enabled = false;
+            if (Application.isPlaying)
+                Destroy(collider);
+            else
+                DestroyImmediate(collider);
+
+            var renderer = reticle.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off;
+            renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+            renderer.allowOcclusionWhenDynamic = false;
+            return reticle;
+        }
+
         public void Configure(
             Vector3 center,
             Quaternion rotation,

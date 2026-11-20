@@ -267,3 +267,6 @@ requested this map repair (CAMPAIGN_MAP_REUSE_POLICY.md:21) and chose "Connect t
 connect the ring's approaches to the street grid, give the ring and approaches continuous sidewalks, and remove stubs that lead
 nowhere. Change visuals only: gameplay surface/grid/op-map data must stay byte-identical, proven with an ARIA regression on accepted
 missions. Lab task `road-connect-oldquarter` runs first in the lab chain after the O001 triage.
+- Owner approved (2026-11-20, "I approve") ONE second Windows checkout, a Windows UI lab. Its Library is seeded by copying the main Windows
+  Library, never rebuilt. ui-a and ui-b run there as W39/W40 in parallel with W37e. The Mac Codex lab keeps the road fix, then ui-c.
+  ui-d stays on HOLD.

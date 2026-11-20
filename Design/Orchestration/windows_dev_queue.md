@@ -483,3 +483,119 @@ Read `Design/Orchestration/notes/operations-gap-table-2026-11-19.md` (sections 3
 - O001 must keep identical facts, checkpoints and settlement. Do not edit `OldQuarter.asset`, whose content hash pins O001 checkpoints.
 - Shared code under the owner's standing OK and the 2026-11-19 Operations decisions. No unit-stat or Skirmish/Campaign rule change.
 - Proof: EditMode for the registry and reducers, then the O001 set on Windows (RunAriaVictory 1102/2102/3102/4102, RunAriaVictoryPersian 9102, RunManualVictory, RunCheckpointResume, RunLifecycle). Compare against the Mac Codex-lab O001 baseline (`windows_dev_results/2026-11-20-o001-baseline.md` on branch missions/ops-o001-baseline, pushed when ready); same or better on every row.
+
+## W39-setup — Windows UI lab checkout (owner-approved second checkout) (2026-11-20) — READY (in parallel with W37e)
+The owner approved ONE second Windows checkout for the match-UI polish work on 2026-11-20 ("I approve"). It runs alongside the main
+Windows checkout, which keeps doing W37e. Rules:
+- Make it a separate full checkout or git worktree of `missions/integration` beside the main one (e.g. `...\WarlineCapture-uilab`).
+  Seed its `Library` by COPYING the main Windows `Library` while no Editor owns the main project: briefly between W37e runs, after
+  verifying no Unity process holds it. Never rebuild either Library, and never delete or clear the main Library. Check free disk space
+  first (at least Library size + 20 GB free). If space is short, report it before copying.
+- Never open any other checkout. One Editor per checkout. The UI lab Editor runs only W39/W40 work.
+- Use the same Windows wrappers with explicit log paths, timeouts and pass markers. A timeout or missing marker is a failed validation.
+- A first open after the copy may reimport changed assets. That is fine; a full reimport means the copy failed, so stop and report.
+
+## W39 — Match UI polish ui-a: Boards 1 and 3, left column spacing and ARIA panel states (2026-11-20) — READY after W39-setup
+Owner-approved boards: `Design/AgentReports/MatchUiPolish/review.md` (mockups + prompts in the same folder). Run in the UI lab checkout.
+Branch `missions/win-w39-ui-side-panels`. Codex effort high.
+## Board 1, left panel spacing (Skirmish and Campaign match HUD)
+- Use one 16 px left safe inset for the selected-unit card, the minimap and the first category card. Leave 24 px between the card and
+  the minimap and 24 px between the minimap and the categories. Use 8 px between category cards, at least 12 px to the command strip,
+  and 16 px above the bottom safe edge.
+- The unit card gets 16 px inner padding, 12 px between sections and a COMMANDS target at least 64 px tall.
+- Fix the audit findings: the minimap must not run behind the selection panel, and the command-strip background must not overlap
+  the rightmost category cards. Check this with a tall selection card and a paginated roster.
+- Touch points: `SCN08_MatchHudContent.prefab`, `MissionHudTouchLayoutView.RefreshLayout`, `MatchHudSelectionPanelView.ContentSize.cs`,
+  `MatchHudSquadTrayView.Pagination.cs`, `MatchHudV3PrefabBuilder` layout.
+
+## Board 3, ARIA panel states (Skirmish and Campaign match HUD)
+- The panel sizes from its content. Three states:
+  - active with 2 actions: Field Guide + Show Me above a red Stop ARIA;
+  - active with 1 action: that action + Stop ARIA;
+  - stopped: header, status and a green Play ARIA.
+- Never reserve empty black space, and never show a bare or unlabelled button. Use 16 px insets, 12 px gaps, 64 px minimum buttons.
+  Show Me uses the native camera-focus glyph, not a play triangle.
+- Touch points: `AriaTutorialBriefingView` (`.Layout.cs`, `.Actions.cs`, `.ButtonIcons.cs`) and
+  `MatchHudAssistantUiSystemHelper.PresentationLifecycle.cs`.
+- Do NOT touch the O001 rail in `OperationsMissionScreenView.cs`. Another branch (O001 triage) is changing it; it comes in a later task.
+- The ARIA input layer clicks these buttons. Keep their GameObject names, button identities and raycast behaviour, so the regression
+  journeys still find them. If an ARIA lookup depends on layout, report it rather than changing ARIA logic.
+
+## Common rules for every UI-polish implementation task (owner approved all six boards on 2026-11-20: "Approve all six")
+Approved board: `Design/AgentReports/MatchUiPolish/review.md`, with mockups and prompts in the same folder. Mockups set the visual direction.
+Native assets, localized copy and live data are authoritative. The "known deviations" listed on each board are NOT targets.
+- Visual and presentation changes only. No gameplay, ARIA decision logic, unit stats, rules, deadlines, objective data or camera
+  behaviour changes. Show Me / focus stays camera-only and never issues troop orders. Keep ARIA Play/Stop visible in every state.
+- Reuse the game's existing font, icons, portraits and the colourful command palette. No developer labels or prototype text.
+  Every new string goes in both EN and FA (`V3UiLocalizationCatalogBuilder` / existing catalogs). Persian must fit right-to-left, with no clipping.
+- Keep every interactive target at least 64 px tall on the 1920x1080 reference. Keep layouts inside the safe area at 1920x1080 and 2400x1080.
+- Commit by explicit path on your branch, in small commits (one per board or concern). Never commit generated/recovery scenes or unrelated prefab churn.
+  If a validation run rewrites a prefab you didn't intend to change, restore it and name the writer.
+
+### Validation (all required; report each separately with log:line)
+1. Compile with 0 `error CS`, then EditMode tests for the touched areas. Add focused tests for layout rules you introduce (insets,
+   minimum target sizes, state → visible-element mapping).
+2. Native captures after the change, EN and FA, at 1920x1080 and 2400x1080, for each state the board covers. Save them under
+   `Design/AgentReports/MatchUiPolish/Implemented/<task>/` with a short `compare.md` placing native and mockup side by side
+   and listing every intentional difference.
+3. ARIA regression on accepted Skirmish missions (Windows: add `--launcher windows`), one counted-style run each:
+   `python3 -B Tools/Missions/run_aria_queue.py --jobs S031:130366:en,S002:130365:en,S020:130365:en,S031:130365:en,S037:130365:en,S043:130365:fa-IR --menu-journey --validation-library --no-table --timeout 30000 --log-dir <your log folder>/aria`
+   The first job is a WARM-UP and is not judged. Each judged job must win, with deadlinePct 20–70, menu journey Passed, return
+   Passed MAIN MENU and no AriaBlocked. Also run `python3 -B Tools/Missions/gate3_objective.py <log>` and require PASS on each judged job.
+   If any of these fails, report it with its first failing line. Don't tune around it, and don't claim done.
+4. A results note in `Design/Orchestration/windows_dev_results/2026-11-20-<task>.md`, committed.
+State plainly that real-player and device acceptance are still pending.
+
+## W40 — Match UI polish ui-b: Boards 2 and 4, objective card, ownership colours and text fit (2026-11-20) — READY after W39
+Run in the UI lab checkout after W39 is pushed. Branch `missions/win-w40-ui-objective-card`, cut from `missions/integration`
+(or from W39's branch if W39 changed shared HUD layout code that W40 needs, and say so). Codex effort high.
+## Board 2, centre information panels (Skirmish)
+- Replace the wide multi-module objective strip with ONE compact top-centre card in the native threat/objective style:
+  a charcoal fill, a 2–3 px warm keyline, 12 px below the resource bar, 16 px padding, about 560x106 px for the English Base Assault (BA) card.
+- Show purpose and next action first, then the timer and essential status, plus at most one gold camera action (64 px+, camera-only).
+- Apply the same order to every objective type: Base Assault (base knowledge and your base HP), Frontline Control (tickets and zones),
+  Breakthrough (corridors and exit), Convoy Escort (convoy progress and destination).
+- Remove the extra stacked instruction bar (S026). Guidance goes in the card or the ARIA panel, not in a second centre bar.
+- Fix the audit findings:
+  - S041: Breakthrough corridor names overflow their frames;
+  - S046: the Materials value crosses its frame.
+- Touch points: `SkirmishMatchView.cs` (BaseObjectives), `.PublicObjectiveHud.cs`, `.Clock.cs`, `.MissionGuidance.cs`.
+  Reuse `MatchHudThreatVisibilityView` styling.
+
+## Board 4, HUD colour consistency
+- Ownership colours:
+  - friendly: green `#49BD62` with a filled shield;
+  - enemy: red-orange `#F45C3B` with a diamond;
+  - neutral: silver `#BBC7CD` with a hollow ring.
+  Use them everywhere ownership appears: zone cards, base chips, YOUR BASE / ENEMY BASE, and in-world base status.
+- Fix the S011 "NEUTRA / L" wrap. Ownership text gets its own line and is sized for localized EN and FA text. Contested state and
+  capture progress stay visible.
+- Touch points: `SkirmishMatchView.PublicObjectiveHud.cs`, `.Observation.cs`, `HudIconButtonView.cs`.
+
+Do not change objective data, timers, tickets or any gameplay. Captures must cover all four objective types (one mission each,
+e.g. S002 BA, S031 FC, S037 BT, S020 CE), in EN and FA.
+
+## Common rules for every UI-polish implementation task (owner approved all six boards on 2026-11-20: "Approve all six")
+Approved board: `Design/AgentReports/MatchUiPolish/review.md`, with mockups and prompts in the same folder. Mockups set the visual direction.
+Native assets, localized copy and live data are authoritative. The "known deviations" listed on each board are NOT targets.
+- Visual and presentation changes only. No gameplay, ARIA decision logic, unit stats, rules, deadlines, objective data or camera
+  behaviour changes. Show Me / focus stays camera-only and never issues troop orders. Keep ARIA Play/Stop visible in every state.
+- Reuse the game's existing font, icons, portraits and the colourful command palette. No developer labels or prototype text.
+  Every new string goes in both EN and FA (`V3UiLocalizationCatalogBuilder` / existing catalogs). Persian must fit right-to-left, with no clipping.
+- Keep every interactive target at least 64 px tall on the 1920x1080 reference. Keep layouts inside the safe area at 1920x1080 and 2400x1080.
+- Commit by explicit path on your branch, in small commits (one per board or concern). Never commit generated/recovery scenes or unrelated prefab churn.
+  If a validation run rewrites a prefab you didn't intend to change, restore it and name the writer.
+
+### Validation (all required; report each separately with log:line)
+1. Compile with 0 `error CS`, then EditMode tests for the touched areas. Add focused tests for layout rules you introduce (insets,
+   minimum target sizes, state → visible-element mapping).
+2. Native captures after the change, EN and FA, at 1920x1080 and 2400x1080, for each state the board covers. Save them under
+   `Design/AgentReports/MatchUiPolish/Implemented/<task>/` with a short `compare.md` placing native and mockup side by side
+   and listing every intentional difference.
+3. ARIA regression on accepted Skirmish missions (Windows: add `--launcher windows`), one counted-style run each:
+   `python3 -B Tools/Missions/run_aria_queue.py --jobs S031:130366:en,S002:130365:en,S020:130365:en,S031:130365:en,S037:130365:en,S043:130365:fa-IR --menu-journey --validation-library --no-table --timeout 30000 --log-dir <your log folder>/aria`
+   The first job is a WARM-UP and is not judged. Each judged job must win, with deadlinePct 20–70, menu journey Passed, return
+   Passed MAIN MENU and no AriaBlocked. Also run `python3 -B Tools/Missions/gate3_objective.py <log>` and require PASS on each judged job.
+   If any of these fails, report it with its first failing line. Don't tune around it, and don't claim done.
+4. A results note in `Design/Orchestration/windows_dev_results/2026-11-20-<task>.md`, committed.
+State plainly that real-player and device acceptance are still pending.

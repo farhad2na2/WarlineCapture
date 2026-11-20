@@ -11,6 +11,7 @@ namespace Game.UI.Runtime
         private MatchOverlayCommandControlsView commands;
         private BuildPlacementConfirmationBarView placement;
         private MatchHudSelectionPanelView selection;
+        private MatchHudSquadTrayView tray;
         private readonly Vector3[] corners=new Vector3[4];
         [SerializeField] private RectTransform dockBorder;
         public RectTransform Minimap => minimap;
@@ -50,12 +51,19 @@ namespace Game.UI.Runtime
                 bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
             commandDockBottom=bottom;
             bool expanded = UiShellRuntimeGateway.TryReadSkirmishContext(out var expandedContext) && expandedContext;
-            // Keep the established left dock. Expanded skirmish raises it above
-            // the slim squad pager, leaving both controls readable and tappable.
-            bottom=Mathf.Max(bottom,expanded ? 300 : 230);
+            // W39 Board 1: the minimap shares the 16 px left safe inset and sits one 24 px
+            // column gap above the category/roster cards. Without a visible tray the
+            // established dock heights remain. A pending placement bar still raises it.
+            float mapBottom=expanded ? 300 : 230;
+            if(tray==null) tray=transform.root.GetComponentInChildren<MatchHudSquadTrayView>(true);
+            if(tray!=null && tray.isActiveAndEnabled)
+                mapBottom=MatchHudSidePanelLayout.MinimapBottom(
+                    TopInHeader((RectTransform)tray.transform)-header.rect.yMin-MatchHudSquadTrayView.CardTopInset,mapBottom);
+            if(placement!=null && placement.HasPendingPlacement && placement.Root.gameObject.activeInHierarchy)
+                mapBottom=Mathf.Max(mapBottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
             minimap.anchorMin=minimap.anchorMax=Vector2.zero;
             minimap.pivot=Vector2.zero;
-            minimap.anchoredPosition=new Vector2(15,bottom);
+            minimap.anchoredPosition=new Vector2(MatchHudSidePanelLayout.Units(MatchHudSidePanelLayout.SafeInsetPx),mapBottom);
             minimap.sizeDelta=new Vector2(320,220);
             if(selection!=null) selection.FitAboveMinimap(minimap);
             if(dockBorder==null)

@@ -60,9 +60,9 @@ namespace Game.UI.Runtime
             fieldRepairAction.gameObject.SetActive(true);fieldRepairAction.interactable=actionable;
             UiLocalizedText.Set(fieldRepairLabel,model.ActionLabel);
         }
-        float FieldRepairContextHeight=>fieldRepairAction!=null&&fieldRepairAction.gameObject.activeSelf?76:0;
+        float FieldRepairContextHeight=>fieldRepairAction!=null&&fieldRepairAction.gameObject.activeSelf?68+SectionGap:0;
         void LayoutFieldRepairContext(ref float y)
-        {if(FieldRepairContextHeight<=0)return;Place(fieldRepairAction.transform as RectTransform,17,y,-34,68);y+=76;}
+        {if(FieldRepairContextHeight<=0)return;Place(fieldRepairAction.transform as RectTransform,CardPadding,y,-2*CardPadding,68);y+=68+SectionGap;}
         void HandleQuotedFieldRepair()
         {
             var shown=presentedFieldRepair;

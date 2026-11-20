@@ -338,7 +338,7 @@ namespace Game.Simulation {
   public static int KindBit(AriaSupportKind kind)=>kind==AriaSupportKind.None?0:1<<((int)kind-1);
   public static int Slots(AriaSupportKind slot0,AriaSupportKind slot1,AriaSupportKind slot2,AriaSupportKind slot3,AriaSupportKind slot4)=>
    (int)slot0|((int)slot1<<SlotBits)|((int)slot2<<(2*SlotBits))|((int)slot3<<(3*SlotBits))|((int)slot4<<(4*SlotBits));
-  public const byte StageDisarm=5,StageDeselect=6,MaxDisarmPresses=2;public const float DisarmSeconds=3f,DeselectSeconds=3f,SettleSeconds=.5f;
+  public const byte StageDisarm=5,StageDeselect=6,MaxDisarmPresses=2,MaxSelectPresses=3;public const float DisarmSeconds=3f,DeselectSeconds=3f,SettleSeconds=.5f;
   public static bool Step(in AriaSupportView view,ref AriaSupportState plan,out AriaSupportDecision output){
    output=default;
    if(plan.Stage==0){
@@ -384,6 +384,10 @@ namespace Game.Simulation {
    }
    if(view.Busy||view.Time>plan.Deadline||!view.EnemyAlive)return ReleaseArmed(view,ref plan,ref output);
    int desired=1<<plan.Slot;bool drone=plan.Kind==(byte)AriaSupportKind.Drone;
+   // W27c (W16 proof S010 130365, Blocked 115 on Move with selectedGroups=0): the unit's selection was lost after
+   // Stage 2 began, so arming Move never took and the input layer stopped ARIA on the third press. Select it again.
+   if(plan.Stage==2&&!OwnSelection(view,plan.Slot)&&!(drone?view.Mode==AriaSupportMode.Scan:view.Mode is AriaSupportMode.Move or AriaSupportMode.Attack))
+    plan.Stage=1;
    if(plan.Stage==1){
     // The page moved under us: the slot no longer shows this support unit.
     if(SlotKind(view.SupportSlots,plan.Slot)!=(AriaSupportKind)plan.Kind){Release(view,ref plan,ref output);return false;}
@@ -391,6 +395,9 @@ namespace Game.Simulation {
     if(!exact){
      if(view.SelectedGroups>0){output.Action=view.ToggleAvailable?AriaSupportAction.ToggleSelected:AriaSupportAction.Waiting;return true;}
      if((view.AvailableSquadMask&desired)==0){Release(view,ref plan,ref output);return false;}
+     // W27c: a card press that does not select the unit is not repeated until the input layer's 115.
+     if(view.CompletedContacts>plan.Actions){plan.Presses++;plan.Actions=view.CompletedContacts;}
+     if(plan.Presses>=MaxSelectPresses){Release(view,ref plan,ref output);return false;}
      output.Action=AriaSupportAction.SelectSlot;output.Slot=plan.Slot;return true;
     }
     plan.Stage=2;

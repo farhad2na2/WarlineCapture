@@ -17,13 +17,13 @@ MonoBehaviour:
   operationMap: {fileID: 11400000, guid: eab21efbe45fc4848958d084dcb8ef3d, type: 2}
   startupConfig: {fileID: 11400000, guid: ba72e07e385d84104a2ae638b4ebd57d, type: 2}
   scanPositions:
-  - {x: 1705.5, y: 0.009179778, z: 805.5}
-  - {x: 1790.5, y: 0.009179778, z: 790.5}
+  - {x: 1703.5, y: 0.009179778, z: 803.5}
+  - {x: 1749.5, y: 0.009179778, z: 749.5}
   - {x: 1882.5, y: -0.0008202214, z: 796.5}
-  evidencePosition: {x: 1860.5, y: 0.009179778, z: 710.5}
+  evidencePosition: {x: 1855.5, y: 0.009179778, z: 705.5}
   exitPosition: {x: 1690.5, y: 0.009179778, z: 700.5}
   patrolRoute:
-  - {x: 1745.5, y: 0.009179778, z: 760.5}
+  - {x: 1738.5, y: 0.009179778, z: 753.5}
   - {x: 1745.5, y: 0.009179778, z: 800.5}
   - {x: 1785.5, y: 0.009179778, z: 760.5}
   forces:
@@ -49,21 +49,21 @@ MonoBehaviour:
     patrol: 0
     wave: 0
   - sourceKey: Unit_Chr_Insurgent_Male_03
-    position: {x: 1825.5, y: 0.009179778, z: 755.5}
+    position: {x: 1819.5, y: 0.009179778, z: 749.5}
     count: 6
     faction: 2
     recon: 0
     patrol: 0
     wave: 0
   - sourceKey: Unit_Chr_Insurgent_Female_01
-    position: {x: 1825.5, y: 0.009179778, z: 759.5}
+    position: {x: 1815.5, y: 0.009179778, z: 749.5}
     count: 2
     faction: 2
     recon: 0
     patrol: 0
     wave: 0
   - sourceKey: Unit_Chr_Insurgent_Male_03
-    position: {x: 1745.5, y: 0.009179778, z: 760.5}
+    position: {x: 1738.5, y: 0.009179778, z: 753.5}
     count: 4
     faction: 2
     recon: 0

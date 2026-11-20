@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
+using Game.Runtime;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -55,7 +56,7 @@ namespace Game.Composition
                     { error = "Insufficient walkable spawn space for " + force.sourceKey; return false; }
                     placements.Add(position);
                 }
-            int index = 0;
+            int index = 0, sceneOwned = 0;
             em.AddBuffer<OperationsReconSpawnRecord>(session);
             uint seed = em.GetComponentData<OperationsReconMissionComponent>(session).Seed;
             var patrolRoute = em.AddBuffer<OperationsReconPatrolWaypoint>(session);
@@ -64,6 +65,10 @@ namespace Game.Composition
                 for (int i = 0; i < force.count; i++)
                 {
                     Entity unit = em.Instantiate(prefabs[force.sourceKey]);
+                    // A live SubScene refresh can unload the prefab's section during the tour.
+                    // These actors belong to the attempt and are destroyed by Operations on return.
+                    if (em.HasComponent<SceneTag>(unit)) sceneOwned++;
+                    SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, unit);
                     float3 position = placements[index++];
                     Set(em, unit, LocalTransform.FromPosition(position));
                     Set(em, unit, new UnitGrid { Cell = Cell(surface, position) });
@@ -95,6 +100,7 @@ namespace Game.Composition
                 }
             em.AddComponentData(session, new OperationsReconWaveComponent
             { WarningSeconds = definition.reinforcementWarningSeconds, EvidenceWarningSeconds = definition.evidenceReinforcementWarningSeconds });
+            UnityEngine.Debug.Log($"[OperationsRoster] phase=Spawned placed={placements.Count} uniqueCells={occupied.Count} inheritedSceneTags={sceneOwned}");
             return true;
         }
 

@@ -123,5 +123,9 @@ namespace Game.UI.Shell.Contracts.Ecs
         // W37c count (accepted order already at the goal) beside the fresh-Move count, for the evidence trace.
         public byte TruckReleased, TruckReleaseReason, TruckReleaseEscorts, TruckReleaseCapable, TruckReleaseEscortsOld;
         public int TruckReleases;
+        // W37e: 1 while the escort started by the escort turn after an accepted CE truck order is in flight.
+        public byte EscortTurnGuard;
+        // W37e: CE finished-objective latches released because the observer's choice moved away (evidence count).
+        public int ObjectiveLatchReleases;
     }
 }

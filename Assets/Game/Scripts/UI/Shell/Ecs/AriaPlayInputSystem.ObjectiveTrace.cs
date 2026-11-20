@@ -24,7 +24,7 @@ namespace Game.UI.Shell.Ecs
         private int tracedObjectiveScore;
         private byte tracedRocketeerStage; private int tracedCoverageDone, tracedTruckReleases;
         private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none", "truck_first" };
-        private string tracedLatch;
+        private string tracedLatch; private int tracedLatchReleases;
 
         private void TraceObjective()
         {
@@ -44,7 +44,7 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveStage = tracedObjectiveFailures = tracedObjectiveAccepted = tracedEscortFailures = tracedEscortAccepted = 0;
                 tracedObjectiveGroup = tracedEscortGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
                 tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0; tracedTruckReleases = 0;
-                tracedLatch = null;
+                tracedLatch = null; tracedLatchReleases = 0;
                 Debug.Log($"{head} event=start presented={o.Presented && o.Supported} frameReason={v.ObjectiveFrameReason} infantry={v.Infantry} groups={v.ExpandedTotalGroups} t={t:F2}");
             }
             if (p.ObjectiveFrameAction != tracedObjectiveFrameAction)
@@ -59,6 +59,9 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveGroup = o.GroupId; tracedObjectiveKey = o.PublicKey; tracedObjectiveAction = o.Action;
                 Debug.Log($"{head} event=choice group={o.GroupId} goal={o.PublicKey:X} action={o.Action} reason={o.Reason} intent={o.Intent} inView={o.GoalInView} ground={o.Ground.Available} t={t:F2}");
             }
+            if (p.ObjectiveLatchReleases > tracedLatchReleases)
+                Debug.Log($"[ObjectiveLatch] event=released releases={p.ObjectiveLatchReleases} objective={o.GroupId}/{o.PublicKey:X}/{o.Action} accepted={o.AcceptedGroupId}/{o.AcceptedPublicKey:X}/{o.AcceptedAction} t={t:F2}");
+            tracedLatchReleases = p.ObjectiveLatchReleases;
             TraceObjectiveLatch(v, p, t);
             if (p.ObjectiveTouch.Stage != tracedObjectiveStage)
             {

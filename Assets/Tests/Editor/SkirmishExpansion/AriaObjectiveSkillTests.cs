@@ -38,11 +38,12 @@ namespace Game.Tests.Editor
             t.ChangedEscortOfferEndsTheInFlightEscort();
             t.ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound();
             t.LaterTruckOrdersAndServiceOrdersGoFirst();
+            t.ReofferedMoveAfterTheChoiceMovedAwayIsANewOrder();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
             t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
             t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=25");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=26");
         }
 
         // ---------- pure policy ----------
@@ -635,10 +636,86 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(1, s.ObjectiveEscortTurn, "the escort turn waits for the end of the service");
                 Assert.IsTrue(AriaSkirmishPlanSystem.ConvoyServiceHolding(v));
             }
+            // W37e (gate 3): the escort turn after an accepted truck order starts a guarded escort ...
+            {
+                var v = View(200, AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Move);
+                var s = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveEscortTurn = 1,
+                    ObjectiveTouch = new AriaObjectiveTouchPlan { GroupId = 11, PublicKey = 22, Action = AriaObjectiveAction.Move, PresentationEpoch = 1, Stage = 4 } };
+                t = observing;
+                Step(v, ref s, ref t, out o);
+                Assert.AreEqual(8, o.TargetId, "escort turn after the accepted truck order"); Assert.AreEqual(1, s.EscortTurnGuard);
+                // ... that a later truck Move does not interrupt ...
+                v.PublicObjective.GroupId = 12; v.PublicObjective.SelectGroup = T(6); v.Frame++;
+                Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(v, s));
+                Step(v, ref s, ref t, out o);
+                Assert.AreNotEqual(6, o.TargetId, "guarded escort keeps the turn"); Assert.AreEqual(2, s.ObjectiveOwner); Assert.AreEqual(1, s.TruckReleases);
+                // ... but a truck Hold or a service order does.
+                foreach (var (intent, action) in new[] { (AriaSkirmishIntent.EscortOriginalTruck, AriaObjectiveAction.Hold), (AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Move) })
+                {
+                    var g = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveOwner = 2, EscortTurnGuard = 1, EscortTouch = InFlight() }; t = observing;
+                    var w = View(200, intent, action);
+                    Step(w, ref g, ref t, out o);
+                    Assert.AreEqual(5, o.TargetId, intent + "/" + action + " pre-empts the guarded escort"); Assert.AreEqual(0, g.ObjectiveOwner); Assert.AreEqual(0, g.EscortTurnGuard);
+                }
+            }
             // FC/BT: no service/cadence rule (cf5f53bd1 path).
             {
                 var v = View(100, AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Hold); v.ObjectiveType = 1;
                 Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyServiceOrder(v)); Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(v, default));
+            }
+        }
+
+        // W37e (W37d S046/S048: a truck's identical Move re-offered after its accepted Move was never re-tapped): replay
+        // Move -> Hold/None -> Move. CE releases the finished latch once the choice moved away; FC keeps it.
+        [Test]
+        public void ReofferedMoveAfterTheChoiceMovedAwayIsANewOrder()
+        {
+            AriaSkirmishObservation View(byte type, float time, uint group, AriaObjectiveAction action)
+            {
+                var v = Presented(time); v.ObjectiveType = type; v.Frame = (int)(time * 10);
+                v.PublicObjective.GroupId = group; v.PublicObjective.PublicKey = group == 0 ? 0ul : 22ul; v.PublicObjective.Action = action;
+                v.PublicObjective.Intent = AriaSkirmishIntent.EscortOriginalTruck; v.PublicObjective.SelectGroup = T(5);
+                return v;
+            }
+            AriaObjectiveTouchPlan Accepted() => new AriaObjectiveTouchPlan { GroupId = 11, PublicKey = 22, Action = AriaObjectiveAction.Move,
+                PresentationEpoch = 1, Stage = 4, OrderRevisionAtIssue = 4 };
+            var observing = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            foreach (var away in new[] { AriaObjectiveAction.Hold, AriaObjectiveAction.None })
+            {
+                var p = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveTouch = Accepted() }; var t = observing;
+                // While the observer keeps choosing the accepted Move, it is not re-issued (latched, unchanged).
+                Step(View(3, 100, 11, AriaObjectiveAction.Move), ref p, ref t, out var o);
+                Assert.AreNotEqual(5, o.TargetId, "accepted Move still chosen: latched"); Assert.AreEqual(4, p.ObjectiveTouch.Stage);
+                // The choice moves away (a truck Hold that is not ready yet, or None) ...
+                p.ObjectiveRetryAt = 105; t = observing;
+                Step(View(3, 101, away == AriaObjectiveAction.None ? 0u : 11u, away), ref p, ref t, out o);
+                Assert.AreNotEqual(5, o.TargetId, away + ": nothing ordered yet"); Assert.AreEqual(1, p.ObjectiveLatchReleases); Assert.AreEqual(0, p.ObjectiveTouch.Stage);
+                // ... and the same Move offered again is a new order.
+                t = observing;
+                Step(View(3, 106, 11, AriaObjectiveAction.Move), ref p, ref t, out o);
+                Assert.AreEqual(5, o.TargetId, away + " then Move: the truck's Move is ordered again");
+            }
+            // Another accepted order shown for the group (here its Hold) also releases the latch.
+            {
+                var p = new AriaSkirmishPlanComponent { TruckReleases = 1, ObjectiveTouch = Accepted() }; var t = observing;
+                var v = View(3, 100, 11, AriaObjectiveAction.Move);
+                v.PublicObjective.AcceptedGroupId = 11; v.PublicObjective.AcceptedPublicKey = 22; v.PublicObjective.AcceptedAction = AriaObjectiveAction.Hold;
+                v.PublicObjective.AcceptedOrderRevision = 9;
+                Step(v, ref p, ref t, out var o);
+                Assert.AreEqual(5, o.TargetId, "the group's other accepted order releases the latch"); Assert.AreEqual(1, p.ObjectiveLatchReleases);
+                // The Move's own receipt does not.
+                Assert.IsFalse(AriaSkirmishPlanSystem.ReleaseFinishedObjective(View(3, 100, 11, AriaObjectiveAction.Move), Accepted()));
+                var own = View(3, 100, 11, AriaObjectiveAction.Move);
+                own.PublicObjective.AcceptedGroupId = 11; own.PublicObjective.AcceptedPublicKey = 22; own.PublicObjective.AcceptedAction = AriaObjectiveAction.Move; own.PublicObjective.AcceptedOrderRevision = 5;
+                Assert.IsFalse(AriaSkirmishPlanSystem.ReleaseFinishedObjective(own, Accepted()));
+            }
+            // FC keeps the latch (cf5f53bd1 path): Move -> None -> Move is not re-issued.
+            {
+                var p = new AriaSkirmishPlanComponent { ObjectiveTouch = Accepted() }; var t = observing;
+                Step(View(1, 101, 0, AriaObjectiveAction.None), ref p, ref t, out var o);
+                t = observing;
+                Step(View(1, 106, 11, AriaObjectiveAction.Move), ref p, ref t, out o);
+                Assert.AreNotEqual(5, o.TargetId, "FC: latched as before"); Assert.AreEqual(0, p.ObjectiveLatchReleases); Assert.AreEqual(4, p.ObjectiveTouch.Stage);
             }
         }
 

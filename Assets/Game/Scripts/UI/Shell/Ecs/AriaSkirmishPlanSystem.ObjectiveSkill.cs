@@ -68,6 +68,8 @@ namespace Game.UI.Shell.Ecs
             // escorts, and while the truck is held or repaired no escort, support or coverage turn re-selects another group
             // (W37c: 5 of 5 service Holds expired with escort Moves or a transport-heli support order taking the turns).
             bool service = ConvoyServiceOrder(view), serviceHold = ConvoyServiceHolding(view);
+            if (plan.ObjectiveOwner != 2) plan.EscortTurnGuard = 0;
+            if (ConvoyEscortCadence(view) && ReleaseFinishedObjective(view, plan.ObjectiveTouch)) { plan.ObjectiveTouch = default; plan.ObjectiveLatchReleases++; }
             // An escort order already in flight finishes (or fails) before anything else re-selects squads.
             if (plan.ObjectiveOwner == 2 && StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
             if (StepPublicBoarding(view, ref plan, ref touch, ref output)) return;
@@ -94,7 +96,13 @@ namespace Game.UI.Shell.Ecs
             if (!pending && !service && plan.ObjectiveEscortTurn != 0)
             {
                 plan.ObjectiveEscortTurn = 0;
-                if (StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
+                if (StepObjectiveEscort(view, ref plan, ref touch, ref output))
+                {
+                    // W37e (lead, gate 3): CE's escort turn after an accepted truck order is not interrupted by a later
+                    // truck order (only service orders and a truck Hold pre-empt it); it ends on its own receipt or limits.
+                    if (plan.ObjectiveOwner == 2 && ConvoyEscortCadence(view)) plan.EscortTurnGuard = 1;
+                    return;
+                }
             }
             var supportView = view;
             supportView.ObjectiveSupport.InfantryTarget = Game.Simulation.AriaObjectiveSkillPolicy.RifleTarget(
@@ -114,7 +122,8 @@ namespace Game.UI.Shell.Ecs
             if (!pending && wants && ready && ConvoyEscortCadence(view) && !service)
             {
                 bool first = plan.TruckReleases == 0, bound = TruckBoundExpired(view, plan);
-                if (first && !bound && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
+                // W37e: a truck Hold (dwell at the destination) is never put behind escorts (it also ends an escort in flight).
+                if (first && !bound && objective.Action != AriaObjectiveAction.Hold && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
                 ReleaseTruck(view, ref plan, !first ? (byte)4 : bound ? (byte)2 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : (byte)3);
             }
             if (pending || wants && ready)
@@ -169,6 +178,19 @@ namespace Game.UI.Shell.Ecs
 
         public const float ConvoyTruckReleaseSeconds = 45f;
 
+        // W37e (lead; W37d: 4 CE deadline losses ended on a truck's identical Move re-offered after its accepted Move and never
+        // re-tapped). A finished objective (accepted, Stage 4) stays latched only while the observer keeps choosing it: once
+        // the choice moves away (None, Hold, another goal or group) or the group shows another accepted order, the latch is
+        // released and the same Move offered again is a new order. CE only (FC/BT/BA keep the cf5f53bd1 latch).
+        public static bool ReleaseFinishedObjective(in AriaSkirmishObservation view, in AriaObjectiveTouchPlan finished)
+        {
+            if (finished.Stage != 4 || finished.CommandPending) return false;
+            var o = view.PublicObjective;
+            if (o.GroupId != finished.GroupId || o.PublicKey != finished.PublicKey || o.Action != finished.Action) return true;
+            return o.AcceptedGroupId == finished.GroupId && o.AcceptedOrderRevision > finished.OrderRevisionAtIssue &&
+                (o.AcceptedPublicKey != finished.PublicKey || o.AcceptedAction != finished.Action);
+        }
+
         // The damaged truck's service journey order (Move/Hold to the pad, emergency Hold, Repair): never behind escorts.
         public static bool ConvoyServiceOrder(in AriaSkirmishObservation view)
         {
@@ -184,9 +206,12 @@ namespace Game.UI.Shell.Ecs
 
         // W37d: an escort in flight hands the turn back now: for any service order, for a truck order once one truck order
         // was released, and for the first truck order exactly at its 45 s bound (even with the same offer still in flight).
+        // W37e: the escort turn after an accepted truck order (EscortTurnGuard) is interrupted only by a service order or a
+        // truck Hold (a truck in danger or dwelling at the destination comes first), not by a later truck Move.
         public static bool ConvoyTruckFirst(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan) =>
             ConvoyEscortCadence(view) && (ConvoyServiceOrder(view) ||
-                ObjectiveOrderWaiting(view, plan) && (plan.TruckReleases > 0 || TruckBoundExpired(view, plan)));
+                ObjectiveOrderWaiting(view, plan) && (view.PublicObjective.Action == AriaObjectiveAction.Hold ||
+                    plan.EscortTurnGuard == 0 && (plan.TruckReleases > 0 || TruckBoundExpired(view, plan))));
 
         static void TrackTruckWait(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan)
         {
@@ -256,7 +281,7 @@ namespace Game.UI.Shell.Ecs
                     if (plan.EscortFailures > 0) plan.EscortFailures--;
                     touch.LastProgressAt = view.Time;
                 }
-                plan.ObjectiveOwner = 0; plan.EscortTouch = default;
+                plan.ObjectiveOwner = 0; plan.EscortTouch = default; plan.EscortTurnGuard = 0;
                 if (!ConvoyServiceOrder(view)) ReleaseTruck(view, ref plan, plan.TruckReleases > 0 ? (byte)4 : (byte)2);
                 return false;
             }

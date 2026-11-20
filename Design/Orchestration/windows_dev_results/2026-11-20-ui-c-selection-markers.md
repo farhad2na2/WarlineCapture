@@ -45,3 +45,17 @@ S002's first Gate 3 failure evidence is `aria/unity.log:151790`. Base Assault lo
 The queue's generated evidence is archived under `aria/generated/` in the log folder. `SkirmishS002AriaRunHarness.cs:997` rewrote the tracked S002 ARIA-controls screenshot. The generated screenshot was archived and the tracked copy was restored.
 
 Real-player and device acceptance are pending.
+
+## Board 6 follow-up
+
+The follow-up is on `missions/ui-c-fix-selection-markers`, based on `91f0dbfc1`. Implementation commit `dc523ad` makes the capture fixture use the visible Continue and launcher guidance targets, records screen and UI hit information, and sends zoom through HUD touches. The capture gate still requires all eight frames at the requested dimensions. The selection shader uses quad UVs and limits ink and keyline coverage around the ring and four outward ticks. This revision has no native capture evidence yet.
+
+Follow-up evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c-fix-selection-markers/`.
+
+| Check | Result and evidence |
+| --- | --- |
+| C# compile and EN 1920×1080 launch | Failed before the harness started. The first compiler error is `native-1920.log:2120`. An escaped string in the new tap diagnostic caused the failure. The quoting is corrected in `dc523ad` and awaits a fresh compile. The process sample shows the startup script refresh entering a native modal at `startup-dialog.sample:54` and `:58`. The verified lab Editor exited after TERM and the wrapper returned 143 at `stop.txt:1`. |
+| Native capture gate and EditMode | Pending after the startup-dialog stop. The existing comparison frames and the original gate failures above remain the latest completed native evidence. The revised infantry ring and launcher tap are unverified. |
+| Counted-style ARIA regression | Pending. The follow-up did not launch the queue, including the S002 and S043 retries. The prior S002 Gate 3 failure at `aria/unity.log:151790` and S043 startup timeout at `aria/unity.log:180092` are under the original evidence root. |
+
+The prior 2400×1080 log shows that the launcher lesson had a world target at `native-2400.log:3337` and the fixture timed out at `:4000`. There was no world gesture between the lesson’s Continue touch and the timeout. The follow-up needs a new native run to establish whether an ordinary tap can select the launcher at each aspect ratio.

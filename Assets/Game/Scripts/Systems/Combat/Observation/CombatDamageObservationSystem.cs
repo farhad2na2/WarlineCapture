@@ -31,6 +31,7 @@ namespace Game.Runtime.Combat
 
         public static void TraceSkirmishBaseDamage(EntityManager em, Entity source, Entity target, string kind, int before, int after)
         {
+            SkirmishConvoyTruckDamageTrace.Trace(em, source, target, kind, before, after); // W37 diagnosis: CE truck hits, log only
             if (before <= after || !em.Exists(target) || !em.HasComponent<SkirmishAttemptOwnedComponent>(target) || !em.HasComponent<SkirmishObjectiveRoleComponent>(target)) return;
             var targetRole = em.GetComponentData<SkirmishObjectiveRoleComponent>(target).Role;
             if (targetRole != SkirmishObjectiveRoleKind.PlayerBase && targetRole != SkirmishObjectiveRoleKind.EnemyBase) return;

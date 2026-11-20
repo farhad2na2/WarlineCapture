@@ -157,6 +157,18 @@ namespace Game.Simulation
         public bool CanMove, Originals, Done, Skipped, Target;
         // W32: the group the objective chooser currently orders; an escort never re-tasks it.
         public bool Chosen;
+        // W16 attempt 2 (garrison offers only): Holding = its accepted order is active at another zone (it holds
+        // that zone); Committed = its accepted order goes to the committed zone. Holders are never sent.
+        public bool Holding, Committed;
+    }
+
+    // W16 attempt 2: the FC garrison zone stays chosen until it is lost or a group arrives and holds it, instead of
+    // being recomputed (and flipped back to the committed zone) whenever the enemy wave contests the committed zone.
+    public struct AriaGarrisonState
+    {
+        public string Zone, Committed;
+        public uint Group;   // the group offered the garrison Move (0 = none yet, or its offer expired)
+        public bool Ordered; // that group's Move was accepted: other escorts return to the committed zone
     }
 
     public static class AriaObjectiveEscortPolicy
@@ -184,22 +196,38 @@ namespace Game.Simulation
 
         public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates) => Pick(candidates, AriaObjectiveType.None);
 
-        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates, AriaObjectiveType type)
+        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates, AriaObjectiveType type) => Pick(candidates, type, false);
+
+        // Garrison: never a group holding another zone; a group not already sent to the committed zone goes first.
+        public static int Pick(IReadOnlyList<AriaEscortCandidate> candidates, AriaObjectiveType type, bool garrison)
         {
             int best = -1;
             if (candidates == null) return best;
             for (int i = 0; i < candidates.Count; i++)
             {
                 var c = candidates[i];
-                if (!Eligible(c, type) || c.Done || c.Skipped || !c.Target) continue;
-                if (best < 0 || c.GroupId < candidates[best].GroupId) best = i;
+                if (!Eligible(c, type) || c.Done || c.Skipped || !c.Target || garrison && c.Holding) continue;
+                if (best < 0) { best = i; continue; }
+                var b = candidates[best];
+                if (garrison && b.Committed != c.Committed) { if (!c.Committed) best = i; continue; }
+                if (c.GroupId < b.GroupId) best = i;
             }
             return best;
         }
 
+        // The garrison offer went to this group (the helper calls this after Pick, for the garrison goal only).
+        public static void BindGarrison(ref AriaGarrisonState state, uint group) { if (state.Group == 0) state.Group = group; }
+
         // FC: the zone own combat infantry is committed to (else the chosen or first unowned zone).
         // BT: the corridor own infantry is opening; the exit once it is open. CE: the delivery destination.
         public static string Goal(SkirmishPublicGoalSnapshot goal, IReadOnlyList<SkirmishPublicPlayerGroup> groups, string chosen)
+        {
+            var garrison = default(AriaGarrisonState);
+            return Goal(goal, groups, chosen, ref garrison);
+        }
+
+        public static string Goal(SkirmishPublicGoalSnapshot goal, IReadOnlyList<SkirmishPublicPlayerGroup> groups, string chosen,
+            ref AriaGarrisonState garrison)
         {
             if (goal == null || goal.Outcome != SkirmishOutcomeKind.None) return null;
             var type = AriaObjectiveSkillPolicy.TypeOf(goal.Perspective);
@@ -223,9 +251,10 @@ namespace Game.Simulation
                 if (node.Contested) count += 2;
                 if (count > most) { most = count; committed = node.PublicId; }
             }
-            if (committed != null && type == AriaObjectiveType.FrontlineControl)
+            if (type != AriaObjectiveType.FrontlineControl) garrison = default;
+            else if (committed != null)
             {
-                string thin = Garrison(goal, groups, committed);
+                string thin = Garrison(goal, groups, committed, ref garrison);
                 if (thin != null) return thin;
             }
             if (committed != null) return committed;
@@ -244,8 +273,28 @@ namespace Game.Simulation
         // zone, the second owned zone had no committed group, and the enemy's single wave took it unopposed at ~141 s
         // (then held two zones for 500 s). While the committed zone is ours and uncontested, escorts garrison the
         // other owned, uncontested zone that has fewer own groups (any domain) moving to or holding it.
-        static string Garrison(SkirmishPublicGoalSnapshot goal, IReadOnlyList<SkirmishPublicPlayerGroup> groups, string committed)
+        // Attempt 1 failed (W16 proof): the choice was recomputed every frame and fell back to the committed zone
+        // whenever the wave contested it, so the garrison offer was re-issued every 11-22 s and never arrived.
+        // Attempt 2: once chosen, the zone stays chosen until it is lost or an own group arrives and holds it; after
+        // the garrisoning group's Move is accepted, other escorts return to the committed zone (null here).
+        static string Garrison(SkirmishPublicGoalSnapshot goal, IReadOnlyList<SkirmishPublicPlayerGroup> groups, string committed,
+            ref AriaGarrisonState state)
         {
+            state.Committed = committed;
+            if (state.Zone != null)
+            {
+                bool owned = false;
+                for (int i = 0; i < goal.NodeCount; i++)
+                {
+                    var node = goal.Node(i);
+                    if (node.PublicId == state.Zone)
+                        owned = node.Kind == SkirmishPublicGoalNodeKind.CaptureZone && node.OwnerKnown && node.OwnerFaction == goal.ObserverFaction;
+                }
+                if (!owned || Groups(groups, state.Zone) > 0) { state = new AriaGarrisonState { Committed = committed }; return null; }
+                // The garrisoning group died before arriving: offer the zone again.
+                if (state.Group != 0 && !Alive(groups, state.Group)) { state.Group = 0; state.Ordered = false; }
+                return state.Ordered ? null : state.Zone;
+            }
             bool committedHeld = false;
             for (int i = 0; i < goal.NodeCount; i++)
             {
@@ -264,7 +313,16 @@ namespace Game.Simulation
                 int count = Groups(groups, node.PublicId);
                 if (count < fewest) { fewest = count; thin = node.PublicId; }
             }
+            if (thin != null) state = new AriaGarrisonState { Zone = thin, Committed = committed };
             return thin;
+        }
+
+        static bool Alive(IReadOnlyList<SkirmishPublicPlayerGroup> groups, uint group)
+        {
+            if (groups != null)
+                foreach (var g in groups)
+                    if (g != null && g.GroupId == group && g.Own && g.Living) return true;
+            return false;
         }
 
         static int Groups(IReadOnlyList<SkirmishPublicPlayerGroup> groups, string zone)

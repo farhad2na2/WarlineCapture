@@ -36,7 +36,9 @@ namespace Game.Tests.Editor
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=19");
+            t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
+            t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=21");
         }
 
         // ---------- pure policy ----------
@@ -168,6 +170,62 @@ namespace Game.Tests.Editor
             Assert.AreEqual("zone.c", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 0, contestedC: false), attacking, null), "attack support unchanged");
             // Not FC: unchanged.
             Assert.AreEqual("corridor.a", AriaObjectiveEscortPolicy.Goal(Breakthrough(false, false), holding, null));
+        }
+
+        [Test]
+        public void FrontlineGarrisonZoneStaysChosenUntilHeldOrLost()
+        {
+            SkirmishPublicPlayerGroup G(uint id, string goal, bool infantry) => new SkirmishPublicPlayerGroup
+            { GroupId = id, Own = true, Living = true, CombatInfantry = infantry, Dismounted = infantry, AcceptedOrderActive = goal != null, AcceptedGoalId = goal };
+            var holding = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(2, null, true), G(3, null, false) };
+            var s = default(AriaGarrisonState);
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), holding, null, ref s));
+            Assert.AreEqual("zone.b", s.Zone); Assert.AreEqual("zone.a", s.Committed);
+            // W16 proof (attempt 1): the wave contesting zone.a flipped every escort back to zone.a.
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false, contestedA: true), holding, null), "stateless: flips");
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false, contestedA: true), holding, null, ref s),
+                "the chosen garrison zone is kept while it is ours and nobody holds it");
+            // The garrisoning group's Move is accepted: other escorts return to the committed zone; the choice is kept.
+            AriaObjectiveEscortPolicy.BindGarrison(ref s, 3); s.Ordered = true;
+            AriaObjectiveEscortPolicy.BindGarrison(ref s, 2);
+            Assert.AreEqual(3u, s.Group, "the first bound group keeps the garrison");
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false, contestedA: true), holding, null, ref s));
+            Assert.AreEqual("zone.b", s.Zone);
+            // It dies before arriving: zone.b is offered again.
+            var died = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(2, null, true) };
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false, contestedA: true), died, null, ref s));
+            Assert.AreEqual(0u, s.Group); Assert.IsFalse(s.Ordered);
+            // A group arrives and holds zone.b: the choice ends (balanced, committed zone).
+            var arrived = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(3, "zone.b", false) };
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), arrived, null, ref s));
+            Assert.IsNull(s.Zone);
+            // zone.b is lost: the choice ends.
+            s = default;
+            AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), holding, null, ref s); Assert.AreEqual("zone.b", s.Zone);
+            Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 2, 2, false), holding, null, ref s));
+            Assert.IsNull(s.Zone);
+            // Not FC: no garrison state.
+            s = new AriaGarrisonState { Zone = "zone.b" };
+            Assert.AreEqual("corridor.a", AriaObjectiveEscortPolicy.Goal(Breakthrough(false, false), holding, null, ref s));
+            Assert.IsNull(s.Zone);
+        }
+
+        [Test]
+        public void GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups()
+        {
+            AriaEscortCandidate C(uint id) => new AriaEscortCandidate
+            { GroupId = id, Role = SkirmishRoleKind.Tank, Domain = SkirmishPopulationCategory.Ground, CanMove = true, Target = true };
+            var holder = C(1); holder.Holding = true;
+            var committed = C(2); committed.Committed = true;
+            var list = new List<AriaEscortCandidate> { holder, committed, C(4) };
+            // W16 proof S060: the group holding zone A was sent to garrison zone B and the chooser then swapped holders.
+            Assert.AreEqual(4u, list[AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl, true)].GroupId);
+            Assert.AreEqual(1u, list[AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl)].GroupId, "other escorts unchanged");
+            list.RemoveAt(2);
+            Assert.AreEqual(2u, list[AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl, true)].GroupId,
+                "a group sent to the committed zone only when no other is free");
+            list.RemoveAt(1);
+            Assert.AreEqual(-1, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl, true), "never the holder");
         }
 
         [Test]
@@ -386,11 +444,11 @@ namespace Game.Tests.Editor
         static SkirmishPublicGoalNode Marker(string id, SkirmishPublicGoalNodeKind kind, float x) => new SkirmishPublicGoalNode
         { PublicId = id, Kind = kind, Provenance = SkirmishPublicGoalProvenance.PublicObjective, PositionKnown = true, WorldX = x, WorldZ = 20 };
 
-        static SkirmishPublicGoalSnapshot Frontline(int a, int b, int c, bool contestedC)
+        static SkirmishPublicGoalSnapshot Frontline(int a, int b, int c, bool contestedC, bool contestedA = false)
         {
             Assert.IsTrue(SkirmishPublicGoalSnapshot.TryCreate("fc-skill", 1, 1, SkirmishObjectiveKind.FrontlineControl, SkirmishPublicGoalPerspective.Capture,
                 0, 100, SkirmishOutcomeKind.None, new SkirmishPublicGoalScore { TicketsKnown = true, OwnTickets = 500, OpposingTickets = 500 },
-                new[] { Zone("zone.a", 10, a, false), Zone("zone.b", 20, b, false), Zone("zone.c", 30, c, contestedC) }, out var goal, out var error), error);
+                new[] { Zone("zone.a", 10, a, contestedA), Zone("zone.b", 20, b, false), Zone("zone.c", 30, c, contestedC) }, out var goal, out var error), error);
             return goal;
         }
 

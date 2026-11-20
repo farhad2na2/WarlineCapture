@@ -84,6 +84,12 @@ namespace Game.UI.Runtime
                     Holding = garrison && policy.AcceptedOrderActive && !string.IsNullOrEmpty(policy.AcceptedGoalId) && policy.AcceptedGoalId != goalId,
                     Committed = garrison && policy.AcceptedGoalId == escortGarrison.Committed });
             }
+            {
+                var escortType = AriaObjectiveSkillPolicy.TypeOf(goal.Perspective); int capable = 0, accepted = 0;
+                foreach (var c in escortCandidates)
+                    if (AriaObjectiveEscortPolicy.Eligible(c, escortType)) { capable++; if (c.Done) accepted++; }
+                view.EscortCapable = (byte)System.Math.Min(capable, 255); view.EscortAccepted = (byte)System.Math.Min(accepted, 255);
+            }
             int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective), garrison);
             if (pick < 0) { escortOfferKey = null; return; }
             var chosen = escortCandidates[pick];

@@ -58,6 +58,9 @@ namespace Game.UI.Contracts
         public int ObjectiveFrameReason;
         public AriaObjectiveScoreObservation ObjectiveScore;
         public AriaObjectiveTouchObservation ObjectiveEscort;
+        // W37c: escort-capable own groups for the current escort goal (AriaObjectiveEscortPolicy.Eligible) and how many
+        // of them have a displayed accepted Move to it.
+        public byte EscortCapable, EscortAccepted;
         public bool Active, Finished, DrawerOpen, SelectionVisible, AttackMode, MapOpen, MapContactInView, SelectionMode, FocusThreatDrag, FocusGroupDrag, FocusAdvanceDrag, PlacementOpen, AdvancePreferred, ThreatNearForce, AssaultAtBase;
         public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public bool CanAffordAntiAir, PadReady, AirQueueOffered, PadPresent, ReadinessEligible, CanUpgradeReadiness;

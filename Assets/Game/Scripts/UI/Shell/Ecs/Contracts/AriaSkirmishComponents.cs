@@ -115,5 +115,11 @@ namespace Game.UI.Shell.Contracts.Ecs
         // W32 gate 3: one escort turn after each accepted objective order, before support/coverage take the frame.
         public byte ObjectiveEscortTurn;
         public float ObjectiveRocketeerDeadline;
+        // W37c CE cadence: escorts first, then the truck order. TruckWaitSince: when the current truck order first became
+        // ready (0 = none waiting). TruckReleased: this order was released (TruckReleaseReason 1 all escorts accepted,
+        // 2 the 45 s bound, 3 no escort offer left); TruckReleases counts releases for the evidence trace.
+        public float TruckWaitSince, TruckReleaseWaited;
+        public byte TruckReleased, TruckReleaseReason, TruckReleaseEscorts, TruckReleaseCapable;
+        public int TruckReleases;
     }
 }

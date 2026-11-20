@@ -22,7 +22,8 @@ namespace Game.UI.Shell.Ecs
         private AriaObjectiveAction tracedObjectiveAction;
         private AriaObjectiveSupportAction tracedObjectiveSupport;
         private int tracedObjectiveScore;
-        private byte tracedRocketeerStage; private int tracedCoverageDone;
+        private byte tracedRocketeerStage; private int tracedCoverageDone, tracedTruckReleases;
+        private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none" };
 
         private void TraceObjective()
         {
@@ -41,7 +42,7 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveActive = true; tracedObjectiveFinished = false; tracedObjectiveFrameAction = 0;
                 tracedObjectiveStage = tracedObjectiveFailures = tracedObjectiveAccepted = tracedEscortFailures = tracedEscortAccepted = 0;
                 tracedObjectiveGroup = tracedEscortGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
-                tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0;
+                tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0; tracedTruckReleases = 0;
                 Debug.Log($"{head} event=start presented={o.Presented && o.Supported} frameReason={v.ObjectiveFrameReason} infantry={v.Infantry} groups={v.ExpandedTotalGroups} t={t:F2}");
             }
             if (p.ObjectiveFrameAction != tracedObjectiveFrameAction)
@@ -75,6 +76,9 @@ namespace Game.UI.Shell.Ecs
             if (p.EscortFailures > tracedEscortFailures)
                 Debug.Log($"{head} event=escort_retry failures={p.EscortFailures} t={t:F2}");
             tracedEscortFailures = p.EscortFailures;
+            if (p.TruckReleases > tracedTruckReleases)
+                Debug.Log($"[ConvoyCadence] escortsAccepted={p.TruckReleaseEscorts}/{p.TruckReleaseCapable} truckReleased={TruckReleaseReasons[p.TruckReleaseReason < TruckReleaseReasons.Length ? p.TruckReleaseReason : 0]} group={o.GroupId} waited={p.TruckReleaseWaited:F1} t={t:F2}");
+            tracedTruckReleases = p.TruckReleases;
             if (p.ObjectiveSupport.Action != tracedObjectiveSupport)
             {
                 if (p.ObjectiveSupport.Action != AriaObjectiveSupportAction.None)

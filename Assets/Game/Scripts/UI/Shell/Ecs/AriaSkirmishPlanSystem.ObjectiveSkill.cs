@@ -63,6 +63,7 @@ namespace Game.UI.Shell.Ecs
                     StepObjectivePopup(view, ref plan, ref touch, ref output, true); return;
             }
             if (objective.Paused) { plan.Intent = AriaSkirmishIntent.ObserveObjective; return; }
+            if (ConvoyEscortCadence(view)) TrackTruckWait(view, ref plan);
             // An escort order already in flight finishes (or fails) before anything else re-selects squads.
             if (plan.ObjectiveOwner == 2 && StepObjectiveEscort(view, ref plan, ref touch, ref output)) return;
             if (StepPublicBoarding(view, ref plan, ref touch, ref output)) return;
@@ -101,6 +102,14 @@ namespace Game.UI.Shell.Ecs
             {
                 plan.ObjectiveCoverageTurn = 0;
                 if (StepObjectiveCoverage(view, ref plan, ref touch, ref output)) return;
+            }
+            // W37c (lead, option a): CE escorts first. While a truck order waits, every offered escort goes first until each
+            // escort-capable group has an accepted Move, or the truck order has waited ConvoyTruckReleaseSeconds.
+            if (!pending && wants && ready && ConvoyEscortCadence(view))
+            {
+                bool bound = TruckBoundExpired(view, plan);
+                if (!bound && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
+                ReleaseTruck(view, ref plan, bound ? (byte)2 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : (byte)3);
             }
             if (pending || wants && ready)
             {
@@ -152,6 +161,34 @@ namespace Game.UI.Shell.Ecs
         public static bool ConvoyEscortCadence(in AriaSkirmishObservation view) =>
             view.ObjectiveType == (byte)Game.Simulation.AriaObjectiveType.ConvoyEscort;
 
+        public const float ConvoyTruckReleaseSeconds = 45f;
+
+        static void TrackTruckWait(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan)
+        {
+            if (!ObjectiveOrderWaiting(view, plan)) { plan.TruckWaitSince = 0; plan.TruckReleased = 0; return; }
+            if (plan.TruckWaitSince <= 0) { plan.TruckWaitSince = view.Time > 0.01f ? view.Time : 0.01f; plan.TruckReleased = 0; }
+        }
+
+        public static bool TruckBoundExpired(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan) =>
+            plan.TruckWaitSince > 0 && view.Time - plan.TruckWaitSince >= ConvoyTruckReleaseSeconds;
+
+        // An escort offer ARIA can act on now (the same presence/limit tests StepObjectiveEscort applies).
+        public static bool EscortOffered(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
+        {
+            var escort = view.ObjectiveEscort;
+            return ObjectivePresented(escort) && escort.GroupId != 0 && escort.PublicKey != 0 && escort.Action == AriaObjectiveAction.Move &&
+                plan.EscortFailures < Game.Simulation.AriaObjectiveSkillPolicy.MaxEscortFailures &&
+                (plan.ObjectiveOwner == 2 || view.Time >= plan.EscortRetryAt);
+        }
+
+        static void ReleaseTruck(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan, byte reason)
+        {
+            if (plan.TruckReleased != 0 || plan.TruckWaitSince <= 0) return;
+            plan.TruckReleased = 1; plan.TruckReleases++; plan.TruckReleaseReason = reason;
+            plan.TruckReleaseEscorts = view.EscortAccepted; plan.TruckReleaseCapable = view.EscortCapable;
+            plan.TruckReleaseWaited = view.Time - plan.TruckWaitSince;
+        }
+
         // The objective order would act this frame (the same wants/ready test StepObjectiveSkill uses).
         public static bool ObjectiveOrderWaiting(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
         {
@@ -179,9 +216,10 @@ namespace Game.UI.Shell.Ecs
             // the objective order. A changed offer ends the in-flight escort (its displayed receipt counts as accepted) and
             // hands the turn back; the next escort starts from the escort turn or an idle frame.
             // W37b (lead): CE convoys only. FC/BT/BA keep the cf5f53bd1 path (S010 lost once with this cadence on FC).
-            // And only while a truck order is waiting: otherwise escorts keep running back to back (W37 S020: a 167 s win
-            // left four starting groups unused, gate 3 FAIL, with one escort turn per accepted truck order).
-            if (inFlight && !same && plan.EscortTouch.GroupId != 0 && ConvoyEscortCadence(view) && ObjectiveOrderWaiting(view, plan))
+            // W37c (option a): escorts first; the in-flight escort hands back only once the waiting truck order reached
+            // its 45 s release bound (otherwise escorts keep running back to back, as gate 3 needs).
+            if (inFlight && !same && plan.EscortTouch.GroupId != 0 && ConvoyEscortCadence(view) && ObjectiveOrderWaiting(view, plan) &&
+                TruckBoundExpired(view, plan))
             {
                 var last = plan.EscortTouch;
                 if ((last.CommandPending || last.Stage == 3) && escort.AcceptedOrderRevision > last.OrderRevisionAtIssue &&
@@ -192,6 +230,7 @@ namespace Game.UI.Shell.Ecs
                     touch.LastProgressAt = view.Time;
                 }
                 plan.ObjectiveOwner = 0; plan.EscortTouch = default;
+                ReleaseTruck(view, ref plan, 2);
                 return false;
             }
             if (same && plan.EscortTouch.Stage == 4) { plan.ObjectiveOwner = 0; return false; }

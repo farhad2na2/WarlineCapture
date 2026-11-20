@@ -36,11 +36,12 @@ namespace Game.Tests.Editor
             t.RosterChangeBetweenSelectPressesKeepsTheInputBound();
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
             t.ChangedEscortOfferEndsTheInFlightEscort();
+            t.ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
             t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
             t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=23");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=24");
         }
 
         // ---------- pure policy ----------
@@ -460,7 +461,8 @@ namespace Game.Tests.Editor
             foreach (byte type in new byte[] { 3, 0, 1, 2 })
             foreach (bool receipt in new[] { true, false })
             {
-                var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2,
+                // W37c: the truck order has waited past its 45 s release bound (TruckWaitSince 50 at t=100).
+                var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2, TruckWaitSince = 50,
                     EscortTouch = new AriaObjectiveTouchPlan { GroupId = 7, PublicKey = 33, PresentationEpoch = 1, Action = AriaObjectiveAction.Move,
                         Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 200 } };
                 var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
@@ -481,6 +483,7 @@ namespace Game.Tests.Editor
                     continue;
                 }
                 Assert.AreEqual(5, o.TargetId, "the truck's card: the objective order gets the turn (receipt=" + receipt + ")");
+                Assert.AreEqual(1, p.TruckReleases); Assert.AreEqual(2, p.TruckReleaseReason, "released by the bound");
                 Assert.AreEqual(0, p.ObjectiveOwner, "no escort is left in flight");
                 Assert.AreEqual(receipt ? 1 : 0, p.EscortAccepted, "only a displayed receipt for the prior escort counts");
                 Assert.AreEqual(0u, p.EscortTouch.GroupId);
@@ -499,6 +502,20 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(8, o.TargetId, "no truck order waits: the next escort goes on");
                 Assert.AreEqual(2, p.ObjectiveOwner);
             }
+            // W37c: inside the bound the in-flight escort moves on to the next offer (escorts first).
+            {
+                var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2, TruckWaitSince = 90,
+                    EscortTouch = new AriaObjectiveTouchPlan { GroupId = 7, PublicKey = 33, PresentationEpoch = 1, Action = AriaObjectiveAction.Move,
+                        Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 200 } };
+                var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+                var v = Presented(100); v.ObjectiveType = 3;
+                v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move; v.PublicObjective.SelectGroup = T(5);
+                v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                    GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+                Step(v, ref p, ref t, out var o);
+                Assert.AreEqual(8, o.TargetId, "10 s into the wait: the next escort first");
+                Assert.AreEqual(0, p.TruckReleases);
+            }
             // The same offer in flight still finishes first (unchanged).
             var q = new AriaSkirmishPlanComponent(); var s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             var w = Presented(100);
@@ -508,6 +525,46 @@ namespace Game.Tests.Editor
             w.Frame++; w.PublicObjective.GroupId = 11; w.PublicObjective.PublicKey = 22; w.PublicObjective.Action = AriaObjectiveAction.Move; w.PublicObjective.SelectGroup = T(5);
             Step(w, ref q, ref s, out r);
             Assert.AreEqual(8, r.TargetId);
+        }
+
+        // W37c (lead, option a): CE escorts first until every escort-capable group has an accepted Move or the truck
+        // order has waited 45 s; FC/BT keep the truck/objective order first.
+        [Test]
+        public void ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound()
+        {
+            AriaSkirmishObservation View(byte type, float time, bool escort, byte accepted)
+            {
+                var v = Presented(time); v.ObjectiveType = type; v.EscortCapable = 3; v.EscortAccepted = accepted;
+                v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+                v.PublicObjective.Intent = AriaSkirmishIntent.EscortOriginalTruck; v.PublicObjective.SelectGroup = T(5);
+                if (escort)
+                    v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                        GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+                return v;
+            }
+            // CE: the truck order waits; the offered escort goes first and the wait starts.
+            var p = new AriaSkirmishPlanComponent(); var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var a = View(3, 100, true, 1);
+            Step(a, ref p, ref t, out var o);
+            Assert.AreEqual(8, o.TargetId, "CE: escort first"); Assert.AreEqual(100f, p.TruckWaitSince); Assert.AreEqual(0, p.TruckReleases);
+            // 45 s later the truck order goes out even with escorts left (bound).
+            p.ObjectiveOwner = 0; p.EscortTouch = default; t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var b = View(3, 145, true, 1); b.Frame = 800;
+            Step(b, ref p, ref t, out o);
+            Assert.AreEqual(5, o.TargetId, "bound: the truck order");
+            Assert.AreEqual(1, p.TruckReleases); Assert.AreEqual(2, p.TruckReleaseReason); Assert.AreEqual(1, p.TruckReleaseEscorts); Assert.AreEqual(3, p.TruckReleaseCapable);
+            Assert.AreEqual(45f, p.TruckReleaseWaited, 0.01f);
+            // All escorts accepted (no offer): the truck order goes at once.
+            var q = new AriaSkirmishPlanComponent(); t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(View(3, 100, false, 3), ref q, ref t, out o);
+            Assert.AreEqual(5, o.TargetId); Assert.AreEqual(1, q.TruckReleaseReason, "all");
+            // FC/BT: the objective order keeps going first (cf5f53bd1 path), no cadence state.
+            foreach (byte type in new byte[] { 1, 2 })
+            {
+                var f = new AriaSkirmishPlanComponent(); t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+                Step(View(type, 100, true, 1), ref f, ref t, out o);
+                Assert.AreEqual(5, o.TargetId, "type " + type + ": objective order first"); Assert.AreEqual(0f, f.TruckWaitSince); Assert.AreEqual(0, f.TruckReleases);
+            }
         }
 
         // W32 (S032: an unaffordable AttackAircraft recruit held the Build drawer for the 60 s popup limit 5 times).

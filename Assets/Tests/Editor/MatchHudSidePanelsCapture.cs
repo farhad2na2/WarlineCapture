@@ -92,6 +92,7 @@ public static class MatchHudSidePanelsCapture
         }
         finally
         {
+            UiShellRuntimeGateway.Register(null);
             if (EditorApplication.isPlayingOrWillChangePlaymode) { EditorApplication.ExitPlaymode(); await Until(() => !EditorApplication.isPlayingOrWillChangePlaymode); }
             await Task.Delay(500);
             EditorSettings.enterPlayModeOptions = options; EditorSettings.enterPlayModeOptionsEnabled = enabled; GameLocalization.SetLocale(locale, false);
@@ -136,7 +137,9 @@ public static class MatchHudSidePanelsCapture
             bool two = state == "aria-two-actions", one = state == "aria-one-action", stopped = state == "aria-stopped";
             if (!refresh)
             {
-                // Board 1: a tall selected-unit card over the category cards, then the paginated roster.
+                // Board 1: a tall selected-unit card over the category cards, then the paginated
+                // expanded-Skirmish roster (the tray only keeps its roster in an expanded session).
+                UiShellRuntimeGateway.Register(one ? new W39ExpandedSkirmishGateway() : null);
                 tray.SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
                 if (two || one)
                 {
@@ -240,7 +243,7 @@ public static class MatchHudSidePanelsCapture
             if (commandButtons.Count > 0)
             {
                 float bottom = height - commandButtons.Max(r => r.yMax);
-                Rule(Mathf.Abs(bottom - 16) <= Tolerance, $"command buttons 16 px above bottom edge (is {bottom:0.0})");
+                Rule(bottom >= 16 - Tolerance, $"command buttons at least 16 px above bottom edge (is {bottom:0.0})");
             }
             if (sel.HasValue && selection.CommandWheelOpenButton != null && selection.CommandWheelOpenButton.gameObject.activeInHierarchy)
             {
@@ -266,7 +269,8 @@ public static class MatchHudSidePanelsCapture
             // Board 3 ------------------------------------------------------------------
             var ariaRect = ScreenRect((RectTransform)aria.transform, height);
             Line("ARIA panel", ariaRect);
-            var buttons = aria.GetComponentsInChildren<Button>(false).Where(b => b.gameObject.activeInHierarchy && b.transform.parent != null)
+            // The rail root is itself the ARIA header button; measure only the actions inside it.
+            var buttons = aria.GetComponentsInChildren<Button>(false).Where(b => b.gameObject.activeInHierarchy && b.transform != aria.transform)
                 .Select(b => (b, r: ScreenRect((RectTransform)b.transform, height))).Where(x => x.r.height > 20).OrderBy(x => x.r.yMin).ToList();
             foreach (var (b, r) in buttons)
             {

@@ -42,7 +42,7 @@ namespace Game.Composition
         private bool checkpointEvidence, checkpointTerminal;
         private readonly Vector3[] markerScreenPositions = new Vector3[5];
         private double noticeExpires;
-        private bool viewingObjective;
+        private float3? viewedObjective;
 
         protected override void OnCreate()
         {
@@ -104,7 +104,7 @@ namespace Game.Composition
                             EntityManager.SetComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
                         else EntityManager.AddComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
                         Debug.Log(FormattableString.Invariant($"[OperationsStartup] phase=Playing elapsed={UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt:F3}"));
-                        viewingObjective = false;
+                        viewedObjective = null;
                         Focus(definition.exitPosition);
                         checkpointScans = -1;
                         nextCheckpointAt = 0;

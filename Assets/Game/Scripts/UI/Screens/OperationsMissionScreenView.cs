@@ -47,7 +47,9 @@ namespace Game.UI.Runtime
         public bool IsHud => hud;
         public Button IntroductionButton => introButton;
         public Button SkipButton => skipButton;
-        public Button ObjectiveButton => focusButton;
+        // Watch can ask the camera to show an objective. While it pans, the
+        // same button is Return to Squad and must stay a player-only action.
+        public Button ObjectiveButton => current.ViewingObjective ? null : focusButton;
         public Button RecoverButton => recoverButton;
         public Button ScanButton(int index) => commandControls != null ? commandControls.ScanButton : null;
         public Button GuideButton => focusButton;

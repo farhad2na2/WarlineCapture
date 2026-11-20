@@ -85,10 +85,14 @@ namespace Game.UI.Runtime
                     Committed = garrison && policy.AcceptedGoalId == escortGarrison.Committed });
             }
             {
-                var escortType = AriaObjectiveSkillPolicy.TypeOf(goal.Perspective); int capable = 0, accepted = 0;
+                // W37d (lead): accepted = a fresh displayed Move toward this escort goal (this presentation epoch). The W37c
+                // count (Done, which also counts an older accepted order already at the goal) is kept as Old for the trace.
+                var escortType = AriaObjectiveSkillPolicy.TypeOf(goal.Perspective); int capable = 0, accepted = 0, old = 0;
                 foreach (var c in escortCandidates)
-                    if (AriaObjectiveEscortPolicy.Eligible(c, escortType)) { capable++; if (c.Done) accepted++; }
+                    if (AriaObjectiveEscortPolicy.Eligible(c, escortType))
+                    { capable++; if (c.Done) old++; if (escortDone.Contains(c.GroupId + "|" + goalId)) accepted++; }
                 view.EscortCapable = (byte)System.Math.Min(capable, 255); view.EscortAccepted = (byte)System.Math.Min(accepted, 255);
+                view.EscortAcceptedOld = (byte)System.Math.Min(old, 255);
             }
             int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective), garrison);
             if (pick < 0) { escortOfferKey = null; return; }

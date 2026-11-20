@@ -23,7 +23,7 @@ namespace Game.UI.Shell.Ecs
         private AriaObjectiveSupportAction tracedObjectiveSupport;
         private int tracedObjectiveScore;
         private byte tracedRocketeerStage; private int tracedCoverageDone, tracedTruckReleases;
-        private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none" };
+        private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none", "truck_first" };
 
         private void TraceObjective()
         {
@@ -77,7 +77,7 @@ namespace Game.UI.Shell.Ecs
                 Debug.Log($"{head} event=escort_retry failures={p.EscortFailures} t={t:F2}");
             tracedEscortFailures = p.EscortFailures;
             if (p.TruckReleases > tracedTruckReleases)
-                Debug.Log($"[ConvoyCadence] escortsAccepted={p.TruckReleaseEscorts}/{p.TruckReleaseCapable} truckReleased={TruckReleaseReasons[p.TruckReleaseReason < TruckReleaseReasons.Length ? p.TruckReleaseReason : 0]} group={o.GroupId} waited={p.TruckReleaseWaited:F1} t={t:F2}");
+                Debug.Log($"[ConvoyCadence] escortsAccepted={p.TruckReleaseEscorts}/{p.TruckReleaseCapable} oldCount={p.TruckReleaseEscortsOld} truckReleased={TruckReleaseReasons[p.TruckReleaseReason < TruckReleaseReasons.Length ? p.TruckReleaseReason : 0]} group={o.GroupId} waited={p.TruckReleaseWaited:F1} t={t:F2}");
             tracedTruckReleases = p.TruckReleases;
             if (p.ObjectiveSupport.Action != tracedObjectiveSupport)
             {

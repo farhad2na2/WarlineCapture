@@ -8,7 +8,7 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishConvoyServiceJourneyTests
     {
-        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();t.TruckInsideTheDestinationIsNotSentToService();t.HoldThatNeverStopsTheTruckSkipsTheDetour();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=26 nativeMissionPending=1");}
+        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();t.TruckInsideTheDestinationIsNotSentToService();t.HoldThatNeverStopsTheTruckSkipsTheDetour();t.StoppedQuotedTruckRepairsWithoutHold();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=27 nativeMissionPending=1");}
         static UiSkirmishPublicObjectiveModel Model(int health=60,float x=0)
         {
             var node=new SkirmishPublicGoalNode{PublicId="original.truck",Kind=SkirmishPublicGoalNodeKind.OwnDesignatedSubject,Provenance=SkirmishPublicGoalProvenance.OwnRoster,
@@ -29,20 +29,36 @@ namespace Game.Tests.Editor
         static UiVehicleRepairModel Selected()=>new UiVehicleRepairModel{SingleOwnVehicle=true,ActorPublicId="original.truck",AttemptId="journey",GroupId=7,Eligible=true,Health=60,MaximumHealth=100};
         static void AtPad(UiSkirmishPublicObjectiveModel model){model.OwnGroups[0].Policy.WorldX=100;model.OwnGroups[0].OwnMemberPositions=new[]{new Vector2(100,100)};model.OwnGroups[0].HoldActive=true;}
         static void BeginRepair(SkirmishConvoyServiceJourney journey,UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected)
-        {journey.Tick(model,null,false,false);AtPad(model);Assert.That(journey.Tick(model,selected,false,false),Is.EqualTo(ConvoyServiceStage.Hold));model.Order=new UiSkirmishPublicOrderReadout{Present=true,Accepted=true,GroupId=7,Action=AriaObjectiveAction.Hold,Revision=1};Assert.That(journey.Tick(model,selected,true,false),Is.EqualTo(ConvoyServiceStage.Repair));}
+        {journey.Tick(model,null,false,false);AtPad(model);Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Hold));model.Order=new UiSkirmishPublicOrderReadout{Present=true,Accepted=true,GroupId=7,Action=AriaObjectiveAction.Hold,Revision=1};Assert.That(journey.Tick(model,selected,true,false),Is.EqualTo(ConvoyServiceStage.Repair));}
+        // W37b: a stopped, selected truck whose native quote is eligible repairs without a Hold (Hold made the quote "moving").
+        [Test]
+        public void StoppedQuotedTruckRepairsWithoutHold()
+        {
+            var model=Model();var journey=new SkirmishConvoyServiceJourney();
+            journey.Tick(model,null,false,false);
+            model.OwnGroups[0].Policy.WorldX=100;model.OwnGroups[0].OwnMemberPositions=new[]{new Vector2(100,100)};model.OwnGroups[0].MoveActive=true;
+            var shown=Selected();
+            Assert.That(journey.Tick(model,shown,false,false),Is.EqualTo(ConvoyServiceStage.Hold),"still moving: no repair");
+            model.OwnGroups[0].MoveActive=false;shown.Eligible=false;
+            Assert.That(journey.Tick(model,shown,false,false),Is.EqualTo(ConvoyServiceStage.Hold),"no native quote: no repair");
+            shown.Eligible=true;var other=Selected();other.ActorPublicId="other";
+            Assert.That(journey.Tick(model,other,false,false),Is.EqualTo(ConvoyServiceStage.Hold),"another vehicle selected: no repair");
+            Assert.That(journey.Tick(model,shown,false,false),Is.EqualTo(ConvoyServiceStage.Repair),"stopped, selected and quoted: repair without Hold");
+        }
+
         // W37b (lead bound; W37 proof: 0 of 11 service Holds accepted, each detour 100-130 s): one Hold attempt, then the
         // detour is skipped (Handback, latched) instead of retrying the other service destinations.
         [Test]
         public void HoldThatNeverStopsTheTruckSkipsTheDetour()
         {
-            var model=Model();var journey=new SkirmishConvoyServiceJourney();
+            var model=Model();var journey=new SkirmishConvoyServiceJourney();var unquoted=Selected();unquoted.Eligible=false;
             Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Travel));
             AtPad(model);model.SimulationSeconds=10;
-            Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Hold));
-            model.SimulationSeconds=29;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Hold),"inside the 20 s Hold budget");
-            model.SimulationSeconds=31;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Handback),"not stopped within one attempt: no retry");
+            Assert.That(journey.Tick(model,unquoted,false,false),Is.EqualTo(ConvoyServiceStage.Hold));
+            model.SimulationSeconds=29;Assert.That(journey.Tick(model,unquoted,false,false),Is.EqualTo(ConvoyServiceStage.Hold),"inside the 20 s Hold budget");
+            model.SimulationSeconds=31;Assert.That(journey.Tick(model,unquoted,false,false),Is.EqualTo(ConvoyServiceStage.Handback),"not stopped within one attempt: no retry");
             Assert.That(journey.Failure,Does.Contain("could not stop"));Assert.That(journey.Failures,Is.EqualTo(1));
-            model.SimulationSeconds=200;Assert.That(journey.Tick(model,Selected(),false,false),Is.EqualTo(ConvoyServiceStage.Handback),"latched");
+            model.SimulationSeconds=200;Assert.That(journey.Tick(model,unquoted,false,false),Is.EqualTo(ConvoyServiceStage.Handback),"latched");
             // An accepted Hold within the budget still starts the repair (unchanged).
             var ok=Model();var j2=new SkirmishConvoyServiceJourney();var shown=Selected();BeginRepair(j2,ok,shown);
             Assert.That(j2.Stage,Is.EqualTo(ConvoyServiceStage.Repair));
@@ -126,7 +142,7 @@ namespace Game.Tests.Editor
             if(mutation==1||mutation==2){model.OwnGroups[0].Policy.AcceptedOrderActive=true;Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(mutation==2?ConvoyServiceStage.Travel:ConvoyServiceStage.None));return;}
             if(mutation==3){model.Service.Trucks[0].Affordable=false;Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.None));return;}
             if(mutation==4){model.Service.Trucks[0].OriginalPublicId="foreign";Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.None));return;}
-            if(mutation==5){journey.Tick(model,null,false,false);AtPad(model);Assert.That(journey.Tick(model,selected,false,false),Is.EqualTo(ConvoyServiceStage.Hold));return;}
+            if(mutation==5){journey.Tick(model,null,false,false);AtPad(model);selected.Eligible=false;Assert.That(journey.Tick(model,selected,false,false),Is.EqualTo(ConvoyServiceStage.Hold));return;}
             if(mutation==8||mutation==9)
             {
                 journey.Tick(model,null,false,false);

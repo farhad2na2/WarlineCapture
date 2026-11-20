@@ -103,6 +103,11 @@ namespace Game.UI.Runtime
             bool exact=selected!=null&&selected.SingleOwnVehicle&&selected.ActorPublicId==OriginalId&&selected.AttemptId==Attempt&&selected.GroupId==GroupId;
             if(Stage==ConvoyServiceStage.Hold&&acceptedServiceHold&&NewHold(model)&&own.HoldActive&&exact)
             {Stage=ConvoyServiceStage.Repair;Epoch++;LastProgress=model.SimulationSeconds;}
+            // W37b ([ConvoyServiceHold] trace): the truck stops by itself ~2 s inside the radius, and once selected the native
+            // quote is eligible; an accepted Hold then made the same quote refuse with "moving" for the whole stage (0 repairs).
+            // A selected, stopped truck with an eligible native quote goes to Repair without the Hold. Rules/radius unchanged.
+            if(Stage==ConvoyServiceStage.Hold&&exact&&selected.Eligible&&!selected.RequestPending&&!own.Policy.AcceptedOrderActive&&!own.MoveActive)
+            {Stage=ConvoyServiceStage.Repair;Epoch++;LastProgress=model.SimulationSeconds;}
             // W37b bound (lead): a truck not stopped and quoted within one Hold attempt skips the service detour (was up to 3
             // destination retries; W37 proof: 0 accepted Holds of 11 detours, each costing 100-130 s). Repair rules unchanged.
             if(Stage==ConvoyServiceStage.Hold&&model.SimulationSeconds-LastProgress>20)

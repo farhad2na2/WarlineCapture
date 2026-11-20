@@ -24,6 +24,7 @@ namespace Game.UI.Shell.Ecs
         private int tracedObjectiveScore;
         private byte tracedRocketeerStage; private int tracedCoverageDone, tracedTruckReleases;
         private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none", "truck_first" };
+        private string tracedLatch;
 
         private void TraceObjective()
         {
@@ -43,6 +44,7 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveStage = tracedObjectiveFailures = tracedObjectiveAccepted = tracedEscortFailures = tracedEscortAccepted = 0;
                 tracedObjectiveGroup = tracedEscortGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
                 tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0; tracedTruckReleases = 0;
+                tracedLatch = null;
                 Debug.Log($"{head} event=start presented={o.Presented && o.Supported} frameReason={v.ObjectiveFrameReason} infantry={v.Infantry} groups={v.ExpandedTotalGroups} t={t:F2}");
             }
             if (p.ObjectiveFrameAction != tracedObjectiveFrameAction)
@@ -57,6 +59,7 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveGroup = o.GroupId; tracedObjectiveKey = o.PublicKey; tracedObjectiveAction = o.Action;
                 Debug.Log($"{head} event=choice group={o.GroupId} goal={o.PublicKey:X} action={o.Action} reason={o.Reason} intent={o.Intent} inView={o.GoalInView} ground={o.Ground.Available} t={t:F2}");
             }
+            TraceObjectiveLatch(v, p, t);
             if (p.ObjectiveTouch.Stage != tracedObjectiveStage)
             {
                 string e = p.ObjectiveTouch.Stage == 3 ? "order_tapped" : p.ObjectiveTouch.Stage == 4 ? "order_accepted" : null;
@@ -109,6 +112,22 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveFinished = true;
                 Debug.Log($"{head} event=finished rocketeer={p.ObjectiveRocketeerStage} breacher={p.BreacherStage} research={p.ResearchDone} build={p.BuildDone} ownZones={s.OwnZones} tickets={s.OwnTickets}/{s.OpposingTickets} completed={s.Completed}/{s.Required} lost={s.Lost} orders={p.ObjectiveAccepted} escorts={p.EscortAccepted} coverageDone={p.CoverageDone} t={t:F2}");
             }
+        }
+
+        // W37e evidence only: why the presented objective order does or does not act (the planner's finished-objective
+        // latch: same group/goal/action/epoch as an accepted ObjectiveTouch). Logged on change.
+        private void TraceObjectiveLatch(in AriaSkirmishObservation v, in AriaSkirmishPlanComponent p, float t)
+        {
+            var o = v.PublicObjective; var c = p.ObjectiveTouch;
+            bool sameGoal = c.GroupId == o.GroupId && c.PublicKey == o.PublicKey && c.Action == o.Action && c.PresentationEpoch == o.PresentationEpoch;
+            bool pending = c.CommandPending || c.Stage == 3;
+            bool wants = o.GroupId != 0 && o.PublicKey != 0 && o.Action != AriaObjectiveAction.None;
+            string why = pending ? "pending" : !wants ? "none" : sameGoal && c.Stage == 4 ? "finished" : v.Time < p.ObjectiveRetryAt ? "retry" :
+                sameGoal && c.Stage != 0 ? "in_sequence" : "ready";
+            string key = $"{why}|{o.GroupId}|{o.PublicKey:X}|{o.Action}|{o.PresentationEpoch}|{c.GroupId}|{c.PublicKey:X}|{c.Action}|{c.PresentationEpoch}|{c.Stage}|{(why == "ready" ? p.Intent.ToString() : "")}";
+            if (key == tracedLatch) return;
+            tracedLatch = key;
+            Debug.Log($"[ObjectiveLatch] why={why} finished={(sameGoal && c.Stage == 4 ? 1 : 0)} objective={o.GroupId}/{o.PublicKey:X}/{o.Action}/epoch{o.PresentationEpoch} touch={c.GroupId}/{c.PublicKey:X}/{c.Action}/epoch{c.PresentationEpoch}/stage{c.Stage} intent={p.Intent} owner={p.ObjectiveOwner} retryAt={p.ObjectiveRetryAt:F1} t={t:F2}");
         }
     }
 }

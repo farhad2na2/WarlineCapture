@@ -311,6 +311,10 @@ namespace Game.Simulation
                 if (node.Kind != SkirmishPublicGoalNodeKind.CaptureZone || node.PublicId == committed || !node.PositionKnown ||
                     !node.OwnerKnown || node.OwnerFaction != goal.ObserverFaction || node.Contested) continue;
                 int count = Groups(groups, node.PublicId);
+                // W16 attempt-2 proof: a held zone was re-chosen here (still thinner), reset by the holder check on the
+                // next frame and chosen again, flipping offers every frame (S060 87 s, S010 58 s). A zone an own group
+                // already holds has its garrison; it is never chosen again while held.
+                if (count > 0) continue;
                 if (count < fewest) { fewest = count; thin = node.PublicId; }
             }
             if (thin != null) state = new AriaGarrisonState { Zone = thin, Committed = committed };

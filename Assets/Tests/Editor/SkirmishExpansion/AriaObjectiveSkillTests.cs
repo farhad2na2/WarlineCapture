@@ -200,6 +200,18 @@ namespace Game.Tests.Editor
             var arrived = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(3, "zone.b", false) };
             Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), arrived, null, ref s));
             Assert.IsNull(s.Zone);
+            // W16 attempt-2 proof: zone.b held by one group, zone.a by two. zone.b is still thinner, but its garrison
+            // arrived: it is not chosen again, so the offer stays on the committed zone every frame (no reset loop).
+            var thinHeld = new List<SkirmishPublicPlayerGroup> { G(1, "zone.a", true), G(2, "zone.a", true), G(3, "zone.b", false), G(4, null, true) };
+            for (int frame = 0; frame < 3; frame++)
+            {
+                Assert.AreEqual("zone.a", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), thinHeld, null, ref s), "frame " + frame);
+                Assert.IsNull(s.Zone, "frame " + frame);
+            }
+            // The holder leaves zone.b: it is chosen again.
+            thinHeld[2] = G(3, null, false);
+            Assert.AreEqual("zone.b", AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), thinHeld, null, ref s));
+            s = default;
             // zone.b is lost: the choice ends.
             s = default;
             AriaObjectiveEscortPolicy.Goal(Frontline(1, 1, 2, false), holding, null, ref s); Assert.AreEqual("zone.b", s.Zone);

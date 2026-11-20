@@ -270,3 +270,5 @@ missions. Lab task `road-connect-oldquarter` runs first in the lab chain after t
 - Owner approved (2026-11-20, "I approve") ONE second Windows checkout, a Windows UI lab. Its Library is seeded by copying the main Windows
   Library, never rebuilt. ui-a and ui-b run there as W39/W40 in parallel with W37e. The Mac Codex lab keeps the road fix, then ui-c.
   ui-d stays on HOLD.
+- Owner (2026-11-20, "Yes, UI lab only"): Windows may delete `Library/Bee` (a rebuildable build cache) in the Windows UI lab checkout only,
+  to free disk space on D:. The main Windows Library and its Bee stay untouched.

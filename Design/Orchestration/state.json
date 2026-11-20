@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "cycle_active": false,
-  "cycle_owner": "lane worker 47 (returned)",
-  "cycle_started": "2026-11-20T03:27:00+01:00",
-  "unity_lane": "idle",
-  "phase": "lane 47 done (S019 CE 1/1, CC FC S031/S033/S035 12/12 @1690 s, CC BT S038/S040/S042 12/12; gate 3 25/25; warm-up S021 not counted); lane idle",
+  "cycle_active": true,
+  "cycle_owner": "lane worker 48b (blocked)",
+  "cycle_started": "2026-11-20T11:14:00+01:00",
+  "unity_lane": "busy",
+  "phase": "lane 48b BLOCKED: queue A Editor pid 48605 (launched 11:14:23) sits on a startup modal dialog before 'Library Redirect Path' (likely scene-backup recovery from lane 48's 10:17 stop, Temp/__Backupscenes/0.backup); not killed; 0 of 24 jobs run; needs owner/lead",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

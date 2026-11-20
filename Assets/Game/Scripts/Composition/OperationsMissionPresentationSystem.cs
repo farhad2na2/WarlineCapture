@@ -110,7 +110,11 @@ namespace Game.Composition
                     { EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = exception.Message; }
                 }
                 else if (!string.IsNullOrEmpty(error))
+                {
+                    // ObserveFailedStartup consumes this failure before another spawn attempt.
+                    Debug.LogWarning($"[OperationsStartup] spawnError={error}");
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
+                }
             }
             if (live && view == null && shell.CurrentMode == UiShellMode.MatchHud && !shell.IsTransitionRunning &&
                 UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>() != null &&
@@ -349,10 +353,14 @@ namespace Game.Composition
             { startupSession = session; startupBeganAt = UnityEngine.Time.realtimeSinceStartupAsDouble; rollbackCommand = null; nextRollbackRetry = 0; }
             var launch = EntityManager.GetComponentObject<OperationsReconLaunchReference>(root);
             using var starts = EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
-            bool failed = !string.IsNullOrEmpty(launch.StartupFailure) ||
-                starts.CalculateEntityCount() == 1 && starts.GetSingleton<MatchStartQueueComponent>().LastStatus == MatchStartStatusKind.Failed ||
-                UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt >= 180;
+            var lastStatus = starts.CalculateEntityCount() == 1
+                ? starts.GetSingleton<MatchStartQueueComponent>().LastStatus : MatchStartStatusKind.None;
+            double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt;
+            bool timeout = elapsed >= 180;
+            bool failed = !string.IsNullOrEmpty(launch.StartupFailure) || lastStatus == MatchStartStatusKind.Failed || timeout;
             if (!failed) return false;
+            if (nextRollbackRetry == 0)
+                Debug.LogWarning(FormattableString.Invariant($"[OperationsStartup] failed reason={(string.IsNullOrEmpty(launch.StartupFailure) ? "none" : launch.StartupFailure)} matchStart={lastStatus} elapsed={elapsed:F3} timeout={(timeout ? 1 : 0)}"));
             StopSimulation();
             if (UnityEngine.Time.realtimeSinceStartupAsDouble < nextRollbackRetry) return true;
             nextRollbackRetry = UnityEngine.Time.realtimeSinceStartupAsDouble + 5;

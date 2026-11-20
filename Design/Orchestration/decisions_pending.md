@@ -259,3 +259,11 @@ NEUTRA/L wrapping, S041/S046 frame overflow, the S026 stacked bar, the minimap o
 - Owner: "Approve all six" (2026-11-20). Implementation runs alongside mission work as Codex lab tasks:
   ui-a (boards 1+3), ui-b (2+4) and ui-c (6). ui-d (board 5, Operations markers) waits until the O001 triage and W38 merge.
   Each task needs native EN/FA captures compared with the mockup and an ARIA regression on accepted missions before merge.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-20): Old Quarter road repair, "Connect the ring"
+The owner, watching O001 in the Editor, reported road cuts, detached sidewalks and an orphan road stub in the Old Quarter. The cause:
+generator leftovers from October baked into the shared Desert City paving meshes. PR #80 did not cause it. The owner explicitly
+requested this map repair (CAMPAIGN_MAP_REUSE_POLICY.md:21) and chose "Connect the ring" over removing the stubs:
+connect the ring's approaches to the street grid, give the ring and approaches continuous sidewalks, and remove stubs that lead
+nowhere. Change visuals only: gameplay surface/grid/op-map data must stay byte-identical, proven with an ARIA regression on accepted
+missions. Lab task `road-connect-oldquarter` runs first in the lab chain after the O001 triage.

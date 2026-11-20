@@ -26,6 +26,10 @@ namespace Game.UI.Runtime
         public string AcceptedGoalId;
         public AriaObjectiveAction AcceptedAction;
         public bool ProgressKnown;
+        // W37g (CE): the escort cover point ahead of the covered truck (null when none is published).
+        public string CoverId;
+        public uint CoverTruckGroup;
+        public UnityEngine.Vector3 CoverWorld;
     }
     public struct AriaPresentedObjectiveTarget
     {

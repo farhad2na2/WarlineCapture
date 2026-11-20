@@ -10,6 +10,18 @@ namespace Game.UI.Runtime
         readonly SkirmishConvoyServiceJourney convoyServiceJourney=new SkirmishConvoyServiceJourney();
         readonly System.Collections.Generic.HashSet<uint> convoyDelivering=new System.Collections.Generic.HashSet<uint>();
         string convoyHoldTraced;
+        // W37g (lead): a service return Move waits, with the truck held where it is, until an own escort group is within
+        // EscortRadiusMetres, for at most ServiceDeferSeconds once per Travel epoch (the journey retries after 20 s).
+        uint convoyDeferEpoch;float convoyDeferSince;bool convoyDeferOver;
+        bool ConvoyEscortNear(AriaPresentedObjectiveFrame frame,uint truckGroup)
+        {
+            SkirmishPublicPlayerGroup truck=null;foreach(var g in frame.Groups)if(g!=null&&g.GroupId==truckGroup){truck=g;break;}
+            if(truck==null||!truck.PositionKnown)return true;
+            foreach(var g in frame.Groups)
+                if(g!=null&&g.Own&&g.Living&&g.PositionKnown&&g.GroupId!=truckGroup&&(g.DesignatedSubjects==null||g.DesignatedSubjects.Length==0)&&
+                    Game.Simulation.AriaConvoyCoverPolicy.Dist(g.WorldX,g.WorldZ,truck.WorldX,truck.WorldZ)<=Game.Simulation.AriaConvoyCoverPolicy.EscortRadiusMetres)return true;
+            return false;
+        }
         bool ConvoyServiceOwnsRepair=>watchSkirmish!=null&&watchSkirmish.TryReadPublicObjectiveForAria(Time.frameCount,out var frame)&&
             frame.Goal?.Perspective==SkirmishPublicGoalPerspective.Escort;
         void ResetConvoyServiceJourney(){convoyServiceJourney.Reset();publicRepairScope=null;}
@@ -75,6 +87,27 @@ namespace Game.UI.Runtime
             if(destination<0||destination>=service.Ground.Length||destination>=service.GroundVisible.Length)
             {view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true};return;}
             uint group=convoyServiceJourney.GroupId;
+            if(stage==ConvoyServiceStage.Travel&&convoyServiceJourney.Failures==0)
+            {
+                if(convoyDeferEpoch!=convoyServiceJourney.Epoch){convoyDeferEpoch=convoyServiceJourney.Epoch;convoyDeferSince=frame.SimulationSeconds;convoyDeferOver=false;}
+                if(!convoyDeferOver&&(view.EscortCapable==0||ConvoyEscortNear(frame,group)||
+                    frame.SimulationSeconds-convoyDeferSince>=Game.Simulation.AriaConvoyCoverPolicy.ServiceDeferSeconds))convoyDeferOver=true;
+                if(!convoyDeferOver)
+                {
+                    // Hold the truck where it is (the emergency-Hold order); escorts converge on the cover point at the truck.
+                    bool only=frame.ExclusiveSelectedGroup==group;
+                    view.ConvoyServiceDeferred=true;
+                    view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true,Supported=true,Presented=true,PresentationEpoch=frame.PresentationEpoch,
+                        Paused=frame.Paused,GroupId=group,NavigationGroupId=group,RosterRevision=frame.RosterRevision^convoyServiceJourney.Epoch,
+                        PublicKey=PublicObjectiveKey(convoyServiceJourney.OriginalId),Action=AriaObjectiveAction.Hold,Intent=AriaSkirmishIntent.StopDamagedTruck,
+                        ExclusiveGroupSelected=only,SelectGroup=MatchHudSquadTouchNavigation.GroupTarget(watchSquads,group),
+                        ClearOtherSelection=view.ExpandedSelectedGroups>0&&!only?MatchHudSquadTouchNavigation.SelectedCardTarget(watchSquads):default,
+                        GoalInView=true,CameraSettled=true,Hold=ObserveWatchButton(_commandControlsView?.HoldButton),AcceptedOrderRevision=frame.AcceptedOrderRevision,
+                        AcceptedGroupId=frame.AcceptedGroup,AcceptedAction=frame.AcceptedAction,AcceptedFrame=frame.AcceptedFrame,AcceptedContactTargetId=frame.AcceptedContactTargetId,
+                        AcceptedPublicKey=frame.AcceptedGoalId==convoyServiceJourney.OriginalId?PublicObjectiveKey(convoyServiceJourney.OriginalId):0};
+                    return;
+                }
+            }
             var ground=service.Ground[destination];
             if(ground.Available&&!WatchTargetIsReachable(ground.Position,ground.Id,true))ground=default;
             ulong key=PublicObjectiveKey(service.Model.Service.PublicId);

@@ -23,7 +23,7 @@ namespace Game.UI.Shell.Ecs
         private AriaObjectiveSupportAction tracedObjectiveSupport;
         private int tracedObjectiveScore;
         private byte tracedRocketeerStage; private int tracedCoverageDone, tracedTruckReleases;
-        private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none", "truck_first", "hold" };
+        private static readonly string[] TruckReleaseReasons = { "-", "all", "bound", "none", "truck_first", "hold", "two" };
         private string tracedLatch; private int tracedLatchReleases;
 
         private void TraceObjective()

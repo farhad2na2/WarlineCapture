@@ -39,11 +39,14 @@ namespace Game.Tests.Editor
             t.ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound();
             t.EveryTruckOrderWaitsButServiceOrdersGoFirst();
             t.ReofferedMoveAfterTheChoiceMovedAwayIsANewOrder();
+            t.ConvoyCoverPointAndNeverOrderedGroupsFirst();
+            t.FirstTruckGoesOnceTwoEscortsAccepted();
+            t.HeldBackServiceMoveLetsEscortsConverge();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
             t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
             t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=26");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=29");
         }
 
         // ---------- pure policy ----------
@@ -649,6 +652,97 @@ namespace Game.Tests.Editor
                 var v = View(100, AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Hold); v.ObjectiveType = 1;
                 Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyServiceOrder(v)); Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(v, default));
             }
+        }
+
+        // W37g (lead): the escort cover point is a fixed distance ahead of the truck toward its goal, clamped to the goal,
+        // and moves on only in CoverStepMetres steps; escort offers go to never-ordered groups before re-offers.
+        [Test]
+        public void ConvoyCoverPointAndNeverOrderedGroupsFirst()
+        {
+            Game.Simulation.AriaConvoyCoverPolicy.Ahead(100, 100, 200, 100, 30, out float x, out float z, out bool clamped);
+            Assert.AreEqual(130f, x, 0.01f); Assert.AreEqual(100f, z, 0.01f); Assert.IsFalse(clamped, "30 m ahead toward the goal");
+            Game.Simulation.AriaConvoyCoverPolicy.Ahead(100, 100, 110, 100, 30, out x, out z, out clamped);
+            Assert.AreEqual(110f, x, 0.01f); Assert.IsTrue(clamped, "clamped to the goal");
+            Assert.AreEqual(Game.Simulation.AriaConvoyCoverPolicy.ConvergeMetres, Game.Simulation.AriaConvoyCoverPolicy.Distance(false, true), "damaged and stopped: converge");
+            Assert.AreEqual(Game.Simulation.AriaConvoyCoverPolicy.CoverAheadMetres, Game.Simulation.AriaConvoyCoverPolicy.Distance(true, true));
+            Assert.IsTrue(Game.Simulation.AriaConvoyCoverPolicy.StepMoved(false, 0, 0, 0, 0), "first cover point");
+            Assert.IsFalse(Game.Simulation.AriaConvoyCoverPolicy.StepMoved(true, 0, 0, 20, 0), "inside one step: same order");
+            Assert.IsTrue(Game.Simulation.AriaConvoyCoverPolicy.StepMoved(true, 0, 0, 26, 0), "one step on: a new escort order");
+            Game.Simulation.AriaEscortCandidate C(uint id, bool ordered) => new Game.Simulation.AriaEscortCandidate { GroupId = id, CanMove = true, Target = true,
+                Domain = Game.Skirmish.Contracts.SkirmishPopulationCategory.Ground, Role = Game.Skirmish.Contracts.SkirmishRoleKind.ApcArmored, EverOrdered = ordered };
+            var list = new[] { C(1, true), C(2, true), C(8, false), C(9, false) };
+            Assert.AreEqual(2, Game.Simulation.AriaObjectiveEscortPolicy.Pick(list, Game.Simulation.AriaObjectiveType.ConvoyEscort), "never-ordered group 8 first");
+            list[2].EverOrdered = true;
+            Assert.AreEqual(3, Game.Simulation.AriaObjectiveEscortPolicy.Pick(list, Game.Simulation.AriaObjectiveType.ConvoyEscort));
+            list[3].EverOrdered = true;
+            Assert.AreEqual(0, Game.Simulation.AriaObjectiveEscortPolicy.Pick(list, Game.Simulation.AriaObjectiveType.ConvoyEscort), "all ordered: lowest id");
+        }
+
+        // W37g (lead): the first truck order of the mission goes once two escort groups accepted (reason 6); later truck
+        // orders keep the full escort-first wait; an escort in flight hands the first truck order the turn.
+        [Test]
+        public void FirstTruckGoesOnceTwoEscortsAccepted()
+        {
+            AriaSkirmishObservation View(byte accepted)
+            {
+                var v = Presented(100); v.ObjectiveType = 3; v.EscortCapable = 6; v.EscortAccepted = accepted;
+                v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+                v.PublicObjective.Intent = AriaSkirmishIntent.EscortOriginalTruck; v.PublicObjective.SelectGroup = T(5);
+                v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                    GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+                return v;
+            }
+            var observing = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var p = new AriaSkirmishPlanComponent(); var t = observing;
+            Step(View(1), ref p, ref t, out var o);
+            Assert.AreEqual(8, o.TargetId, "one escort accepted: escorts first");
+            p = new AriaSkirmishPlanComponent(); t = observing;
+            Step(View(2), ref p, ref t, out o);
+            Assert.AreEqual(5, o.TargetId, "two escorts accepted: the first truck goes"); Assert.AreEqual(6, p.TruckReleaseReason); Assert.AreEqual(1, p.TruckReleases);
+            p = new AriaSkirmishPlanComponent { TruckReleases = 1 }; t = observing;
+            Step(View(2), ref p, ref t, out o);
+            Assert.AreEqual(8, o.TargetId, "a later truck order keeps the escort-first wait");
+            p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2, EscortTouch = new AriaObjectiveTouchPlan { GroupId = 9, PublicKey = 33, PresentationEpoch = 1,
+                Action = AriaObjectiveAction.Move, Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 300 } }; t = observing;
+            Assert.IsTrue(AriaSkirmishPlanSystem.ConvoyTruckFirst(View(2), p));
+            Step(View(2), ref p, ref t, out o);
+            Assert.AreEqual(5, o.TargetId, "the escort in flight hands the first truck order the turn"); Assert.AreEqual(6, p.TruckReleaseReason);
+            var small = View(2); small.EscortCapable = 2;
+            Assert.IsFalse(AriaSkirmishPlanSystem.FirstTruckEscorted(small, default), "two or fewer capable: the all-accepted rule applies");
+        }
+
+        // W37g (lead): a held-back service return Move presents the truck's Hold; once that Hold is accepted the escorts
+        // converge (escort turns run, an escort in flight is not handed back). An ordinary service Hold keeps the W37d rule.
+        [Test]
+        public void HeldBackServiceMoveLetsEscortsConverge()
+        {
+            AriaSkirmishObservation View(bool deferred)
+            {
+                var v = Presented(100); v.ObjectiveType = 3; v.EscortCapable = 4; v.EscortAccepted = 0; v.ConvoyServiceDeferred = deferred;
+                v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Hold;
+                v.PublicObjective.Intent = AriaSkirmishIntent.StopDamagedTruck; v.PublicObjective.SelectGroup = T(5);
+                v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                    GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+                return v;
+            }
+            var observing = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            // The truck's Hold goes first.
+            var p = new AriaSkirmishPlanComponent(); var t = observing;
+            Step(View(true), ref p, ref t, out var o);
+            Assert.AreEqual(5, o.TargetId, "the truck's Hold first");
+            AriaObjectiveTouchPlan Held() => new AriaObjectiveTouchPlan { GroupId = 11, PublicKey = 22, Action = AriaObjectiveAction.Hold, PresentationEpoch = 1, Stage = 4 };
+            // Hold accepted, Move held back: the escort goes.
+            p = new AriaSkirmishPlanComponent { ObjectiveTouch = Held() }; t = observing;
+            Assert.IsTrue(AriaSkirmishPlanSystem.ConvoyServiceDeferredIdle(View(true), p));
+            Step(View(true), ref p, ref t, out o);
+            Assert.AreEqual(8, o.TargetId, "escorts converge while the Move is held back");
+            p = new AriaSkirmishPlanComponent { ObjectiveTouch = Held(), ObjectiveOwner = 2, EscortTouch = new AriaObjectiveTouchPlan { GroupId = 9, PublicKey = 33,
+                PresentationEpoch = 1, Action = AriaObjectiveAction.Move, Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 300 } }; t = observing;
+            Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(View(true), p), "the converging escort is not handed back");
+            // Without the hold-back (an ordinary emergency Hold), no escort while the truck is held.
+            p = new AriaSkirmishPlanComponent { ObjectiveTouch = Held() }; t = observing;
+            Step(View(false), ref p, ref t, out o);
+            Assert.AreNotEqual(8, o.TargetId, "ordinary service Hold: no escort");
         }
 
         // W37e (W37d S046/S048: a truck's identical Move re-offered after its accepted Move was never re-tapped): replay

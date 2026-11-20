@@ -6,6 +6,7 @@ using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using AriaConvoyCoverPolicy = Game.Simulation.AriaConvoyCoverPolicy;
 
 namespace Game.UI.Runtime
 {
@@ -191,6 +192,7 @@ namespace Game.UI.Runtime
             if(camera.worldToCameraMatrix==previousObjectiveCamera)objectiveCameraSettledFrames++;else objectiveCameraSettledFrames=0;
             previousObjectiveCamera=camera.worldToCameraMatrix;
             var targets=new List<AriaPresentedObjectiveTarget>();var approaches=new List<SkirmishPublicPlayerApproach>();var groups=new List<SkirmishPublicPlayerGroup>();
+            UpdateConvoyCover(model);
             uint revision=2166136261,selected=0;int selectedCount=0;
             var tray=FindAnyObjectByType<MatchHudSquadTrayView>();
             foreach(var row in model.OwnGroups)
@@ -229,6 +231,16 @@ namespace Game.UI.Runtime
                     approaches.Add(new SkirmishPublicPlayerApproach {GroupId=policy.GroupId,GoalId=node.PublicId,Inspected=inspected,
                         GroundCompatible=policy.CanMove||policy.CanHold||policy.CanUnload,InsideGoalFootprint=inside,TravelSeconds=0,ObservedExposure=0});
                 }
+                // W37g (CE): the escort cover point ahead of the covered truck is one more ground target for escort groups.
+                if(convoyCoverId!=null&&(policy.DesignatedSubjects==null||policy.DesignatedSubjects.Length==0))
+                {
+                    var world=new Vector3(convoyCoverX,convoyCoverY,convoyCoverZ);var screen=camera.WorldToScreenPoint(world);
+                    bool visible=screen.z>0&&Screen.safeArea.Contains(screen);
+                    targets.Add(new AriaPresentedObjectiveTarget {PublicId=convoyCoverId,GroupId=policy.GroupId,PublicWorld=world,NavigationGroupId=navigation,
+                        InView=visible,GroundFitsPublicGoal=true,Ground=new AriaTouchTarget {Id=GroundPublicId(convoyCoverId),Position=screen,Available=visible&&!mapOpen}});
+                    if(!policy.AcceptedOrderActive&&row.MoveActive&&CoverGoalsNear(row.CurrentMoveGoals,convoyCoverX,convoyCoverZ))
+                    {policy.AcceptedOrderActive=true;policy.AcceptedGoalId=convoyCoverId;}
+                }
                 if(policy.AcceptedOrderActive)
                     for(int i=0;i<model.Goal.NodeCount;i++)if(model.Goal.Node(i).PublicId==policy.AcceptedGoalId)
                     {
@@ -238,7 +250,7 @@ namespace Game.UI.Runtime
                         else if(best-distance>=model.GroundCellSize){bestPublicTravel[key]=distance;publicTravelRevision++;}
                     }
             }
-            string acceptedGoal=ResolvePublicServiceOrder(model)??ResolvePublicOrderGoal(model);
+            string acceptedGoal=ResolvePublicServiceOrder(model)??ResolvePublicOrderGoal(model)??ResolveConvoyCoverOrder(model);
             int contact=0;
             if(model.Order.Present&&model.Order.Accepted&&acceptedGoal!=null&&model.CompletedContactTargetId!=0&&
                 Math.Abs(model.Order.Frame-model.CompletedContactFrame)<=2&&
@@ -250,7 +262,8 @@ namespace Game.UI.Runtime
                 SimulationSeconds=model.SimulationSeconds,SignificantPublicEventRevision=significant,CameraSettled=objectiveCameraSettledFrames>=2,
                 ExclusiveSelectedGroup=selectedCount==1?selected:0,MoveMode=UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)&&command.ActiveCommandMode==Game.Tactical.Contracts.TacticalCommandMode.Move,
                 AcceptedOrderRevision=model.Order.Present?model.Order.Revision:0,AcceptedGroup=model.Order.GroupId,AcceptedGoalId=acceptedGoal,
-                AcceptedAction=model.Order.Action,AcceptedNavigationGroupId=model.Order.NavigationGroupId,AcceptedFrame=model.Order.Frame,AcceptedContactTargetId=contact,ProgressKnown=true,PublicProgressRevision=progress});
+                AcceptedAction=model.Order.Action,AcceptedNavigationGroupId=model.Order.NavigationGroupId,AcceptedFrame=model.Order.Frame,AcceptedContactTargetId=contact,ProgressKnown=true,PublicProgressRevision=progress,
+                CoverId=convoyCoverId,CoverTruckGroup=convoyCoverTruck,CoverWorld=new Vector3(convoyCoverX,convoyCoverY,convoyCoverZ)});
         }
         private static int GroundPublicId(string value){unchecked{uint hash=2166136261;foreach(char c in value)hash=(hash^c)*16777619;return (int)(0x30000000u|(hash&0x0fffffffu));}}
         private static bool AllInsidePublicGoal(UiSkirmishPublicObjectiveModel model,SkirmishPublicGoalNode node,Vector2[] points)
@@ -262,6 +275,65 @@ namespace Game.UI.Runtime
             if(node.Kind!=SkirmishPublicGoalNodeKind.OwnDesignatedSubject)return false;
             foreach(var point in points)if(Mathf.Abs(point.x-node.WorldX)>model.GroundCellSize*.75f||Mathf.Abs(point.y-node.WorldZ)>model.GroundCellSize*.75f)return false;
             return true;
+        }
+        // W37g (lead, CE only): escorts cover the truck, not the destination. Published from public facts only: the own
+        // trucks' positions, health and current move goals and the delivery destination. The covered truck is a damaged
+        // one (lowest health) first, else a moving one, else the one nearest the destination; trucks inside a delivery
+        // destination are not covered (escorts finish at the destination as before). A cover point inside a goal area
+        // is not published either (that area's own target applies).
+        private string convoyCoverId,convoyCoverPrevId;private uint convoyCoverTruck;private int convoyCoverCounter;
+        private float convoyCoverX,convoyCoverY,convoyCoverZ,convoyCoverPrevX,convoyCoverPrevZ;
+        private void UpdateConvoyCover(UiSkirmishPublicObjectiveModel model)
+        {
+            if(model.Goal==null||model.Goal.Perspective!=SkirmishPublicGoalPerspective.Escort){convoyCoverId=convoyCoverPrevId=null;convoyCoverTruck=0;return;}
+            UiSkirmishPublicGroupRow truck=null;int bestRank=int.MaxValue;float bestValue=float.MaxValue;float destX=0,destZ=0;
+            foreach(var row in model.OwnGroups)
+            {
+                var policy=row?.Policy;if(policy==null||policy.DesignatedSubjects==null||policy.DesignatedSubjects.Length==0||row.AliveCount<=0||!policy.PositionKnown)continue;
+                bool inside=false;float nearest=float.MaxValue,nx=0,nz=0;
+                for(int i=0;i<model.Goal.NodeCount;i++)
+                {
+                    var node=model.Goal.Node(i);if(node.Kind!=SkirmishPublicGoalNodeKind.DeliveryDestination||!node.PositionKnown)continue;
+                    if(AllInsidePublicGoal(model,node,row.OwnMemberPositions))inside=true;
+                    float d=AriaConvoyCoverPolicy.Dist(policy.WorldX,policy.WorldZ,node.WorldX,node.WorldZ);if(d<nearest){nearest=d;nx=node.WorldX;nz=node.WorldZ;}
+                }
+                if(inside||nearest==float.MaxValue)continue;
+                bool damaged=row.Health01<AriaConvoyCoverPolicy.DamagedHealth01;
+                int rank=damaged?0:row.MoveActive?1:2;float value=damaged?row.Health01:nearest;
+                if(rank<bestRank||rank==bestRank&&value<bestValue){bestRank=rank;bestValue=value;truck=row;destX=nx;destZ=nz;}
+            }
+            if(truck==null){convoyCoverId=null;convoyCoverTruck=0;return;}
+            var t=truck.Policy;bool moving=truck.MoveActive&&truck.CurrentMoveGoals!=null&&truck.CurrentMoveGoals.Length>0;
+            float gx=destX,gz=destZ;
+            if(moving){gx=0;gz=0;foreach(var g in truck.CurrentMoveGoals){gx+=g.x;gz+=g.y;}gx/=truck.CurrentMoveGoals.Length;gz/=truck.CurrentMoveGoals.Length;}
+            AriaConvoyCoverPolicy.Ahead(t.WorldX,t.WorldZ,gx,gz,AriaConvoyCoverPolicy.Distance(moving,bestRank==0),out float px,out float pz,out _);
+            var point=new[]{new Vector2(px,pz)};
+            for(int i=0;i<model.Goal.NodeCount;i++)
+            {var node=model.Goal.Node(i);if(node.Kind!=SkirmishPublicGoalNodeKind.OwnDesignatedSubject&&node.PositionKnown&&AllInsidePublicGoal(model,node,point)){convoyCoverId=null;convoyCoverTruck=0;return;}}
+            if(convoyCoverTruck!=t.GroupId||AriaConvoyCoverPolicy.StepMoved(convoyCoverId!=null,convoyCoverX,convoyCoverZ,px,pz))
+            {
+                convoyCoverPrevId=convoyCoverId;convoyCoverPrevX=convoyCoverX;convoyCoverPrevZ=convoyCoverZ;
+                convoyCoverCounter++;convoyCoverTruck=t.GroupId;convoyCoverX=px;convoyCoverZ=pz;
+                var height=Array.Find(model.Positions,p=>p.PublicId==t.DesignatedSubjects[0]);convoyCoverY=height.PublicId!=null?height.World.y:0f;
+                convoyCoverId="cover.g"+t.GroupId+"."+convoyCoverCounter;
+            }
+        }
+        private static bool CoverGoalsNear(Vector2[] goals,float x,float z)
+        {
+            if(goals==null||goals.Length==0)return false;
+            foreach(var g in goals)if(AriaConvoyCoverPolicy.Dist(g.x,g.y,x,z)>AriaConvoyCoverPolicy.CoverGoalMetres)return false;
+            return true;
+        }
+        // An accepted Move at the current (or the just-replaced) cover point resolves to that cover id.
+        private string ResolveConvoyCoverOrder(UiSkirmishPublicObjectiveModel model)
+        {
+            if(convoyCoverId==null||!model.Order.Present||!model.Order.Accepted||model.Order.Action!=AriaObjectiveAction.Move||!model.Order.WorldKnown)return null;
+            var group=Array.Find(model.OwnGroups,g=>g.Policy.GroupId==model.Order.GroupId);if(group==null)return null;
+            float ox=model.Order.World.x,oz=model.Order.World.z;
+            if(AriaConvoyCoverPolicy.Dist(ox,oz,convoyCoverX,convoyCoverZ)<=AriaConvoyCoverPolicy.CoverTapMetres&&CoverGoalsNear(group.CurrentMoveGoals,convoyCoverX,convoyCoverZ))return convoyCoverId;
+            if(convoyCoverPrevId!=null&&AriaConvoyCoverPolicy.Dist(ox,oz,convoyCoverPrevX,convoyCoverPrevZ)<=AriaConvoyCoverPolicy.CoverTapMetres&&
+                CoverGoalsNear(group.CurrentMoveGoals,convoyCoverPrevX,convoyCoverPrevZ))return convoyCoverPrevId;
+            return null;
         }
         private static string ResolvePublicOrderGoal(UiSkirmishPublicObjectiveModel model)
         {

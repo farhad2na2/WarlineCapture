@@ -61,6 +61,8 @@ namespace Game.UI.Contracts
         // W37c: escort-capable own groups for the current escort goal (AriaObjectiveEscortPolicy.Eligible) and how many
         // of them have a displayed accepted Move to it.
         public byte EscortCapable, EscortAccepted, EscortAcceptedOld;
+        // W37g: the CE service return Move is held back (truck held) until an escort is near the truck.
+        public bool ConvoyServiceDeferred;
         public bool Active, Finished, DrawerOpen, SelectionVisible, AttackMode, MapOpen, MapContactInView, SelectionMode, FocusThreatDrag, FocusGroupDrag, FocusAdvanceDrag, PlacementOpen, AdvancePreferred, ThreatNearForce, AssaultAtBase;
         public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public bool CanAffordAntiAir, PadReady, AirQueueOffered, PadPresent, ReadinessEligible, CanUpgradeReadiness;

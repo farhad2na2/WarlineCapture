@@ -160,6 +160,40 @@ namespace Game.Simulation
         // W16 attempt 2 (garrison offers only): Holding = its accepted order is active at another zone (it holds
         // that zone); Committed = its accepted order goes to the committed zone. Holders are never sent.
         public bool Holding, Committed;
+        // W37g (lead, S046 gate 3): the group has never had an accepted order this match; such groups are offered first.
+        public bool EverOrdered;
+    }
+
+    // W37g (lead, CE only): escorts cover the truck, not the destination. The cover point is CoverAheadMetres ahead of
+    // the covered truck toward its current move goal (or toward the destination before it departs), clamped to that
+    // goal; a damaged truck that is not moving is covered at ConvergeMetres so the escorts converge on it. The published
+    // point moves on only after the truck's cover point has moved CoverStepMetres (each step is a new escort order).
+    public static class AriaConvoyCoverPolicy
+    {
+        public const float CoverAheadMetres = 30f, ConvergeMetres = 8f, CoverStepMetres = 25f;
+        // An accepted Move belongs to the cover point when its tapped point is this close and every move goal is
+        // within CoverGoalMetres of it (a squad spreads its goals around the tap).
+        public const float CoverTapMetres = 12f, CoverGoalMetres = 20f;
+        // W37g: a service return Move waits (truck held) until an escort group is this close, at most ServiceDeferSeconds
+        // (the service journey retries a Travel stage after 20 s without progress, so the Move needs time to start).
+        public const float EscortRadiusMetres = 30f, ServiceDeferSeconds = 10f;
+        public const float DamagedHealth01 = 0.6f;
+
+        public static void Ahead(float truckX, float truckZ, float goalX, float goalZ, float metres, out float x, out float z, out bool clamped)
+        {
+            float dx = goalX - truckX, dz = goalZ - truckZ, d = (float)Math.Sqrt(dx * dx + dz * dz);
+            if (d <= metres || d < 0.001f) { x = goalX; z = goalZ; clamped = true; return; }
+            x = truckX + dx / d * metres; z = truckZ + dz / d * metres; clamped = false;
+        }
+
+        // Moving: toward the move goal; stationary and healthy: toward the destination; damaged and stationary: converge.
+        public static float Distance(bool moving, bool damaged) => moving ? CoverAheadMetres : damaged ? ConvergeMetres : CoverAheadMetres;
+
+        public static bool StepMoved(bool published, float lastX, float lastZ, float x, float z) =>
+            !published || Dist(lastX, lastZ, x, z) > CoverStepMetres;
+
+        public static float Dist(float ax, float az, float bx, float bz)
+        { float dx = ax - bx, dz = az - bz; return (float)Math.Sqrt(dx * dx + dz * dz); }
     }
 
     // W16 attempt 2: the FC garrison zone stays chosen until it is lost or a group arrives and holds it, instead of
@@ -210,6 +244,9 @@ namespace Game.Simulation
                 if (best < 0) { best = i; continue; }
                 var b = candidates[best];
                 if (garrison && b.Committed != c.Committed) { if (!c.Committed) best = i; continue; }
+                // W37g (S046 gate 3: a fast CE win ended before the lowest-id-first offers reached aa/apc/heli): a group
+                // that never had an order goes before one that already had one; otherwise the lowest group id.
+                if (b.EverOrdered != c.EverOrdered) { if (!c.EverOrdered) best = i; continue; }
                 if (c.GroupId < b.GroupId) best = i;
             }
             return best;

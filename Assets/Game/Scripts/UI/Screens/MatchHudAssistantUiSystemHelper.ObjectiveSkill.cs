@@ -18,6 +18,11 @@ namespace Game.UI.Runtime
         private AriaGarrisonState escortGarrison;
         private float escortOfferedAt, escortAttemptSeconds;
         private uint escortEpoch;
+        // W37g (S046 gate 3): groups that had any accepted order this match (never-ordered groups are offered first),
+        // and the one-time group->role map for reading gate 3.
+        private readonly HashSet<uint> everOrdered = new();
+        private bool groupMapLogged;
+        private float everOrderedSeenAt = -1f;
 
         private void ObserveObjectiveSkillFacts(ref AriaSkirmishObservation view, AriaPresentedObjectiveFrame frame)
         {
@@ -62,6 +67,18 @@ namespace Game.UI.Runtime
             { escortEpoch = frame.PresentationEpoch; escortDone.Clear(); escortSkipped.Clear(); escortOfferKey = null; escortGarrison = default; }
             var model = frame.OwnModel; var goal = frame.Goal;
             if (model == null || goal == null || goal.Outcome != SkirmishOutcomeKind.None || frame.Paused) return;
+            if (frame.SimulationSeconds + 1f < everOrderedSeenAt) { everOrdered.Clear(); groupMapLogged = false; }
+            everOrderedSeenAt = frame.SimulationSeconds;
+            if (frame.AcceptedGroup != 0 && frame.AcceptedAction != AriaObjectiveAction.None && frame.AcceptedOrderRevision != 0) everOrdered.Add(frame.AcceptedGroup);
+            foreach (var row in model.OwnGroups) if (row?.Policy != null && row.Policy.AcceptedOrderActive) everOrdered.Add(row.Policy.GroupId);
+            if (!groupMapLogged && model.OwnGroups.Length > 0 && (Game.Runtime.AriaCommandEvidence.Active || UnityEngine.Debug.isDebugBuild))
+            {
+                groupMapLogged = true;
+                var map = new System.Text.StringBuilder();
+                foreach (var row in model.OwnGroups)
+                    if (row?.Policy != null) map.Append(map.Length > 0 ? "," : "").Append(row.Policy.GroupId).Append(':').Append(row.Role).Append(row.Originals ? "/original" : "");
+                UnityEngine.Debug.Log("[AriaObjective] type=" + AriaObjectiveSkillPolicy.TypeOf(goal.Perspective) + " event=groups map=" + map + " t=" + frame.SimulationSeconds.ToString("F2"));
+            }
             // The displayed accepted Move for a group/goal completes that escort (normal HUD order receipt).
             if (frame.AcceptedGroup != 0 && !string.IsNullOrEmpty(frame.AcceptedGoalId) && frame.AcceptedAction == AriaObjectiveAction.Move)
                 escortDone.Add(frame.AcceptedGroup + "|" + frame.AcceptedGoalId);
@@ -69,6 +86,9 @@ namespace Game.UI.Runtime
             if (escortGarrison.Group != 0 && escortDone.Contains(escortGarrison.Group + "|" + escortGarrison.Zone)) escortGarrison.Ordered = true;
             string goalId = AriaObjectiveEscortPolicy.Goal(goal, frame.Groups, chosenGoal, ref escortGarrison);
             if (goalId == null) { escortOfferKey = null; return; }
+            // W37g (lead, CE): escorts cover the truck (the HUD's published cover point ahead of it), not the destination;
+            // with no cover point (no truck left outside a destination) they finish at the destination as before.
+            if (frame.CoverId != null && AriaObjectiveSkillPolicy.TypeOf(goal.Perspective) == AriaObjectiveType.ConvoyEscort) goalId = frame.CoverId;
             bool garrison = escortGarrison.Zone != null && goalId == escortGarrison.Zone;
             escortCandidates.Clear();
             foreach (var row in model.OwnGroups)
@@ -82,7 +102,7 @@ namespace Game.UI.Runtime
                     Chosen = publicObjectiveChoice.Available && publicObjectiveChoice.GroupId == policy.GroupId,
                     Done = escortDone.Contains(key) || policy.AcceptedOrderActive && policy.AcceptedGoalId == goalId,
                     Holding = garrison && policy.AcceptedOrderActive && !string.IsNullOrEmpty(policy.AcceptedGoalId) && policy.AcceptedGoalId != goalId,
-                    Committed = garrison && policy.AcceptedGoalId == escortGarrison.Committed });
+                    Committed = garrison && policy.AcceptedGoalId == escortGarrison.Committed, EverOrdered = everOrdered.Contains(policy.GroupId) });
             }
             {
                 // W37d (lead): accepted = a fresh displayed Move toward this escort goal (this presentation epoch). The W37c

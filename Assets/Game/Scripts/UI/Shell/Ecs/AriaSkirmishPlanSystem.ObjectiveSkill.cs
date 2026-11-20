@@ -111,13 +111,13 @@ namespace Game.UI.Shell.Ecs
             // W37c (lead, option a): CE escorts first. While a truck order waits, every offered escort goes first until each
             // escort-capable group has an accepted Move, or the truck order has waited ConvoyTruckReleaseSeconds.
             // W37f (lead, option 3): escort-first for EVERY truck order again (W37d/e truck-first later orders cost S043 three
-            // losses @130365), with the exact 45 s bound. Service orders never wait (skipped here), nor does a truck Hold
-            // (dwell at the destination).
+            // losses @130365), with the exact 45 s bound. Only service orders never wait (skipped here); a truck Hold at the
+            // destination waits like a Move (W37c destination behaviour; the W37f hold-first variant lost 4 CE jobs).
             if (!pending && wants && ready && ConvoyEscortCadence(view) && !service)
             {
-                bool bound = TruckBoundExpired(view, plan), hold = objective.Action == AriaObjectiveAction.Hold;
-                if (!bound && !hold && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
-                ReleaseTruck(view, ref plan, bound ? (byte)2 : hold ? (byte)5 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : (byte)3);
+                bool bound = TruckBoundExpired(view, plan);
+                if (!bound && EscortOffered(view, plan)) { StepObjectiveEscort(view, ref plan, ref touch, ref output); return; }
+                ReleaseTruck(view, ref plan, bound ? (byte)2 : view.EscortAccepted >= view.EscortCapable ? (byte)1 : (byte)3);
             }
             if (pending || wants && ready)
             {
@@ -197,11 +197,10 @@ namespace Game.UI.Shell.Ecs
             ConvoyServiceOrder(view) && (view.PublicObjective.Action == AriaObjectiveAction.Hold ||
                 view.PublicObjective.Action == AriaObjectiveAction.Repair || view.PublicObjective.Intent == AriaSkirmishIntent.RepairVehicle);
 
-        // W37f: an escort in flight hands the turn back now for any service order or a waiting truck Hold, and for a waiting
-        // truck Move exactly at its 45 s bound (even with the same offer still in flight). Otherwise escorts go first.
+        // W37f: an escort in flight hands the turn back now for any service order, and for a waiting truck order exactly at
+        // its 45 s bound (even with the same offer still in flight). Otherwise escorts go first.
         public static bool ConvoyTruckFirst(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan) =>
-            ConvoyEscortCadence(view) && (ConvoyServiceOrder(view) ||
-                ObjectiveOrderWaiting(view, plan) && (view.PublicObjective.Action == AriaObjectiveAction.Hold || TruckBoundExpired(view, plan)));
+            ConvoyEscortCadence(view) && (ConvoyServiceOrder(view) || ObjectiveOrderWaiting(view, plan) && TruckBoundExpired(view, plan));
 
         static void TrackTruckWait(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan)
         {
@@ -272,7 +271,7 @@ namespace Game.UI.Shell.Ecs
                     touch.LastProgressAt = view.Time;
                 }
                 plan.ObjectiveOwner = 0; plan.EscortTouch = default;
-                if (!ConvoyServiceOrder(view)) ReleaseTruck(view, ref plan, TruckBoundExpired(view, plan) ? (byte)2 : (byte)5);
+                if (!ConvoyServiceOrder(view)) ReleaseTruck(view, ref plan, 2);
                 return false;
             }
             if (same && plan.EscortTouch.Stage == 4) { plan.ObjectiveOwner = 0; return false; }

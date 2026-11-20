@@ -15,6 +15,7 @@ namespace Game.UI.Runtime
         private readonly HashSet<string> escortDone = new(StringComparer.Ordinal), escortSkipped = new(StringComparer.Ordinal);
         private readonly List<AriaEscortCandidate> escortCandidates = new();
         private string escortOfferKey;
+        private AriaGarrisonState escortGarrison;
         private float escortOfferedAt, escortAttemptSeconds;
         private uint escortEpoch;
 
@@ -58,14 +59,17 @@ namespace Game.UI.Runtime
         private void ObserveObjectiveEscort(ref AriaSkirmishObservation view, AriaPresentedObjectiveFrame frame, string chosenGoal)
         {
             if (frame.PresentationEpoch != escortEpoch)
-            { escortEpoch = frame.PresentationEpoch; escortDone.Clear(); escortSkipped.Clear(); escortOfferKey = null; }
+            { escortEpoch = frame.PresentationEpoch; escortDone.Clear(); escortSkipped.Clear(); escortOfferKey = null; escortGarrison = default; }
             var model = frame.OwnModel; var goal = frame.Goal;
             if (model == null || goal == null || goal.Outcome != SkirmishOutcomeKind.None || frame.Paused) return;
             // The displayed accepted Move for a group/goal completes that escort (normal HUD order receipt).
             if (frame.AcceptedGroup != 0 && !string.IsNullOrEmpty(frame.AcceptedGoalId) && frame.AcceptedAction == AriaObjectiveAction.Move)
                 escortDone.Add(frame.AcceptedGroup + "|" + frame.AcceptedGoalId);
-            string goalId = AriaObjectiveEscortPolicy.Goal(goal, frame.Groups, chosenGoal);
+            // W16 attempt 2: the garrisoning group's displayed accepted Move ends the garrison offers.
+            if (escortGarrison.Group != 0 && escortDone.Contains(escortGarrison.Group + "|" + escortGarrison.Zone)) escortGarrison.Ordered = true;
+            string goalId = AriaObjectiveEscortPolicy.Goal(goal, frame.Groups, chosenGoal, ref escortGarrison);
             if (goalId == null) { escortOfferKey = null; return; }
+            bool garrison = escortGarrison.Zone != null && goalId == escortGarrison.Zone;
             escortCandidates.Clear();
             foreach (var row in model.OwnGroups)
             {
@@ -76,11 +80,14 @@ namespace Game.UI.Runtime
                 escortCandidates.Add(new AriaEscortCandidate { GroupId = policy.GroupId, Role = row.Role, Domain = row.Domain,
                     CanMove = policy.CanMove, Originals = row.Originals, Target = target, Skipped = escortSkipped.Contains(key),
                     Chosen = publicObjectiveChoice.Available && publicObjectiveChoice.GroupId == policy.GroupId,
-                    Done = escortDone.Contains(key) || policy.AcceptedOrderActive && policy.AcceptedGoalId == goalId });
+                    Done = escortDone.Contains(key) || policy.AcceptedOrderActive && policy.AcceptedGoalId == goalId,
+                    Holding = garrison && policy.AcceptedOrderActive && !string.IsNullOrEmpty(policy.AcceptedGoalId) && policy.AcceptedGoalId != goalId,
+                    Committed = garrison && policy.AcceptedGoalId == escortGarrison.Committed });
             }
-            int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective));
+            int pick = AriaObjectiveEscortPolicy.Pick(escortCandidates, AriaObjectiveSkillPolicy.TypeOf(goal.Perspective), garrison);
             if (pick < 0) { escortOfferKey = null; return; }
             var chosen = escortCandidates[pick];
+            if (garrison) AriaObjectiveEscortPolicy.BindGarrison(ref escortGarrison, chosen.GroupId);
             string offer = chosen.GroupId + "|" + goalId;
             // W32: the offer expires after OfferSeconds of actual attempt (the offered group selected, as ARIA does to
             // order it), not elapsed time: an offer ARIA never got to while busy elsewhere stays open.
@@ -90,7 +97,11 @@ namespace Game.UI.Runtime
                 float elapsed = frame.SimulationSeconds - escortOfferedAt; escortOfferedAt = frame.SimulationSeconds;
                 if (elapsed > 0 && frame.ExclusiveSelectedGroup == chosen.GroupId) escortAttemptSeconds += elapsed;
                 if (AriaObjectiveEscortPolicy.OfferExpired(escortAttemptSeconds))
-                { escortSkipped.Add(offer); escortOfferKey = null; return; } // Bounded: the next group gets its turn.
+                {
+                    escortSkipped.Add(offer); escortOfferKey = null; // Bounded: the next group gets its turn.
+                    if (garrison && escortGarrison.Group == chosen.GroupId) escortGarrison.Group = 0;
+                    return;
+                }
             }
             AriaPresentedObjectiveTarget target1 = default;
             foreach (var shown in frame.Targets) if (shown.GroupId == chosen.GroupId && shown.PublicId == goalId) { target1 = shown; break; }

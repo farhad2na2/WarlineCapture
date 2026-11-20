@@ -42,8 +42,12 @@ namespace Game.Editor
         public static void RunFirstScan() { firstScanOnly = true; RunAriaVictory(); }
         private static int menuCaptureFrames;
         private static int menuReturnFrames;
+        private static int resumeCaptureFrame = -1;
         private static int ariaTraceBucket;
         private static bool ariaWasActive;
+        private static int tracedAriaActions;
+        private static readonly System.Collections.Generic.HashSet<int> tracedCasualties = new();
+        private static readonly System.Collections.Generic.Dictionary<int, Unity.Mathematics.float3> lastActorPositions = new();
         private static string capturePath;
         private static int exitCode;
         private static string loadFailure;
@@ -389,7 +393,23 @@ namespace Game.Editor
                     int original = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root).Length;
                     using var units = world.EntityManager.CreateEntityQuery(new EntityQueryDesc
                     { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
-                    if (original != 16 || captureFrames == 0 && units.CalculateEntityCount() != 36) throw new InvalidOperationException("Finite roster mismatch.");
+                    if (captureFrames == 0)
+                    {
+                        var roster = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root);
+                        int recon = 0, factionOne = 0, factionTwo = 0;
+                        foreach (var member in roster) if (member.Recon != 0) recon++;
+                        using var actors = units.ToEntityArray(Unity.Collections.Allocator.Temp);
+                        foreach (var actor in actors)
+                        {
+                            int faction = world.EntityManager.GetComponentData<Faction>(actor).Id;
+                            if (faction == 1) factionOne++;
+                            if (faction == 2) factionTwo++;
+                        }
+                        Debug.Log($"[OperationsRoster] phase=Handoff original={original} records={world.EntityManager.GetBuffer<OperationsReconSpawnRecord>(root).Length} " +
+                            $"live={actors.Length} player={factionOne} enemy={factionTwo} recon={recon}");
+                        if (actors.Length != 36) throw new InvalidOperationException("Finite roster mismatch.");
+                    }
+                    if (original != 16) throw new InvalidOperationException("Finite roster mismatch.");
                     captureFrames++;
                     // Editor update callbacks can outpace game frames. Require actual
                     // simulation progress so a frozen world cannot pass the launch gate.
@@ -431,6 +451,16 @@ namespace Game.Editor
                             var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
                             foreach (var button in tray.GetComponentsInChildren<Button>(true))
                             { var observedButton = button; observedButton.onClick.AddListener(() => Debug.Log("[OperationsInputTrace] squadCardClick=" + observedButton.name)); }
+                            foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                            {
+                                if (!view.IsHud) continue;
+                                TraceAriaControl(view.GuideButton, "camera");
+                                TraceAriaControl(view.ScanButton(0), "scan");
+                                TraceAriaControl(view.RecoverButton, "recover");
+                                break;
+                            }
+                            var commandControls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                            TraceAriaControl(commandControls?.AttackButton, "attack");
                             selectionDiagnosticsAttached = true;
                         }
                         if (Click("ARIA PLAY")) { stage = 20; ariaRequestedAt = EditorApplication.timeSinceStartup; }
@@ -663,6 +693,7 @@ namespace Game.Editor
                             " ap=2 marker=" + ProcessCheckpointMarker);
                         return;
                     }
+                    if (!CaptureResumeIfRequested()) return;
                     if (Click("RESUME ATTEMPT")) stage = 11;
                     return;
                 }
@@ -700,6 +731,7 @@ namespace Game.Editor
                         return;
                     }
                     stoppedActions = state.Actions;
+                    TraceCasualties();
                     stoppedAt = EditorApplication.timeSinceStartup;
                     ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001AriaStopped.png"));
                     stage = 41;
@@ -707,6 +739,7 @@ namespace Game.Editor
                 }
                 if (stage == 41)
                 {
+                    TraceCasualties();
                     var state = UiShellRuntimeGateway.ReadAriaPlay();
                     if (state.Active || state.Actions != stoppedActions)
                         throw new InvalidOperationException("ARIA continued issuing input after STOP ARIA.");
@@ -719,6 +752,7 @@ namespace Game.Editor
                         throw new InvalidOperationException("The mission clock stopped with ARIA.");
                     if (!Click("ARIA PLAY")) throw new InvalidOperationException("Visible ARIA PLAY was not restored after stopping.");
                     stopResumeVerified = true; ariaWasActive = false;
+                    tracedAriaActions = 0;
                     ariaRequestedAt = EditorApplication.timeSinceStartup; stage = 20;
                     Debug.Log("[OperationsReconLaunchSmokeValidation] ariaStopResume=Passed input=visible-button-events missionContinued=1");
                     return;
@@ -750,6 +784,12 @@ namespace Game.Editor
                     if (ariaState.Active) ariaWasActive = true;
                     using var sessions = world.EntityManager.CreateEntityQuery(typeof(AriaPlaySessionComponent));
                     var session = sessions.IsEmptyIgnoreFilter ? default : sessions.GetSingleton<AriaPlaySessionComponent>();
+                    if (session.Actions > tracedAriaActions)
+                    {
+                        tracedAriaActions = session.Actions;
+                        Debug.Log(FormattableString.Invariant($"[OperationsAriaAction] elapsed={operation.ElapsedSeconds:F2} action={session.Actions} goal={session.GoalId} target={session.LastCompletedTargetId} point={session.LastCompletedPosition} frame={session.LastCompletedFrame}"));
+                    }
+                    TraceCasualties(world.EntityManager, root, operation);
                     if (traceBucket > ariaTraceBucket)
                     {
                         ariaTraceBucket = traceBucket;
@@ -904,6 +944,58 @@ namespace Game.Editor
                     if (label.isTextOverflowing)
                         throw new InvalidOperationException("Mission text overflows its native box: " + label.text + " rect=" + label.rectTransform.rect);
                 }
+            }
+        }
+
+        private static bool CaptureResumeIfRequested()
+        {
+            string path = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_O001_RESUME_CAPTURE");
+            if (string.IsNullOrEmpty(path)) return true;
+            if (resumeCaptureFrame < 0)
+            {
+                resumeCaptureFrame = Time.frameCount;
+                ScreenCapture.CaptureScreenshot(path);
+                return false;
+            }
+            if (Time.frameCount - resumeCaptureFrame < 10) return false;
+            if (!File.Exists(path)) throw new InvalidOperationException("Missing resume screenshot: " + path);
+            Debug.Log("[OperationsReconLaunchSmokeValidation] resumeCapture=" + path);
+            return true;
+        }
+
+        private static void TraceAriaControl(Button button, string action)
+        {
+            if (button == null) return;
+            button.onClick.AddListener(() =>
+            {
+                if (!UiShellRuntimeGateway.TryReadOperationsMission(out var mission)) return;
+                Debug.Log($"[OperationsAriaControl] action={action} label={button.GetComponentInChildren<TMPro.TMP_Text>()?.text} " +
+                    $"site={mission.NextSite} scans={mission.CompletedScans} frame={Time.frameCount}");
+            });
+        }
+
+        private static void TraceCasualties()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world != null && world.IsCreated && OperationsReconLaunchProjection.TryGet(world.EntityManager, out var root, out var mission))
+                TraceCasualties(world.EntityManager, root, mission);
+        }
+
+        private static void TraceCasualties(EntityManager em, Entity root, OperationsReconMissionComponent mission)
+        {
+            var records = em.GetBuffer<OperationsReconSpawnRecord>(root);
+            int original = em.GetBuffer<OperationsReconRosterElement>(root).Length;
+            foreach (var record in records)
+            {
+                if (tracedCasualties.Contains(record.StableIndex)) continue;
+                bool exists = em.Exists(record.Unit);
+                if (exists && em.HasComponent<Unity.Transforms.LocalTransform>(record.Unit))
+                    lastActorPositions[record.StableIndex] = em.GetComponentData<Unity.Transforms.LocalTransform>(record.Unit).Position;
+                if (exists && em.HasComponent<UnitHealth>(record.Unit) && em.GetComponentData<UnitHealth>(record.Unit).Current > 0) continue;
+                tracedCasualties.Add(record.StableIndex);
+                lastActorPositions.TryGetValue(record.StableIndex, out var position);
+                string side = record.StableIndex <= original ? "player" : "enemy";
+                Debug.Log(FormattableString.Invariant($"[OperationsCasualty] elapsed={mission.ElapsedSeconds:F2} side={side} unit={record.StableIndex} exists={exists} lastPosition={position} scans={mission.CompletedScans}"));
             }
         }
 

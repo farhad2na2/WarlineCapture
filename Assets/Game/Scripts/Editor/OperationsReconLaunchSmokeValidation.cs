@@ -655,7 +655,7 @@ namespace Game.Editor
                     var saved = SaveService.CreateDefault().LoadProfile().operations;
                     if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Withdrawal did not durably settle the single AP reservation.");
-                    if (Click("CONTINUE")) stage = 6;
+                    if (Click("Leave", "MissionResult")) stage = 6;
                     return;
                 }
                 if (stage == 6 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -853,7 +853,8 @@ namespace Game.Editor
                             " extracted=" + operation.InfantryAtExit + " saved=1");
                     }
                     if (resultCaptureFrames < 30) return;
-                    if (Click("CONTINUE")) stage = 21;
+                    // The rendered Persian label is shaped, so identify the result action by its control name.
+                    if (Click("Leave", "MissionResult")) stage = 21;
                     return;
                 }
                 if (stage == 21 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -1104,7 +1105,6 @@ namespace Game.Editor
             "ARIA PLAY" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_play", name),
             "STOP ARIA" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_stop", name),
             "WITHDRAW" => UiShellRuntimeGateway.Localization.Get("operations.withdraw", name),
-            "CONTINUE" => UiShellRuntimeGateway.Localization.Get("ui.common.continue", name),
             _ => name
         };
 

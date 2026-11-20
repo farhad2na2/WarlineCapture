@@ -32,8 +32,10 @@ namespace Game.Editor
         private static int stoppedActions;
         private static int resultCaptureFrames;
         private static double resumeRecapAt;
+        private static int tracedResumeStage = -1;
         private static bool wideLayout;
         private static bool withdrawalCancelRequested, withdrawalCancelChecked;
+        private static bool withdrawalReopenRendered;
         private static double withdrawalPromptAt;
         private static float withdrawalElapsed;
         private static double checkpointPauseAt;
@@ -636,6 +638,14 @@ namespace Game.Editor
                         Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed input=visible-touch missionRemainedPaused=1");
                         return;
                     }
+                    if (GameObject.Find("ConfirmWithdraw") == null) return;
+                    // Give the reactivated confirmation canvas a rendered frame
+                    // before raycasting its button over the Pause popup.
+                    if (!withdrawalReopenRendered)
+                    {
+                        withdrawalReopenRendered = true;
+                        return;
+                    }
                     if (Click("WITHDRAW", "ConfirmWithdraw")) stage = 5;
                     return;
                 }
@@ -921,6 +931,11 @@ namespace Game.Editor
         private static bool ResumeRecapHasHandedBackControl()
         {
             if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model) || !model.Resumed) return false;
+            if (tracedResumeStage != model.IntroductionStage)
+            {
+                tracedResumeStage = model.IntroductionStage;
+                Debug.Log($"[OperationsResumeRecap] stage={tracedResumeStage} introduction={model.Introduction} paused={model.Paused} timeScale={Time.timeScale}");
+            }
             if (resumeRecapAt == 0)
             {
                 if (!model.Introduction) throw new InvalidOperationException("Saved mission skipped its resume recap.");
@@ -962,6 +977,8 @@ namespace Game.Editor
             if (string.IsNullOrEmpty(path)) return true;
             if (resumeCaptureFrame < 0)
             {
+                if (UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>() == null || menuReturnFrames++ < 3)
+                    return false;
                 resumeCaptureFrame = Time.frameCount;
                 ScreenCapture.CaptureScreenshot(path);
                 return false;

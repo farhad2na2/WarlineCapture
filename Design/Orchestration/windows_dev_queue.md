@@ -473,3 +473,13 @@ Mac lane 45 (450 s, W32 build): S043/S044 auto-accepted (33-50%). S045: 36.9/77.
 S047: 33.0/71.4/LOSS/60.5%; S048: 50.9/53.8/LOSS/53.4%. Losses are ConvoyImpossible (all trucks lost: lane45 :334020, :531906, :600862) and one deadline (:504203).
 Read-only first: why do the trucks die (route through enemy fire, escorts late, the service detour seen on S047), and is it ARIA or the layout? Then a fix without stat/rule changes.
 W32b (transport heli) is merged, so S046/S048 gate 3 should now pass; re-check it in the proof runs.
+
+## W38 — Operations: mission-keyed runtime registry, O001 unchanged (gap-table step 2) (2026-11-20)
+status: READY after W37
+Operations production has started: Skirmish now has an accepted mission of every objective type (BA S002, FC S031/S033/S035, BT S037+, CE S019-S024+).
+Read `Design/Orchestration/notes/operations-gap-table-2026-11-19.md` (sections 3-4) and `Design/Orchestration/notes/operations-readiness-2026-11-19.md` (section 2, "Hard-coded to O001").
+- Replace the O001 hard-codes with a mission-keyed registry: a config per mission ID, the session predicate from the catalog, and HUD restrictions from data. Known hard-codes: `MatchSceneView.Operations.cs:9`, `OperationsMissionPresentationSystem.cs:392,411`, `UiShellEcsGateway.MissionHudRestrictions.cs:23`, `OperationsReconMissionConfig.ResourcePath`.
+- Split `OperationsReconObjectiveSystem` into a graph reducer plus SCAN, INTERACT, EXTRACT and evidence carry, so that O002 (ESCORT/HOLD/PROTECT/CLEAR) can plug in.
+- O001 must keep identical facts, checkpoints and settlement. Do not edit `OldQuarter.asset`, whose content hash pins O001 checkpoints.
+- Shared code under the owner's standing OK and the 2026-11-19 Operations decisions. No unit-stat or Skirmish/Campaign rule change.
+- Proof: EditMode for the registry and reducers, then the O001 set on Windows (RunAriaVictory 1102/2102/3102/4102, RunAriaVictoryPersian 9102, RunManualVictory, RunCheckpointResume, RunLifecycle). Compare against the Mac Codex-lab O001 baseline (`windows_dev_results/2026-11-20-o001-baseline.md` on branch missions/ops-o001-baseline, pushed when ready); same or better on every row.

@@ -97,8 +97,12 @@ namespace Game.Tests.Editor
             }
             if(mutation==22)
             {
+                // W37: one attempt, then handback (was a Travel retry, three times).
                 BeginRepair(journey,model,selected);model.SimulationSeconds=26;
-                Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Travel));Assert.That(journey.Failures,Is.EqualTo(1));return;
+                Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Handback));Assert.That(journey.Failure,Does.Contain("could not be verified"));
+                var again=new SkirmishConvoyServiceJourney();var shown=Selected();var fresh=Model();BeginRepair(again,fresh,shown);fresh.SimulationSeconds=26;
+                Assert.That(again.Tick(fresh,shown,false,false),Is.EqualTo(ConvoyServiceStage.Handback),"exact selection, repair never started");
+                Assert.That(again.Failure,Does.Contain("could not start"));return;
             }
             if(mutation==0){Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(ConvoyServiceStage.Travel));Assert.That(journey.GroupId,Is.EqualTo(7));return;}
             if(mutation==1||mutation==2){model.OwnGroups[0].Policy.AcceptedOrderActive=true;Assert.That(journey.Tick(model,null,false,false),Is.EqualTo(mutation==2?ConvoyServiceStage.Travel:ConvoyServiceStage.None));return;}

@@ -120,10 +120,11 @@ namespace Game.UI.Runtime
                 {Failure="The repair refund could not be verified. Please check the truck and Materials.";Stage=ConvoyServiceStage.Handback;}
                 else if(selected.RequestRejected&&selected.IssuedRequestId!=LastRepairFailureRequest||selected.Phase==UiVehicleRepairPhase.Cancelled&&selected.StateRequestId!=0&&selected.StateRequestId!=LastRepairFailureRequest)
                 {LastRepairFailureRequest=selected.RequestRejected?selected.IssuedRequestId:selected.StateRequestId;Retry(model.SimulationSeconds,"Repair could not continue safely.");}
-                else if(model.SimulationSeconds-LastProgress>25)Retry(model.SimulationSeconds,"Repair could not start at the shown price and service conditions.");
+                // W37: a repair that never starts is handed back after one attempt (was 3 x ~27 s; 0 of 9 started on Windows).
+                else if(model.SimulationSeconds-LastProgress>25){Failure="Repair could not start at the shown price and service conditions.";Stage=ConvoyServiceStage.Handback;Epoch++;}
             }
             if(Stage==ConvoyServiceStage.Repair&&!exact&&model.SimulationSeconds-LastProgress>25)
-                Retry(model.SimulationSeconds,"The original truck selection and repair feedback could not be verified.");
+            {Failure="The original truck selection and repair feedback could not be verified.";Stage=ConvoyServiceStage.Handback;Epoch++;}
             return Stage;
         }
         public void Resume(){Stage=ConvoyServiceStage.None;OriginalId=null;GroupId=0;Failure=null;Epoch++;}

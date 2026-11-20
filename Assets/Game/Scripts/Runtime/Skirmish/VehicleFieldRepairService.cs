@@ -150,6 +150,33 @@ namespace Game.Runtime
             error=null;return true;
         }
 
+        // W37 diagnostic only (CE convoy service: 0 of 9 repairs started on Windows). The first TryQuote gate that
+        // refuses, in TryQuote's order; null when a quote is available. Never feeds a decision or changes a rule.
+        public static string QuoteRefusal(EntityManager em,Entity session,Entity actor,byte faction)
+        {
+            if(!BasicActor(em,session,actor,faction,out var native,out var clock))return "actor";
+            if(clock.Paused!=0)return "paused";
+            if(!em.HasComponent<SkirmishLaunchDefinitionRecord>(session))return "launch";
+            var launch=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
+            if(launch==null||!launch.Matches(em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup,native))return "launch";
+            if(!launch.Definition.MapLayout.TryGetPad(faction,SkirmishLegalPadKind.Service,out var pad)||
+                !launch.Definition.MapLayout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))return "pad";
+            var position=em.GetComponentData<LocalTransform>(actor).Position;
+            if(!math.all(math.isfinite(position))||math.distancesq(position.xz,new float2(x,z))>144)
+                return "distance="+math.distance(position.xz,new float2(x,z)).ToString("F1",System.Globalization.CultureInfo.InvariantCulture);
+            if(Moving(em,actor))return "moving";
+            if(VisibleThreat(em,native.SessionId,faction,position))return "threat";
+            if(!TryContext(em,session,actor,faction,out var context))return "facility";
+            if(em.HasComponent<VehicleRepairStateComponent>(actor))
+            {
+                var phase=em.GetComponentData<VehicleRepairStateComponent>(actor).Phase;
+                if(phase==VehicleRepairPhase.Working||phase==VehicleRepairPhase.AccountingFailure)return "working";
+            }
+            if(!VehicleRepairRules.TryQuote(context.Health.Current,context.Health.Max,out var plan))return "rules";
+            if(!FactionTacticalMaterialsUtilitySystemHelper.CanAfford(context.Materials,plan.Materials))return "materials";
+            return null;
+        }
+
         public static bool ProcessRequest(EntityManager em,Entity actor,out string error)
         {
             error="Repair request is unavailable.";

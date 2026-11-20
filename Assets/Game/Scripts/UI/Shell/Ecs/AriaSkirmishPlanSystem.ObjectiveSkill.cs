@@ -166,9 +166,9 @@ namespace Game.UI.Shell.Ecs
             // hands the turn back; the next escort starts from the escort turn or an idle frame.
             if (inFlight && !same && plan.EscortTouch.GroupId != 0)
             {
-                var prior = plan.EscortTouch;
-                if ((prior.CommandPending || prior.Stage == 3) && escort.AcceptedOrderRevision > prior.OrderRevisionAtIssue &&
-                    escort.AcceptedGroupId == prior.GroupId && escort.AcceptedPublicKey == prior.PublicKey && escort.AcceptedAction == AriaObjectiveAction.Move)
+                var last = plan.EscortTouch;
+                if ((last.CommandPending || last.Stage == 3) && escort.AcceptedOrderRevision > last.OrderRevisionAtIssue &&
+                    escort.AcceptedGroupId == last.GroupId && escort.AcceptedPublicKey == last.PublicKey && escort.AcceptedAction == AriaObjectiveAction.Move)
                 {
                     plan.EscortAccepted++;
                     if (plan.EscortFailures > 0) plan.EscortFailures--;

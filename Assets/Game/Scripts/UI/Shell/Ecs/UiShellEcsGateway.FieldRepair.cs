@@ -21,6 +21,7 @@ namespace Game.UI.Shell.Ecs
         int repairIssuedFrame;
         float2 repairIssuedScreen;
         bool repairIssuedScreenKnown,repairIssuedCancel;
+        string repairQuoteTraced;
 
         bool IUiVehicleRepairGateway.TryReadVehicleRepair(out UiVehicleRepairModel model)
         {
@@ -46,6 +47,18 @@ namespace Game.UI.Shell.Ecs
             {model.Materials=potential.Materials;model.DurationTicks=potential.DurationTicks;model.FractionNumerator=potential.FractionNumerator;model.FractionDenominator=potential.FractionDenominator;}
             VehicleRepairPlan quote=default;
             model.Eligible=!model.RequestPending&&VehicleFieldRepairService.TryQuote(em,session,actor,1,out quote,out _);
+            // W37 evidence only: why a damaged selected vehicle has no repair quote (traced on change).
+            if((AriaCommandEvidence.Active||UnityEngine.Debug.isDebugBuild)&&!model.Eligible&&!model.RequestPending&&health.Max>0&&(long)health.Current*4<=(long)health.Max*3)
+            {
+                string reason=VehicleFieldRepairService.QuoteRefusal(em,session,actor,1)??"none";
+                string key=model.ActorPublicId+"|"+reason;
+                if(key!=repairQuoteTraced)
+                {
+                    repairQuoteTraced=key;
+                    double t=em.HasComponent<SkirmishObjectiveClockComponent>(session)?em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds:0;
+                    UnityEngine.Debug.Log($"[VehicleRepairQuote] actor={model.ActorPublicId} group={model.GroupId} eligible=False reason={reason} health={health.Current}/{health.Max} t={t:F2}");
+                }
+            }
             if(model.Eligible)
             {model.Materials=quote.Materials;model.DurationTicks=quote.DurationTicks;model.FractionNumerator=quote.FractionNumerator;model.FractionDenominator=quote.FractionDenominator;}
             if(em.HasComponent<VehicleRepairStateComponent>(actor))

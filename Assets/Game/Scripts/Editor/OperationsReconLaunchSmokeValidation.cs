@@ -33,6 +33,7 @@ namespace Game.Editor
         private static int resultCaptureFrames;
         private static double resumeRecapAt;
         private static int tracedResumeStage = -1;
+        private static bool tracedResumePaused;
         private static bool wideLayout;
         private static bool withdrawalCancelRequested, withdrawalCancelChecked;
         private static bool withdrawalReopenRendered;
@@ -933,9 +934,10 @@ namespace Game.Editor
         private static bool ResumeRecapHasHandedBackControl()
         {
             if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model) || !model.Resumed) return false;
-            if (tracedResumeStage != model.IntroductionStage)
+            if (tracedResumeStage != model.IntroductionStage || tracedResumePaused != model.Paused)
             {
                 tracedResumeStage = model.IntroductionStage;
+                tracedResumePaused = model.Paused;
                 Debug.Log($"[OperationsResumeRecap] stage={tracedResumeStage} introduction={model.Introduction} paused={model.Paused} timeScale={Time.timeScale}");
             }
             if (resumeRecapAt == 0)

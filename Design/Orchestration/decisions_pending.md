@@ -250,3 +250,12 @@ imagegen for the mockups, we can use the same." Survey: `Design/Orchestration/no
 4. **Build order:** the free intro O001-O003 first. Extending existing tools (an Operations job format in run_aria_queue, a draft format) is allowed.
 The trigger for Operations production stays: one accepted Skirmish mission per objective type. Offline prep (drafts, tool extensions, a gap table) may start now.
 - Owner approved the three Operations HUD mockups v01 (O002 escort, O003 repair, O005 rescue) on 2026-11-19: "Approve all three". Board: `Design/AgentReports/OperationsMockups/review.md`.
+
+## DECIDED by the owner (Farhad, in chat, 2026-11-20): match UI polish, six boards approved
+The owner reported inconsistent match UI while missions were being built: left panel padding, off-style centre info panels,
+empty or bare ARIA panel areas, uncolourful YOUR BASE / ENEMY BASE, placeholder Operations ground markers, and wanting high-end
+selection and target markers. Codex ImageGen boards: `Design/AgentReports/MatchUiPolish/review.md`. The audit also found
+NEUTRA/L wrapping, S041/S046 frame overflow, the S026 stacked bar, the minimap overlap and the ping looking like the ring.
+- Owner: "Approve all six" (2026-11-20). Implementation runs alongside mission work as Codex lab tasks:
+  ui-a (boards 1+3), ui-b (2+4) and ui-c (6). ui-d (board 5, Operations markers) waits until the O001 triage and W38 merge.
+  Each task needs native EN/FA captures compared with the mockup and an ARIA regression on accepted missions before merge.

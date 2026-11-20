@@ -599,3 +599,10 @@ Native assets, localized copy and live data are authoritative. The "known deviat
    If any of these fails, report it with its first failing line. Don't tune around it, and don't claim done.
 4. A results note in `Design/Orchestration/windows_dev_results/2026-11-20-<task>.md`, committed.
 State plainly that real-player and device acceptance are still pending.
+
+## W41 — ARIA FindBase loop after a base-alert detour (after W37 lands; diagnose and propose, no change yet)
+In W39 ARIA run 2 (win-uilab aria-2), S002@130365: a perimeter base alert (:165355) sent ARIA home and the army ended up 700.7 m
+from the enemy base (:165451). FindBase then opened and closed the full map 7 times without a map-drag target until AriaBlocked 101
+(:310865). The same job won in run 1 and in the warmed-up rerun (aria-3). Diagnose why FindBase gets no drag target in the open full map at
+that distance (SkirmishWatch.cs ObserveAdvanceMapFocus and the full-map flow) and propose the smallest fix. This is shared Skirmish ARIA:
+the proposal must state which accepted missions it can affect and how to prove they're unchanged.

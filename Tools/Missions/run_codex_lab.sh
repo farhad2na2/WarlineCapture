@@ -32,6 +32,16 @@ echo "$name $(date '+%H:%M') pid $$" > "$LOCK/owner"
 trap 'rm -rf "$LOCK"' EXIT
 mkdir -p "$LOGS/$name"
 
+# A force-stopped Editor leaves Temp/__Backupscenes/*.backup behind; the next launch then waits on a hidden
+# scene-recovery dialog. With no lab Editor running, move any leftover backup into the task's log folder (never delete it).
+if ! ps -axo command= | grep "Unity.app/Contents/MacOS/Unity" | grep -v grep | grep -qi "projectPath $LAB"; then
+  for b in "$LAB"/Temp/__Backupscenes/*.backup; do
+    [ -f "$b" ] || continue
+    mkdir -p "$LOGS/$name/temp-backup-moved" && mv "$b" "$LOGS/$name/temp-backup-moved/$(basename "$b").$(date +%H%M%S)" &&
+      note "$name: moved leftover lab scene backup $(basename "$b") to $LOGS/$name/temp-backup-moved"
+  done
+fi
+
 ( cd "$LAB" && git status --porcelain --untracked-files=no | grep -q . && git stash push -q -m "lab-leftover-before-$name" ;
   git checkout -q -B "missions/$name" "$BASE" ) >>"$transcript" 2>&1 ||
   { note "$name not started: could not cut missions/$name from $BASE in the lab (see $transcript)"; exit 1; }

@@ -33,11 +33,12 @@ namespace Game.Editor
         private static int resultCaptureFrames;
         private static double resumeRecapAt;
         private static bool wideLayout;
-        private static bool withdrawalCancelChecked;
+        private static bool withdrawalCancelRequested, withdrawalCancelChecked;
         private static double withdrawalPromptAt;
         private static float withdrawalElapsed;
         private static double checkpointPauseAt;
         private static InputSettings originalInputSettings, validationInputSettings;
+        private static AriaTouchInputUiSystemHelper buttonTouch;
         private static readonly System.Collections.Generic.List<InputDevice> isolatedNativeDevices = new();
         public static void RunFirstScan() { firstScanOnly = true; RunAriaVictory(); }
         private static int menuCaptureFrames;
@@ -227,6 +228,7 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying) return;
             Application.runInBackground = true;
+            buttonTouch?.Tick(Time.unscaledTime);
             if (ariaVictory) SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = true;
             if (AriaTouchInputUiSystemHelper.AllowBackgroundValidation && validationInputSettings == null)
             {
@@ -609,7 +611,8 @@ namespace Game.Editor
                 {
                     if (!withdrawalCancelChecked)
                     {
-                        if (GameObject.Find("ConfirmWithdraw") == null) return;
+                        bool confirmationActive = GameObject.Find("ConfirmWithdraw") != null;
+                        if (!withdrawalCancelRequested && !confirmationActive) return;
                         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
                         using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
                         float elapsed = roots.GetSingleton<OperationsReconMissionComponent>().ElapsedSeconds;
@@ -622,9 +625,15 @@ namespace Game.Editor
                         if (EditorApplication.timeSinceStartup - withdrawalPromptAt < 2) return;
                         if (elapsed != withdrawalElapsed || Time.timeScale != 0)
                             throw new InvalidOperationException("Withdrawal confirmation resumed the mission underneath the modal.");
-                        if (!Click("CANCEL", "ConfirmWithdraw")) throw new InvalidOperationException("Withdrawal confirmation has no usable Cancel.");
+                        if (!withdrawalCancelRequested)
+                        {
+                            if (!Click("CANCEL", "ConfirmWithdraw")) throw new InvalidOperationException("Withdrawal confirmation has no usable Cancel.");
+                            withdrawalCancelRequested = true;
+                            return;
+                        }
+                        if (confirmationActive) return;
                         withdrawalCancelChecked = true; stage = 3;
-                        Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed missionRemainedPaused=1");
+                        Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed input=visible-touch missionRemainedPaused=1");
                         return;
                     }
                     if (Click("WITHDRAW", "ConfirmWithdraw")) stage = 5;
@@ -672,7 +681,7 @@ namespace Game.Editor
                     Complete(true, "journey=" + (recovery ? "deploy-failed-startup-refund-return-redeploy" : (interrupted ? "interrupted-restart-withdraw-save-return-redeploy" : "deploy-withdraw-save-return-redeploy")) +
                         " input=button-event-smoke original=16 total=36 ap=" + expectedAp);
                 }
-                if (stage == 10 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu &&
+                if (stage == 10 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu && !shell.IsTransitionRunning &&
                     UiShellRuntimeGateway.TryReadOperationsMission(out var resumable) && resumable.CanResume)
                 {
                     var save = SaveService.CreateDefault();
@@ -715,7 +724,7 @@ namespace Game.Editor
                                 " after=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds));
                     }
                     if (!ResumeRecapHasHandedBackControl()) return;
-                    Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
+                    Complete(true, "journey=save-exit-resume resumeInput=visible-touch session=" + checkpointSession +
                         " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds +
                         " scanBefore=" + checkpointScanSeconds + " ap=2");
                 }
@@ -1021,14 +1030,25 @@ namespace Game.Editor
                         if (parent.name == ancestor) { found = true; break; }
                     if (!found) continue;
                 }
-                AssertButtonReachable(button); button.onClick.Invoke(); return true;
+                Vector2 point = AssertButtonReachable(button);
+                if ((name == "RESUME ATTEMPT" && checkpointResume && !processRestore) ||
+                    (name == "CANCEL" && ancestor == "ConfirmWithdraw"))
+                {
+                    buttonTouch ??= new AriaTouchInputUiSystemHelper();
+                    if ((!buttonTouch.IsRunning && !buttonTouch.Start()) ||
+                        !buttonTouch.TryGesture(point, point, .08f, 0f, Time.unscaledTime))
+                        throw new InvalidOperationException("Could not send touch to " + button.name);
+                    Debug.Log($"[OperationsReconLaunchSmokeValidation] visibleTouch={button.name} point={point}");
+                }
+                else button.onClick.Invoke();
+                return true;
             }
             if (name is "ARIA PLAY" or "SAVE & EXIT" or "WITHDRAW")
                 UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.Pause);
             return false;
         }
 
-        private static void AssertButtonReachable(Button button)
+        private static Vector2 AssertButtonReachable(Button button)
         {
             Canvas.ForceUpdateCanvases();
             var rect = (RectTransform)button.transform;
@@ -1054,6 +1074,7 @@ namespace Game.Editor
             if (hits.Count == 0 || !hits[0].gameObject.transform.IsChildOf(button.transform))
                 throw new InvalidOperationException("Visible button is covered or clipped: " + button.name + " hit=" +
                     (hits.Count == 0 ? "none" : hits[0].gameObject.name));
+            return center;
         }
 
         private static string Visible(string name) => name switch
@@ -1073,6 +1094,8 @@ namespace Game.Editor
         {
             Canvas.willRenderCanvases -= TickInGameView;
             Application.logMessageReceived -= ObserveLog;
+            buttonTouch?.Dispose();
+            buttonTouch = null;
             foreach (var device in isolatedNativeDevices) if (device.added) InputSystem.EnableDevice(device);
             isolatedNativeDevices.Clear();
             if (validationInputSettings != null)

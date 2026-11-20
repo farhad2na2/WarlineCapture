@@ -121,11 +121,13 @@ public sealed class M03PresentationTests
                 var utilities=BoundsIn(view.transform,utility);
                 var bodyBounds=BoundsIn(view.transform,(RectTransform)view.BodyText.transform.parent);
                 var rail=((RectTransform)view.transform).rect;
-                Assert.LessOrEqual(utilities.max.y,actions.min.y-11.99f,"Utility row must stay below primary actions.");
+                // W39 Board 3: 12 px gaps and 16 px insets on the 1920x1080 reference (HUD units here).
+                float gap=AriaTutorialBriefingView.Gap-.01f, inset=AriaTutorialBriefingView.Inset-.01f;
+                Assert.LessOrEqual(utilities.max.y,actions.min.y-gap,"Utility row must stay below primary actions.");
                 Assert.LessOrEqual(actions.max.y,bodyBounds.min.y-43.99f,"Buttons must not cut instruction text.");
-                Assert.GreaterOrEqual(utilities.min.y,rail.yMin+11.99f,"Utility row must fit inside ARIA.");
-                Assert.GreaterOrEqual(utilities.min.x,rail.xMin+19.99f);
-                Assert.LessOrEqual(utilities.max.x,rail.xMax-19.99f);
+                Assert.GreaterOrEqual(utilities.min.y,rail.yMin+inset,"Utility row must fit inside ARIA.");
+                Assert.GreaterOrEqual(utilities.min.x,rail.xMin+inset);
+                Assert.LessOrEqual(utilities.max.x,rail.xMax-inset);
                 var mapBounds=BoundsIn(view.transform,dock.Minimap);
                 // The shared minimap now occupies the left dock. Enforce actual
                 // rectangle clearance rather than requiring a vertical stack.
@@ -142,7 +144,7 @@ public sealed class M03PresentationTests
                     var primary=view.ContinueButton;
                     var buttonBounds=BoundsIn(view.transform,rect);
                     var primaryBounds=BoundsIn(view.transform,(RectTransform)primary.transform);
-                    Assert.That(buttonBounds.max.y,Is.LessThanOrEqualTo(previousBottom-11.99f),"Buttons must stack with a touch-safe gap.");
+                    Assert.That(buttonBounds.max.y,Is.LessThanOrEqualTo(previousBottom-gap),"Buttons must stack with a touch-safe gap.");
                     previousBottom=buttonBounds.min.y;
                     Assert.That(buttonBounds.min.x,Is.EqualTo(primaryBounds.min.x).Within(.01f),"All buttons must share the full-width left edge.");
                     Assert.That(buttonBounds.size.x,Is.EqualTo(primaryBounds.size.x).Within(.01f),"All buttons must span the same panel width.");

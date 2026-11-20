@@ -35,11 +35,12 @@ namespace Game.Tests.Editor
             t.RejectedObjectivePressesAreRetriedBeforeTheInputLayerStops();
             t.RosterChangeBetweenSelectPressesKeepsTheInputBound();
             t.EscortGetsATurnAfterAnAcceptedObjectiveOrder();
+            t.ChangedEscortOfferEndsTheInFlightEscort();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
             t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
             t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=22");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=23");
         }
 
         // ---------- pure policy ----------
@@ -449,6 +450,41 @@ namespace Game.Tests.Editor
             Step(v, ref p, ref t, out var o);
             Assert.AreEqual(8, o.TargetId, "the escort's vehicle card, although an objective order is wanted");
             Assert.AreEqual(2, p.ObjectiveOwner); Assert.AreEqual(0, p.ObjectiveEscortTurn, "one turn per accepted order");
+        }
+
+        // W37 (S046 130365: a convoy truck's chosen Move waited 144 s while escorts 2-9 ran back to back; escort_accepted=0
+        // on every run). The observer offers the next group on the frame the previous escort's accepted Move is displayed.
+        [Test]
+        public void ChangedEscortOfferEndsTheInFlightEscort()
+        {
+            foreach (bool receipt in new[] { true, false })
+            {
+                var p = new AriaSkirmishPlanComponent { ObjectiveOwner = 2,
+                    EscortTouch = new AriaObjectiveTouchPlan { GroupId = 7, PublicKey = 33, PresentationEpoch = 1, Action = AriaObjectiveAction.Move,
+                        Stage = 3, CommandPending = true, OrderRevisionAtIssue = 4, Deadline = 200 } };
+                var t = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+                var v = Presented(100);
+                v.PublicObjective.GroupId = 11; v.PublicObjective.PublicKey = 22; v.PublicObjective.Action = AriaObjectiveAction.Move;
+                v.PublicObjective.Intent = AriaSkirmishIntent.EscortOriginalTruck; v.PublicObjective.SelectGroup = T(5);
+                v.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                    GroupId = 9, NavigationGroupId = 9, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true,
+                    AcceptedOrderRevision = receipt ? 5u : 4u, AcceptedGroupId = receipt ? 7u : 0u, AcceptedPublicKey = receipt ? 33ul : 0ul,
+                    AcceptedAction = receipt ? AriaObjectiveAction.Move : AriaObjectiveAction.None };
+                Step(v, ref p, ref t, out var o);
+                Assert.AreEqual(5, o.TargetId, "the truck's card: the objective order gets the turn (receipt=" + receipt + ")");
+                Assert.AreEqual(0, p.ObjectiveOwner, "no escort is left in flight");
+                Assert.AreEqual(receipt ? 1 : 0, p.EscortAccepted, "only a displayed receipt for the prior escort counts");
+                Assert.AreEqual(0u, p.EscortTouch.GroupId);
+            }
+            // The same offer in flight still finishes first (unchanged).
+            var q = new AriaSkirmishPlanComponent(); var s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var w = Presented(100);
+            w.ObjectiveEscort = new AriaObjectiveTouchObservation { Applicable = true, Supported = true, Presented = true, PresentationEpoch = 1,
+                GroupId = 7, NavigationGroupId = 7, PublicKey = 33, Action = AriaObjectiveAction.Move, SelectGroup = T(8), CameraSettled = true };
+            Step(w, ref q, ref s, out var r);
+            w.Frame++; w.PublicObjective.GroupId = 11; w.PublicObjective.PublicKey = 22; w.PublicObjective.Action = AriaObjectiveAction.Move; w.PublicObjective.SelectGroup = T(5);
+            Step(w, ref q, ref s, out r);
+            Assert.AreEqual(8, r.TargetId);
         }
 
         // W32 (S032: an unaffordable AttackAircraft recruit held the Build drawer for the 60 s popup limit 5 times).

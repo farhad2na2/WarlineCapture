@@ -8,6 +8,7 @@ namespace Game.UI.Runtime
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
         readonly SkirmishConvoyServiceJourney convoyServiceJourney=new SkirmishConvoyServiceJourney();
+        readonly System.Collections.Generic.HashSet<uint> convoyDelivering=new System.Collections.Generic.HashSet<uint>();
         bool ConvoyServiceOwnsRepair=>watchSkirmish!=null&&watchSkirmish.TryReadPublicObjectiveForAria(Time.frameCount,out var frame)&&
             frame.Goal?.Perspective==SkirmishPublicGoalPerspective.Escort;
         void ResetConvoyServiceJourney(){convoyServiceJourney.Reset();publicRepairScope=null;}
@@ -24,7 +25,12 @@ namespace Game.UI.Runtime
             bool acceptedHold=frame.AcceptedGroup==convoyServiceJourney.GroupId&&frame.AcceptedGoalId==holdGoal&&
                 frame.AcceptedAction==AriaObjectiveAction.Hold&&_commandControlsView?.HoldButton!=null&&frame.AcceptedContactTargetId==_commandControlsView.HoldButton.GetEntityId().GetHashCode();
             var oldStage=convoyServiceJourney.Stage;
-            var stage=convoyServiceJourney.Tick(model,selected,acceptedHold,repairButton!=null&&SkirmishPresentedRepairPolicy.HasAcceptedContact(selected,repairButton.GetEntityId().GetHashCode()));
+            convoyDelivering.Clear();
+            for(int i=0;i<frame.Goal.NodeCount;i++)
+                if(frame.Goal.Node(i).Kind==SkirmishPublicGoalNodeKind.DeliveryDestination)
+                    foreach(var approach in frame.Approaches)
+                        if(approach.InsideGoalFootprint&&approach.GoalId==frame.Goal.Node(i).PublicId)convoyDelivering.Add(approach.GroupId);
+            var stage=convoyServiceJourney.Tick(model,selected,acceptedHold,repairButton!=null&&SkirmishPresentedRepairPolicy.HasAcceptedContact(selected,repairButton.GetEntityId().GetHashCode()),convoyDelivering);
             if(oldStage==ConvoyServiceStage.Repair&&stage==ConvoyServiceStage.Hold)publicRepairScope=null;
             if(oldStage==ConvoyServiceStage.None&&(stage==ConvoyServiceStage.Travel||stage==ConvoyServiceStage.EmergencyHold))watchSkirmish.PresentConvoyServiceDiagnosis(null);
             if(stage==ConvoyServiceStage.None)return;

@@ -159,6 +159,24 @@ namespace Game.UI.Shell.Ecs
             { plan.ObjectiveOwner = 0; return false; }
             bool same = plan.EscortTouch.GroupId == escort.GroupId && plan.EscortTouch.PublicKey == escort.PublicKey &&
                 plan.EscortTouch.PresentationEpoch == escort.PresentationEpoch;
+            // W37 (S046: a truck's chosen Move waited 144 s; escort_accepted=0 on every run): the observer marks an escort
+            // done on the frame its accepted Move is displayed and offers the next group at once, so the in-flight touch
+            // never saw its own receipt and ObjectiveOwner stayed 2 while offers lasted; escorts ran back to back ahead of
+            // the objective order. A changed offer ends the in-flight escort (its displayed receipt counts as accepted) and
+            // hands the turn back; the next escort starts from the escort turn or an idle frame.
+            if (inFlight && !same && plan.EscortTouch.GroupId != 0)
+            {
+                var prior = plan.EscortTouch;
+                if ((prior.CommandPending || prior.Stage == 3) && escort.AcceptedOrderRevision > prior.OrderRevisionAtIssue &&
+                    escort.AcceptedGroupId == prior.GroupId && escort.AcceptedPublicKey == prior.PublicKey && escort.AcceptedAction == AriaObjectiveAction.Move)
+                {
+                    plan.EscortAccepted++;
+                    if (plan.EscortFailures > 0) plan.EscortFailures--;
+                    touch.LastProgressAt = view.Time;
+                }
+                plan.ObjectiveOwner = 0; plan.EscortTouch = default;
+                return false;
+            }
             if (same && plan.EscortTouch.Stage == 4) { plan.ObjectiveOwner = 0; return false; }
             if (!inFlight && view.Time < plan.EscortRetryAt) return false;
             var prior = touch.Phase;

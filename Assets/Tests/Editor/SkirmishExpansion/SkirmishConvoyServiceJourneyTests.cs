@@ -8,7 +8,7 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishConvoyServiceJourneyTests
     {
-        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=24 nativeMissionPending=1");}
+        public static void RunFocusedValidation(){var t=new SkirmishConvoyServiceJourneyTests();for(int i=0;i<23;i++)t.PublicJourneyPreservesNativeGates(i);t.HandbackKeepsTheEscortObjectiveForAria();t.TruckInsideTheDestinationIsNotSentToService();Debug.Log("[SkirmishConvoyServiceJourney] result=Passed controls=25 nativeMissionPending=1");}
         static UiSkirmishPublicObjectiveModel Model(int health=60,float x=0)
         {
             var node=new SkirmishPublicGoalNode{PublicId="original.truck",Kind=SkirmishPublicGoalNodeKind.OwnDesignatedSubject,Provenance=SkirmishPublicGoalProvenance.OwnRoster,
@@ -47,6 +47,16 @@ namespace Game.Tests.Editor
             string hud=System.IO.File.ReadAllText(System.IO.Path.Combine(root,"Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ConvoyService.cs"));
             Assert.That(hud,Does.Contain("if(SkirmishConvoyServiceJourney.PresentsEscortObjective(stage))view.PublicObjective=escort;"));
             Assert.That(hud,Does.Not.Contain("view.PublicObjective=new AriaObjectiveTouchObservation{Applicable=true,Intent=AriaSkirmishIntent.ServiceOriginalTruck};return;"));
+        }
+        // W37 (S046 130365, 231 s): the truck had reached the destination (Move done, no Hold yet) and was sent to the
+        // service pad 2 s before its 5 s dwell delivered it.
+        [Test]
+        public void TruckInsideTheDestinationIsNotSentToService()
+        {
+            var model=Model();var journey=new SkirmishConvoyServiceJourney();
+            Assert.That(journey.Tick(model,null,false,false,new System.Collections.Generic.HashSet<uint>{7}),Is.EqualTo(ConvoyServiceStage.None),"dwelling: no service");
+            Assert.That(journey.Tick(model,null,false,false,new System.Collections.Generic.HashSet<uint>{8}),Is.EqualTo(ConvoyServiceStage.Travel),"another group inside: unchanged");
+            Assert.That(new SkirmishConvoyServiceJourney().Tick(Model(),null,false,false),Is.EqualTo(ConvoyServiceStage.Travel),"no set: unchanged");
         }
         static string ThisFile([System.Runtime.CompilerServices.CallerFilePath] string path="")=>path;
 

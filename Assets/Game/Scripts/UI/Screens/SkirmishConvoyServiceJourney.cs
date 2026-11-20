@@ -24,7 +24,9 @@ namespace Game.UI.Runtime
         {Failures++;Failure=reason;Epoch++;DestinationIndex=Failures%3;BestDistance=float.PositiveInfinity;LastProgress=now;Stage=Failures>=3?ConvoyServiceStage.Handback:ConvoyServiceStage.Travel;}
         // This state machine receives the exact rendered own UI snapshot. It
         // has no EntityManager, pathfinder, collector, command or repair service.
-        public ConvoyServiceStage Tick(UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected,bool acceptedServiceHold,bool acceptedRepairContact)
+        // delivering: own truck groups inside the delivery destination's public footprint (dwelling toward delivery).
+        public ConvoyServiceStage Tick(UiSkirmishPublicObjectiveModel model,UiVehicleRepairModel selected,bool acceptedServiceHold,bool acceptedRepairContact,
+            ICollection<uint> delivering=null)
         {
             if(model==null||model.Goal==null||model.Goal.Perspective!=SkirmishPublicGoalPerspective.Escort||model.Goal.Outcome!=SkirmishOutcomeKind.None)
             {Reset();return Stage;}
@@ -58,6 +60,9 @@ namespace Game.UI.Runtime
                 foreach(var truck in service.Trucks)
                 {
                     var group=Array.Find(model.OwnGroups,row=>row.Policy.GroupId==truck.GroupId);
+                    // W37 (S046 130365, 231 s): a truck that had just reached the destination (its Move done, no Hold yet) was
+                    // sent to the service pad 2 s before its 5 s dwell delivered it. Delivery ends the need for repair.
+                    if(delivering!=null&&delivering.Contains(truck.GroupId))continue;
                     if(group==null||group.AliveCount!=1||!group.Policy.Own||!group.Policy.Living||!group.Policy.CanMove||
                         group.Policy.DesignatedSubjects.Length!=1||group.Policy.DesignatedSubjects[0]!=truck.OriginalPublicId||!OwnOriginal(model.Goal,truck)||
                         !truck.Affordable||truck.Health<=0||truck.MaximumHealth<=0||(long)truck.Health*4>(long)truck.MaximumHealth*3||

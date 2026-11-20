@@ -651,6 +651,7 @@ namespace Game.Editor
                 }
                 if (stage == 5 && UiShellRuntimeGateway.TryReadOperationsMission(out var result) && result.Finished && result.Saved)
                 {
+                    if (resultCaptureFrames++ < 30) return;
                     var saved = SaveService.CreateDefault().LoadProfile().operations;
                     if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Withdrawal did not durably settle the single AP reservation.");

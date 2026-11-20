@@ -9,6 +9,11 @@ These are native captures of the shipped `SCN08_MatchHudContent` prefab. They we
 
 This is a static fixture. It does not show mission readiness, and the battlefield is a flat background. The ARIA journeys are recorded separately in the W39 results note.
 
+Live native frames from the W39 ARIA regression rerun (1920×1080) are in `live/`:
+- [S002 EN](live/s002-en-opening.png)
+- [S031 EN](live/s031-en-opening.png)
+- [S043 FA](live/s043-fa-opening.png): the active one-action state, with Field Guide above a red Stop ARIA, the minimap 24 px above the roster, and the shared 16 px inset.
+
 ## Side by side
 
 | State | Mockup | Before (EN 1920) | After (EN 1920) | After (FA 1920 / EN 2400 / FA 2400) |

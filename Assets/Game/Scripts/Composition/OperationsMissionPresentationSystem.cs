@@ -32,7 +32,8 @@ namespace Game.Composition
         private bool restartAfterResult;
         private double nextRefresh, nextSaveRetry;
         private string settlementCommand;
-        private string startupSession, rollbackCommand;
+        private Entity startupRoot;
+        private string rollbackCommand;
         private double startupBeganAt, nextRollbackRetry;
         private MatchStartStatusKind? startupStatus;
         private Unity.Collections.FixedString64Bytes startupDetail;
@@ -68,7 +69,7 @@ namespace Game.Composition
             saves ??= SaveService.CreateDefault();
             commands ??= new OperationsProfileCommandService(saves);
             definition ??= Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
-            if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root, mission)) return;
+            if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root)) return;
             var requests = EntityManager.GetBuffer<UiOperationsMissionRequest>(boundary);
             if (requests.Length > 0)
             {
@@ -349,12 +350,12 @@ namespace Game.Composition
             return true;
         }
 
-        private bool ObserveFailedStartup(Entity root, OperationsReconMissionComponent mission)
+        private bool ObserveFailedStartup(Entity root)
         {
-            string session = mission.SessionId.ToString();
-            if (startupSession != session)
+            // A checkpoint relaunch preserves the session ID and creates a new root.
+            if (startupRoot != root)
             {
-                startupSession = session;
+                startupRoot = root;
                 startupBeganAt = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 startupStatus = null;
                 rollbackCommand = null;

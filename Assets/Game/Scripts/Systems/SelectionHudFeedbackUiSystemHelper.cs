@@ -2065,6 +2065,7 @@ namespace Game.Runtime
                         : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode, feedback.Message.ToString()));
                     break;
                 case SelectionHudFeedbackKind.WorldMarkersVisible:
+                    // The world presentation owns marker drawing and lifetimes.
                     feedbackSink.SetWorldMarkersVisible(feedback.Visible != 0);
                     break;
             }

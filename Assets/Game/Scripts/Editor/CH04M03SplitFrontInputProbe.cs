@@ -49,8 +49,16 @@ namespace Game.Editor
             manualActions=lastManualGuidance=0;manualFocused=refinerySourceChecked=false;
             Output="Design/AgentReports/MapVariantMissionRework/SplitFront/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-split-front-"+SessionState.GetString(Locale,"en");
             if(SessionState.GetBool(Active+".Smoke",false))Output+="-smoke";
+            int markerWidth=SessionState.GetInt(MarkerWidthKey,0);
+            if(markerWidth!=0)
+            {
+                Output=Environment.GetEnvironmentVariable("WARLINE_SELECTION_MARKER_CONTEXT")??Output;
+                markerStage=markerShots=markerMoveAttempt=0;
+                markerDue=markerStageStarted=0;markerActor=Entity.Null;markerFile=null;
+                markerProjectionFailure=null;markerInputWaitLogged=false;
+            }
             ResetOptionalSmokeProbe();Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;combatSeen=launcherFired=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
-            engageStarted=comicAdvanceAt=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
+            engageStarted=comicAdvanceAt=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(markerWidth!=0?markerWidth:SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);AssetDatabase.DisallowAutoRefresh();
             EditorApplication.update-=Tick;EditorApplication.update+=Tick;Application.logMessageReceived-=Observe;Application.logMessageReceived+=Observe;EditorApplication.EnterPlaymode();
         }
@@ -140,6 +148,12 @@ namespace Game.Editor
                     Complete(true,$"locale={GameLocalization.CurrentLocaleCode} dialogue=8 combat=live launcher=normal-attack ARIA-actions={actions} victory=result=settlement=return");return;
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                int markerWidth=SessionState.GetInt(MarkerWidthKey,0);
+                if(markerWidth!=0&&(markerStage==MarkerDone||runtime.Outcome!=MissionOutcomeKind.None))
+                {
+                    if(markerStage!=MarkerDone)markerProjectionFailure??=$"Mission ended with {runtime.Outcome} at marker stage {markerStage}.";
+                    CompleteMarkerCapture(markerWidth);return;
+                }
                 if(facts.HostileRosterIntegrityFault!=0)
                 {
                     using var buildings=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
@@ -195,6 +209,7 @@ namespace Game.Editor
                 }
                 if(runtime.Phase!=MissionPhaseKind.Engage)return;
                 ValidateRefinerySource(em);
+                if(markerWidth!=0){EnsureSmokeInputHost();return;}
                 if(ManualInput){DriveRefineryManual(em,root);return;}
                 if(engageStarted==0){ValidateNormalHud();engageStarted=EditorApplication.timeSinceStartup;Shot("hud");}
                 if(SessionState.GetBool(Active+".Smoke",false)&&(!TickOptionalSmoke(em,root)||!TickPlayerLauncherCancellation(em,root)))return;
@@ -278,6 +293,8 @@ namespace Game.Editor
             touch?.Dispose();touch=null;
             FinishPlayerFrameInput();
             FinishOptionalSmokeProbe();SessionState.SetBool(Active+".Smoke",false);
+            if(SessionState.GetInt(MarkerWidthKey,0)!=0)SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=false;
+            SessionState.SetInt(MarkerWidthKey,0);
             if(inputRoutingConfigured){var input=UnityEngine.InputSystem.InputSystem.settings;input.editorInputBehaviorInPlayMode=savedEditorInput;input.backgroundBehavior=savedBackgroundInput;inputRoutingConfigured=false;}
             SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;AriaTouchInputUiSystemHelper.Evidence-=ObserveTouch;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);Debug.Log("[SplitFrontInput] result="+(passed?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(passed);
         }

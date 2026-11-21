@@ -165,9 +165,7 @@ namespace Game.UI.Runtime
 
         public static void SetWorldMarkersVisible(IBattleHudRuntimeFeedbackView view, bool visible)
         {
-            // The HUD marker layer is a static art-preview surface. Live targeting feedback
-            // must come from grounded runtime markers so fixed screen-space art cannot cover units.
-            view?.SetWorldMarkersVisible(false);
+            view?.SetWorldMarkersVisible(Game.Runtime.SelectionScreenMarkerUiSystemHelper.ShowHudMarkerPreview(visible));
         }
 
         private static void ApplyCommandModeVisuals(

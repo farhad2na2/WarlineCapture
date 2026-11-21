@@ -28,13 +28,10 @@ namespace Game.Runtime
         private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
         private float _attackOrderMarkerHideTime = -1f;
         private Entity _attackMarkerTarget;
-        private GameObject _attackTargetRingMarker;
-        private LineRenderer _attackTargetRingRenderer;
+        private GameObject _attackTargetFallbackReticle;
         private GameObject _attackTargetSelectionMarker;
         private Renderer[] _attackTargetSelectionMarkerRenderers;
         private Vector3 _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
-        private readonly MaterialPropertyBlock _attackTargetSelectionMarkerPropertyBlock = new();
-        private PremiumWorldSelectionFrameView _attackTargetSelectionBoundaryView;
         private GameObject _scanOrderMarker;
         private LineRenderer _scanOrderMarkerRenderer;
         private LineRenderer _scanOrderMarkerInnerRenderer;
@@ -50,7 +47,7 @@ namespace Game.Runtime
         private readonly List<GameObject> _attackTargetPreviewMarkers = new();
         private readonly List<Entity> _previewTargets = new();
         private readonly List<Renderer[]> _attackTargetPreviewMarkerRenderers = new();
-        private readonly MaterialPropertyBlock _boardTargetPreviewPropertyBlock = new();
+        private readonly MaterialPropertyBlock _targetPreviewPropertyBlock = new();
         private bool _attackTargetPreviewVisible;
         private int _attackTargetPreviewVisibleCount;
         private float _nextAttackTargetPreviewUpdateTime;
@@ -62,24 +59,15 @@ namespace Game.Runtime
         private const float AttackOrderMarkerHorizontalScale = 2.1f;
         private const float AttackTargetSelectionMarkerVerticalOffset = 0.12f;
         private const float AttackTargetSelectionMarkerScaleMultiplier = 1.25f;
-        private const float AttackTargetRingMinimumRadius = 0.95f;
-        private const float AttackTargetRingWidth = 0.55f;
+        private const float AttackTargetFallbackMinimumSpan = 1.9f;
         private const float AttackTargetMarkerMinimumVisibleSeconds = 14f;
-        private const int AttackTargetRingSegments = 96;
         private const string SelectionObjectOutlineToken = "SelectionObjectOutline";
-        private const string BaseColorProperty = "_BaseColor";
         private const string LegacyColorProperty = "_Color";
         private const string EmissionColorProperty = "_EmissionColor";
         private const string AccentColorProperty = "_AccentColor";
-        private static readonly Color AttackTargetMarkerColor = new(1f, 0.08f, 0.04f, 0.95f);
-        private static readonly Color AttackTargetMarkerEmissionColor = new(0.76f, 0.05f, 0.03f, 1f);
-        private static readonly Color AttackTargetMarkerAccentColor = new(1f, 0.92f, 0.5f, 1f);
-        private static readonly Color AttackPreviewMarkerColor = new(0.92f, 0.12f, 0.08f, 0.62f);
-        private static readonly Color AttackPreviewMarkerEmissionColor = new(0.24f, 0.03f, 0.02f, 1f);
-        private static readonly Color AttackPreviewMarkerAccentColor = new(1f, 0.64f, 0.42f, 1f);
+        private const string BaseColorProperty = "_BaseColor";
+        private static readonly Color AttackPreviewMarkerColor = new Color32(255, 85, 54, 158);
         private static readonly Color BoardPreviewMarkerColor = new(0.2f, 1f, 0.78f, 0.68f);
-        private static readonly Color BoardPreviewMarkerEmissionColor = new(0.04f, 0.34f, 0.25f, 1f);
-        private static readonly Color BoardPreviewMarkerAccentColor = new(0.72f, 1f, 0.88f, 1f);
         private const int ScanMarkerRingSegments = 128;
         private const int ScanMarkerBracketSegments = 12;
         private const float ScanMarkerVerticalOffset = 0.18f;
@@ -175,7 +163,7 @@ namespace Game.Runtime
             ReleaseEntityQueries();
             DestroyRuntimeObject(_moveOrderMarker);
             DestroyRuntimeObject(_attackOrderMarker);
-            DestroyRuntimeObject(_attackTargetRingMarker);
+            DestroyRuntimeObject(_attackTargetFallbackReticle);
             DestroyRuntimeObject(_attackTargetSelectionMarker);
             DestroyRuntimeObject(_scanOrderMarker);
             for (int i = 0; i < _attackTargetPreviewMarkers.Count; i++)
@@ -185,12 +173,10 @@ namespace Game.Runtime
             _moveOrderMarkerRenderers = null;
             _attackOrderMarker = null;
             _attackOrderMarkerRenderers = null;
-            _attackTargetRingMarker = null;
-            _attackTargetRingRenderer = null;
+            _attackTargetFallbackReticle = null;
             _attackTargetSelectionMarker = null;
             _attackTargetSelectionMarkerRenderers = null;
             _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
-            _attackTargetSelectionBoundaryView = null;
             _scanOrderMarker = null;
             _scanOrderMarkerRenderer = null;
             _scanOrderMarkerInnerRenderer = null;
@@ -239,7 +225,7 @@ namespace Game.Runtime
 
         public void UpdateAttackOrderMarkerVisibility(System.Action<bool> setHudWorldMarkersVisible)
         {
-            if ((_attackOrderMarker == null && _attackTargetRingMarker == null && _attackTargetSelectionMarker == null) || _attackOrderMarkerHideTime < 0f)
+            if ((_attackOrderMarker == null && _attackTargetFallbackReticle == null && _attackTargetSelectionMarker == null) || _attackOrderMarkerHideTime < 0f)
                 return;
 
             // Target death takes precedence over the command feedback display duration.
@@ -256,8 +242,8 @@ namespace Game.Runtime
 
             if (_attackOrderMarker != null)
                 _attackOrderMarker.SetActive(false);
-            if (_attackTargetRingMarker != null)
-                _attackTargetRingMarker.SetActive(false);
+            if (_attackTargetFallbackReticle != null)
+                _attackTargetFallbackReticle.SetActive(false);
             if (_attackTargetSelectionMarker != null)
                 _attackTargetSelectionMarker.SetActive(false);
             _attackOrderMarkerHideTime = -1f;
@@ -371,7 +357,7 @@ namespace Game.Runtime
             if (targetEntity != Entity.Null)
             {
                 if (!ShowAttackTargetSelectionMarker(em, targetEntity, grid, worldPosition, visibleSeconds))
-                    ShowAttackTargetRingMarker(em, targetEntity, grid, worldPosition, visibleSeconds);
+                    ShowAttackTargetFallbackReticle(em, targetEntity, grid, worldPosition, visibleSeconds);
                 if (_attackOrderMarker != null)
                     _attackOrderMarker.SetActive(false);
                 return;
@@ -420,11 +406,9 @@ namespace Game.Runtime
                 return false;
 
             Vector2 markerSize = ResolveAttackMarkerWorldSize(em, targetEntity, grid);
-            Vector2 boundarySize = markerSize;
             Vector3 markerPosition = worldPosition;
             Quaternion markerRotation = ResolveAttackMarkerRotation(em, targetEntity);
             float markerSurfaceY;
-            float targetHeight = ResolveAttackMarkerWorldHeight(em, targetEntity);
             bool usedRuntimeBounds = TryResolveRuntimeBuildingMarkerPlacement(
                 em,
                 targetEntity,
@@ -437,10 +421,9 @@ namespace Game.Runtime
                 markerPosition = runtimePosition;
                 markerRotation = runtimeRotation;
                 markerSurfaceY = runtimePosition.y - AttackTargetSelectionMarkerVerticalOffset;
-                boundarySize = new Vector2(
+                markerSize = new Vector2(
                     Mathf.Max(markerSize.x, runtimeBounds.size.x),
                     Mathf.Max(markerSize.y, runtimeBounds.size.z));
-                targetHeight = Mathf.Max(targetHeight, runtimeBounds.size.y);
             }
             else
             {
@@ -456,9 +439,8 @@ namespace Game.Runtime
                 _attackTargetSelectionMarker,
                 _attackTargetSelectionMarkerRenderers,
                 markerSurfaceY + AttackTargetSelectionMarkerVerticalOffset);
-            ConfigureAttackTargetBoundaryView(markerPosition, markerRotation, boundarySize, markerSurfaceY, targetHeight);
-            if (_attackTargetRingMarker != null)
-                _attackTargetRingMarker.SetActive(false);
+            if (_attackTargetFallbackReticle != null)
+                _attackTargetFallbackReticle.SetActive(false);
 
             float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
             _attackOrderMarkerHideTime = UnityEngine.Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
@@ -466,36 +448,28 @@ namespace Game.Runtime
             return true;
         }
 
-        private void ShowAttackTargetRingMarker(
+        private void ShowAttackTargetFallbackReticle(
             EntityManager em,
             Entity targetEntity,
             GridConfig grid,
             Vector3 worldPosition,
             float visibleSeconds)
         {
-            EnsureAttackTargetRingMarker();
-            if (_attackTargetRingMarker == null || _attackTargetRingRenderer == null)
+            if (_attackTargetFallbackReticle == null)
+                _attackTargetFallbackReticle = PremiumWorldSelectionFrameView.CreateAttackTargetReticle(_runtimeRoot);
+            if (_attackTargetFallbackReticle == null)
                 return;
 
-            Vector2 markerSize = ResolveAttackMarkerWorldSize(em, targetEntity, grid);
-            float radiusX = Mathf.Max(AttackTargetRingMinimumRadius, markerSize.x * AttackTargetSelectionMarkerScaleMultiplier * 0.5f);
-            float radiusZ = Mathf.Max(AttackTargetRingMinimumRadius, markerSize.y * AttackTargetSelectionMarkerScaleMultiplier * 0.5f);
-            float markerY = Mathf.Max(grid.Origin.y + AttackTargetSelectionMarkerVerticalOffset, worldPosition.y + AttackTargetSelectionMarkerVerticalOffset);
-            _attackTargetRingMarker.transform.position = Vector3.zero;
-            _attackTargetRingMarker.transform.rotation = Quaternion.identity;
-            _attackTargetRingRenderer.positionCount = AttackTargetRingSegments;
-            for (int i = 0; i < AttackTargetRingSegments; i++)
-            {
-                float t = (i / (float)AttackTargetRingSegments) * Mathf.PI * 2f;
-                _attackTargetRingRenderer.SetPosition(
-                    i,
-                    new Vector3(
-                        worldPosition.x + Mathf.Cos(t) * radiusX,
-                        markerY,
-                        worldPosition.z + Mathf.Sin(t) * radiusZ));
-            }
+            Vector2 size = ResolveAttackMarkerWorldSize(em, targetEntity, grid) * AttackTargetSelectionMarkerScaleMultiplier;
+            worldPosition.y = Mathf.Max(grid.Origin.y, worldPosition.y) + AttackTargetSelectionMarkerVerticalOffset;
+            Transform marker = _attackTargetFallbackReticle.transform;
+            marker.position = worldPosition;
+            marker.localScale = new Vector3(
+                Mathf.Max(AttackTargetFallbackMinimumSpan, size.x),
+                Mathf.Max(AttackTargetFallbackMinimumSpan, size.y),
+                1f);
+            _attackTargetFallbackReticle.SetActive(true);
 
-            _attackTargetRingMarker.SetActive(true);
             float duration = visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds;
             _attackOrderMarkerHideTime = UnityEngine.Time.time + Mathf.Max(duration, AttackTargetMarkerMinimumVisibleSeconds);
         }
@@ -596,11 +570,12 @@ namespace Game.Runtime
                 return;
             }
 
-            bool hasGroundY = TryGetMarkerGroundY(em, out float groundY);
+            bool hasGroundY = TryGetMarkerGroundY(em, out float groundY, out GridConfig grid);
             int markerIndex = UpdateTargetPreviewMarkersFromChunks(
                 em,
                 hasGroundY,
                 groundY,
+                grid,
                 boardPreview: false,
                 Entity.Null,
                 null);
@@ -638,11 +613,12 @@ namespace Game.Runtime
                 return;
             }
 
-            bool hasGroundY = TryGetMarkerGroundY(em, out float groundY);
+            bool hasGroundY = TryGetMarkerGroundY(em, out float groundY, out GridConfig grid);
             int markerIndex = UpdateTargetPreviewMarkersFromChunks(
                 em,
                 hasGroundY,
                 groundY,
+                grid,
                 boardPreview: true,
                 source,
                 isValidTarget);
@@ -655,6 +631,7 @@ namespace Game.Runtime
             EntityManager em,
             bool hasGroundY,
             float groundY,
+            GridConfig grid,
             bool boardPreview,
             Entity source,
             IsPreviewTargetValidWithSourceDelegate isValidTarget)
@@ -706,10 +683,13 @@ namespace Game.Runtime
                         hasGroundY ? groundY : position.y + MoveOrderMarkerVerticalOffset,
                         position.z);
                     marker.transform.rotation = Quaternion.identity;
-                    if (boardPreview)
-                        ApplyBoardTargetPreviewColor(markerIndex);
-                    else
-                        ApplyAttackTargetPreviewColor(markerIndex);
+                    marker.transform.localScale = Vector3.one;
+                    if (!boardPreview && hasGroundY)
+                    {
+                        Vector2 size = ResolveAttackMarkerWorldSize(em, target, grid);
+                        marker.transform.localScale = new Vector3(size.x, 1f, size.y);
+                    }
+                    ApplyTargetPreviewColor(markerIndex, boardPreview ? BoardPreviewMarkerColor : AttackPreviewMarkerColor);
                     SetMarkerActive(marker, true);
                     if ((uint)markerIndex < (uint)_attackTargetPreviewMarkerRenderers.Count)
                         LiftMarkerRendererBoundsAbove(marker, _attackTargetPreviewMarkerRenderers[markerIndex], marker.transform.position.y);
@@ -972,32 +952,7 @@ namespace Game.Runtime
             _attackTargetSelectionMarkerRenderers = _attackTargetSelectionMarker.GetComponentsInChildren<Renderer>(true);
             _attackTargetSelectionMarkerBaseRendererSize = CalculateRendererSize(_attackTargetSelectionMarkerRenderers);
             ConfigureMarkerRenderers(_attackTargetSelectionMarkerRenderers);
-            ApplyAttackTargetSelectionMarkerColor();
-            _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.GetComponent<PremiumWorldSelectionFrameView>();
-            if (_attackTargetSelectionBoundaryView == null)
-                _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.AddComponent<PremiumWorldSelectionFrameView>();
             _attackTargetSelectionMarker.SetActive(false);
-        }
-
-        private void ConfigureAttackTargetBoundaryView(
-            Vector3 markerPosition,
-            Quaternion markerRotation,
-            Vector2 markerSize,
-            float surfaceY,
-            float targetHeight)
-        {
-            if (_attackTargetSelectionBoundaryView == null)
-                return;
-
-            Color accent = Color.Lerp(AttackTargetMarkerAccentColor, Color.white, 0.25f);
-            _attackTargetSelectionBoundaryView.Configure(
-                markerPosition,
-                markerRotation,
-                markerSize,
-                surfaceY,
-                Mathf.Max(0.9f, targetHeight),
-                AttackTargetMarkerColor,
-                accent);
         }
 
         private Vector3 ResolveAttackTargetSelectionMarkerScale(Vector2 markerSize)
@@ -1008,28 +963,6 @@ namespace Game.Runtime
                 Mathf.Max(0.01f, markerSize.x * AttackTargetSelectionMarkerScaleMultiplier) / baseX,
                 1f,
                 Mathf.Max(0.01f, markerSize.y * AttackTargetSelectionMarkerScaleMultiplier) / baseZ);
-        }
-
-        private void ApplyAttackTargetSelectionMarkerColor()
-        {
-            if (_attackTargetSelectionMarkerRenderers == null)
-                return;
-
-            for (int i = 0; i < _attackTargetSelectionMarkerRenderers.Length; i++)
-            {
-                Renderer renderer = _attackTargetSelectionMarkerRenderers[i];
-                if (renderer == null)
-                    continue;
-
-                _attackTargetSelectionMarkerPropertyBlock.Clear();
-                renderer.GetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
-                SetHologramMarkerColors(
-                    _attackTargetSelectionMarkerPropertyBlock,
-                    AttackTargetMarkerColor,
-                    AttackTargetMarkerEmissionColor,
-                    AttackTargetMarkerAccentColor);
-                renderer.SetPropertyBlock(_attackTargetSelectionMarkerPropertyBlock);
-            }
         }
 
         private bool TryResolveRuntimeBuildingMarkerPlacement(
@@ -1066,23 +999,6 @@ namespace Game.Runtime
             position.y = surfaceY + AttackTargetSelectionMarkerVerticalOffset;
             rotation = Quaternion.Euler(0f, instance.transform.eulerAngles.y, 0f);
             return true;
-        }
-
-        private static float ResolveAttackMarkerWorldHeight(EntityManager em, Entity targetEntity)
-        {
-            if (targetEntity == Entity.Null || !em.Exists(targetEntity))
-                return 1.2f;
-
-            if (em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity))
-                return 3.4f;
-
-            if (em.HasComponent<UnitMovementBehavior>(targetEntity) &&
-                em.GetComponentData<UnitMovementBehavior>(targetEntity).UsesVehicleMotion != 0)
-            {
-                return 1.65f;
-            }
-
-            return 1.25f;
         }
 
         private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
@@ -1134,61 +1050,6 @@ namespace Game.Runtime
 
             Quaternion rotation = em.GetComponentData<LocalTransform>(targetEntity).Rotation;
             return Quaternion.Euler(0f, rotation.eulerAngles.y, 0f);
-        }
-
-        private void EnsureAttackTargetRingMarker()
-        {
-            if (_attackTargetRingMarker != null && _attackTargetRingRenderer != null)
-                return;
-
-            _attackTargetRingMarker = new GameObject("AttackTargetRingMarkerRuntime");
-            if (_runtimeRoot != null)
-                _attackTargetRingMarker.transform.SetParent(_runtimeRoot, false);
-
-            _attackTargetRingRenderer = _attackTargetRingMarker.AddComponent<LineRenderer>();
-            _attackTargetRingRenderer.useWorldSpace = true;
-            _attackTargetRingRenderer.loop = true;
-            _attackTargetRingRenderer.widthMultiplier = AttackTargetRingWidth;
-            _attackTargetRingRenderer.numCornerVertices = 4;
-            _attackTargetRingRenderer.numCapVertices = 4;
-            _attackTargetRingRenderer.alignment = LineAlignment.View;
-            _attackTargetRingRenderer.shadowCastingMode = ShadowCastingMode.Off;
-            _attackTargetRingRenderer.receiveShadows = false;
-            _attackTargetRingRenderer.lightProbeUsage = LightProbeUsage.Off;
-            _attackTargetRingRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
-            _attackTargetRingRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
-            Material ringMaterial = CreateAttackTargetRingMaterial();
-            if (ringMaterial != null)
-                _attackTargetRingRenderer.material = ringMaterial;
-            _attackTargetRingRenderer.startColor = AttackTargetMarkerColor;
-            _attackTargetRingRenderer.endColor = AttackTargetMarkerColor;
-            _attackTargetRingMarker.SetActive(false);
-        }
-
-        private static Material CreateAttackTargetRingMaterial()
-        {
-            Shader shader = Shader.Find("Hidden/Internal-Colored");
-            if (shader == null)
-                shader = Shader.Find("Sprites/Default");
-            if (shader == null)
-                return null;
-
-            var material = new Material(shader)
-            {
-                name = "AttackTargetRingOverlayMaterial",
-                hideFlags = HideFlags.HideAndDontSave,
-                renderQueue = (int)RenderQueue.Overlay
-            };
-            material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
-            material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-            material.SetInt("_Cull", (int)CullMode.Off);
-            material.SetInt("_ZWrite", 0);
-            material.SetInt("_ZTest", (int)CompareFunction.Always);
-            material.SetColor(LegacyColorProperty, AttackTargetMarkerColor);
-            material.SetColor(BaseColorProperty, AttackTargetMarkerColor);
-            material.SetColor(EmissionColorProperty, AttackTargetMarkerEmissionColor);
-            material.SetColor(AccentColorProperty, AttackTargetMarkerAccentColor);
-            return material;
         }
 
         private static Vector3 CalculateRendererSize(Renderer[] renderers)
@@ -1282,68 +1143,18 @@ namespace Game.Runtime
             }
         }
 
-        private void ApplyBoardTargetPreviewColor(int markerIndex)
+        private void ApplyTargetPreviewColor(int markerIndex, Color color)
         {
-            if ((uint)markerIndex >= (uint)_attackTargetPreviewMarkerRenderers.Count)
-                return;
-
             Renderer[] renderers = _attackTargetPreviewMarkerRenderers[markerIndex];
-            if (renderers == null)
-                return;
-
-            for (int i = 0; i < renderers.Length; i++)
+            foreach (Renderer renderer in renderers)
             {
-                Renderer renderer = renderers[i];
                 if (renderer == null)
                     continue;
 
-                _boardTargetPreviewPropertyBlock.Clear();
-                renderer.GetPropertyBlock(_boardTargetPreviewPropertyBlock);
-                SetHologramMarkerColors(
-                    _boardTargetPreviewPropertyBlock,
-                    BoardPreviewMarkerColor,
-                    BoardPreviewMarkerEmissionColor,
-                    BoardPreviewMarkerAccentColor);
-                renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
+                _targetPreviewPropertyBlock.Clear();
+                _targetPreviewPropertyBlock.SetColor(BaseColorProperty, color);
+                renderer.SetPropertyBlock(_targetPreviewPropertyBlock);
             }
-        }
-
-        private void ApplyAttackTargetPreviewColor(int markerIndex)
-        {
-            if ((uint)markerIndex >= (uint)_attackTargetPreviewMarkerRenderers.Count)
-                return;
-
-            Renderer[] renderers = _attackTargetPreviewMarkerRenderers[markerIndex];
-            if (renderers == null)
-                return;
-
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                Renderer renderer = renderers[i];
-                if (renderer == null)
-                    continue;
-
-                _boardTargetPreviewPropertyBlock.Clear();
-                renderer.GetPropertyBlock(_boardTargetPreviewPropertyBlock);
-                SetHologramMarkerColors(
-                    _boardTargetPreviewPropertyBlock,
-                    AttackPreviewMarkerColor,
-                    AttackPreviewMarkerEmissionColor,
-                    AttackPreviewMarkerAccentColor);
-                renderer.SetPropertyBlock(_boardTargetPreviewPropertyBlock);
-            }
-        }
-
-        private static void SetHologramMarkerColors(
-            MaterialPropertyBlock propertyBlock,
-            Color baseColor,
-            Color emissionColor,
-            Color accentColor)
-        {
-            propertyBlock.SetColor(BaseColorProperty, baseColor);
-            propertyBlock.SetColor(LegacyColorProperty, baseColor);
-            propertyBlock.SetColor(EmissionColorProperty, emissionColor);
-            propertyBlock.SetColor(AccentColorProperty, accentColor);
         }
 
         private static void SetMarkerActive(GameObject marker, bool active)
@@ -1363,14 +1174,15 @@ namespace Game.Runtime
                 UnityEngine.Object.DestroyImmediate(instance);
         }
 
-        private bool TryGetMarkerGroundY(EntityManager em, out float y)
+        private bool TryGetMarkerGroundY(EntityManager em, out float y, out GridConfig grid)
         {
             y = MoveOrderMarkerVerticalOffset;
+            grid = default;
             if (_gridBlockerQuery.IsEmptyIgnoreFilter)
                 return false;
 
             Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
-            GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+            grid = em.GetComponentData<GridConfig>(gridEntity);
             y = grid.Origin.y + MoveOrderMarkerVerticalOffset;
             return true;
         }

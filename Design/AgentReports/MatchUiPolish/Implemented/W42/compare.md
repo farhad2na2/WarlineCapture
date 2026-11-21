@@ -38,4 +38,13 @@ These are fixture renders over real mission setups. They are not live mission fr
 - **No new strings.**
   - FC, BT and CE reuse the Battle Library family names, the same EN/FA copy the W40 objective card uses (`SkirmishObjectiveCardLayout.Purpose`).
   - BA keeps its catalog title `ui.skirmish.base_assault`.
-- **Not changed (outside W42's scope):** the panel body under the heading is still the Base Assault match help ("Destroy the original enemy Barracks…") for FC, BT and CE. It comes from `SkirmishSetupBriefing.MatchHelp`. This is pre-existing and recorded in the results note.
+- **Not changed (outside W42's scope):** the panel's static body is still the Base Assault match help ("Destroy the original enemy Barracks…") for FC, BT and CE. It comes from `SkirmishSetupBriefing.MatchHelp`. In live ARIA Play the body shows ARIA's narration instead. This is pre-existing and recorded in the results note.
+
+## Live frames
+
+`live/` holds opening frames (1920×1080) from the counted W42 ARIA run, on the W42 code:
+- [S002 EN](live/s002-en-opening.png): BASE ASSAULT;
+- [S031 EN](live/s031-en-opening.png): FRONTLINE CONTROL;
+- [S037 EN](live/s037-en-opening.png): BREAKTHROUGH;
+- [S020 EN](live/s020-en-opening.png): CONVOY ESCORT;
+- [S043 FA](live/s043-fa-opening.png): اسکورت کاروان.

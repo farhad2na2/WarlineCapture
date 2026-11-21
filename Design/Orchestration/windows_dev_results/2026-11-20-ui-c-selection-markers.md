@@ -112,4 +112,32 @@ The 1920×1080 zoom-in frame omitted the selected launcher. The first affected f
 
 `SplitFrontLauncherHudView.cs:31` draws the authored missile damage-radius circle as a gameplay indicator. The Board 6 comparison records it as outside scope.
 
+### ARIA regression
+
+The queue recorded all six jobs and an unchanged source fingerprint at `aria/unity.log:282883`. Four of five scored jobs won. All five passed Gate 3 and the normal-touch menu and return journeys. The Unity log contains zero `AriaBlocked` markers. The runner reported zero mission table updates at `aria-wrapper.log:13`.
+
+| Job | Outcome and deadline fraction | Menu journey | Return to MAIN MENU | Gate 3 |
+| --- | --- | --- | --- | --- |
+| Warm-up S031 / 130366 / en | Victory, 34.60% `aria/unity.log:9952` | Passed `:1210` | Passed `:10209` | Unjudged |
+| S002 / 130365 / en | Victory `aria/unity.log:238657`, 21.62% `aria-wrapper.log:8` | Passed `aria/unity.log:11023` | Passed `:238898` | PASS `aria/gate3.log:2` |
+| S020 / 130365 / en | Victory, 48.11% `aria/unity.log:246321` | Passed `:239665` | Passed `:246577` | PASS `aria/gate3.log:3` |
+| S031 / 130365 / en | Victory, 34.64% `aria/unity.log:256970` | Passed `:247386` | Passed `:257227` | PASS `aria/gate3.log:4` |
+| S037 / 130365 / en | Victory, 48.46% `aria/unity.log:273988` | Passed `:258042` | Passed `:274262` | PASS `aria/gate3.log:5` |
+| S043 / 130365 / fa-IR | **Defeat**, 75.55% `aria/unity.log:282332`. `ConvoyImpossible`, 0/2 delivered, 2 lost. | Passed `:275071` | Passed `:282605` | PASS `aria/gate3.log:6` |
+
+The first scored failure is the S043 terminal objective at `aria/unity.log:282332`. The previous Board 6 queue timed out during S043 startup. This run started ARIA at `aria/unity.log:276751`. The scored queue missed the S043 victory and deadline conditions.
+
+### S002 and S043 repeats
+
+The repeat queue used the same seeds and locales. Both jobs won, with an unchanged source fingerprint at `aria-retries/unity.log:279141` and zero mission table updates at `aria-retries-wrapper.log:9`. The Unity log contains zero `AriaBlocked` markers.
+
+| Job | Outcome and deadline fraction | Menu journey | Return to MAIN MENU | Gate 3 |
+| --- | --- | --- | --- | --- |
+| S002 / 130365 / en | Victory `aria-retries/unity.log:259902`, 21.93% `aria-retries-wrapper.log:7` | Passed `aria-retries/unity.log:1207` | Passed `:260143` | PASS `aria-retries/gate3.log:1` |
+| S043 / 130365 / fa-IR | Victory, 2/2 delivered, 0 lost. **Deadline gate failed** at 76.07% `aria-retries/unity.log:278654`. | Passed `:260954` | Passed `:278923` | PASS `aria-retries/gate3.log:2` |
+
+S043 exceeded the 70% limit twice. The first deadline failure is `aria/unity.log:282332`. The S043 ARIA regression remains open.
+
+The generated files are archived under `aria/generated/` and `aria-retries/generated/`. `SkirmishS002AriaRunHarness.cs:997` rewrote the tracked S002 ARIA-controls screenshot in each queue. Each generated image was archived and the tracked file was restored.
+
 The owner approved the Board 6 visual direction on November 20, 2026. Real-player and device acceptance remain pending.

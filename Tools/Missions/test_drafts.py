@@ -12,6 +12,7 @@ SOURCES = {
     'MP': 'Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset',
     'IB': 'Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset',
     'DB': 'Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset',
+    'AP': 'Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset',
 }
 
 

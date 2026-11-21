@@ -380,9 +380,9 @@ namespace Game.Editor
             int2 center = (int2)math.floor((source.xz - grid.Origin.xz) / grid.CellSize);
             var walkable = em.GetBuffer<GridWalkable>(gridEntity, true);
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
-            // Keep the endpoint in the open sand east of the tank, clear of the refinery stacks and smoke.
-            int distance = 30 + markerMoveAttempt * 3;
-            foreach (int2 delta in new[] { new int2(distance, -5), new int2(distance, -2), new int2(distance, -8) })
+            // Open sand west of the tank keeps the marker clear of the refinery and lesson callout.
+            int west = -30 - markerMoveAttempt * 3;
+            foreach (int2 delta in new[] { new int2(west, -8), new int2(west, -5), new int2(west, -11) })
             {
                 int2 cell = center + delta;
                 if (!GridUtils.InBounds(cell, grid.Width, grid.Height))

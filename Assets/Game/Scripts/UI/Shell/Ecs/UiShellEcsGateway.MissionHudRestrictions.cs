@@ -21,9 +21,9 @@ namespace Game.UI.Shell.Ecs
                     bool introduction = operationsWorld.EntityManager.HasComponent<OperationsReconIntroduction>(operations.GetSingletonEntity()) &&
                         operationsWorld.EntityManager.GetComponentData<OperationsReconIntroduction>(operations.GetSingletonEntity()).Stage < 6;
                     // W38: mission ID and family HUD flags from the running mission (was the literal "operation.o001").
-                    var root = operations.GetSingletonEntity();
-                    var identity = operationsWorld.EntityManager.HasComponent<OperationsMissionIdentityComponent>(root)
-                        ? operationsWorld.EntityManager.GetComponentData<OperationsMissionIdentityComponent>(root)
+                    var opsRoot = operations.GetSingletonEntity();
+                    var identity = operationsWorld.EntityManager.HasComponent<OperationsMissionIdentityComponent>(opsRoot)
+                        ? operationsWorld.EntityManager.GetComponentData<OperationsMissionIdentityComponent>(opsRoot)
                         : new OperationsMissionIdentityComponent { MissionId = "operation.o001", HudFlags = 127, AvailableSquadMask = 1 };
                     int flags = identity.HudFlags;
                     restrictions = new UiMissionHudRestrictionsModel(identity.MissionId.ToString(), (flags & 1) != 0, (flags & 2) != 0,

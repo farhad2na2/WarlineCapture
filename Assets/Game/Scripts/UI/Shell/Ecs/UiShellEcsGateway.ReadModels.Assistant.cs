@@ -170,7 +170,8 @@ namespace Game.UI.Shell.Ecs
                 {
                     var resolvedSetup = skirmishWorld.GetComponentObject<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession).Setup;
                     help = Game.Configs.SkirmishSetupBriefing.MatchHelp(resolvedSetup, GameLocalization.IsRightToLeft);
-                    if (resolvedSetup != null) objectiveKind = resolvedSetup.ObjectiveKind;
+                    if (resolvedSetup != null && resolvedSetup.ObjectiveKind != Game.Skirmish.Contracts.SkirmishObjectiveKind.None)
+                        objectiveKind = resolvedSetup.ObjectiveKind;
                 }
                 // W42: the heading names the mission's own objective family (it was the Base Assault title for every family).
                 assistantPanel=new UiAssistantPanelModel(1,"","","",false,false,true,

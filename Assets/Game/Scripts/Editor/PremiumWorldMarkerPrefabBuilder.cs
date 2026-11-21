@@ -33,6 +33,59 @@ namespace Game.Editor
         {
             Run(); M04AirliftConfigBuilder.Build(); Debug.Log("[TacticalMarkerPreparation] result=Passed"); MissionEditorValidationExit.Complete(true);
         }
+
+        public static void ApplyTacticalInfantryRing()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(VehicleSelectionPrefabPath);
+            try
+            {
+                MeshFilter filter = root.transform.Find("Model/InfantryGroundRing").GetComponent<MeshFilter>();
+                filter.sharedMesh = SaveMesh("Tactical_InfantryRing", CreateTacticalInfantryRing());
+                SavePrefabRoot(root, VehicleSelectionPrefabPath);
+                AssetDatabase.SaveAssets();
+                Debug.Log("[TacticalInfantryRing] result=Passed");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static Mesh CreateTacticalInfantryRing()
+        {
+            const int segments = 64;
+            const int quarter = segments / 4;
+            const float innerRadius = 0.20f;
+            const float outerRadius = 0.43f;
+            const float tickRadius = 0.49f;
+            Vector3[] vertices = new Vector3[segments * 2];
+            Vector2[] uvs = new Vector2[vertices.Length];
+            int[] triangles = new int[segments * 6];
+            for (int segment = 0; segment < segments; segment++)
+            {
+                float angle = (segment + 0.5f) * (2f * Mathf.PI / segments);
+                Vector2 direction = new(Mathf.Cos(angle), Mathf.Sin(angle));
+                int index = segment * 2;
+                int next = (index + 2) % vertices.Length;
+                int quarterSegment = segment % quarter;
+                bool tick = quarterSegment == 0 || quarterSegment == quarter - 1;
+                vertices[index] = direction * innerRadius;
+                vertices[index + 1] = direction * (tick ? tickRadius : outerRadius);
+                // Keep the shader's quad coordinates across the ring and tick envelope.
+                uvs[index] = (Vector2)vertices[index] + Vector2.one * 0.5f;
+                uvs[index + 1] = (Vector2)vertices[index + 1] + Vector2.one * 0.5f;
+                int triangle = segment * 6;
+                triangles[triangle] = index;
+                triangles[triangle + 1] = next;
+                triangles[triangle + 2] = index + 1;
+                triangles[triangle + 3] = index + 1;
+                triangles[triangle + 4] = next;
+                triangles[triangle + 5] = next + 1;
+            }
+
+            return new Mesh { vertices = vertices, uv = uvs, triangles = triangles };
+        }
+
         [MenuItem("Game/Markers/Rebuild Premium World Marker Prefabs")]
         public static void Run()
         {

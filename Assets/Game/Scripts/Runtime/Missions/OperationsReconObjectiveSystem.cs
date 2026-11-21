@@ -6,7 +6,8 @@ using Unity.Transforms;
 
 namespace Game.Runtime
 {
-    /// <summary>Recon rules read the shared combat world's entities; there is no shadow simulation.</summary>
+    /// <summary>Recon rules read the shared combat world's entities; there is no shadow simulation.
+    /// W38: node transitions live in OperationsObjectiveGraphReducer; this system gathers the native facts.</summary>
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     public partial struct OperationsReconObjectiveSystem : ISystem
@@ -104,71 +105,49 @@ namespace Game.Runtime
                         math.distancesq(positions[member.Unit].Position.xz, mission.ExitPosition.xz) <= mission.ExitRadius * mission.ExitRadius)
                         mission.InfantryAtExit++;
                 }
-                // Cache the carrier's last location while alive so deletion in combat leaves
-                // the evidence recoverable at a real world position.
+                // Evidence carry: cache the carrier's last location while alive so deletion in combat
+                // leaves the evidence recoverable at a real world position.
                 if (evidence.Carrier != Entity.Null)
                 {
-                    if (positions.HasComponent(evidence.Carrier)) evidence.Position = positions[evidence.Carrier].Position;
-                    if (!health.HasComponent(evidence.Carrier) || health[evidence.Carrier].Current <= 0)
-                    {
-                        evidence.Carrier = Entity.Null;
-                        evidence.Actor = Entity.Null;
-                        evidence.ChannelSeconds = 0f;
-                    }
+                    Entity carrier = evidence.Carrier;
+                    bool carrierHasPosition = positions.HasComponent(carrier);
+                    OperationsObjectiveGraphReducer.CarryEvidence(ref evidence, carrierHasPosition,
+                        carrierHasPosition ? positions[carrier].Position : float3.zero, health.HasComponent(carrier) && health[carrier].Current > 0);
                 }
 
+                // SCAN nodes.
                 for (int i = 0; i < sites.Length; i++)
                 {
                     var site = sites[i];
                     if (site.Completed != 0 || site.Actor == Entity.Null) continue;
-                    if (!hasSurface || !IsDismounted(site.Actor, health, positions, passengers) ||
-                        !CanReach(positions[site.Actor].Position, site.Position, site.Radius, ref surface))
-                    { site.Actor = Entity.Null; site.ChannelSeconds = 0f; }
-                    else
+                    bool canContinue = hasSurface && IsDismounted(site.Actor, health, positions, passengers) &&
+                        CanReach(positions[site.Actor].Position, site.Position, site.Radius, ref surface);
+                    if (OperationsObjectiveGraphReducer.StepScan(ref site, canContinue, mission.ScanSeconds, missionDelta))
                     {
-                        site.ChannelSeconds = math.min(mission.ScanSeconds, site.ChannelSeconds + missionDelta);
-                        if (site.ChannelSeconds >= mission.ScanSeconds)
-                        {
-                            site.Completed = 1;
-                            site.Actor = Entity.Null;
-                            mission.CompletedScans++;
-                            if (mission.FirstScanWaveTriggered == 0) mission.FirstScanPosition = site.Position;
-                            mission.FirstScanWaveTriggered = 1;
-                        }
+                        mission.CompletedScans++;
+                        if (mission.FirstScanWaveTriggered == 0) mission.FirstScanPosition = site.Position;
+                        mission.FirstScanWaveTriggered = 1;
                     }
                     sites[i] = site;
                 }
                 if (mission.CompletedScans == sites.Length && mission.ReconLostBeforeScansComplete == 0)
                     mission.MasteryCompleted = 1;
+                // INTERACT node (evidence recovery).
                 if (evidence.Actor != Entity.Null)
                 {
-                    if (!evidenceSafe || !hasSurface || !IsDismounted(evidence.Actor, health, positions, passengers) ||
-                        !CanReach(positions[evidence.Actor].Position, evidence.Position, 6f, ref surface))
-                    { evidence.Actor = Entity.Null; evidence.ChannelSeconds = 0f; }
-                    else
-                    {
-                        evidence.ChannelSeconds = math.min(mission.EvidenceSeconds, evidence.ChannelSeconds + missionDelta);
-                        if (evidence.ChannelSeconds >= mission.EvidenceSeconds)
-                        {
-                            evidence.Carrier = evidence.Actor;
-                            evidence.Actor = Entity.Null;
-                            evidence.Recovered = 1;
-                            mission.EvidenceWaveTriggered = 1;
-                        }
-                    }
+                    bool canContinue = evidenceSafe && hasSurface && IsDismounted(evidence.Actor, health, positions, passengers) &&
+                        CanReach(positions[evidence.Actor].Position, evidence.Position, 6f, ref surface);
+                    if (OperationsObjectiveGraphReducer.StepInteract(ref evidence, canContinue, mission.EvidenceSeconds, missionDelta))
+                        mission.EvidenceWaveTriggered = 1;
                 }
+                // EXTRACT and terminal resolution.
                 bool evidenceAtExit = evidence.Recovered != 0 && exitSafe &&
                     IsDismounted(evidence.Carrier, health, positions, passengers) &&
                     math.distancesq(positions[evidence.Carrier].Position.xz, mission.ExitPosition.xz) <= mission.ExitRadius * mission.ExitRadius;
-                bool partial = mission.CompletedScans >= 2 && mission.InfantryAtExit >= 2;
+                var outcome = OperationsObjectiveGraphReducer.Resolve(mission.SurvivingInfantry, mission.CompletedScans, sites.Length,
+                    mission.InfantryAtExit, evidenceAtExit, mission.ElapsedSeconds, mission.DeadlineSeconds, withdraw, conclude, out bool partial);
                 mission.PartialAvailable = partial ? (byte)1 : (byte)0;
-                if (mission.SurvivingInfantry < 2) mission.Outcome = OperationsReconOutcome.Defeat;
-                else if (mission.CompletedScans == sites.Length && mission.InfantryAtExit >= 2 && evidenceAtExit)
-                    mission.Outcome = OperationsReconOutcome.Victory;
-                else if (mission.ElapsedSeconds >= mission.DeadlineSeconds)
-                    mission.Outcome = partial ? OperationsReconOutcome.Partial : OperationsReconOutcome.Defeat;
-                else if (withdraw) mission.Outcome = OperationsReconOutcome.Withdraw;
-                else if (conclude && partial) mission.Outcome = OperationsReconOutcome.Partial;
+                if (outcome != OperationsReconOutcome.None) mission.Outcome = outcome;
                 if (mission.Outcome != OperationsReconOutcome.None) mission.Phase = OperationsReconPhase.Terminal;
             }
         }

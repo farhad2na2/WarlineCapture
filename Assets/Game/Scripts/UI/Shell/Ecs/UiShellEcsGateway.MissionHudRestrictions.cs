@@ -20,9 +20,16 @@ namespace Game.UI.Shell.Ecs
                     var mission = operations.GetSingleton<OperationsReconMissionComponent>();
                     bool introduction = operationsWorld.EntityManager.HasComponent<OperationsReconIntroduction>(operations.GetSingletonEntity()) &&
                         operationsWorld.EntityManager.GetComponentData<OperationsReconIntroduction>(operations.GetSingletonEntity()).Stage < 6;
-                    restrictions = new UiMissionHudRestrictionsModel("operation.o001", true, true, true, true, true,
-                        mission.Phase != OperationsReconPhase.Playing || introduction, hideLogisticsResources: true,
-                        hideUnrelatedControls: true, availableSquadMask: 1);
+                    // W38: mission ID and family HUD flags from the running mission (was the literal "operation.o001").
+                    var opsRoot = operations.GetSingletonEntity();
+                    var identity = operationsWorld.EntityManager.HasComponent<OperationsMissionIdentityComponent>(opsRoot)
+                        ? operationsWorld.EntityManager.GetComponentData<OperationsMissionIdentityComponent>(opsRoot)
+                        : new OperationsMissionIdentityComponent { MissionId = "operation.o001", HudFlags = 127, AvailableSquadMask = 1 };
+                    int flags = identity.HudFlags;
+                    restrictions = new UiMissionHudRestrictionsModel(identity.MissionId.ToString(), (flags & 1) != 0, (flags & 2) != 0,
+                        (flags & 4) != 0, (flags & 8) != 0, (flags & 16) != 0,
+                        mission.Phase != OperationsReconPhase.Playing || introduction, hideLogisticsResources: (flags & 32) != 0,
+                        hideUnrelatedControls: (flags & 64) != 0, availableSquadMask: identity.AvailableSquadMask);
                     return true;
                 }
             }

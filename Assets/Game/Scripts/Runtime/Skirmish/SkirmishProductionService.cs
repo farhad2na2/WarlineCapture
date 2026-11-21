@@ -310,6 +310,7 @@ namespace Game.Runtime
                 GroundStagingPresent = HasLivingProducer(em, session, SkirmishProducerKind.GroundStaging, factionId),
                 HelipadPresent = HasLivingProducer(em, session, SkirmishProducerKind.Helipad, factionId),
                 AirportPresent = HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId),
+                SmallAirportPresent = HasLivingProducer(em, session, SkirmishProducerKind.SmallAirport, factionId),
                 IntelStationPresent = HasLivingProducer(em, session, SkirmishProducerKind.IntelStation, factionId),
                 EnforceStocks = true,
                 MaterialsAvailable = materials,
@@ -656,6 +657,21 @@ namespace Game.Runtime
             return HasProducer(em, session, producer, factionId);
         }
 
+        /// <summary>True when a living structure may produce the role: its overlay producer, or for
+        /// fighter and strike either airport type (transport_plane needs the full Airport).</summary>
+        public static bool HasLivingProducerFor(
+            EntityManager em,
+            Entity session,
+            SkirmishRoleOverlay overlay,
+            byte factionId)
+        {
+            if (!SkirmishAirportTypes.IsAirport(overlay.Producer))
+                return HasProducer(em, session, overlay.Producer, factionId);
+            return SkirmishAirportTypes.Resolve(overlay.Producer, overlay.RoleKind,
+                HasProducer(em, session, SkirmishProducerKind.Airport, factionId),
+                HasProducer(em, session, SkirmishProducerKind.SmallAirport, factionId)) != SkirmishProducerKind.None;
+        }
+
         public static bool TryReleaseDeath(EntityManager em, Entity session, Entity unit)
         {
             if (!em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
@@ -921,10 +937,10 @@ namespace Game.Runtime
             reason = SkirmishReasonCode.None;
             field = string.Empty;
             if (reservation.Producer != SkirmishProducerKind.Helipad &&
-                reservation.Producer != SkirmishProducerKind.Airport)
+                !SkirmishAirportTypes.IsAirport(reservation.Producer))
                 return true;
 
-            SkirmishReadinessStage required = reservation.Producer == SkirmishProducerKind.Airport
+            SkirmishReadinessStage required = SkirmishAirportTypes.IsAirport(reservation.Producer)
                 ? SkirmishReadinessStage.FullArsenal
                 : SkirmishReadinessStage.Established;
             SkirmishReadinessStage compiled = SkirmishReadinessStage.Field;
@@ -947,7 +963,9 @@ namespace Game.Runtime
                 reason = SkirmishReasonCode.MissingProducer;
                 field = reservation.Producer == SkirmishProducerKind.Airport
                     ? "producer.airport"
-                    : "producer.helipad";
+                    : reservation.Producer == SkirmishProducerKind.SmallAirport
+                        ? "producer.airport_small"
+                        : "producer.helipad";
                 return false;
             }
 

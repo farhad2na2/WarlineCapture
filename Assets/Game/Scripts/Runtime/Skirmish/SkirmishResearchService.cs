@@ -448,6 +448,12 @@ namespace Game.Runtime
                 !SkirmishProductionService.HasLivingProducer(em, session, producer, factionId) &&
                 SkirmishProductionService.HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId))
                 producer = SkirmishProducerKind.Airport;
+            // A small airport is an air producer too; it is only consulted when neither the
+            // Helipad nor the full Airport exists, so existing faction states keep their producer.
+            if (kind == SkirmishResearchKind.AircraftEfficiency &&
+                !SkirmishProductionService.HasLivingProducer(em, session, producer, factionId) &&
+                SkirmishProductionService.HasLivingProducer(em, session, SkirmishProducerKind.SmallAirport, factionId))
+                producer = SkirmishProducerKind.SmallAirport;
             if (!SkirmishProductionService.HasLivingProducer(em, session, producer, factionId) &&
                 !(kind == SkirmishResearchKind.AircraftEfficiency &&
                   SkirmishProductionService.HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId)))

@@ -2,6 +2,7 @@
 // =============================================================================
 // RunCatalogAreaMeasurementAndExit - read-only measurement of a FC/BT/CE draft on the
 // Campaign source that the launched host mission uses (Desert Base: S006 or S002).
+// Without WARLINE_SKIRMISH_CATALOG, select a probe host by the draft's campaign_source.
 //
 //   WARLINE_SKIRMISH_CATALOG=S006 WARLINE_MISSION_DRAFT=Tools/Missions/drafts/<draft>.json \
 //   WARLINE_AREA_MEASUREMENT_OUT=Design/AgentReports/SkirmishExpansion/<id>/area-measurement.json \
@@ -50,17 +51,19 @@ namespace Game.Editor
 
         public static void RunCatalogAreaMeasurementAndExit()
         {
-            string catalog = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG");
             string draftArgument = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT");
             string outArgument = Environment.GetEnvironmentVariable("WARLINE_AREA_MEASUREMENT_OUT");
-            if (string.IsNullOrEmpty(catalog) || string.IsNullOrEmpty(draftArgument) || string.IsNullOrEmpty(outArgument))
-                throw new InvalidOperationException("RunCatalogAreaMeasurementAndExit requires WARLINE_SKIRMISH_CATALOG (the Desert Base host), " +
-                    "WARLINE_MISSION_DRAFT and WARLINE_AREA_MEASUREMENT_OUT.");
-            string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            areaMeasurementDraftPath = Path.GetFullPath(Path.IsPathRooted(draftArgument) ? draftArgument : Path.Combine(project, draftArgument));
-            if (!File.Exists(areaMeasurementDraftPath)) throw new InvalidOperationException("Draft not found: " + areaMeasurementDraftPath);
-            areaMeasurementDraft = JObject.Parse(File.ReadAllText(areaMeasurementDraftPath));
+            if (string.IsNullOrEmpty(draftArgument) || string.IsNullOrEmpty(outArgument))
+                throw new InvalidOperationException("RunCatalogAreaMeasurementAndExit requires WARLINE_MISSION_DRAFT and WARLINE_AREA_MEASUREMENT_OUT.");
+            areaMeasurementDraft = ReadMeasurementDraft(draftArgument, out areaMeasurementDraftPath);
             if (!(areaMeasurementDraft["anchors"] is JObject)) throw new InvalidOperationException("Draft has no anchors{}.");
+            // Keep the existing catalog dispatch, including coded-host fallbacks, for existing callers.
+            RunMeasurementHost(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(MeasurementCatalogVariable))
+                ? areaMeasurementDraft : null, StartAreaMeasurement);
+        }
+
+        private static void StartAreaMeasurement()
+        {
             areaMeasurementActive = true;
 
             // Same startup-only map-review setup as the catalog Airport source-fit probe.
@@ -98,20 +101,33 @@ namespace Game.Editor
             }
         }
 
+        // A source-selected host may load the right physical map and still fail its opening
+        // grants. The live grid can be measured, with that failure recorded in the receipt.
+        private static bool TryMeasureAreaAfterStartupFailure(EntityManager em)
+        {
+            if (!areaMeasurementActive || measurementSource == null || !LayoutDumpSessionFailed(em, out string reason))
+                return false;
+            TickAreaMeasurement(reason);
+            Finish(false, "areaMeasurementOnly:sessionStartupFailure=" + reason);
+            return true;
+        }
+
         // Called from the map-review tick (see SkirmishS002AriaRunHarness.cs). Runs once; true = finished.
-        private static bool TickAreaMeasurement()
+        private static bool TickAreaMeasurement(string hostStartupFailure = null)
         {
             deadline = EditorApplication.timeSinceStartup + 900d; // one-shot computation, longer than the opening watchdog
             try
             {
                 string outPath = Environment.GetEnvironmentVariable("WARLINE_AREA_MEASUREMENT_OUT");
                 var result = MeasureAreaDraft(areaMeasurementDraft);
+                if (hostStartupFailure != null) result["hostStartupFailure"] = hostStartupFailure;
                 outPath = Path.GetFullPath(outPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outPath));
                 File.WriteAllText(outPath, result.ToString(Newtonsoft.Json.Formatting.Indented));
                 File.WriteAllText(LiveTracePath() + ".area-measurement.json", result.ToString(Newtonsoft.Json.Formatting.Indented));
                 Debug.Log("[SkirmishAreaMeasurement] catalog=" + catalogId + " result=Completed draft=" + (string)result["draft"] +
                     " areas=" + ((JArray)result["areas"]).Count + " pads=" + ((JArray)result["pads"]).Count + " routes=" + ((JArray)result["routes"]).Count +
+                    (hostStartupFailure == null ? "" : " hostStartupFailure=" + hostStartupFailure) +
                     " out=" + outPath + " previewMutated=0 physicalSourceModified=0 readiness=0");
                 return true;
             }
@@ -146,6 +162,12 @@ namespace Game.Editor
             var surface = em.GetComponentData<MapSurfaceComponent>(surfaces.GetSingletonEntity());
             if (!blockers.Blocked.IsCreated || grid.CellSize <= 0f || !surface.SurfaceBlob.IsCreated)
                 throw new InvalidOperationException("Live blocker bits or surface blob unavailable.");
+            if (measurementSource != null)
+            {
+                if (!TryReadLayoutDumpBounds(em, out _, out _, out string sourceId))
+                    throw new InvalidOperationException("Cannot identify the live map for area measurement.");
+                RequireMeasurementSource(sourceId);
+            }
             // Coded hosts (S002) carry no expansion-catalog definition, so the session may expose no logical map; the draft's own
             // campaign_source then supplies the playable bounds. Either way the host must run the draft's source.
             OperationMapDefinition map = null;

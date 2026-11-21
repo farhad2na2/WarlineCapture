@@ -707,6 +707,7 @@ namespace Game.Editor
                     }
                 // Layout dump on a session that failed to start (BlockedSpawn): scan the loaded map, then finish.
                 if (TickLayoutDumpAfterStartupFailure(em)) return;
+                if (TryMeasureAreaAfterStartupFailure(em)) return;
                 using (var expanded = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)))
                 {
                     if (expanded.CalculateEntityCount() == 1)

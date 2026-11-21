@@ -59,3 +59,23 @@ Follow-up evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/cod
 | Counted-style ARIA regression | Pending. The follow-up did not launch the queue, including the S002 and S043 retries. The prior S002 Gate 3 failure at `aria/unity.log:151790` and S043 startup timeout at `aria/unity.log:180092` are under the original evidence root. |
 
 The prior 2400×1080 log shows that the launcher lesson had a world target at `native-2400.log:3337` and the fixture timed out at `:4000`. There was no world gesture between the lesson’s Continue touch and the timeout. The follow-up needs a new native run to establish whether an ordinary tap can select the launcher at each aspect ratio.
+
+## Board 6 follow-up 2
+
+Evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c-fix2-selection-markers/`. The work ran on `missions/ui-c-fix2-selection-markers` from `3f7621d61`.
+
+| Check | Result and evidence |
+| --- | --- |
+| Initial C# compile | Tundra built successfully with zero `error CS` at `editmode.log:724`, before the first capture. |
+| Initial marker EditMode | Passed 19 of 19 at `editmode.log:1471`. The focused render test saw an open centre. |
+| First EN 1920×1080 capture | The launcher received an unobstructed touch at `native-1920.log:2329` and `:2346`, and the selected launcher frame was recorded at `:2394`. The infantry frame at `:2157` still showed solid cyan patches. Zoom-in stalled at `:3091`, and the gate failed with four frames at `:8937`. |
+| Infantry mesh authoring | Tundra built the revised source with zero `error CS` at `apply-infantry-ring.log:726`. The prefab authoring method passed at `:1402`. |
+| EN 1920×1080 retry | Seven frames. Infantry used the revised mesh at `native-1920-retry.log:2152` and showed an open ring in the frame at `:2178`. The vehicle frame is at `:2288`. The launcher tap began and ended at `:2425` and `:2441`, and selection was recorded at `:2489`. |
+| Zoom frames | Near and far views were captured at `native-1920-retry.log:2522` and `:2753`, at camera heights 15.05 and 74.35. The fixture used camera requests at `:2506`, `:2536` and `:2629` because the HUD offered no reachable zoom button. |
+| Attack preview and accepted | Frames at `native-1920-retry.log:2999` and `:3060`, with the target touch at `:3027` and `:3043`. Launcher command acceptance is logged at `:3139`. The preview frame shows the cyan guide prominently. The accepted frame still shows a large missile impact-area circle from `SplitFrontLauncherHudView` around the compact target glyph. |
+| Move and retry gate | Move was accepted on the first attempt, with a frame at `native-1920.log:8864`. Refinery geometry obscures the endpoint. After the retry's Attack, the pointer trace showed a mismatched press and release at `native-1920-retry.log:3201` and `:3272`. The retry stalled while reselecting the tank at `:5242` and again while publishing the result at `:7327`. The verified lab Editor was stopped after the stall, and the wrapper exited 143. See `native-1920-retry-stop.txt:1` and `:2`. |
+| Final compile and EditMode | Stopped before compilation. The startup process sample shows `HandleDanglingSceneBackups` at `editmode-final-startup.sample:50` and a native modal at `:54`. The scene backup remained available, and the wrapper exited 143 at `editmode-final-stop.txt:2`. |
+
+The last fixture revision captures Move while the tank is already selected, spaces out touches, and evaluates the unchanged eight-frame gate before checking input restrictions. The startup dialog prevented compilation and execution of that revision.
+
+The EN 2400×1080 rerun, six-job ARIA queue, Gate 3 and conditional S002 and S043 fa-IR retries remain pending. The previous S002 unused-role failure and S043 timeout above are still the latest ARIA evidence for this board. Real-player and device acceptance remain pending.

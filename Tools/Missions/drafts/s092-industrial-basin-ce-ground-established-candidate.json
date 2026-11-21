@@ -1,7 +1,7 @@
 {
   "catalog_id": "S092",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "candidate=1, unmeasured. S092 Industrial Basin CE, ground established. BA draft S074 supplies the binding, anchors, placement pads, structure footprints and starting layout. The checked-in S074 Industrial Basin map asset references the shared desert source. The named RefineryDistrict definition and the S074 salvage binding JSON are absent from this copy. Confirm the physical source before measuring. The Established package retains the BA approach tower, dish and helipad placements, with the refinery module reserve ordered after the four opening supply pads for War/LargeWar. ConvoyDestination is the rear receiving rectangle from rally.enemy to w29.f2.dish. The BA MainHighway and FlankSouthSweep middle waypoints give two approaches to rally.enemy, with that rally replacing staging.enemy as their goal. FlankNorthRuins keeps the BA staging approach. Main and west route polylines measure about 166 m and 230 m from staging on paper. The main straight-line trace intersects starting facility footprints and needs a drivable bypass. The BA endpoints and middle waypoints do not establish convoy-width clearance, holding pockets, travel length with buildings in place, or room at the destination for two trucks to dwell. Two extra defense approach tower pads are unresolved. The known Field reserve sites w29.f2.approach and w29.f2.dish already carry Established grants. The BA source supplies no spare enemy building pads outside the opening placements and routes. Truck bays 1–3 provisionally reuse rally.player, spawn.vehicle.player and spawn.infantry.player. The last two share active combat spawn pads, and the infantry pad lacks truck traversal evidence. Independent truck bay placement and access to staging remain unresolved. Native area measurement, live route clearance and recommended War capacity are pending.",
+  "notes": "candidate=1, measured 2026-11-21 (macOS Codex lab r2, host S074, seed 130365, en). Three 6 by 10 m truck bays use S074 dump candidates 2096, 2110 and 2082, clear of the combat spawns. The routes skirt the starting facilities, with separate holding points on the main and side streets. The destination moves east of enemy staging. Defense pads use dump candidates 1908 and 1853.",
   "anchors": {
     "base.player": [
       834.0,
@@ -115,29 +115,77 @@
       842.5,
       436.0
     ],
-    "w29.route.FlankSouthSweep": [
-      748.0,
-      493.0
-    ],
-    "w29.route.FlankNorthRuins": [
-      852.0,
-      501.0
-    ],
-    "w29.route.MainHighway": [
-      804.0,
-      457.0
-    ],
     "convoy.origin.1": [
-      852.5,
-      610.0
+      911.5,
+      627
     ],
     "convoy.origin.2": [
-      858.5,
-      596.0
+      923,
+      631.5
     ],
     "convoy.origin.3": [
-      852.5,
-      580.0
+      935.5,
+      619
+    ],
+    "defense.approach.a": [
+      911.5,
+      515
+    ],
+    "defense.approach.b": [
+      955,
+      495.5
+    ],
+    "route.main.crossing": [
+      902,
+      550
+    ],
+    "route.main.exit": [
+      902,
+      450
+    ],
+    "route.north.street": [
+      890,
+      478
+    ],
+    "route.north.exit": [
+      890,
+      454
+    ],
+    "route.enemy.apron": [
+      898,
+      450
+    ],
+    "route.south.main": [
+      902,
+      634
+    ],
+    "route.south.flank": [
+      898,
+      634
+    ],
+    "route.depot.turn": [
+      934,
+      630
+    ],
+    "route.depot.east": [
+      934,
+      594
+    ],
+    "route.depot.north": [
+      906,
+      594
+    ],
+    "route.side.pocket": [
+      886,
+      538
+    ],
+    "route.side.street": [
+      886,
+      478
+    ],
+    "route.goal.convoy": [
+      923,
+      455.5
     ]
   },
   "pads": {
@@ -231,20 +279,32 @@
     },
     "convoy.origin.1": {
       "size": [
-        4.6,
-        12
+        6,
+        10
       ]
     },
     "convoy.origin.2": {
       "size": [
-        4.6,
-        12
+        6,
+        10
       ]
     },
     "convoy.origin.3": {
       "size": [
-        4.6,
-        12
+        6,
+        10
+      ]
+    },
+    "defense.approach.a": {
+      "size": [
+        10,
+        10
+      ]
+    },
+    "defense.approach.b": {
+      "size": [
+        10,
+        10
       ]
     }
   },
@@ -562,33 +622,45 @@
     {
       "kind": "MainHighway",
       "via": [
-        "staging.player",
-        "w29.route.MainHighway",
-        "rally.enemy"
+        "convoy.origin.1",
+        "route.south.main",
+        "route.main.crossing",
+        "route.main.exit",
+        "route.goal.convoy"
       ],
-      "width": 12.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankSouthSweep",
       "via": [
-        "staging.player",
-        "w29.route.FlankSouthSweep",
-        "rally.enemy"
+        "convoy.origin.3",
+        "route.depot.turn",
+        "route.south.flank",
+        "route.side.pocket",
+        "route.side.street",
+        "route.north.street",
+        "route.north.exit",
+        "route.enemy.apron",
+        "route.goal.convoy"
       ],
-      "width": 12.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankNorthRuins",
       "via": [
-        "staging.player",
-        "w29.route.FlankNorthRuins",
-        "staging.enemy"
+        "convoy.origin.2",
+        "route.depot.turn",
+        "route.depot.east",
+        "route.depot.north",
+        "route.main.crossing",
+        "route.main.exit",
+        "route.goal.convoy"
       ],
-      "width": 12.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     }
@@ -652,14 +724,17 @@
     "ConvoyDestination": {
       "rectangle": [
         [
-          842.5,
-          436.0
+          906,
+          442
         ],
         [
-          875.0,
-          449.0
+          940,
+          462
         ]
       ]
     }
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S091/area-measurement-r2.json"
   }
 }

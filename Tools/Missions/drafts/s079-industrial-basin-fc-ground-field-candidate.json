@@ -1,7 +1,7 @@
 {
   "catalog_id": "S079",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "candidate=1, unmeasured. S079 Industrial Basin FC, ground field. BA draft S074 supplies the binding, anchors, placement pads, structure footprints and starting layout. The checked-in S074 Industrial Basin map asset references the shared desert source. The named RefineryDistrict definition and the S074 salvage binding JSON are absent from this copy. Confirm the physical source before measuring. The Field package uses seven opening structure pads per faction. FrontlineA covers the west sweep between w29.route.FlankSouthSweep and w29.f2.module. FrontlineB covers the main approach between w29.f2.module and w29.f1.dish. FrontlineC follows the east approach polygon through w29.f2.refinery, w29.route.FlankNorthRuins, w29.f1.module and w29.f1.dish. The three BA route chains are unchanged. Zone access from both sides, neutral opening and usable area around starting structures and the west map edge need measurement. Native area measurement, live route clearance and recommended War capacity are pending.",
+  "notes": "candidate=1, measured 2026-11-21 (macOS Codex lab r2, host S074, seed 130365, en). The west zone moves inward and all three capture zones use separate rectangles. Infantry and trucks reach all three from both bases and both staging pads. Every vehicle segment reaches the exact native goal.",
   "anchors": {
     "base.player": [
       834.0,
@@ -107,17 +107,69 @@
       842.5,
       436.0
     ],
-    "w29.route.FlankSouthSweep": [
-      748.0,
-      493.0
+    "route.player.apron": [
+      835,
+      583.5
     ],
-    "w29.route.FlankNorthRuins": [
-      852.0,
-      501.0
+    "route.player.east": [
+      846,
+      582
     ],
-    "w29.route.MainHighway": [
-      804.0,
-      457.0
+    "route.main.crossing": [
+      902,
+      550
+    ],
+    "route.main.exit": [
+      902,
+      450
+    ],
+    "route.west.apron": [
+      826,
+      582
+    ],
+    "route.west.ramp": [
+      823.5,
+      555
+    ],
+    "route.west.pocket": [
+      810,
+      534
+    ],
+    "route.west.corner": [
+      814,
+      538
+    ],
+    "route.west.yard": [
+      826,
+      538
+    ],
+    "route.west.south": [
+      826,
+      550
+    ],
+    "route.west.join": [
+      830,
+      554
+    ],
+    "route.north.entry": [
+      858,
+      550
+    ],
+    "route.north.pocket": [
+      890,
+      538
+    ],
+    "route.north.street": [
+      890,
+      478
+    ],
+    "route.north.exit": [
+      890,
+      454
+    ],
+    "route.enemy.apron": [
+      898,
+      450
     ]
   },
   "pads": {
@@ -412,33 +464,47 @@
     {
       "kind": "MainHighway",
       "via": [
-        "staging.player",
-        "w29.route.MainHighway",
-        "staging.enemy"
+        "route.player.east",
+        "route.main.crossing",
+        "route.main.exit",
+        "route.enemy.apron"
       ],
-      "width": 12.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankSouthSweep",
       "via": [
-        "staging.player",
-        "w29.route.FlankSouthSweep",
-        "staging.enemy"
+        "route.player.apron",
+        "route.west.apron",
+        "route.west.ramp",
+        "route.west.pocket",
+        "route.west.corner",
+        "route.west.yard",
+        "route.west.south",
+        "route.west.join",
+        "route.north.entry",
+        "route.north.pocket",
+        "route.north.street",
+        "route.north.exit",
+        "route.enemy.apron"
       ],
-      "width": 12.0,
+      "width": 4,
       "vehicles": true,
       "aircraft": false
     },
     {
       "kind": "FlankNorthRuins",
       "via": [
-        "staging.player",
-        "w29.route.FlankNorthRuins",
-        "staging.enemy"
+        "route.player.east",
+        "route.north.entry",
+        "route.north.pocket",
+        "route.north.street",
+        "route.north.exit",
+        "route.enemy.apron"
       ],
-      "width": 12.0,
+      "width": 6,
       "vehicles": true,
       "aircraft": false
     }
@@ -502,46 +568,41 @@
     "FrontlineA": {
       "rectangle": [
         [
-          748.0,
-          493.0
+          798,
+          510
         ],
         [
-          808.5,
-          507.5
+          830,
+          546
         ]
       ]
     },
     "FrontlineB": {
       "rectangle": [
         [
-          808.5,
-          507.5
+          830,
+          514
         ],
         [
-          835.0,
-          545.0
+          862,
+          538
         ]
       ]
     },
     "FrontlineC": {
-      "polygon": [
+      "rectangle": [
         [
-          840.5,
-          499.5
+          886,
+          526
         ],
         [
-          852.0,
-          501.0
-        ],
-        [
-          968.5,
-          571.5
-        ],
-        [
-          835.0,
-          545.0
+          914,
+          554
         ]
       ]
     }
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S079/area-measurement-r2.json"
   }
 }

@@ -83,15 +83,17 @@ namespace Game.Runtime
                         : 128,
                     Playing = view.Playing
                 };
-                view.CanAffordRifle = SkirmishStrategyScoring.TryAfford(
-                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
-                    SkirmishRoleIds.Rifle, SkirmishRoleKind.Rifle);
-                view.CanAffordRocketeer = SkirmishStrategyScoring.TryAfford(
-                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
-                    SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer);
-                view.CanAffordBreacher = SkirmishStrategyScoring.TryAfford(
-                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
-                    SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
+                // A depleted base-assault force can lose its producer too. Quote the actual
+                // purchase before offering Build, or the unavailable card sends ARIA back to Close.
+                bool replacingAssaultForce = setup.ObjectiveKind == SkirmishObjectiveKind.BaseAssault &&
+                    view.OwnStructureAttackUnits == 0;
+                var readiness = LiveReadiness(em, session, setup.Readiness);
+                bool CanRecruit(string id, SkirmishRoleKind role) => replacingAssaultForce
+                    ? SkirmishProductionService.EvaluateQueue(em, session, id, 1, army, 1).Accepted
+                    : SkirmishStrategyScoring.TryAfford(army, readiness, setup.RoleOverlays, perception, id, role);
+                view.CanAffordRifle = CanRecruit(SkirmishRoleIds.Rifle, SkirmishRoleKind.Rifle);
+                view.CanAffordRocketeer = CanRecruit(SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer);
+                view.CanAffordBreacher = CanRecruit(SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
                 // Coverage is affordable only above a materials reserve (lane 8 S050: five coverage
                 // purchases took materials 900 -> 20 and the assault stalled for ~130 s).
                 // The real production check (readiness, every producer incl. Intel Station and Helipad, caps,

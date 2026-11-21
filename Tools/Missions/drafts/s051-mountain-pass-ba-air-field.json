@@ -1,142 +1,158 @@
 {
   "catalog_id": "S051",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "Provisional Standard/Regular layout from S050 salvage referenced layout; verify profile-specific placements and source fit.",
+  "notes": "All pads and per-structure pad centers use s050-mountain-pass-ba-ground-established.json, matched by anchor role, kind and faction. The S050 starting buildings placed in Mac lane 50 (2026-11-21/lane50/a/unity.log:329111–329548). The S050 route waypoints accompany its base, spawn and rally pads.",
   "anchors": {
     "base.player": [
-      906,
-      450
+      1002.0,
+      363.5
     ],
     "base.enemy": [
-      1206,
-      450
+      1218.0,
+      387.5
     ],
     "s050.f1.barracks": [
-      904.0,
-      449.5
+      1002.0,
+      363.5
     ],
     "s050.f1.fabrication_depot": [
-      937.5,
-      446.0
+      1093.5,
+      364.0
     ],
     "economy.player": [
-      910.5,
-      440.0
+      1019.5,
+      334.0
     ],
     "s050.f1.refinery": [
-      959.5,
-      445.5
+      1072.5,
+      387.5
     ],
     "s050.f1.fuel_bladder": [
-      901.0,
-      472.0
+      1043.0,
+      337.0
     ],
     "staging.player": [
-      915.0,
-      470.5
+      1019.0,
+      407.5
     ],
     "s050.f1.satellite_dish": [
-      904.0,
-      462.0
+      1092.0,
+      387.5
     ],
     "service.player": [
-      919.5,
-      452.0
+      1043.0,
+      407.5
     ],
     "s050.f1.watchtower.approach": [
-      919.5,
-      448.0
+      1067.0,
+      407.5
     ],
     "air.player": [
-      947.0,
-      495.5
+      1020.0,
+      459.5
     ],
     "s050.f2.barracks": [
-      1221.0,
-      493.5
+      1218.0,
+      387.5
     ],
     "s050.f2.fabrication_depot": [
-      1207.5,
-      451.0
+      1141.5,
+      388.0
     ],
     "economy.enemy": [
-      1209.5,
-      441.0
+      1187.5,
+      406.0
     ],
     "s050.f2.refinery": [
-      1257.5,
-      447.5
+      1168.5,
+      339.5
     ],
     "s050.f2.fuel_bladder": [
-      1226.0,
-      473.0
+      1115.0,
+      385.0
     ],
     "staging.enemy": [
-      1246.0,
-      463.5
+      1211.0,
+      407.5
     ],
     "s050.f2.satellite_dish": [
-      1173.0,
-      447.0
+      1140.0,
+      459.5
     ],
     "service.enemy": [
-      1208.5,
-      461.0
+      1163.0,
+      407.5
     ],
     "s050.f2.watchtower.approach": [
-      1211.5,
-      461.0
+      1211.0,
+      455.5
     ],
     "air.enemy": [
-      1261.0,
-      467.5
+      1140.0,
+      363.5
     ],
     "spawn.infantry.player": [
-      938.5,
-      416.5
+      1024.5,
+      363.5
     ],
     "spawn.infantry.enemy": [
-      1188.5,
-      416.5
+      1170.0,
+      363.5
     ],
     "spawn.vehicle.player": [
-      932.5,
-      427.0
+      1019.5,
+      346.0
     ],
     "spawn.vehicle.enemy": [
-      1178.5,
-      427.0
+      1189.5,
+      340.0
     ],
     "rally.player": [
-      938.5,
-      416.5
+      1019.5,
+      382.0
     ],
     "rally.enemy": [
-      1188.5,
-      416.5
+      1207.5,
+      363.0
     ],
-    "s050.provisional.route.vehicle.0": [
-      932.5,
-      426.5
+    "basemove.route.1.waypoint.00": [
+      1022.0,
+      362.0
     ],
-    "s050.provisional.route.vehicle.1": [
-      1178.5,
-      426.5
+    "basemove.route.1.waypoint.01": [
+      1034.0,
+      350.0
     ],
-    "s050.provisional.route.infantry.0": [
-      938.5,
-      416.5
+    "basemove.route.1.waypoint.02": [
+      1046.0,
+      350.0
     ],
-    "s050.provisional.route.infantry.1": [
-      1188.5,
-      416.5
+    "basemove.route.1.waypoint.03": [
+      1046.0,
+      354.0
+    ],
+    "basemove.route.1.waypoint.04": [
+      1186.0,
+      354.0
+    ],
+    "basemove.route.2.waypoint.00": [
+      998.0,
+      386.0
+    ],
+    "basemove.route.2.waypoint.01": [
+      1010.0,
+      398.0
+    ],
+    "basemove.route.2.waypoint.02": [
+      1202.0,
+      398.0
     ]
   },
   "pads": {
     "base.player": {
       "at": [
-        904.0,
-        449.5
+        1002.0,
+        363.5
       ],
       "anchor": "s050.f1.barracks",
       "size": [
@@ -146,8 +162,8 @@
     },
     "economy.player": {
       "at": [
-        910.5,
-        440.0
+        1019.5,
+        334.0
       ],
       "anchor": "economy.player",
       "size": [
@@ -157,8 +173,8 @@
     },
     "staging.player": {
       "at": [
-        915.0,
-        470.5
+        1019.0,
+        407.5
       ],
       "anchor": "staging.player",
       "size": [
@@ -168,8 +184,8 @@
     },
     "service.player": {
       "at": [
-        919.5,
-        452.0
+        1043.0,
+        407.5
       ],
       "anchor": "service.player",
       "size": [
@@ -179,8 +195,8 @@
     },
     "air.player": {
       "at": [
-        947.0,
-        495.5
+        1020.0,
+        459.5
       ],
       "anchor": "air.player",
       "size": [
@@ -190,8 +206,8 @@
     },
     "base.enemy": {
       "at": [
-        1221.0,
-        493.5
+        1218.0,
+        387.5
       ],
       "anchor": "s050.f2.barracks",
       "size": [
@@ -201,8 +217,8 @@
     },
     "economy.enemy": {
       "at": [
-        1209.5,
-        441.0
+        1187.5,
+        406.0
       ],
       "anchor": "economy.enemy",
       "size": [
@@ -212,8 +228,8 @@
     },
     "staging.enemy": {
       "at": [
-        1246.0,
-        463.5
+        1211.0,
+        407.5
       ],
       "anchor": "staging.enemy",
       "size": [
@@ -223,8 +239,8 @@
     },
     "service.enemy": {
       "at": [
-        1208.5,
-        461.0
+        1163.0,
+        407.5
       ],
       "anchor": "service.enemy",
       "size": [
@@ -234,8 +250,8 @@
     },
     "air.enemy": {
       "at": [
-        1261.0,
-        467.5
+        1140.0,
+        363.5
       ],
       "anchor": "air.enemy",
       "size": [
@@ -245,8 +261,8 @@
     },
     "spawn.infantry.player": {
       "at": [
-        938.5,
-        416.5
+        1024.5,
+        363.5
       ],
       "anchor": "spawn.infantry.player",
       "size": [
@@ -256,8 +272,8 @@
     },
     "spawn.infantry.enemy": {
       "at": [
-        1188.5,
-        416.5
+        1170.0,
+        363.5
       ],
       "anchor": "spawn.infantry.enemy",
       "size": [
@@ -267,8 +283,8 @@
     },
     "spawn.vehicle.player": {
       "at": [
-        932.5,
-        427.0
+        1019.5,
+        346.0
       ],
       "anchor": "spawn.vehicle.player",
       "size": [
@@ -278,8 +294,8 @@
     },
     "spawn.vehicle.enemy": {
       "at": [
-        1178.5,
-        427.0
+        1189.5,
+        340.0
       ],
       "anchor": "spawn.vehicle.enemy",
       "size": [
@@ -289,8 +305,8 @@
     },
     "rally.player": {
       "at": [
-        938.5,
-        416.5
+        1019.5,
+        382.0
       ],
       "anchor": "rally.player",
       "size": [
@@ -300,8 +316,8 @@
     },
     "rally.enemy": {
       "at": [
-        1188.5,
-        416.5
+        1207.5,
+        363.0
       ],
       "anchor": "rally.enemy",
       "size": [
@@ -316,8 +332,8 @@
       "kind": "BaseBarracks",
       "faction": 1,
       "at": [
-        904.0,
-        449.5
+        1002.0,
+        363.5
       ],
       "size": [
         28,
@@ -330,8 +346,8 @@
       "kind": "GroundStaging",
       "faction": 1,
       "at": [
-        915.0,
-        470.5
+        1019.0,
+        407.5
       ],
       "size": [
         14,
@@ -344,8 +360,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        910.5,
-        440.0
+        1019.5,
+        334.0
       ],
       "size": [
         15,
@@ -358,8 +374,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        959.5,
-        445.5
+        1072.5,
+        387.5
       ],
       "size": [
         25,
@@ -372,8 +388,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        901.0,
-        472.0
+        1043.0,
+        337.0
       ],
       "size": [
         14,
@@ -386,8 +402,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        937.5,
-        446.0
+        1093.5,
+        364.0
       ],
       "size": [
         19,
@@ -400,8 +416,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        919.5,
-        452.0
+        1043.0,
+        407.5
       ],
       "size": [
         3,
@@ -414,8 +430,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        919.5,
-        448.0
+        1067.0,
+        407.5
       ],
       "size": [
         3,
@@ -428,8 +444,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        904.0,
-        462.0
+        1092.0,
+        387.5
       ],
       "size": [
         10,
@@ -442,8 +458,8 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        947.0,
-        495.5
+        1020.0,
+        459.5
       ],
       "size": [
         16,
@@ -456,8 +472,8 @@
       "kind": "BaseBarracks",
       "faction": 2,
       "at": [
-        1221.0,
-        493.5
+        1218.0,
+        387.5
       ],
       "size": [
         28,
@@ -470,8 +486,8 @@
       "kind": "GroundStaging",
       "faction": 2,
       "at": [
-        1246.0,
-        463.5
+        1211.0,
+        407.5
       ],
       "size": [
         14,
@@ -484,8 +500,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1209.5,
-        441.0
+        1187.5,
+        406.0
       ],
       "size": [
         15,
@@ -498,8 +514,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1257.5,
-        447.5
+        1168.5,
+        339.5
       ],
       "size": [
         25,
@@ -512,8 +528,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1226.0,
-        473.0
+        1115.0,
+        385.0
       ],
       "size": [
         14,
@@ -526,8 +542,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1207.5,
-        451.0
+        1141.5,
+        388.0
       ],
       "size": [
         19,
@@ -540,8 +556,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1208.5,
-        461.0
+        1163.0,
+        407.5
       ],
       "size": [
         3,
@@ -554,8 +570,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1211.5,
-        461.0
+        1211.0,
+        455.5
       ],
       "size": [
         3,
@@ -568,8 +584,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1173.0,
-        447.0
+        1140.0,
+        459.5
       ],
       "size": [
         10,
@@ -582,8 +598,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1261.0,
-        467.5
+        1140.0,
+        363.5
       ],
       "size": [
         16,
@@ -596,8 +612,13 @@
     {
       "kind": "MainHighway",
       "via": [
-        "s050.provisional.route.vehicle.0",
-        "s050.provisional.route.vehicle.1"
+        "base.player",
+        "basemove.route.1.waypoint.00",
+        "basemove.route.1.waypoint.01",
+        "basemove.route.1.waypoint.02",
+        "basemove.route.1.waypoint.03",
+        "basemove.route.1.waypoint.04",
+        "base.enemy"
       ],
       "width": 3.0,
       "vehicles": true,
@@ -606,8 +627,11 @@
     {
       "kind": "FlankNorthRuins",
       "via": [
-        "s050.provisional.route.infantry.0",
-        "s050.provisional.route.infantry.1"
+        "base.player",
+        "basemove.route.2.waypoint.00",
+        "basemove.route.2.waypoint.01",
+        "basemove.route.2.waypoint.02",
+        "base.enemy"
       ],
       "width": 1.0,
       "vehicles": false,

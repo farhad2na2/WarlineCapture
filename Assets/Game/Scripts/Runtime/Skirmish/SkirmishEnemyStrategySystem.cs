@@ -116,6 +116,8 @@ namespace Game.Runtime
                 em, session, SkirmishProducerKind.Helipad, 2);
             perception.AirportPresent = SkirmishProductionService.HasLivingProducer(
                 em, session, SkirmishProducerKind.Airport, 2);
+            perception.SmallAirportPresent = SkirmishProductionService.HasLivingProducer(
+                em, session, SkirmishProducerKind.SmallAirport, 2);
 
             if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
             {
@@ -477,7 +479,7 @@ namespace Game.Runtime
         {
             // The read-model ID is a normalized prefab key, not a Skirmish structure ID.
             string[] ids = { SkirmishStructureIds.Barracks, SkirmishStructureIds.GroundStaging,
-                SkirmishStructureIds.Helipad, SkirmishStructureIds.Airport, SkirmishStructureIds.OilPump,
+                SkirmishStructureIds.Helipad, SkirmishStructureIds.Airport, SkirmishStructureIds.AirportSmall, SkirmishStructureIds.OilPump,
                 SkirmishStructureIds.Refinery, SkirmishStructureIds.FuelBladder, SkirmishStructureIds.FabricationDepot,
                 SkirmishStructureIds.Watchtower, SkirmishStructureIds.SatelliteDish };
             foreach (string id in ids)

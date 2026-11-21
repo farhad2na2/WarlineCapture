@@ -53,6 +53,7 @@ namespace Game.Skirmish.Contracts
         public int VisibleHostileAir;
         public bool HelipadPresent;
         public bool AirportPresent;
+        public bool SmallAirportPresent;
         public bool PlayerDesignatedAlive;
         public bool EnemyDesignatedAlive;
         public bool KnowsHostileMaterials;

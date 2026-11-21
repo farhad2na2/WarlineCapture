@@ -11,8 +11,10 @@ namespace Game.Runtime
         {
             surface = default;
             if (building?.Definition == null || !building.Definition.HasRunway ||
-                !BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(building.Definition,
-                    BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Airport")) ||
+                !(BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(building.Definition,
+                      BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Airport")) ||
+                  BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(building.Definition,
+                      BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Airport_Small"))) ||
                 !BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData(building, out Vector3 center,
                     out Quaternion rotation, out Vector3 halfExtents)) return false;
             Vector3 right = rotation * Vector3.right, forward = rotation * Vector3.forward;

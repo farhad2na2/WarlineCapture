@@ -386,6 +386,7 @@ namespace Game.Runtime
             SkirmishStructureIds.GroundStaging=>SkirmishLegalPadKind.GroundStaging,
             SkirmishStructureIds.Helipad=>SkirmishLegalPadKind.AirReturn,
             SkirmishStructureIds.Airport=>SkirmishLegalPadKind.AirReturn,
+            SkirmishStructureIds.AirportSmall=>SkirmishLegalPadKind.AirReturn,
             SkirmishStructureIds.SatelliteDish=>SkirmishLegalPadKind.Service,
             SkirmishStructureIds.OilPump=>SkirmishLegalPadKind.Supply,
             SkirmishStructureIds.Refinery=>SkirmishLegalPadKind.Supply,

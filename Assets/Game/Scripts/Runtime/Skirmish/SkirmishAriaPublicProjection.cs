@@ -75,6 +75,8 @@ namespace Game.Runtime
                         em, session, SkirmishProducerKind.Helipad, 1),
                     AirportPresent = SkirmishProductionService.HasLivingProducer(
                         em, session, SkirmishProducerKind.Airport, 1),
+                    SmallAirportPresent = SkirmishProductionService.HasLivingProducer(
+                        em, session, SkirmishProducerKind.SmallAirport, 1),
                     OwnSupplyLive = em.HasComponent<SkirmishCapacityComponent>(session)
                         ? em.GetComponentData<SkirmishCapacityComponent>(session).SupplyLive
                         : 0,

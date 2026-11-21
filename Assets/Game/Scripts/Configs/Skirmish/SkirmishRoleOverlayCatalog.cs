@@ -96,6 +96,34 @@ namespace Game.Configs
             return kept.Count == overlays.Length ? overlays : kept.ToArray();
         }
 
+        // Small-airport map form (W34; no mission uses it yet): fighter and strike move to the
+        // small airport producer and transport_plane is withheld, because only the full Airport
+        // produces it. Every other overlay and value is copied unchanged. Returns the same array
+        // instance when no airport role is present.
+        public static SkirmishRoleOverlay[] WithSmallAirport(SkirmishRoleOverlay[] overlays)
+        {
+            if (overlays == null)
+                return null;
+            bool airport = false;
+            for (int i = 0; i < overlays.Length && !airport; i++)
+                airport = SkirmishAirportTypes.IsAirport(overlays[i].Producer);
+            if (!airport)
+                return overlays;
+            var result = new System.Collections.Generic.List<SkirmishRoleOverlay>(overlays.Length);
+            for (int i = 0; i < overlays.Length; i++)
+            {
+                SkirmishRoleOverlay overlay = overlays[i];
+                if (SkirmishAirportTypes.IsAirport(overlay.Producer))
+                {
+                    if (!SkirmishAirportTypes.SmallAirportServes(overlay.RoleKind))
+                        continue;
+                    overlay.Producer = SkirmishProducerKind.SmallAirport;
+                }
+                result.Add(overlay);
+            }
+            return result.ToArray();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]

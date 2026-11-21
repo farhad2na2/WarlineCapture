@@ -49,7 +49,10 @@ namespace Game.Skirmish.Contracts
         Helipad = 3,
         Airport = 4,
         IntelStation = 5,
-        AuthoredOnly = 6
+        AuthoredOnly = 6,
+        // Appended: existing serialized values stay unchanged. The small airport is a
+        // separate producer so transport_plane can never resolve to it (SkirmishAirportTypes).
+        SmallAirport = 7
     }
 
     public enum SkirmishReadinessStage : byte
@@ -272,6 +275,7 @@ namespace Game.Skirmish.Contracts
         public const string BarracksReplacement = "building.barracks.replacement";
         public const string Helipad = "building.helipad";
         public const string Airport = "building.airport";
+        public const string AirportSmall = "building.airport_small";
         public const string OilPump = "building.oil_pump";
         public const string Refinery = "building.refinery";
         public const string RefineryModule = "building.refinery.module";
@@ -291,6 +295,8 @@ namespace Game.Skirmish.Contracts
                 return "Building_Helipad";
             if (structureId == Airport)
                 return "Building_Airport";
+            if (structureId == AirportSmall)
+                return "Building_Airport_Small";
             if (structureId == OilPump)
                 return "Building_OilPump";
             if (structureId == Refinery || structureId == RefineryModule)
@@ -314,6 +320,7 @@ namespace Game.Skirmish.Contracts
             "Building_GroundStaging" => GroundStaging,
             "Building_Helipad" => Helipad,
             "Building_Airport" => Airport,
+            "Building_Airport_Small" => AirportSmall,
             "Building_OilPump" => OilPump,
             "Building_Refinery" => Refinery,
             "Building_Fuel_Bladder" => FuelBladder,
@@ -333,9 +340,77 @@ namespace Game.Skirmish.Contracts
                 return SkirmishProducerKind.Helipad;
             if (structureId == Airport)
                 return SkirmishProducerKind.Airport;
+            if (structureId == AirportSmall)
+                return SkirmishProducerKind.SmallAirport;
             if (!string.IsNullOrEmpty(structureId) && structureId.StartsWith(Barracks, System.StringComparison.Ordinal))
                 return SkirmishProducerKind.Barracks;
             return SkirmishProducerKind.None;
+        }
+
+        /// <summary>The structure a producer kind builds, or empty. Inverse of <see cref="ProducerFor"/>.</summary>
+        public static string StructureFor(SkirmishProducerKind producer) => producer switch
+        {
+            SkirmishProducerKind.Barracks => Barracks,
+            SkirmishProducerKind.GroundStaging => GroundStaging,
+            SkirmishProducerKind.Helipad => Helipad,
+            SkirmishProducerKind.Airport => Airport,
+            SkirmishProducerKind.SmallAirport => AirportSmall,
+            SkirmishProducerKind.IntelStation => SatelliteDish,
+            _ => string.Empty
+        };
+    }
+
+    /// <summary>
+    /// Two runway producers exist: the full Airport (building.airport) and the small airport
+    /// (building.airport_small, ~100 m strip). Fighter and strike may come from either; every other
+    /// role that names an airport (transport_plane) needs the full Airport. The rule is structural:
+    /// no overlay, request or enemy plan can resolve transport_plane to the small airport.
+    /// </summary>
+    public static class SkirmishAirportTypes
+    {
+        public static bool IsAirport(SkirmishProducerKind producer) =>
+            producer == SkirmishProducerKind.Airport || producer == SkirmishProducerKind.SmallAirport;
+
+        /// <summary>True when the small airport may produce this role (fighter and strike only).</summary>
+        public static bool SmallAirportServes(SkirmishRoleKind role) =>
+            role == SkirmishRoleKind.Fighter || role == SkirmishRoleKind.Strike;
+
+        /// <summary>True when a living structure of <paramref name="producer"/> may produce a role whose
+        /// overlay names <paramref name="overlayProducer"/>.</summary>
+        public static bool Serves(SkirmishProducerKind producer, SkirmishRoleKind role, SkirmishProducerKind overlayProducer)
+        {
+            if (producer == SkirmishProducerKind.None) return false;
+            if (!IsAirport(overlayProducer)) return producer == overlayProducer;
+            if (producer == SkirmishProducerKind.Airport)
+                return overlayProducer == SkirmishProducerKind.Airport || SmallAirportServes(role);
+            return producer == SkirmishProducerKind.SmallAirport && SmallAirportServes(role);
+        }
+
+        /// <summary>The airport producer that serves the role from the airports present, preferring the
+        /// overlay's own kind; None when no present airport may serve it.</summary>
+        public static SkirmishProducerKind Resolve(SkirmishProducerKind overlayProducer, SkirmishRoleKind role,
+            bool airportPresent, bool smallAirportPresent)
+        {
+            if (!IsAirport(overlayProducer)) return SkirmishProducerKind.None;
+            SkirmishProducerKind other = overlayProducer == SkirmishProducerKind.Airport
+                ? SkirmishProducerKind.SmallAirport
+                : SkirmishProducerKind.Airport;
+            bool ownPresent = overlayProducer == SkirmishProducerKind.Airport ? airportPresent : smallAirportPresent;
+            bool otherPresent = overlayProducer == SkirmishProducerKind.Airport ? smallAirportPresent : airportPresent;
+            if (ownPresent && Serves(overlayProducer, role, overlayProducer)) return overlayProducer;
+            if (otherPresent && Serves(other, role, overlayProducer)) return other;
+            return SkirmishProducerKind.None;
+        }
+
+        /// <summary>The airport structure a role's overlay offers (what a map's production needs built),
+        /// or empty when the overlay names no airport. A small-airport overlay for a role the small airport
+        /// cannot serve offers nothing.</summary>
+        public static string OfferedStructure(SkirmishRoleOverlay overlay)
+        {
+            if (overlay.Producer == SkirmishProducerKind.Airport) return SkirmishStructureIds.Airport;
+            if (overlay.Producer == SkirmishProducerKind.SmallAirport && SmallAirportServes(overlay.RoleKind))
+                return SkirmishStructureIds.AirportSmall;
+            return string.Empty;
         }
     }
 }

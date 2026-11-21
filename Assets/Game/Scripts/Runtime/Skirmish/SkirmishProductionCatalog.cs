@@ -125,6 +125,7 @@ namespace Game.Runtime
             SkirmishProducerKind.GroundStaging => SkirmishStructureIds.VisualKey(SkirmishStructureIds.GroundStaging),
             SkirmishProducerKind.Helipad => SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad),
             SkirmishProducerKind.Airport => SkirmishStructureIds.VisualKey(SkirmishStructureIds.Airport),
+            SkirmishProducerKind.SmallAirport => SkirmishStructureIds.VisualKey(SkirmishStructureIds.AirportSmall),
             SkirmishProducerKind.IntelStation => SkirmishStructureIds.VisualKey(SkirmishStructureIds.SatelliteDish),
             _ => string.Empty
         };

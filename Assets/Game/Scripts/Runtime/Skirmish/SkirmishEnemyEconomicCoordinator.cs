@@ -66,7 +66,8 @@ namespace Game.Runtime
                     foreach(var role in needs)
                     {
                         if(!Supported(setup,role,out var overlay))continue;
-                        string structure=SkirmishStructureIds.FromVisualKey(SkirmishProductionCatalog.ProducerPrefabKey(overlay.Producer));
+                        string structure=ConstructionStructureFor(overlay);
+                        if(SkirmishAirportTypes.IsAirport(overlay.Producer) && string.IsNullOrEmpty(structure))continue;
                         if(SkirmishEnemyConstructionAdapter.CountLiving(em,session,structure)==0)
                         {
                             if(TryConstruction(em,session,context,role,structure,(int)reserve,ref planner,ref result))return result;
@@ -152,7 +153,7 @@ namespace Game.Runtime
             var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             var cap=em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
             var request=new SkirmishProductionRequest{RoleId=SkirmishRoleIds.ToId(role),RoleKind=role,SquadCount=1,
-                BarracksPresent=true,GroundStagingPresent=true,HelipadPresent=true,AirportPresent=true,IntelStationPresent=true,
+                BarracksPresent=true,GroundStagingPresent=true,HelipadPresent=true,AirportPresent=true,SmallAirportPresent=true,IntelStationPresent=true,
                 EnforceStocks=true,MaterialsAvailable=SkirmishMaterialsService.Read(em,session,2),FuelAvailable=SkirmishStartingSupplyService.ReadFuel(em,session,2),
                 InfantryCap=cap.InfantryCap,GroundCap=cap.GroundCap,AirCap=cap.AirCap,SupplyCap=cap.SupplyCap,
                 InfantryLive=cap.InfantryLive,GroundLive=cap.GroundLive,AirLive=cap.AirLive,SupplyLive=cap.SupplyLive,
@@ -163,6 +164,13 @@ namespace Game.Runtime
                 (long)SkirmishEnemyEconomyService.CountOwnedOrPending(em,session,2,SkirmishRoleKind.LogisticsTruck)+
                 SkirmishEnemyEconomyService.CountOwnedOrPending(em,session,2,SkirmishRoleKind.Tanker)+decision.MemberCount<=setup.LogisticsSupportCapEach);
         }
+        /// <summary>The producer structure the enemy builds for a role: the airport type the map's
+        /// overlay offers (full Airport or small airport), never a small airport for transport_plane.</summary>
+        public static string ConstructionStructureFor(SkirmishRoleOverlay overlay) =>
+            SkirmishAirportTypes.IsAirport(overlay.Producer)
+                ? SkirmishAirportTypes.OfferedStructure(overlay)
+                : SkirmishStructureIds.FromVisualKey(SkirmishProductionCatalog.ProducerPrefabKey(overlay.Producer));
+
         static bool Supported(SkirmishResolvedSetup setup,SkirmishRoleKind role,out SkirmishRoleOverlay overlay)
         {
             overlay=default;var army=setup==null?null:SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);

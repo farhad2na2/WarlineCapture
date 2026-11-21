@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4406517563763317000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
+  m_Name: SkirmishMissionViewProfile_S054
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
+  OpeningFocusPolicy: 0
+  OpeningFocusStableActorId:
+  ActiveOperationMapId:
+  ActiveMapContentHash:
+  ActiveMapSourceIdentityHash:
+  UseSeparateAircraftYaw: 0
+  AircraftYaw: 0
+  AuthoredNonBaseAssault: 0
+  AuthoredGenericBaseAssault: 1
+  ObjectiveKind: 1
+  SchemaVersion: 1
+  ContentVersion: 1
+  DefinitionVersion: 2
+  CatalogId: S054
+  DefinitionId: skirmish.s054
+  CampaignSourceContentHash: 5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d
+  LayoutContentHash: authored.s054.1613ea20d0eb593a
+  MinHeight: 6.68918
+  MaxHeight: 14.68918
+  NormalHeight: 12.68918
+  BuildHeight: 14.68918
+  Pitch: 65
+  Yaw: 35
+  NormalFieldOfView: 46
+  BuildFieldOfView: 50
+  GroundReferenceY: -5.31082
+  MaximumGroundCenterSlantDistance: 32
+  InfantryMinimumViewportHeight: 0.03
+  PlaneMaximumViewportDimension: 0.45
+  AircraftPitch: 50
+  AircraftFieldOfView: 60
+  AircraftMinimumDistance: 1
+  AircraftMaximumDistance: 300
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23,7 +68,7 @@ MonoBehaviour:
   SourceContentHash: 5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d
   SourceSemanticFingerprint: 2c30761058824792a805630c60d83217c9f3247e81cfd2d6f71065671b434e23
   LayoutId: layout.skirmish.s054
-  ReviewedLayoutSemanticFingerprint: 1fb4cdaed128688ba369e4b17fe50c8c843966bce9dc0276de2116aa5a687d14
+  ReviewedLayoutSemanticFingerprint: e4769624943404d8abb6cd47ea26427181cd76720d9ff24657794445af867dd0
   ObjectiveKind: 1
   Variants:
   - Size: 1
@@ -32,7 +77,7 @@ MonoBehaviour:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -259,14 +304,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 1
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -493,14 +538,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 1
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -727,14 +772,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 1
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -961,14 +1006,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 2
     Difficulty: 1
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1195,14 +1240,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 2
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1429,14 +1474,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 2
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1663,14 +1708,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 2
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1897,14 +1942,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 3
     Difficulty: 1
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2131,14 +2176,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 3
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2365,14 +2410,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 3
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2599,14 +2644,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   - Size: 3
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: 8552640765908131112}
+    View: {fileID: -4406517563763317000}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2833,54 +2878,9 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: db2a08b460c8522363d1d5760cfc4ffdea84f652ef6bddc4fd108f32e81718e2
+    ReviewedViewFingerprint: 831867962980fefe5d8c350ca564424639cde651b884d4fa2f1d25791f35ad69
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
---- !u!114 &8552640765908131112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
-  m_Name: SkirmishMissionViewProfile_S054
-  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
-  OpeningFocusPolicy: 0
-  OpeningFocusStableActorId: 
-  ActiveOperationMapId: 
-  ActiveMapContentHash: 
-  ActiveMapSourceIdentityHash: 
-  UseSeparateAircraftYaw: 0
-  AircraftYaw: 0
-  AuthoredNonBaseAssault: 0
-  AuthoredGenericBaseAssault: 1
-  ObjectiveKind: 1
-  SchemaVersion: 1
-  ContentVersion: 1
-  DefinitionVersion: 2
-  CatalogId: S054
-  DefinitionId: skirmish.s054
-  CampaignSourceContentHash: 5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d
-  LayoutContentHash: authored.s054.6693abe96e024b04
-  MinHeight: 6.68918
-  MaxHeight: 14.68918
-  NormalHeight: 12.68918
-  BuildHeight: 14.68918
-  Pitch: 65
-  Yaw: 35
-  NormalFieldOfView: 46
-  BuildFieldOfView: 50
-  GroundReferenceY: -5.31082
-  MaximumGroundCenterSlantDistance: 32
-  InfantryMinimumViewportHeight: 0.03
-  PlaneMaximumViewportDimension: 0.45
-  AircraftPitch: 50
-  AircraftFieldOfView: 60
-  AircraftMinimumDistance: 1
-  AircraftMaximumDistance: 300

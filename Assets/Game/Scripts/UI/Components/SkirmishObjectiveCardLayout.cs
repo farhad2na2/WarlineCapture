@@ -64,6 +64,13 @@ namespace Game.UI.Runtime
             _ => persian ? "حمله به پایگاه" : "BASE ASSAULT"
         };
 
+        /// <summary>The family's existing objective sentence (SkirmishObjectiveCopyTable) for the player's
+        /// own side; null for Base Assault, which keeps the session's objective line.</summary>
+        public static string ObjectiveCopyKey(SkirmishObjectiveKind kind, SkirmishPublicGoalPerspective perspective) =>
+            kind == SkirmishObjectiveKind.FrontlineControl && perspective == SkirmishPublicGoalPerspective.Capture ? "skirmish.s007.objective" :
+            kind == SkirmishObjectiveKind.Breakthrough && perspective == SkirmishPublicGoalPerspective.Evacuate ? "skirmish.s013.objective" :
+            kind == SkirmishObjectiveKind.ConvoyEscort && perspective == SkirmishPublicGoalPerspective.Escort ? "skirmish.s019.objective" : null;
+
         /// <summary>Width a chip needs so its title line (icon, title, optional status tag) and its
         /// ownership line (optional glyph, word) both fit on one line each.</summary>
         public static float ChipWidth(float title, float detail, bool glyph, float tag = 0f)

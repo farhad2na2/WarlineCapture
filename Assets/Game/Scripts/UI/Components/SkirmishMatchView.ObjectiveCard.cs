@@ -86,7 +86,7 @@ namespace Game.UI.Runtime
             if (purpose != objectivePurposeShown) { objectivePurposeShown = purpose; UiLocalizedText.Set(objectivePurpose, purpose); }
             // S026 (W40): the opening first order is the card's next action, not a second centre bar.
             ObjectiveCardShowsFirstOrder = !string.IsNullOrEmpty(model.FirstOrderText);
-            string next = ObjectiveCardShowsFirstOrder ? model.FirstOrderText : model.Objective ?? string.Empty;
+            string next = ObjectiveCardShowsFirstOrder ? model.FirstOrderText : ObjectiveSentence(goal, model.Objective, rtl);
             if (next != objectiveNextShown) { objectiveNextShown = next; UiLocalizedText.Set(objectiveNextAction, next); }
             BoundFont(objectivePurpose, Card.PurposeSize * .6f, Card.PurposeSize);
             BoundFont(objectiveNextAction, Card.NextActionMinSize, Card.NextActionMaxSize);
@@ -103,6 +103,17 @@ namespace Game.UI.Runtime
                 if (thirdObjective != null) PresentGoalChip(thirdObjective.GetComponentInParent<Button>(), thirdObjectiveProgress, thirdPublicGoal, goal, rtl);
             }
             FitObjectiveCard(rtl);
+        }
+
+        // Frontline Control, Breakthrough and Convoy Escort use their family's objective copy: the
+        // session objective line is the Base Assault sentence for those catalog entries (live S031).
+        private static string ObjectiveSentence(SkirmishPublicGoalSnapshot goal, string sessionObjective, bool rtl)
+        {
+            string key = goal != null ? Card.ObjectiveCopyKey(goal.ObjectiveKind, goal.Perspective) : null;
+            if (key != null)
+                foreach (var row in Game.Configs.SkirmishObjectiveCopyTable.Rows)
+                    if (row.Key == key) return UiShellRuntimeGateway.Localization.Get(key, rtl ? row.Farsi : row.English);
+            return sessionObjective ?? string.Empty;
         }
 
         private void PresentGoalChip(Button button, TMP_Text detail, string publicId, SkirmishPublicGoalSnapshot goal, bool rtl)

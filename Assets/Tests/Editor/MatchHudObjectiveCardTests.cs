@@ -43,6 +43,28 @@ public sealed class MatchHudObjectiveCardTests
         Assert.AreEqual(HudButtonRole.Unowned, Card.Role(HudOwnership.Neutral));
     }
 
+    // Live S031 showed the Base Assault sentence: each family states its own objective in EN and FA.
+    [Test]
+    public void NextActionUsesTheFamilyObjectiveCopy()
+    {
+        var cases = new[]
+        {
+            (SkirmishObjectiveKind.FrontlineControl, SkirmishPublicGoalPerspective.Capture, "zones"),
+            (SkirmishObjectiveKind.Breakthrough, SkirmishPublicGoalPerspective.Evacuate, "riflemen"),
+            (SkirmishObjectiveKind.ConvoyEscort, SkirmishPublicGoalPerspective.Escort, "convoy trucks"),
+        };
+        foreach (var (kind, perspective, word) in cases)
+        {
+            string key = Card.ObjectiveCopyKey(kind, perspective);
+            Assert.IsNotNull(key, kind.ToString());
+            var row = SkirmishObjectiveCopyTable.Rows.Single(r => r.Key == key);
+            StringAssert.Contains(word, row.English, kind + " sentence");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(row.Farsi), kind + " Farsi");
+        }
+        Assert.IsNull(Card.ObjectiveCopyKey(SkirmishObjectiveKind.BaseAssault, SkirmishPublicGoalPerspective.BaseAssault), "Base Assault keeps the session objective");
+        Assert.IsNull(Card.ObjectiveCopyKey(SkirmishObjectiveKind.Breakthrough, SkirmishPublicGoalPerspective.DefendExits), "only the player's own side");
+    }
+
     [Test]
     public void CardSizePaddingAndPlacementFollowTheBoard()
     {

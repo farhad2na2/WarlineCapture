@@ -26,6 +26,7 @@ namespace Game.Editor
         private const string MarkerWidthKey = Active + ".MarkerWidth";
         private const int MarkerMoveStart = 4;
         private const int MarkerLauncherStart = 6;
+        private const int MarkerAttackAccepted = 15;
         private const int MarkerDone = 16;
         private static int markerStage;
         private static double markerDue;
@@ -90,7 +91,10 @@ namespace Game.Editor
                 Debug.Log("[SelectionMarkerNativeInput] physical controls released, touch actuator running");
                 markerInputWaitLogged = false;
             }
-            if (smokeHand.IsBusy || now < nextSmokeAction || !UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))
+            // The accepted-Attack stage only observes the result of the previous touch.
+            // Its marker can be covered by the comms cinematic during the input cooldown.
+            if ((markerStage != MarkerAttackAccepted && (smokeHand.IsBusy || now < nextSmokeAction)) ||
+                !UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))
                 return;
 
             var mission = em.GetComponentData<CampaignMissionSplitFrontState>(root);
@@ -199,9 +203,10 @@ namespace Game.Editor
                     if (TapMarkerGuideWorld(em, mission.Battery, 0))
                         NextMarkerStage(0);
                     break;
-                case 15:
+                case MarkerAttackAccepted:
                     var launcher = em.GetComponentData<SplitFrontLauncherCommandState>(mission.Launcher);
                     if ((markerFile != null || (launcher.CommandedTarget == mission.Battery &&
+                        UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>()?.IsVisible != true &&
                         (GameObject.Find("AttackTargetSelectionMarkerRuntime") != null ||
                          GameObject.Find("AttackTargetFallbackReticleRuntime") != null))) &&
                         WriteMarkerShot("attack-accepted", width))

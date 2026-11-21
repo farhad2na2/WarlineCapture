@@ -70,14 +70,7 @@ namespace Game.Editor
                 markerProjectionFailure ??= failure;
                 JumpMarkerStage(markerStage < MarkerLauncherStart ? MarkerLauncherStart : MarkerDone, 0);
             }
-            if (markerStage == MarkerDone)
-            {
-                bool passed = markerShots == 8 && markerProjectionFailure == null;
-                Debug.Log($"[SelectionMarkerNativeCapture] result={(passed ? "Passed" : "Failed")} locale=en width={width} height=1080 shots={markerShots} failure={markerProjectionFailure}");
-                Complete(passed, $"marker-capture locale=en width={width} runtime-touch=1 shots={markerShots}");
-                return;
-            }
-            if (now < markerDue || Screen.width != width || Screen.height != 1080 || Camera.main == null)
+            if (markerStage == MarkerDone || now < markerDue || Screen.width != width || Screen.height != 1080 || Camera.main == null)
                 return;
 
             if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) &&
@@ -137,7 +130,8 @@ namespace Game.Editor
                         NextMarkerStage(0);
                     break;
                 case 5:
-                    if (GameObject.Find("MoveOrderMarkerRuntime") != null && WriteMarkerShot("move-accepted", width))
+                    if ((markerFile != null || GameObject.Find("MoveOrderMarkerRuntime") != null) &&
+                        WriteMarkerShot("move-accepted", width))
                     {
                         SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = false;
                         NextMarkerStage(0.3);
@@ -207,13 +201,20 @@ namespace Game.Editor
                     break;
                 case 15:
                     var launcher = em.GetComponentData<SplitFrontLauncherCommandState>(mission.Launcher);
-                    if (launcher.CommandedTarget == mission.Battery &&
+                    if ((markerFile != null || (launcher.CommandedTarget == mission.Battery &&
                         (GameObject.Find("AttackTargetSelectionMarkerRuntime") != null ||
-                         GameObject.Find("AttackTargetFallbackReticleRuntime") != null) &&
+                         GameObject.Find("AttackTargetFallbackReticleRuntime") != null))) &&
                         WriteMarkerShot("attack-accepted", width))
-                        NextMarkerStage(0.3);
+                        NextMarkerStage(0);
                     break;
             }
+        }
+
+        private static void CompleteMarkerCapture(int width)
+        {
+            bool passed = markerStage == MarkerDone && markerShots == 8 && markerProjectionFailure == null;
+            Debug.Log($"[SelectionMarkerNativeCapture] result={(passed ? "Passed" : "Failed")} locale=en width={width} height=1080 shots={markerShots} failure={markerProjectionFailure}");
+            Complete(passed, $"marker-capture locale=en width={width} runtime-touch=1 shots={markerShots}");
         }
 
         private static void NextMarkerStage(double wait) => JumpMarkerStage(markerStage + 1, wait);
@@ -379,8 +380,9 @@ namespace Game.Editor
             int2 center = (int2)math.floor((source.xz - grid.Origin.xz) / grid.CellSize);
             var walkable = em.GetBuffer<GridWalkable>(gridEntity, true);
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
-            int distance = 12 + markerMoveAttempt * 3;
-            foreach (int2 delta in new[] { new int2(0, distance), new int2(distance, 0), new int2(-distance, 0), new int2(0, -distance) })
+            // Keep the endpoint in the open sand east of the tank, clear of the refinery stacks and smoke.
+            int distance = 30 + markerMoveAttempt * 3;
+            foreach (int2 delta in new[] { new int2(distance, -5), new int2(distance, -2), new int2(distance, -8) })
             {
                 int2 cell = center + delta;
                 if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
@@ -398,7 +400,7 @@ namespace Game.Editor
                 EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, MarkerUiHits);
                 if (MarkerUiHits.Count == 0 && SmokeGesture(point))
                 {
-                    Debug.Log($"[SelectionMarkerNativeMove] requested cell={cell} attempt={markerMoveAttempt + 1}");
+                    Debug.Log($"[SelectionMarkerNativeMove] requested cell={cell} screen={point:F1} attempt={markerMoveAttempt + 1}");
                     return true;
                 }
             }

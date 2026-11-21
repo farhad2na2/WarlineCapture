@@ -148,6 +148,12 @@ namespace Game.Editor
                     Complete(true,$"locale={GameLocalization.CurrentLocaleCode} dialogue=8 combat=live launcher=normal-attack ARIA-actions={actions} victory=result=settlement=return");return;
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                int markerWidth=SessionState.GetInt(MarkerWidthKey,0);
+                if(markerWidth!=0&&(markerStage==MarkerDone||runtime.Outcome!=MissionOutcomeKind.None))
+                {
+                    if(markerStage!=MarkerDone)markerProjectionFailure??=$"Mission ended with {runtime.Outcome} at marker stage {markerStage}.";
+                    CompleteMarkerCapture(markerWidth);return;
+                }
                 if(facts.HostileRosterIntegrityFault!=0)
                 {
                     using var buildings=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
@@ -203,7 +209,7 @@ namespace Game.Editor
                 }
                 if(runtime.Phase!=MissionPhaseKind.Engage)return;
                 ValidateRefinerySource(em);
-                if(SessionState.GetInt(MarkerWidthKey,0)!=0){EnsureSmokeInputHost();return;}
+                if(markerWidth!=0){EnsureSmokeInputHost();return;}
                 if(ManualInput){DriveRefineryManual(em,root);return;}
                 if(engageStarted==0){ValidateNormalHud();engageStarted=EditorApplication.timeSinceStartup;Shot("hud");}
                 if(SessionState.GetBool(Active+".Smoke",false)&&(!TickOptionalSmoke(em,root)||!TickPlayerLauncherCancellation(em,root)))return;

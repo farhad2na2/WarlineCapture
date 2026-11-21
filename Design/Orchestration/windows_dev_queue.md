@@ -168,7 +168,7 @@ non-counted menu runs at 130365 en for all 12 and report % of deadline. Accept i
 Branch `missions/win-w31-pacing-ce-bt`. No shared code.
 
 ## W31b — CE/BT (and FC if the same) reducers ignore the authored deadline (2026-11-19)
-status: READY FIRST once the owner confirms the standing OK in the Windows session (shared code)
+status: READY (shared code; owner standing OK 2026-11-21, no further confirmation)
 codex effort: high
 Pass `setup.DeadlineSeconds` (SkirmishSetupCompiler.cs:275) into the reducer Create calls (SkirmishNativeObjectiveLifecycleHooks.cs:42/44, SkirmishNativeObjectiveCheckpoint.cs:179/200),
 check whether the FC reducer has the same size-only pattern and fix it the same way, and update the reducer tests that assert 1080. A missing or zero value keeps the size default.
@@ -205,7 +205,7 @@ Then on a new MP host row bound to the derivative:
 Do not move the MP rows yet; report first. Branch `missions/win-w33-mp-enlarged`. Per-task results file.
 
 ## W34 — Small airport building (owner-approved Airport plan) (2026-11-19)
-status: READY after W31 (owner approved in chat 2026-11-19; it is new shared game code, so confirm with the owner in your session)
+status: READY after W31 (owner approved in chat 2026-11-19; no further confirmation)
 codex effort: xhigh
 Add `building.airport_small` (120x40 cells, runway ~100 m) that produces fighter + strike only. Drones stay on the satellite dish; transport_plane goes through the
 per-map army profile. Every place that hard-wires one Airport type is listed in `notes/airport-map-feasibility-2026-11-19.md`, section "Airport type assumptions in code".
@@ -216,7 +216,7 @@ EditMode tests: id/prefab mapping, eligibility (fighter/strike yes, transport_pl
 Branch `missions/win-w34-small-airport`.
 
 ## W35 — City Crossroads "CC air" logical window with extended bounds (owner-approved Airport plan) (2026-11-19)
-status: READY after W31 (owner approved in chat 2026-11-19; confirm with the owner in your session)
+status: READY after W31 (owner approved in chat 2026-11-19; no further confirmation)
 codex effort: high
 Clone `OperationMap_CityCrossroads` into a Skirmish-only asset (e.g. `OperationMap_CityCrossroadsAir`) with playable 804-1300 x 156-875 and matching camera/minimap
 bounds, following the `SkirmishS004CampaignMapBuilder.cs:16-40` pattern (marker with `campaignAssetsUnchanged=1`). The original asset, `Resources/SkirmishCityCrossroads.asset` (S025),
@@ -354,7 +354,7 @@ Windows W10 CE: S070 and S072 abort with expandedStartupFailure=BlockedSpawn aft
 prefab=Unit_Veh_Helicopter_Transport faction=2 member=0`. The same helipad (AirReturn (1261,467.5)), army profile and start package launch fine in S058 and
 S064/S066, and CE S046/S048 on S026 spawn the same helicopter. Diagnose first: what differs at spawn time on S070/S072 (CE destination/convoy pads
 overlapping the air spawn cell, f2 satellite dish at (1173,447), occupancy from the moved defense tower). Extend the startup-allocator capture beyond S002 if
-needed (harness/tooling). Fix the draft data if that is the cause; a shared-code fix needs the owner's OK in the Windows session. Prove with a menu launch of
+needed (harness/tooling). Fix the draft data if that is the cause; a shared-code fix is covered by the owner's standing OK of 2026-11-21 (prove accepted missions unchanged). Prove with a menu launch of
 S070/S072 with expandedStartupFailure=0. Branch `missions/win-w24-s070-heli-spawn`. Per-task results file.
 
 ## W23c — Mountain Pass BT S061-S066 / CE S067-S072: endpoint past the defenses, tappable (2026-11-19)
@@ -629,3 +629,9 @@ losses and S048 gate 3, but slowed accepted S043 to 78-90 % with one loss, worse
 S022 104731. W37 line (cadence, bounds, service-first) stops. W37h tests ONE change on current integration code (no W37c-f cadence):
 the CE-gated "offer never-ordered starting groups first" preference (from 4ade40eda) plus the group->role log. Proof on Windows: EditMode;
 S046/S048 @130365, S020/S022 @130365 and @104731, S043 @130365 x2. Then the Mac judges with a CE recount before any merge.
+
+## Standing rule — no per-task owner confirmations (owner, 2026-11-21)
+Owner in chat to the program lead, 2026-11-21: "decide for me and let it run". Tasks in this queue that the program lead has approved
+run without asking the owner again in the Windows session, including shared code and Editor tooling. The gates stay: EditMode proof,
+accepted missions unchanged (ARIA regression), no unit-stat/rule/map changes unless a queue entry says so, the Library rules,
+missions/* branches only. Physical map changes still need an explicit owner request.

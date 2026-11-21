@@ -272,3 +272,7 @@ missions. Lab task `road-connect-oldquarter` runs first in the lab chain after t
   ui-d stays on HOLD.
 - Owner (2026-11-20, "Yes, UI lab only"): Windows may delete `Library/Bee` (a rebuildable build cache) in the Windows UI lab checkout only,
   to free disk space on D:. The main Windows Library and its Bee stay untouched.
+
+## 2026-11-21 — Per-task owner confirmations on Windows
+- **DECIDED by the owner (chat, 2026-11-21): "decide for me and let it run".** Program-lead-approved tasks no longer ask the owner
+  in the Windows session. Proof gates stay (EditMode, accepted-mission regression, no stat/rule/map changes, Library rules).

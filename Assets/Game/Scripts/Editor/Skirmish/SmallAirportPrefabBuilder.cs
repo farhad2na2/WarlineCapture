@@ -39,7 +39,8 @@ namespace Game.Editor
         private const float HalfWidth = 59.75f;
         private const float HalfDepth = 19.75f;
         private const float TowerMargin = 1f;
-        private const float ParkingMargin = 3f;
+        private const float TowerGap = 0.25f;
+        private const float ParkingMargin = 1.5f;
 
         public static void Build()
         {
@@ -103,11 +104,12 @@ namespace Game.Editor
 
             Verification check = Verify();
             return "footprint=" + Footprint.x + "x" + Footprint.y +
-                   " runwayLengthM=" + F(check.RunwayLength) + " runwayScaleX=" + F(layout.RunwayScale) +
+                   " runwayLengthM=" + F(check.RunwayLength) + " runwayScale=" + F(layout.RunwayScaleX) + "x" + F(layout.RunwayScaleZ) +
+                   " strip=" + F(layout.Strip.x) + "x" + F(layout.Strip.z) + " baseStrip=" + F(layout.BaseStrip.x) + "x" + F(layout.BaseStrip.z) +
+                   " tower=" + F(layout.Tower.x) + "x" + F(layout.Tower.z) +
                    " modelBounds=" + F(check.Bounds.size.x) + "x" + F(check.Bounds.size.z) +
                    " runtimeFootprint=" + check.RuntimeFootprint.x + "x" + check.RuntimeFootprint.y +
                    " spawnsInside=" + check.SpawnsInside + "/" + check.Spawns +
-                   " parkingRows=" + layout.ParkingRows +
                    " productions=" + string.Join(",", check.Productions) +
                    " variantOf=" + Path.GetFileNameWithoutExtension(BasePrefabPath) +
                    " destroyedVariantOf=" + Path.GetFileNameWithoutExtension(BaseDestroyedPath) +
@@ -118,9 +120,8 @@ namespace Game.Editor
 
         private struct Layout
         {
-            public float RunwayScale;
-            public Vector3 ModelLocalPosition;
-            public int ParkingRows;
+            public float RunwayScaleX, RunwayScaleZ;
+            public Vector3 ModelLocalPosition, BaseStrip, Strip, Tower;
         }
 
         private static Layout ApplyLayout(GameObject root, GameObject basePrefab)
@@ -152,67 +153,81 @@ namespace Game.Editor
             model.localPosition = baseModel.localPosition;
             model.localRotation = baseModel.localRotation;
 
-            // Shorten the runway along its axis (x) until its model is just inside 120 cells. Barrier
-            // props keep their world size; Runway_Start/End scale with the strip.
-            float low = 0.05f, high = 1f;
-            for (int i = 0; i < 60; i++)
+            // Record the base layout: parking spawns sit on the strip's shoulders, so keep their
+            // position as a fraction of the strip bounds.
+            var spawns = new List<(Transform live, Transform baseSpawn, Vector2 fraction)>();
+            Bounds baseStrip = Measure(root.transform, runway);
+            for (int i = 0; i < model.childCount; i++)
             {
-                float mid = 0.5f * (low + high);
-                SetRunwayScale(runway, baseRunway.localScale, barriers, mid);
-                if (Measure(root.transform, runway).size.x > 2f * HalfWidth) high = mid; else low = mid;
+                Transform child = model.GetChild(i);
+                if (!child.name.StartsWith("Spawn_", StringComparison.Ordinal)) continue;
+                Transform baseSpawn = Child(baseModel, child.name);
+                child.localPosition = baseSpawn.localPosition;
+                child.localRotation = baseSpawn.localRotation;
+                child.localScale = baseSpawn.localScale;
+                Vector3 p = root.transform.InverseTransformPoint(child.position);
+                spawns.Add((child, baseSpawn, new Vector2((p.x - baseStrip.min.x) / baseStrip.size.x,
+                    (p.z - baseStrip.min.z) / baseStrip.size.z)));
             }
-            SetRunwayScale(runway, baseRunway.localScale, barriers, low);
+            if (spawns.Count == 0) throw new InvalidOperationException("Building_Airport has no parking spawns.");
+
+            // The strip shares the footprint depth with the control tower beside it (as on the Airport);
+            // narrow it across (z) to fit, then shorten it along its axis (x) until the model is just
+            // inside 120 cells. Barrier props keep their length; Runway_Start/End scale with the strip.
+            Bounds towerBounds = Measure(root.transform, tower);
+            float stripDepth = 2f * HalfDepth - towerBounds.size.z - TowerGap;
+            float scaleZ = Solve(z => { SetRunwayScale(runway, baseRunway.localScale, barriers, 1f, z);
+                return Measure(root.transform, runway).size.z; }, stripDepth);
+            float scaleX = Solve(x => { SetRunwayScale(runway, baseRunway.localScale, barriers, x, scaleZ);
+                return Measure(root.transform, runway).size.x; }, 2f * HalfWidth);
+            SetRunwayScale(runway, baseRunway.localScale, barriers, scaleX, scaleZ);
             Bounds strip = Measure(root.transform, runway);
             runway.localPosition += new Vector3(-strip.center.x, 0f, HalfDepth - strip.max.z);
             strip = Measure(root.transform, runway);
 
-            // Control tower at the west end of the apron band below the strip.
-            Bounds towerBounds = Measure(root.transform, tower);
+            // Control tower at the west end, beside the strip.
             model.localPosition += new Vector3(-HalfWidth + TowerMargin - towerBounds.min.x, 0f, -HalfDepth - towerBounds.min.z);
             towerBounds = Measure(root.transform, tower);
-            if (towerBounds.max.z > strip.min.z - 0.5f)
-                throw new InvalidOperationException("Tower (depth " + F(towerBounds.size.z) + ") and runway (width " +
-                    F(strip.size.z) + ") do not fit a " + Footprint.y + "-cell footprint.");
+            if (towerBounds.max.z > strip.min.z)
+                throw new InvalidOperationException("Tower (depth " + F(towerBounds.size.z) + ") overlaps the runway (width " +
+                    F(strip.size.z) + ").");
 
             if (!BuildingModelBounds.TryMeasure(root, out Bounds all) || BuildingModelBounds.EnclosingCells(all) != Footprint)
                 throw new InvalidOperationException("Model bounds " + F(all.size.x) + "x" + F(all.size.z) +
                     " do not enclose to " + Footprint.x + "x" + Footprint.y + ".");
 
-            // Parking spawns on the apron, east of the tower, inside the footprint.
-            var spawns = new List<(Transform live, Transform baseSpawn, int index)>();
-            for (int i = 0; i < model.childCount; i++)
+            foreach (var spawn in spawns)
             {
-                Transform child = model.GetChild(i);
-                if (!child.name.StartsWith("Spawn_", StringComparison.Ordinal) ||
-                    !int.TryParse(child.name.Substring(6), NumberStyles.Integer, CultureInfo.InvariantCulture, out int index))
-                    continue;
-                spawns.Add((child, Child(baseModel, child.name), index));
-            }
-            spawns.Sort((a, b) => a.index.CompareTo(b.index));
-            float xMin = towerBounds.max.x + ParkingMargin, xMax = all.max.x - ParkingMargin;
-            float zMin = all.min.z + ParkingMargin, zMax = strip.min.z - ParkingMargin;
-            if (spawns.Count == 0 || xMax <= xMin || zMax <= zMin)
-                throw new InvalidOperationException("No apron left for parking spawns.");
-            int rows = zMax - zMin >= 12f && spawns.Count > 1 ? 2 : 1;
-            int columns = (spawns.Count + rows - 1) / rows;
-            for (int i = 0; i < spawns.Count; i++)
-            {
-                int row = i / columns, column = i % columns;
-                float x = xMin + (column + 0.5f) * (xMax - xMin) / columns;
-                float z = rows == 1 ? 0.5f * (zMin + zMax) : zMax - (row * 0.5f + 0.25f) * (zMax - zMin);
-                Vector3 local = model.InverseTransformPoint(root.transform.TransformPoint(new Vector3(x, 0f, z)));
-                spawns[i].live.localPosition = new Vector3(local.x, spawns[i].baseSpawn.localPosition.y, local.z);
-                spawns[i].live.localRotation = spawns[i].baseSpawn.localRotation;
-                spawns[i].live.localScale = spawns[i].baseSpawn.localScale;
+                var target = new Vector3(strip.min.x + spawn.fraction.x * strip.size.x, 0f,
+                    strip.min.z + spawn.fraction.y * strip.size.z);
+                if (target.x < all.min.x + ParkingMargin || target.x > all.max.x - ParkingMargin ||
+                    target.z < all.min.z + ParkingMargin || target.z > all.max.z - ParkingMargin)
+                    throw new InvalidOperationException(spawn.live.name + " falls outside the footprint.");
+                Vector3 local = model.InverseTransformPoint(root.transform.TransformPoint(target));
+                spawn.live.localPosition = new Vector3(local.x, spawn.baseSpawn.localPosition.y, local.z);
             }
 
-            return new Layout { RunwayScale = low, ModelLocalPosition = model.localPosition, ParkingRows = rows };
+            return new Layout { RunwayScaleX = scaleX, RunwayScaleZ = scaleZ, ModelLocalPosition = model.localPosition,
+                BaseStrip = baseStrip.size, Strip = strip.size, Tower = towerBounds.size };
+        }
+
+        // Monotonic bisection: the largest scale whose measured extent stays at or below target.
+        private static float Solve(Func<float, float> extent, float target)
+        {
+            float low = 0.05f, high = 1f;
+            if (extent(high) <= target) return high;
+            for (int i = 0; i < 60; i++)
+            {
+                float mid = 0.5f * (low + high);
+                if (extent(mid) > target) high = mid; else low = mid;
+            }
+            return low;
         }
 
         private static void SetRunwayScale(Transform runway, Vector3 baseScale,
-            List<(Transform live, Vector3 baseScale)> barriers, float scaleX)
+            List<(Transform live, Vector3 baseScale)> barriers, float scaleX, float scaleZ)
         {
-            runway.localScale = new Vector3(baseScale.x * scaleX, baseScale.y, baseScale.z);
+            runway.localScale = new Vector3(baseScale.x * scaleX, baseScale.y, baseScale.z * scaleZ);
             foreach (var barrier in barriers)
                 barrier.live.localScale = new Vector3(barrier.baseScale.x / scaleX, barrier.baseScale.y, barrier.baseScale.z);
         }

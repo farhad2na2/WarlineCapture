@@ -626,5 +626,59 @@
       "vehicles": true,
       "aircraft": false
     }
-  ]
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  }
 }

@@ -24,6 +24,9 @@ namespace Game.Editor
     public static partial class CH04M03SplitFrontInputProbe
     {
         private const string MarkerWidthKey = Active + ".MarkerWidth";
+        private const int MarkerMoveStart = 4;
+        private const int MarkerLauncherStart = 6;
+        private const int MarkerDone = 16;
         private static int markerStage;
         private static double markerDue;
         private static double markerStageStarted;
@@ -32,6 +35,8 @@ namespace Game.Editor
         private static bool markerInputWaitLogged;
         private static int markerMoveAttempt;
         private static int markerShots;
+        private static float markerNominalCameraY;
+        private static float markerCloseCameraY;
         private static string markerProjectionFailure;
         private static string markerTapDiagnostic;
         private static readonly List<RaycastResult> MarkerUiHits = new();
@@ -55,17 +60,22 @@ namespace Game.Editor
             double now = EditorApplication.timeSinceStartup;
             if (markerStageStarted == 0)
                 markerStageStarted = now;
-            if (now - markerStageStarted > 35)
+            if (markerStage != MarkerDone && now - markerStageStarted > 35)
             {
                 string failure = $"Marker capture stalled at stage {markerStage} actor={markerActor}. {markerTapDiagnostic}";
-                if (markerStage < 4)
+                if (markerStage < MarkerMoveStart)
                     throw new TimeoutException(failure);
 
-                // A command capture failure should still leave the selection and
-                // other command evidence available for review.
                 Debug.LogWarning("[SelectionMarkerNativeCapture] state=Missing " + failure);
                 markerProjectionFailure ??= failure;
-                JumpMarkerStage(markerStage < 14 ? 14 : 18, 0);
+                JumpMarkerStage(markerStage < MarkerLauncherStart ? MarkerLauncherStart : MarkerDone, 0);
+            }
+            if (markerStage == MarkerDone)
+            {
+                bool passed = markerShots == 8 && markerProjectionFailure == null;
+                Debug.Log($"[SelectionMarkerNativeCapture] result={(passed ? "Passed" : "Failed")} locale=en width={width} height=1080 shots={markerShots} failure={markerProjectionFailure}");
+                Complete(passed, $"marker-capture locale=en width={width} runtime-touch=1 shots={markerShots}");
+                return;
             }
             if (now < markerDue || Screen.width != width || Screen.height != 1080 || Camera.main == null)
                 return;
@@ -87,7 +97,7 @@ namespace Game.Editor
                 Debug.Log("[SelectionMarkerNativeInput] physical controls released, touch actuator running");
                 markerInputWaitLogged = false;
             }
-            if (smokeHand.IsBusy || !UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))
+            if (smokeHand.IsBusy || now < nextSmokeAction || !UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))
                 return;
 
             var mission = em.GetComponentData<CampaignMissionSplitFrontState>(root);
@@ -119,7 +129,26 @@ namespace Game.Editor
                     if (SelectMarkerActor(em, command.ActiveCommandMode) && WriteMarkerShot("vehicle-selected", width))
                         NextMarkerStage(0.3);
                     break;
-                case 4:
+                case MarkerMoveStart:
+                    SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = true;
+                    if (command.ActiveCommandMode != TacticalCommandMode.Move)
+                        SmokeTapNamed("MoveCommand");
+                    else if (TapMoveDestination(em))
+                        NextMarkerStage(0);
+                    break;
+                case 5:
+                    if (GameObject.Find("MoveOrderMarkerRuntime") != null && WriteMarkerShot("move-accepted", width))
+                    {
+                        SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = false;
+                        NextMarkerStage(0.3);
+                    }
+                    else if (markerFile == null && now > markerStageStarted + 2 && markerMoveAttempt < 3)
+                    {
+                        markerMoveAttempt++;
+                        JumpMarkerStage(MarkerMoveStart, 0);
+                    }
+                    break;
+                case MarkerLauncherStart:
                     markerActor = mission.Launcher;
                     var launcherGuidance = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
                     if ((launcherGuidance.AcknowledgedGuidanceMask & 1) == 0)
@@ -129,7 +158,7 @@ namespace Game.Editor
                     else
                         NextMarkerStage(0);
                     break;
-                case 5:
+                case 7:
                     if (!em.HasComponent<SelectedUnitTag>(markerActor))
                     {
                         TapMarkerGuideWorld(em, markerActor, 402);
@@ -138,25 +167,28 @@ namespace Game.Editor
                     if (SelectMarkerActor(em, command.ActiveCommandMode) && WriteMarkerShot("large-unit-selected", width))
                         NextMarkerStage(0.3);
                     break;
-                case 6:
-                    if (SmokeTapMarkerZoom(zoomIn: true))
-                        NextMarkerStage(2);
-                    break;
-                case 7:
-                    if (WriteMarkerShot("zoom-in", width))
-                        NextMarkerStage(0.3);
-                    break;
                 case 8:
-                    if (MarkerHudCamera()?.ReadZoomControlState().ZoomOutEnabled == false)
+                    markerNominalCameraY = Camera.main.transform.position.y;
+                    if (RequestMarkerZoom(zoomIn: true))
                         NextMarkerStage(2);
-                    else if (SmokeTapMarkerZoom(zoomIn: false))
-                        markerDue = now + 0.8;
                     break;
                 case 9:
-                    if (WriteMarkerShot("zoom-out", width))
+                    markerCloseCameraY = Camera.main.transform.position.y;
+                    if (markerCloseCameraY < markerNominalCameraY - 0.5f && WriteMarkerShot("zoom-in", width))
                         NextMarkerStage(0.3);
                     break;
                 case 10:
+                    if (MarkerHudCamera()?.ReadZoomControlState().ZoomOutEnabled == false)
+                        NextMarkerStage(2);
+                    else if (RequestMarkerZoom(zoomIn: false))
+                        markerDue = now + 2;
+                    break;
+                case 11:
+                    if (Camera.main.transform.position.y > markerCloseCameraY + 0.5f &&
+                        WriteMarkerShot("zoom-out", width))
+                        NextMarkerStage(0.3);
+                    break;
+                case 12:
                     if (command.ActiveCommandMode != TacticalCommandMode.Attack)
                         SmokeTapNamed("AttackCommand");
                     else if (TryReadMarkerGuide(em, out var attackGuide) &&
@@ -165,52 +197,21 @@ namespace Game.Editor
                     else
                         SmokeTapMarkerShowMe();
                     break;
-                case 11:
+                case 13:
                     if (GameObject.Find("AttackTargetPreviewMarkerRuntime") != null && WriteMarkerShot("attack-preview", width))
                         NextMarkerStage(0.3);
                     break;
-                case 12:
+                case 14:
                     if (TapMarkerGuideWorld(em, mission.Battery, 0))
                         NextMarkerStage(0);
                     break;
-                case 13:
+                case 15:
                     var launcher = em.GetComponentData<SplitFrontLauncherCommandState>(mission.Launcher);
                     if (launcher.CommandedTarget == mission.Battery &&
                         (GameObject.Find("AttackTargetSelectionMarkerRuntime") != null ||
                          GameObject.Find("AttackTargetFallbackReticleRuntime") != null) &&
                         WriteMarkerShot("attack-accepted", width))
                         NextMarkerStage(0.3);
-                    break;
-                case 14:
-                    SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = true;
-                    markerActor = FindMarkerActor(em, root, mission.Launcher, vehicle: true);
-                    if (FocusMarkerActor(em, markerActor))
-                        NextMarkerStage(0.8);
-                    break;
-                case 15:
-                    if (SelectMarkerActor(em, command.ActiveCommandMode))
-                        NextMarkerStage(0.3);
-                    break;
-                case 16:
-                    if (command.ActiveCommandMode != TacticalCommandMode.Move)
-                        SmokeTapNamed("MoveCommand");
-                    else if (TapMoveDestination(em))
-                        NextMarkerStage(0);
-                    break;
-                case 17:
-                    if (GameObject.Find("MoveOrderMarkerRuntime") != null && WriteMarkerShot("move-accepted", width))
-                        NextMarkerStage(0.3);
-                    else if (markerFile == null && now > markerStageStarted + 2 && markerMoveAttempt < 3)
-                    {
-                        markerMoveAttempt++;
-                        JumpMarkerStage(16, 0);
-                    }
-                    break;
-                case 18:
-                    bool passed = markerShots == 8 && markerProjectionFailure == null;
-                    Debug.Log($"[SelectionMarkerNativeCapture] result={(passed ? "Passed" : "Failed")} locale=en width={width} height=1080 shots={markerShots} failure={markerProjectionFailure}");
-                    markerStage++;
-                    Complete(passed, $"marker-capture locale=en width={width} runtime-touch=1 shots={markerShots}");
                     break;
             }
         }
@@ -229,11 +230,22 @@ namespace Game.Editor
         private static SelectionUiCameraSystemHelper MarkerHudCamera() =>
             UnityEngine.Object.FindAnyObjectByType<MatchSceneView>()?.MatchBootstrap?.SelectionUiCamera;
 
-        private static bool SmokeTapMarkerZoom(bool zoomIn)
+        private static bool RequestMarkerZoom(bool zoomIn)
         {
-            var minimap = UnityEngine.Object.FindAnyObjectByType<MatchHudMinimapView>();
-            return SmokeTap(zoomIn ? minimap?.ZoomInButton : minimap?.ZoomOutButton) ||
-                   SmokeTapNamed(zoomIn ? "ZoomInButton" : "ZoomOutButton");
+            foreach (var rail in UnityEngine.Object.FindObjectsByType<MatchHudRightQuickRailView>(FindObjectsInactive.Exclude))
+                if (SmokeTap(zoomIn ? rail.ZoomInButton : rail.ZoomOutButton))
+                    return true;
+            foreach (var minimap in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude))
+                if (minimap.HasNormalCameraZoomControls && SmokeTap(zoomIn ? minimap.ZoomInButton : minimap.ZoomOutButton))
+                    return true;
+
+            // The compact HUD can omit camera zoom controls. Set the camera for
+            // the visual comparison without changing the player command path.
+            var camera = MarkerHudCamera();
+            bool requested = camera != null && (zoomIn ? camera.RequestZoomInLevel() : camera.RequestZoomOutLevel());
+            if (requested)
+                Debug.Log($"[SelectionMarkerNativeZoom] source=capture-camera direction={(zoomIn ? "in" : "out")}");
+            return requested;
         }
 
         private static bool TryReadMarkerGuide(EntityManager em, out AriaPlayObservationComponent guide)
@@ -368,7 +380,7 @@ namespace Game.Editor
             var walkable = em.GetBuffer<GridWalkable>(gridEntity, true);
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
             int distance = 12 + markerMoveAttempt * 3;
-            foreach (int2 delta in new[] { new int2(0, -distance), new int2(0, distance), new int2(distance, 0), new int2(-distance, 0) })
+            foreach (int2 delta in new[] { new int2(0, distance), new int2(distance, 0), new int2(-distance, 0), new int2(0, -distance) })
             {
                 int2 cell = center + delta;
                 if (!GridUtils.InBounds(cell, grid.Width, grid.Height))

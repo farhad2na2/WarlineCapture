@@ -169,10 +169,12 @@ public static class MatchHudAriaHeadingCapture
         Line("ARIA panel", panelRect);
         Rule(panelRect.xMin >= 0 && panelRect.yMin >= 0 && panelRect.xMax <= width && panelRect.yMax <= height, "ARIA panel inside the 1920x1080 safe area");
         var title = aria.TitleText;
-        string shown = Caption(title);
-        text.AppendLine($"- read model heading \"{panel.RecommendationTitle}\"; shown heading \"{shown}\"; expected \"{family}\"");
+        // Persian is drawn in Arabic presentation forms; NFKC folds them back to the catalog letters.
+        string shown = Caption(title).Normalize(NormalizationForm.FormKC);
+        text.AppendLine($"- read model heading \"{panel.RecommendationTitle}\"; shown heading \"{shown}\" (NFKC); expected \"{family}\"");
         Rule(title != null && title.gameObject.activeInHierarchy && !string.IsNullOrWhiteSpace(shown), "heading shown");
-        Rule(shown == family, $"heading names the mission's objective family \"{family}\" (is \"{shown}\")");
+        Rule(panel.RecommendationTitle == family, $"read model heading is the mission's objective family \"{family}\" (is \"{panel.RecommendationTitle}\")");
+        Rule(shown == family.Normalize(NormalizationForm.FormKC), $"shown heading names the mission's objective family \"{family}\" (is \"{shown}\")");
         Rect titleRect = title != null ? ScreenRect(title.rectTransform, height, camera) : default;
         if (title != null)
         {

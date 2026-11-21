@@ -71,6 +71,8 @@ namespace Game.Composition
             em.AddBuffer<OperationsReconRosterElement>(session);
             em.AddBuffer<OperationsReconActionElement>(session);
             em.AddComponentObject(session, new OperationsReconLaunchReference { Definition = definition });
+            em.AddComponentData(session, new OperationsMissionIdentityComponent { MissionId = new FixedString64Bytes(definition.missionId),
+                HudFlags = definition.HudFlags, AvailableSquadMask = definition.hudAvailableSquadMask });
             return true;
         }
 

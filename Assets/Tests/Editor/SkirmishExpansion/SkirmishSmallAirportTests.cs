@@ -54,7 +54,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishProducerKind.SmallAirport, SkirmishStructureIds.ProducerFor(SkirmishStructureIds.AirportSmall));
             Assert.AreEqual(SkirmishStructureIds.AirportSmall, SkirmishStructureIds.StructureFor(SkirmishProducerKind.SmallAirport));
             Assert.AreEqual("Building_Airport_Small", SkirmishProductionCatalog.ProducerPrefabKey(SkirmishProducerKind.SmallAirport));
-            Assert.AreEqual(SkirmishLegalPadKind.AirReturn, SkirmishMapLayoutBuilder.PadKindForStructure(SkirmishStructureIds.AirportSmall));
+            Assert.AreEqual(SkirmishLegalPadKind.AirReturn, Game.Configs.SkirmishMapLayoutBuilder.PadKindForStructure(SkirmishStructureIds.AirportSmall));
             Assert.AreEqual(7, (int)SkirmishProducerKind.SmallAirport, "appended; serialized values unchanged");
 
             // Full Airport: same id, prefab key, producer and serialized value as before W34.
@@ -64,7 +64,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishStructureIds.Airport, SkirmishStructureIds.FromVisualKey("Building_Airport"));
             Assert.AreEqual(SkirmishProducerKind.Airport, SkirmishStructureIds.ProducerFor(SkirmishStructureIds.Airport));
             Assert.AreEqual("Building_Airport", SkirmishProductionCatalog.ProducerPrefabKey(SkirmishProducerKind.Airport));
-            Assert.AreEqual(SkirmishLegalPadKind.AirReturn, SkirmishMapLayoutBuilder.PadKindForStructure(SkirmishStructureIds.Airport));
+            Assert.AreEqual(SkirmishLegalPadKind.AirReturn, Game.Configs.SkirmishMapLayoutBuilder.PadKindForStructure(SkirmishStructureIds.Airport));
             foreach (SkirmishProducerKind kind in Enum.GetValues(typeof(SkirmishProducerKind)))
             {
                 string structure = SkirmishStructureIds.StructureFor(kind);

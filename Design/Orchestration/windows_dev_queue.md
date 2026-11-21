@@ -612,3 +612,13 @@ FC, BT and CE missions show BASE ASSAULT in the ARIA panel heading (pre-existing
 mission's own existing objective title (EN/FA copy already exists). Presentation only. Proof: EN/FA captures at 1920 and a 6-job ARIA regression.
 W41 moves to the UI lab now (diagnosis only) and also covers lane 49 S058: AriaBlocked 101 kind=Waiting intent=ControlZone, then
 AriaBlockedControl control=Move, after zones went 0 own / 2 opposing at about 195 s (155923 and 104731).
+
+## W41b — ARIA stale group selection (UI lab, after W41a; approved 2026-11-21)
+S058 block cause (W41 note, 75862660d): the tray card group record stays Selected while member selection tags drift (deaths remove
+tags, production deliveries join untagged), so ARIA never re-selects and its Move reaches only tagged members, then NoSelection.
+Fix: in UiShellEcsGateway.TryOwnObjectiveGroups, Selected only when every living member is tagged. EditMode cases (agreed, dead tagged,
+partly tagged, unselected), plus a one-line alive/tagged trace at order_retry. Windows ARIA set, then a Mac lane: S058 (4 seeds) + FC/BT/CE controls.
+
+## W43 — player-facing selection desync (after W37 lands; diagnose and propose only)
+The group card shows selected while reinforcements delivered into the group are untagged (and dead members drop out), so a player's
+Move reaches only part of the group. Propose the smallest runtime fix and its blast radius.

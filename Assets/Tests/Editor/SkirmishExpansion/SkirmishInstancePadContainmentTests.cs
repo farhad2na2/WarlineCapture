@@ -177,9 +177,39 @@ namespace Game.Tests.Editor
         // -------------------------------------------------------------------------------------------------
         public static void RunAuthoredLayoutValidation()
         {
-            bool quit = Environment.GetCommandLineArgs().Contains("-quit");
             string catalog = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG") ?? string.Empty;
             string explicitDraft = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT");
+            bool passed = ReportAuthoredLayoutValidation(catalog, explicitDraft);
+            if (Environment.GetCommandLineArgs().Contains("-quit")) EditorApplication.Exit(passed ? 0 : 2);
+        }
+
+        // Use the authoring draft list to validate the same rows in a wrapper-owned Editor.
+        public static void RunAuthoredLayoutValidationAndExit()
+        {
+            bool passed = false;
+            try
+            {
+                string listPath = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT_LIST");
+                if (string.IsNullOrWhiteSpace(listPath))
+                    throw new InvalidOperationException("WARLINE_MISSION_DRAFT_LIST is not set.");
+                var drafts = File.ReadAllLines(listPath, Encoding.UTF8).Select(line => line.Trim())
+                    .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.Ordinal)).ToArray();
+                if (drafts.Length == 0)
+                    throw new InvalidOperationException("WARLINE_MISSION_DRAFT_LIST contains no drafts.");
+
+                int failed = drafts.Count(draft => !ReportAuthoredLayoutValidation(string.Empty, draft));
+                passed = failed == 0;
+                Debug.Log($"[SkirmishInstancePadContainmentBatch] result={(passed ? "Passed" : "Failed")} drafts={drafts.Length} failures={failed}");
+            }
+            catch (Exception error)
+            {
+                Debug.LogError("[SkirmishInstancePadContainmentBatch] result=Failed " + error.Message);
+            }
+            MissionEditorValidationExit.Complete(passed);
+        }
+
+        private static bool ReportAuthoredLayoutValidation(string catalog, string explicitDraft)
+        {
             int failures = 0, checkedRows = 0;
             void Fail(string text) { failures++; Debug.LogError("[SkirmishInstancePadContainment] catalog=" + catalog + " failure " + text); }
             try
@@ -193,7 +223,7 @@ namespace Game.Tests.Editor
             Debug.Log("[SkirmishInstancePadContainment] catalog=" + catalog + " result=" + result + " failures=" + failures.ToString(CultureInfo.InvariantCulture) +
                 " rows=" + checkedRows.ToString(CultureInfo.InvariantCulture) +
                 " note=envelope-only-does-not-prove-scenery-clearance");
-            if (quit) EditorApplication.Exit(result == "Passed" ? 0 : 2);
+            return result == "Passed";
         }
 
         private static void Validate(string catalogArgument, string explicitDraft, Action<string> fail, ref int checkedRows, ref string catalog)

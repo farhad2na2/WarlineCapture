@@ -32,14 +32,14 @@ echo "$name $(date '+%H:%M') pid $$" > "$LOCK/owner"
 trap 'rm -rf "$LOCK"' EXIT
 mkdir -p "$LOGS/$name"
 
-# A force-stopped Editor leaves Temp/__Backupscenes/*.backup behind; the next launch then waits on a hidden
-# scene-recovery dialog. With no lab Editor running, move any leftover backup into the task's log folder (never delete it).
+# A force-stopped Editor leaves scene-backup state in Temp; the next launch then waits on a hidden scene-recovery dialog
+# (Application::HandleDanglingSceneBackups), seen even with an empty Temp/__Backupscenes. With no lab Editor running, move the
+# whole lab Temp folder into the task's log folder (never delete it; Unity recreates Temp, and Library is untouched).
 if ! ps -axo command= | grep "Unity.app/Contents/MacOS/Unity" | grep -v grep | grep -qi "projectPath $LAB"; then
-  for b in "$LAB"/Temp/__Backupscenes/*.backup; do
-    [ -f "$b" ] || continue
-    mkdir -p "$LOGS/$name/temp-backup-moved" && mv "$b" "$LOGS/$name/temp-backup-moved/$(basename "$b").$(date +%H%M%S)" &&
-      note "$name: moved leftover lab scene backup $(basename "$b") to $LOGS/$name/temp-backup-moved"
-  done
+  if [ -d "$LAB/Temp" ]; then
+    mv "$LAB/Temp" "$LOGS/$name/lab-temp-moved-$(date +%H%M%S)" &&
+      note "$name: moved the lab Temp folder (scene-backup state) to $LOGS/$name before launch"
+  fi
 fi
 
 ( cd "$LAB" && git status --porcelain --untracked-files=no | grep -q . && git stash push -q -m "lab-leftover-before-$name" ;

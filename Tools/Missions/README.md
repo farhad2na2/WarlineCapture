@@ -48,6 +48,8 @@ Run the end-to-end controls with `rtk proxy python3 -B Tools/Missions/test_quick
 
 Run an explicit ARIA queue: `python3 Tools/Missions/run_aria_queue.py --jobs S002:130365:en,S006:130370:en --log-dir /tmp/aria-queue --dry-run`.
 
+New checkout: before its first counted queue, run one uncounted scene-cache warm-up match (for example a single `--jobs S031:130366:en` queue). Unity's first match on a fresh checkout writes untracked `Assets/SceneDependencyCache/*.sceneWithBuildSettings*.meta` files, and the queue's candidate source hash (`SkirmishCandidateSourceHash`) counts every `.meta` under `Assets`. A `result=Failed reason=candidateSourceChangedDuringQueue` on a fresh checkout therefore means those cache metas appeared during the queue: warm up, then rerun. The hash is deliberately unchanged, because stored identities and candidate directories must not re-key. Duplicate jobs are refused (`Duplicate job`); run a repeat of the same catalog, seed and locale in a separate queue.
+
 Long-session runtime regression (required once per runtime candidate before mission rows are accepted): S026 Regular/Standard seed 104729 from the real menu, ARIA off, one infantry purchase every 30 s through presented touch controls, no troop orders, until the 18-minute deadline; then the result screen and MAIN MENU. Needs a fresh `--log-dir` outside the repository; about 22–26 minutes wall clock.
 
 ```sh

@@ -33,6 +33,7 @@ namespace Game.Editor
         private static int resultCaptureFrames;
         private static double resumeRecapAt;
         private static int tracedResumeStage = -1;
+        private static bool tracedResumePaused;
         private static bool wideLayout;
         private static bool withdrawalCancelRequested, withdrawalCancelChecked;
         private static bool withdrawalReopenRendered;
@@ -655,7 +656,7 @@ namespace Game.Editor
                     var saved = SaveService.CreateDefault().LoadProfile().operations;
                     if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Withdrawal did not durably settle the single AP reservation.");
-                    if (Click("CONTINUE")) stage = 6;
+                    if (Click("Leave", "MissionResult")) stage = 6;
                     return;
                 }
                 if (stage == 6 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -853,7 +854,8 @@ namespace Game.Editor
                             " extracted=" + operation.InfantryAtExit + " saved=1");
                     }
                     if (resultCaptureFrames < 30) return;
-                    if (Click("CONTINUE")) stage = 21;
+                    // The rendered Persian label is shaped, so identify the result action by its control name.
+                    if (Click("Leave", "MissionResult")) stage = 21;
                     return;
                 }
                 if (stage == 21 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -932,9 +934,10 @@ namespace Game.Editor
         private static bool ResumeRecapHasHandedBackControl()
         {
             if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model) || !model.Resumed) return false;
-            if (tracedResumeStage != model.IntroductionStage)
+            if (tracedResumeStage != model.IntroductionStage || tracedResumePaused != model.Paused)
             {
                 tracedResumeStage = model.IntroductionStage;
+                tracedResumePaused = model.Paused;
                 Debug.Log($"[OperationsResumeRecap] stage={tracedResumeStage} introduction={model.Introduction} paused={model.Paused} timeScale={Time.timeScale}");
             }
             if (resumeRecapAt == 0)
@@ -1104,7 +1107,6 @@ namespace Game.Editor
             "ARIA PLAY" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_play", name),
             "STOP ARIA" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_stop", name),
             "WITHDRAW" => UiShellRuntimeGateway.Localization.Get("operations.withdraw", name),
-            "CONTINUE" => UiShellRuntimeGateway.Localization.Get("ui.common.continue", name),
             _ => name
         };
 

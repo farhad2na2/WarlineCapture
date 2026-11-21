@@ -404,6 +404,19 @@ namespace Game.Composition
         private bool BeginReturn(Entity root, string message)
         {
             if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.ReturnToMainMenu, UIRoute.Operations, false)) return false;
+            // The shell processes popup requests before route requests. Dismiss Pause
+            // before leaving so it cannot keep the next deployment paused past its recap.
+            using var popup = EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UiShellActivePopupComponent>(), ComponentType.ReadWrite<UiShellPopupRequestComponent>());
+            if (popup.CalculateEntityCount() == 1 &&
+                popup.GetSingleton<UiShellActivePopupComponent>() is { Visible: not 0, PopupKind: UiShellPopupKind.Pause })
+            {
+                EntityManager.GetBuffer<UiShellPopupRequestComponent>(popup.GetSingletonEntity()).Add(new UiShellPopupRequestComponent
+                {
+                    PopupKind = UiShellPopupKind.Pause,
+                    Intent = UiShellPopupIntent.Hide
+                });
+            }
             reopenOperationsMenu = true;
             using var owned = EntityManager.CreateEntityQuery(new EntityQueryDesc
             { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });

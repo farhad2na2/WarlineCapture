@@ -9,10 +9,34 @@ param(
     [string] $OutputPath,
 
     [Parameter(Mandatory = $false)]
-    [string] $LogFile
+    [string] $LogFile,
+
+    # Project whose ProjectSettings/ProjectVersion.txt names the Editor when -UnityVersion is not given
+    # (default: the repository that contains this script).
+    [Parameter(Mandatory = $false)]
+    [string] $ProjectPath
 )
 
 $ErrorActionPreference = "Stop"
+
+# Without -UnityVersion, resolve the project's own Editor version. Before this, an empty version accepted every
+# installed Editor and returned the first one found (6000.5.2f1 on a machine whose project is on 6000.5.8f1).
+$versionSource = "parameter"
+if ([string]::IsNullOrWhiteSpace($UnityVersion)) {
+    $projectRoot = if ([string]::IsNullOrWhiteSpace($ProjectPath)) { Split-Path -Parent (Split-Path -Parent $PSScriptRoot) } else { $ProjectPath.Trim() }
+    $versionFile = Join-Path $projectRoot "ProjectSettings\ProjectVersion.txt"
+    if (-not [System.IO.File]::Exists($versionFile)) {
+        Write-Error -Message "No -UnityVersion given and '$versionFile' does not exist. Pass -UnityVersion or -ProjectPath." -ErrorAction Continue
+        exit 1
+    }
+    $versionMatch = Select-String -LiteralPath $versionFile -Pattern '^\s*m_EditorVersion:\s*(\S+)' | Select-Object -First 1
+    if ($null -eq $versionMatch) {
+        Write-Error -Message "'$versionFile' has no m_EditorVersion. Pass -UnityVersion." -ErrorAction Continue
+        exit 1
+    }
+    $UnityVersion = $versionMatch.Matches[0].Groups[1].Value
+    $versionSource = $versionFile
+}
 
 $resolvedLogFile = if ([string]::IsNullOrWhiteSpace($LogFile)) {
     $null
@@ -56,6 +80,7 @@ function Format-LogValue {
 }
 
 Write-ResolverLog "[UnityResolve] RequestedVersion: $(Format-LogValue $UnityVersion)"
+Write-ResolverLog "[UnityResolve] VersionSource: $versionSource"
 Write-ResolverLog "[UnityResolve] PreferredPath: $(Format-LogValue $PreferredPath)"
 Write-ResolverLog "[UnityResolve] OutputPath: $(Format-LogValue $OutputPath)"
 Write-ResolverLog "[UnityResolve] UNITY_EXE_OVERRIDE: $(Format-LogValue $env:UNITY_EXE_OVERRIDE)"

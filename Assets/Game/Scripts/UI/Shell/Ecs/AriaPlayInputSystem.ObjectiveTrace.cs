@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Runtime;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Game.UI.Shell.Ecs
 {
     // Evidence only: the FC/BT/CE objective skill (AriaSkirmishPlanSystem.ObjectiveSkill) as transitions:
     //   [AriaObjective] type=FC|BT|CE event=start|frame_missing|frame_restored|popup|popup_close|frame_lost|
-    //   choice|order_tapped|order_accepted|order_retry|order_blocked|escort_offer|escort_accepted|escort_retry|
+    //   choice|order_tapped|order_accepted|order_retry|order_blocked|order_retry_selection|escort_offer|escort_accepted|escort_retry|
     //   recruit|score|finished ... t=<match seconds>
     // Reads the planner state and the observation it already consumed; never feeds a decision.
     public partial class AriaPlayInputSystem
@@ -18,7 +19,7 @@ namespace Game.UI.Shell.Ecs
         private bool tracedObjectiveActive, tracedObjectiveFinished;
         private byte tracedObjectiveFrameAction;
         private int tracedObjectiveStage, tracedObjectiveFailures, tracedObjectiveAccepted, tracedEscortFailures, tracedEscortAccepted;
-        private uint tracedObjectiveGroup, tracedEscortGroup; private ulong tracedObjectiveKey;
+        private uint tracedObjectiveGroup, tracedEscortGroup, tracedObjectiveTouchGroup; private ulong tracedObjectiveKey;
         private AriaObjectiveAction tracedObjectiveAction;
         private AriaObjectiveSupportAction tracedObjectiveSupport;
         private int tracedObjectiveScore;
@@ -40,7 +41,7 @@ namespace Game.UI.Shell.Ecs
             {
                 tracedObjectiveActive = true; tracedObjectiveFinished = false; tracedObjectiveFrameAction = 0;
                 tracedObjectiveStage = tracedObjectiveFailures = tracedObjectiveAccepted = tracedEscortFailures = tracedEscortAccepted = 0;
-                tracedObjectiveGroup = tracedEscortGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
+                tracedObjectiveGroup = tracedEscortGroup = tracedObjectiveTouchGroup = 0; tracedObjectiveKey = 0; tracedObjectiveAction = AriaObjectiveAction.None;
                 tracedObjectiveSupport = AriaObjectiveSupportAction.None; tracedObjectiveScore = 0; tracedRocketeerStage = 0; tracedCoverageDone = 0;
                 Debug.Log($"{head} event=start presented={o.Presented && o.Supported} frameReason={v.ObjectiveFrameReason} infantry={v.Infantry} groups={v.ExpandedTotalGroups} t={t:F2}");
             }
@@ -63,8 +64,13 @@ namespace Game.UI.Shell.Ecs
                 if (e != null) Debug.Log($"{head} event={e} group={p.ObjectiveTouch.GroupId} goal={p.ObjectiveTouch.PublicKey:X} action={p.ObjectiveTouch.Action} accepted={p.ObjectiveAccepted} t={t:F2}");
             }
             if (p.ObjectiveFailures > tracedObjectiveFailures)
+            {
                 Debug.Log($"{head} event={(p.ObjectiveFailures >= Game.Simulation.AriaObjectiveSkillPolicy.MaxOrderFailures ? "order_blocked" : "order_retry")} failures={p.ObjectiveFailures} retryAt={p.ObjectiveRetryAt:F1} t={t:F2}");
+                TraceObjectiveRetrySelection(head, tracedObjectiveTouchGroup != 0 ? tracedObjectiveTouchGroup : o.GroupId, o, t);
+            }
             tracedObjectiveFailures = p.ObjectiveFailures;
+            // The retry resets ObjectiveTouch, so remember the group of the order that was being issued.
+            if (p.ObjectiveTouch.GroupId != 0) tracedObjectiveTouchGroup = p.ObjectiveTouch.GroupId;
             var escort = v.ObjectiveEscort;
             if (escort.Presented && escort.GroupId != 0 && escort.GroupId != tracedEscortGroup)
                 Debug.Log($"{head} event=escort_offer group={escort.GroupId} goal={escort.PublicKey:X} inView={escort.GoalInView} ground={escort.Ground.Available} t={t:F2}");
@@ -105,6 +111,19 @@ namespace Game.UI.Shell.Ecs
                 tracedObjectiveFinished = true;
                 Debug.Log($"{head} event=finished rocketeer={p.ObjectiveRocketeerStage} breacher={p.BreacherStage} research={p.ResearchDone} build={p.BuildDone} ownZones={s.OwnZones} tickets={s.OwnTickets}/{s.OpposingTickets} completed={s.Completed}/{s.Required} lost={s.Lost} orders={p.ObjectiveAccepted} escorts={p.EscortAccepted} coverageDone={p.CoverageDone} t={t:F2}");
             }
+        }
+
+        // W41b evidence (H6), log-only: at each objective order_retry / order_blocked, the retried order's group as the
+        // public own-group projection reads it now (living members, selection-tagged living members, the group record's
+        // Selected flag) and Move mode. Reads the existing read-only projection; never feeds a decision.
+        private static void TraceObjectiveRetrySelection(string head, uint group, in AriaObjectiveTouchObservation o, float t)
+        {
+            int alive = -1, tagged = -1; bool found = false, record = false, selected = false;
+            if (group != 0 && UiShellRuntimeGateway.TryReadSkirmishPublicObjective(out var model) && model != null && model.Available)
+                foreach (var row in model.OwnGroups)
+                    if (row.Policy.GroupId == group)
+                    { found = true; alive = row.AliveCount; tagged = row.SelectedTaggedAlive; record = row.RecordSelected; selected = row.Selected; break; }
+            Debug.Log($"{head} event=order_retry_selection group={group} found={found} alive={alive} tagged={tagged} recordSelected={record} selected={selected} exclusive={o.ExclusiveGroupSelected} moveMode={o.MoveMode} t={t:F2}");
         }
     }
 }

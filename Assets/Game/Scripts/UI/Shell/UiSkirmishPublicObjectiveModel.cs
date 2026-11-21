@@ -34,6 +34,9 @@ namespace Game.UI.Runtime
         public SkirmishPopulationCategory Domain;
         public bool Originals;
         public bool Selected;
+        // W41b evidence only: the group record's own Selected flag and how many living members carry the selection tag.
+        public bool RecordSelected;
+        public int SelectedTaggedAlive;
         public float Health01;
         public int AliveCount;
         public bool MoveActive,HoldActive;
@@ -42,6 +45,12 @@ namespace Game.UI.Runtime
         public string UnloadCarrierId;
         public Vector2[] CurrentMoveGoals=Array.Empty<Vector2>();
         public Vector2[] OwnMemberPositions = Array.Empty<Vector2>();
+    }
+    public static class UiSkirmishPublicGroupSelection
+    {
+        // W41b (H6): the group record stays Selected after tagged members die or untagged reinforcements join,
+        // while the Move button reads unit tags. Report a group as selected only when every living member is tagged.
+        public static bool Selected(bool recordSelected, int taggedLiving, int living) => recordSelected && taggedLiving == living;
     }
     public struct UiSkirmishPublicGoalPosition
     {

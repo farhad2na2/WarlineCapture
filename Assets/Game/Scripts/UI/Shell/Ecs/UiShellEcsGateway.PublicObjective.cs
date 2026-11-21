@@ -119,7 +119,7 @@ namespace Game.UI.Shell.Ecs
             {
                 if(group.FactionId!=1||group.AliveCount<=0)continue;
                 if(group.GroupId==0||!ids.Add(group.GroupId))return false;
-                var points=new List<Vector2>();var originals=new List<string>();var destinations=new List<Vector2>();bool mounted=false,moveActive=true,holdActive=true;float health=0,maximum=0;
+                var points=new List<Vector2>();var originals=new List<string>();var destinations=new List<Vector2>();bool mounted=false,moveActive=true,holdActive=true;float health=0,maximum=0;int taggedLiving=0;
                 foreach(var actor in actors)
                 {
                     var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
@@ -128,6 +128,7 @@ namespace Game.UI.Shell.Ecs
                     var hp=em.GetComponentData<UnitHealth>(actor);if(hp.Current<=0)continue;
                     if(!TryPublicOwnPosition(em,actor,attempt,out var position))return false;
                     points.Add(new Vector2(position.x,position.z));health+=hp.Current;maximum+=hp.Max;
+                    if(em.HasComponent<SelectedUnitTag>(actor))taggedLiving++;
                     moveActive&=em.HasComponent<ManualMoveOrderTag>(actor);holdActive&=em.HasComponent<HoldPositionOrderTag>(actor);
                     if(haveGrid&&em.HasComponent<UnitTarget>(actor))
                     {
@@ -161,7 +162,10 @@ namespace Game.UI.Shell.Ecs
                 {var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate);if(owner.SessionId==attempt&&owner.StableObjectId.ToString()==transport.CarrierPublicId){if(carrier!=Entity.Null){unload=false;break;}carrier=candidate;}}
                 policy.CanUnload=unload&&carrier!=Entity.Null;
                 rows.Add(new UiSkirmishPublicGroupRow {Policy=policy,UnloadCarrierGroupId=policy.CanUnload?transport.CarrierGroupId:0,
-                    UnloadCarrier=policy.CanUnload?new UiEntityHandle(carrier.Index,carrier.Version):UiEntityHandle.Null,UnloadCarrierId=policy.CanUnload?transport.CarrierPublicId:null,Selected=group.Selected!=0,AliveCount=points.Count,
+                    UnloadCarrier=policy.CanUnload?new UiEntityHandle(carrier.Index,carrier.Version):UiEntityHandle.Null,UnloadCarrierId=policy.CanUnload?transport.CarrierPublicId:null,
+                    // W41b (H6): selected only when every living member carries the selection tag.
+                    Selected=UiSkirmishPublicGroupSelection.Selected(group.Selected!=0,taggedLiving,points.Count),
+                    RecordSelected=group.Selected!=0,SelectedTaggedAlive=taggedLiving,AliveCount=points.Count,
                     MoveActive=moveActive&&destinations.Count==points.Count,HoldActive=holdActive,CurrentMoveGoals=destinations.ToArray(),
                     Health01=maximum>0?Mathf.Clamp01(health/maximum):0,OwnMemberPositions=points.ToArray(),
                     Label=SkirmishSetupBriefing.RoleLabel(group.Role,GameLocalization.IsRightToLeft)+" ("+points.Count+")",

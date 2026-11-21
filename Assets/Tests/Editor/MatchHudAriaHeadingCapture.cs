@@ -170,7 +170,8 @@ public static class MatchHudAriaHeadingCapture
         Rule(panelRect.xMin >= 0 && panelRect.yMin >= 0 && panelRect.xMax <= width && panelRect.yMax <= height, "ARIA panel inside the 1920x1080 safe area");
         var title = aria.TitleText;
         // Persian is drawn in Arabic presentation forms; NFKC folds them back to the catalog letters.
-        string shown = Caption(title).Normalize(NormalizationForm.FormKC);
+        // Mono's NFKC table leaves WAW isolated/final forms (U+FEED, U+FEEE) unfolded; fold them explicitly.
+        string shown = Caption(title).Normalize(NormalizationForm.FormKC).Replace('ﻭ', 'و').Replace('ﻮ', 'و');
         text.AppendLine($"- read model heading \"{panel.RecommendationTitle}\"; shown heading \"{shown}\" (NFKC); expected \"{family}\"");
         Rule(title != null && title.gameObject.activeInHierarchy && !string.IsNullOrWhiteSpace(shown), "heading shown");
         Rule(panel.RecommendationTitle == family, $"read model heading is the mission's objective family \"{family}\" (is \"{panel.RecommendationTitle}\")");

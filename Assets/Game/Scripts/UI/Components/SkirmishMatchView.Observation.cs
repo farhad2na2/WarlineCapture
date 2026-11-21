@@ -56,6 +56,7 @@ namespace Game.UI.Runtime
         private RectTransform baseMarker;
         private TMPro.TMP_Text baseMarkerTitle, baseMarkerDetail;
         private V3GradientGraphic baseMarkerChip;
+        private HudOwnershipGlyphGraphic baseMarkerGlyph;
         private Image baseMarkerStem;
         private HudDirectionArrowGraphic baseMarkerCue;
         private string baseMarkerShown;
@@ -63,9 +64,6 @@ namespace Game.UI.Runtime
         private bool enemyBaseKnowledgeKnown;
         private byte enemyBaseKnowledge;
         private float enemyBaseLastSeenAge;
-        private static readonly Color MarkerAmber = new(1, .65f, .1f);
-        private static readonly Color MarkerMuted = new(.80f, .62f, .30f);
-        private static readonly Color MarkerSlate = new(.62f, .70f, .74f);
         private void ObserveEnemyBaseKnowledge(in UiSkirmishModel model)
         {
             enemyBaseKnowledgeKnown = model.EnemyBaseKnowledgeKnown;
@@ -100,8 +98,12 @@ namespace Game.UI.Runtime
                 : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen
                     ? text.Format("ui.skirmish.marker.last_seen_ago", "LAST SEEN {0} AGO", SkirmishEnemyBaseMarkerState.FormatAge(enemyBaseLastSeenAge))
                     : text.Get("ui.skirmish.marker.reported", "REPORTED POSITION");
-            Color tone = knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? MarkerAmber
-                : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen ? MarkerMuted : MarkerSlate;
+            // W40 (Board 4): the enemy base is always enemy red-orange with a diamond; knowledge
+            // (in sight, last seen, reported) reads from the status copy and the keyline strength.
+            Color enemy = SkirmishObjectiveCardLayout.Enemy;
+            float strength = knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? 1f
+                : knowledge == SkirmishEnemyBaseMarkerKnowledge.LastSeen ? .8f : .62f;
+            Color tone = new(enemy.r, enemy.g, enemy.b, strength);
             if (!PlaceWorldChip(baseMarker, baseMarkerStem.gameObject, ref baseMarkerCue, tone, screen)) return;
             string detail = string.IsNullOrEmpty(range) ? state : state + "\n" + range;
             string signature = text.CurrentLocaleCode + "|" + (int)knowledge + "|" + detail;
@@ -111,6 +113,24 @@ namespace Game.UI.Runtime
             UiLocalizedText.Set(baseMarkerDetail, detail);
             baseMarkerChip.Configure(new Color32(25, 34, 38, 247), new Color32(3, 8, 10, 252), tone, 3f);
             baseMarkerStem.color = new Color(tone.r, tone.g, tone.b, knowledge == SkirmishEnemyBaseMarkerKnowledge.InSight ? 1f : .6f);
+            PlaceBaseMarkerGlyph(text.IsRightToLeft);
+        }
+
+        // The diamond sits before the title (after it in right-to-left), centred on the title line.
+        private void PlaceBaseMarkerGlyph(bool rtl)
+        {
+            if (baseMarkerGlyph == null) return;
+            baseMarkerTitle.ForceMeshUpdate();
+            float title = baseMarkerTitle.GetPreferredValues(baseMarkerTitle.text, float.PositiveInfinity, float.PositiveInfinity).x;
+            float limit = baseMarkerTitle.rectTransform.rect.width;
+            if (limit > 0f) title = Mathf.Min(title, limit);
+            const float size = 24f, gap = 10f;
+            var rect = baseMarkerGlyph.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, 1f); rect.pivot = new Vector2(.5f, .5f);
+            rect.sizeDelta = Vector2.one * size;
+            float offset = title * .5f + gap + size * .5f;
+            rect.anchoredPosition = new Vector2(rtl ? offset : -offset, -34f);
+            baseMarkerGlyph.Present(HudOwnershipGlyph.Diamond, SkirmishObjectiveCardLayout.Enemy);
         }
         private void BuildEnemyBaseMarker()
         {
@@ -129,8 +149,12 @@ namespace Game.UI.Runtime
             baseMarkerTitle = Label(chip, "", 30f);
             baseMarkerTitle.rectTransform.anchorMin = new Vector2(0f, 1f);
             baseMarkerTitle.rectTransform.anchorMax = Vector2.one;
-            baseMarkerTitle.rectTransform.offsetMin = new Vector2(14f, -64f);
-            baseMarkerTitle.rectTransform.offsetMax = new Vector2(-14f, -4f);
+            // Side insets leave room for the enemy diamond beside the centred title.
+            baseMarkerTitle.rectTransform.offsetMin = new Vector2(48f, -64f);
+            baseMarkerTitle.rectTransform.offsetMax = new Vector2(-48f, -4f);
+            var glyph = Panel("OwnershipGlyph", chip, false);
+            baseMarkerGlyph = glyph.gameObject.AddComponent<HudOwnershipGlyphGraphic>();
+            baseMarkerGlyph.Present(HudOwnershipGlyph.Diamond, SkirmishObjectiveCardLayout.Enemy);
 
             baseMarkerDetail = Label(chip, "", 24f);
             baseMarkerDetail.color = new Color32(222, 233, 237, 255);

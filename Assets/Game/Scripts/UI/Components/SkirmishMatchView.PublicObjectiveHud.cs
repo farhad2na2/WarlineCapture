@@ -55,9 +55,10 @@ namespace Game.UI.Runtime
             firstPublicGoal=main[0].PublicId;secondPublicGoal=main.Count>1?main[1].PublicId:null;thirdPublicGoal=main.Count>2?main[2].PublicId:null;
             if(thirdObjective==null)
             {
-                thirdObjective=Button(hud.transform,"",()=>FocusPublicGoal(thirdPublicGoal));
-                thirdObjectiveProgress=HealthLabel(thirdObjective);thirdObjective.transform.parent.SetSiblingIndex(clock.transform.parent.GetSiblingIndex());
-                thirdObjective.transform.parent.GetComponent<LayoutElement>().preferredWidth=200;
+                // W40: the third goal control joins the card's status row, before the score.
+                thirdObjective=Button(objectiveStatus,"",()=>FocusPublicGoal(thirdPublicGoal));
+                thirdObjectiveProgress=HealthLabel(thirdObjective);thirdObjective.transform.parent.SetSiblingIndex(objectiveScore.transform.parent.GetSiblingIndex());
+                HudIconButtonView.Apply(thirdObjective.GetComponentInParent<Button>(),HudButtonIcon.Camera,HudButtonRole.Navigation,"","",thirdObjective,true,HudButtonLayout.TitleLineIcon);
             }
             thirdObjective.transform.parent.gameObject.SetActive(main.Count>2);
             PresentGoalControl(player,playerHealth,main[0],0);
@@ -89,18 +90,30 @@ namespace Game.UI.Runtime
         private void RestoreBaseObjectiveControls()
         {
             enemy.transform.parent.gameObject.SetActive(true);if(thirdObjective!=null)thirdObjective.transform.parent.gameObject.SetActive(false);
-            HudIconButtonView.Apply(PlayerFocusButton,HudButtonIcon.YourBase,HudButtonRole.Play,"YOUR BASE","پایگاه شما",player,true);
-            HudIconButtonView.Apply(EnemyFocusButton,HudButtonIcon.EnemyBase,HudButtonRole.Stop,"ENEMY BASE","پایگاه دشمن",enemy,true);
-            RestoreClockCaption();player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;
+            // W40 (Board 4): base chips carry ownership (friendly shield, enemy diamond); widths follow their copy.
+            HudIconButtonView.Apply(PlayerFocusButton,HudButtonIcon.Camera,HudButtonRole.Friendly,"YOUR BASE","پایگاه شما",player,true,HudButtonLayout.TitleLineIcon);
+            HudIconButtonView.Apply(EnemyFocusButton,HudButtonIcon.Camera,HudButtonRole.Enemy,"ENEMY BASE","پایگاه دشمن",enemy,true,HudButtonLayout.TitleLineIcon);
+            RestoreClockCaption();
         }
         private void PresentGoalControl(TMP_Text heading,TMP_Text progress,SkirmishPublicGoalNode node,int index)
         {
             bool fa=UiShellRuntimeGateway.Localization.IsRightToLeft;
             string name=PublicGoalName(node,index,fa);var button=heading.GetComponentInParent<Button>();
-            HudIconButtonView.Apply(button,HudButtonIcon.Camera,HudButtonRole.Navigation,name,name,heading,true);
-            heading.transform.parent.GetComponent<LayoutElement>().preferredWidth=200;
-            UiLocalizedText.Set(progress,PublicGoalProgress(node,fa));AlignBaseHealth(progress);
+            // A zone chip is coloured by its owner; other goals keep the camera-navigation style.
+            var role=node.Kind==SkirmishPublicGoalNodeKind.CaptureZone?
+                SkirmishObjectiveCardLayout.Role(SkirmishObjectiveCardLayout.Resolve(node.OwnerFaction,objectiveModel.Goal.ObserverFaction)):HudButtonRole.Navigation;
+            HudIconButtonView.Apply(button,HudButtonIcon.Camera,role,name,name,heading,true,HudButtonLayout.TitleLineIcon);
+            UiLocalizedText.Set(progress,PublicGoalChipDetail(node,fa));
         }
+        // The chip's own line: a zone shows only its owner (contested and capture progress sit on the
+        // title line); every other goal shows its usual progress readout.
+        private string PublicGoalChipDetail(SkirmishPublicGoalNode node,bool fa)=>
+            node.Kind==SkirmishPublicGoalNodeKind.CaptureZone&&!node.WorkProgressKnown?ZoneOwnerWord(node,fa):PublicGoalProgress(node,fa);
+        private string ZoneOwnerWord(SkirmishPublicGoalNode node,bool fa)=>
+            node.OwnerFaction==0?(fa?"بی‌طرف":"NEUTRAL"):node.OwnerFaction==objectiveModel.Goal.ObserverFaction?(fa?"خودی":"OURS"):(fa?"دشمن":"OPPONENT");
+        private static string ZoneStatusTag(SkirmishPublicGoalNode node,bool fa)=>
+            node.Contested?(fa?"درگیری":"CONTESTED"):
+            node.CaptureProgressKnown?(node.CapturePhase==SkirmishPublicCapturePhase.Neutralizing?(fa?"خنثی‌سازی ":"NEUTRALIZE "):(fa?"تصرف ":"CAPTURE "))+Mathf.FloorToInt(node.CaptureFraction*100)+"%":null;
         private static string PublicGoalName(SkirmishPublicGoalNode node,int index,bool fa)
         {
             string letter=((char)('A'+index)).ToString();
@@ -118,10 +131,8 @@ namespace Game.UI.Runtime
             if(node.WorkProgressKnown)return Mathf.FloorToInt(node.WorkTicks/(float)TimeSpan.TicksPerSecond)+" / "+Mathf.CeilToInt(node.RequiredWorkTicks/(float)TimeSpan.TicksPerSecond)+(fa?" ثانیه":" s");
             if(node.Kind==SkirmishPublicGoalNodeKind.CaptureZone)
             {
-                string owner=node.OwnerFaction==0?(fa?"بی‌طرف":"NEUTRAL"):node.OwnerFaction==objectiveModel.Goal.ObserverFaction?(fa?"خودی":"OURS"):(fa?"دشمن":"OPPONENT");
-                if(node.Contested)return owner+" • "+(fa?"درگیری":"CONTESTED");
-                if(node.CaptureProgressKnown)return owner+" • "+(node.CapturePhase==SkirmishPublicCapturePhase.Neutralizing?(fa?"خنثی‌سازی ":"NEUTRALIZE "):(fa?"تصرف ":"CAPTURE "))+Mathf.FloorToInt(node.CaptureFraction*100)+"%";
-                return owner;
+                string owner=ZoneOwnerWord(node,fa),status=ZoneStatusTag(node,fa);
+                return status==null?owner:owner+" • "+status;
             }
             return node.SubjectDisposition==SkirmishPublicSubjectDisposition.Live?
                 Mathf.CeilToInt(node.Health)+" / "+Mathf.CeilToInt(node.MaximumHealth):
@@ -158,6 +169,8 @@ namespace Game.UI.Runtime
                 // World labels stay in the open play area, never over HUD controls; the full map places its own.
                 if(map!=null)label.rectTransform.position=point;else if(!PlaceWorldLabel(label.rectTransform,point))continue;
                 label.gameObject.SetActive(true);UiLocalizedText.Set(label,name+"\n"+PublicGoalProgress(node,fa));
+                // W40 (Board 4): an in-world zone label takes its owner's colour.
+                label.color=node.Kind==SkirmishPublicGoalNodeKind.CaptureZone?SkirmishObjectiveCardLayout.Colour(SkirmishObjectiveCardLayout.Resolve(node.OwnerFaction,goal.ObserverFaction)):Color.white;
             }
             if(mapInformation!=null&&fullMap!=null&&fullMap.IsOpen)
             {UiLocalizedText.Set(mapPlayer,goal.Score.TicketsKnown?(fa?"بلیت‌های ما":"OUR TICKETS"):(fa?"پیشرفت هدف":"OBJECTIVE PROGRESS"));UiLocalizedText.Set(mapPlayerHealth,goal.Score.TicketsKnown?goal.Score.OwnTickets.ToString():goal.Score.Completed+" / "+goal.Score.Required);UiLocalizedText.Set(mapEnemy,goal.Score.TicketsKnown?(fa?"بلیت‌های حریف":"OPPONENT TICKETS"):"");UiLocalizedText.Set(mapEnemyHealth,goal.Score.TicketsKnown?goal.Score.OpposingTickets.ToString():"");}

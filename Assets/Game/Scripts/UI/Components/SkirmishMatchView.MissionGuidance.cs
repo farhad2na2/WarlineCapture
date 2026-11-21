@@ -6,62 +6,30 @@ namespace Game.UI.Runtime
 {
     /// <summary>
     /// Per-mission guidance from SkirmishMissionHudGuidanceCatalog (owner designer playtest
-    /// 2026-11-17, S026): a first-order prompt during the opening seconds (tap to dismiss)
-    /// and a rendezvous chip on an existing layout anchor. Presentation only; no orders.
+    /// 2026-11-17, S026): a first-order prompt during the opening seconds and a rendezvous chip on an
+    /// existing layout anchor. Since W40 (Board 2) the first order is the objective card's next-action
+    /// line instead of a second stacked centre bar. Presentation only; no orders.
     /// </summary>
     public sealed partial class SkirmishMatchView
     {
-        private RectTransform firstOrderRow, rendezvousMarker;
+        private RectTransform rendezvousMarker;
         private GameObject rendezvousStem;
         private HudDirectionArrowGraphic rendezvousCue;
-        private Button firstOrderButton;
         private TMPro.TMP_Text rendezvousTitle;
-        private string firstOrderShown, rendezvousShown;
-        private bool firstOrderDismissed;
+        private string rendezvousShown;
         private static readonly Color RendezvousCyan = new(0f, .73f, .85f, 1f);
 
-        public bool FirstOrderPresented => firstOrderRow != null && firstOrderRow.gameObject.activeSelf;
+        public bool FirstOrderPresented => ObjectiveCardShowsFirstOrder && hud != null && hud.activeSelf;
         public bool RendezvousMarkerPresented => rendezvousMarker != null && rendezvousMarker.gameObject.activeSelf;
 
         private void RefreshMissionGuidance(in UiSkirmishModel model)
         {
-            if (model.Finished || model.StartupFailed) firstOrderDismissed = false;
             bool live = hud != null && hud.activeSelf && !model.Finished && !model.StartupFailed;
-            bool showOrder = live && !firstOrderDismissed && !string.IsNullOrEmpty(model.FirstOrderText);
-            if (showOrder && firstOrderRow == null) BuildFirstOrder();
-            if (firstOrderRow != null)
-            {
-                firstOrderRow.gameObject.SetActive(showOrder);
-                if (showOrder)
-                {
-                    var strip = (RectTransform)hud.transform;
-                    firstOrderRow.anchoredPosition = new Vector2(0, strip.offsetMin.y - 10);
-                    string signature = model.FirstOrderText + UiShellRuntimeGateway.Localization.CurrentLocaleCode;
-                    if (firstOrderShown != signature)
-                    {
-                        firstOrderShown = signature;
-                        HudIconButtonView.Apply(firstOrderButton, HudButtonIcon.Guide, HudButtonRole.Information,
-                            model.FirstOrderText, model.FirstOrderText);
-                    }
-                }
-            }
             PresentRendezvous(model, live);
         }
 
-        /// <summary>Extra downward offset for rows stacked below the first-order prompt.</summary>
-        private float GuidanceStackOffset => FirstOrderPresented ? 72f : 0f;
-
-        private void BuildFirstOrder()
-        {
-            firstOrderRow = Panel("FirstOrderPrompt", transform, false);
-            firstOrderRow.anchorMin = firstOrderRow.anchorMax = new Vector2(.5f, 1f);
-            firstOrderRow.pivot = new Vector2(.5f, 1f);
-            firstOrderRow.sizeDelta = new Vector2(820, 62);
-            var row = firstOrderRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            row.childControlWidth = row.childControlHeight = true; row.childForceExpandWidth = true;
-            var label = Button(firstOrderRow, "", () => firstOrderDismissed = true);
-            firstOrderButton = label.GetComponentInParent<Button>();
-        }
+        /// <summary>Extra downward offset for rows stacked below the card (none since W40).</summary>
+        private float GuidanceStackOffset => 0f;
 
         private void PresentRendezvous(in UiSkirmishModel model, bool live)
         {

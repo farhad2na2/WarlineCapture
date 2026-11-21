@@ -10,7 +10,13 @@ namespace Game.UI.Runtime
         Team, Landing, Departure, Cancel, YourBase, EnemyBase, Confirm, Commands
     }
 
-    public enum HudButtonRole { Information, Play, Stop, Alert, Navigation, Neutral }
+    // Friendly, Enemy and Unowned are ownership chips (W40, Board 4): a dark surface with the
+    // ownership keyline (green #49BD62, red-orange #F45C3B, silver #BBC7CD).
+    public enum HudButtonRole { Information, Play, Stop, Alert, Navigation, Neutral, Friendly, Enemy, Unowned }
+
+    // TitleLineIcon (W40): a compact chip with the icon and title on the first line and the
+    // second line left free for its status (ownership, health or progress).
+    public enum HudButtonLayout { Standard, TitleLineIcon }
 
     /// <summary>Shared presentation for HUD actions; never changes their input handlers.</summary>
     [DisallowMultipleComponent]
@@ -36,6 +42,8 @@ namespace Game.UI.Runtime
         private bool baseHeading;
         private HudButtonIcon kind;
         private HudButtonRole currentRole;
+        private HudButtonLayout layout;
+        private float titleTrailingInset;
         private bool configured;
 
         public static Sprite LoadIcon(HudButtonIcon kind)
@@ -52,12 +60,15 @@ namespace Game.UI.Runtime
             return icons[index];
         }
 
+        /// <param name="layout">Null keeps the control's current layout.</param>
         public static void Apply(Button target, HudButtonIcon kind, HudButtonRole role,
-            string english = null, string persian = null, TMP_Text heading = null, bool baseHeading = false)
+            string english = null, string persian = null, TMP_Text heading = null, bool baseHeading = false,
+            HudButtonLayout? layout = null)
         {
             if (target == null) return;
             var view = target.GetComponent<HudIconButtonView>() ?? target.gameObject.AddComponent<HudIconButtonView>();
             view.button = target;
+            if (layout.HasValue) view.layout = layout.Value;
             view.label = heading != null ? heading : target.GetComponentInChildren<TMP_Text>(true);
             view.english = english; view.persian = persian; view.baseHeading = baseHeading;
             bool iconChanged = view.kind != kind;
@@ -67,6 +78,13 @@ namespace Game.UI.Runtime
             if (!view.configured || view.currentRole != role) view.ApplyRole(role);
             view.currentRole = role; view.configured = true;
             view.Refresh();
+        }
+
+        /// <summary>Room kept at the end of a TitleLineIcon title for a short status tag.</summary>
+        public static void SetTitleTrailingInset(Button target, float inset)
+        {
+            var view = target != null ? target.GetComponent<HudIconButtonView>() : null;
+            if (view != null) view.titleTrailingInset = Mathf.Max(0f, inset);
         }
 
         private void EnsureGraphics()
@@ -120,6 +138,7 @@ namespace Game.UI.Runtime
             var top = new Color(.03f, .32f, .42f);
             var bottom = new Color(.015f, .12f, .17f);
             var border = new Color(0, .78f, .94f);
+            float width = 2;
             switch (role)
             {
                 case HudButtonRole.Play:
@@ -137,8 +156,15 @@ namespace Game.UI.Runtime
                 case HudButtonRole.Neutral:
                     top = new Color(.2f, .25f, .27f); bottom = new Color(.065f, .095f, .11f);
                     border = new Color(.48f, .6f, .64f); break;
+                case HudButtonRole.Friendly:
+                case HudButtonRole.Enemy:
+                case HudButtonRole.Unowned:
+                    top = SkirmishObjectiveCardLayout.CardTop; bottom = SkirmishObjectiveCardLayout.CardBottom;
+                    border = SkirmishObjectiveCardLayout.Colour(role == HudButtonRole.Friendly ? HudOwnership.Friendly
+                        : role == HudButtonRole.Enemy ? HudOwnership.Enemy : HudOwnership.Neutral);
+                    width = SkirmishObjectiveCardLayout.KeylineWidth; break;
             }
-            surface.Configure(top, bottom, border, 2);
+            surface.Configure(top, bottom, border, width);
             surface.SetMilitaryMaterial(MilitaryUiMaterialKind.Automatic);
         }
 
@@ -154,6 +180,7 @@ namespace Game.UI.Runtime
                 string current = label is RTLTMPro.RTLTextMeshPro localized ? localized.OriginalText : label.text;
                 if (current != caption) UiLocalizedText.Set(label, caption);
             }
+            if (layout == HudButtonLayout.TitleLineIcon) { RefreshTitleLine(rtl); return; }
             label.enableAutoSizing = false;
             label.fontSize = label.fontSizeMin = label.fontSizeMax = LabelSize;
             label.textWrappingMode = TextWrappingModes.NoWrap;
@@ -169,6 +196,32 @@ namespace Game.UI.Runtime
             imageRect.anchorMin = imageRect.anchorMax = imageRect.pivot = new Vector2(rtl ? 1 : 0, .5f);
             imageRect.anchoredPosition = new Vector2(rtl ? -8 : 8, 64f * verticalArtworkOffsets[(int)kind]);
             imageRect.sizeDelta = new Vector2(64, 64);
+            icon.color = button.IsInteractable() ? Color.white : new Color(.6f, .6f, .6f, .85f);
+            label.color = button.IsInteractable() ? Color.white : new Color(.65f, .7f, .72f);
+        }
+
+        // Icon and title share the first line; the title shrinks to fit rather than wrap or clip.
+        private void RefreshTitleLine(bool rtl)
+        {
+            label.enableAutoSizing = true;
+            label.fontSizeMin = SkirmishObjectiveCardLayout.TitleMinSize;
+            label.fontSizeMax = SkirmishObjectiveCardLayout.TitleMaxSize;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.alignment = rtl ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            label.raycastTarget = false;
+            label.margin = Vector4.zero;
+            float inset = SkirmishObjectiveCardLayout.ChipInset, size = SkirmishObjectiveCardLayout.ChipIcon;
+            float lead = inset + size + SkirmishObjectiveCardLayout.ChipIconGap, trail = inset + titleTrailingInset;
+            var rect = label.rectTransform;
+            rect.anchorMin = new Vector2(0, .5f); rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(rtl ? trail : lead, 0);
+            // Clear of the keyline: tall Persian marks (the dot of "خ") reach above the line box.
+            rect.offsetMax = new Vector2(rtl ? -lead : -trail, -5);
+            var imageRect = icon.rectTransform;
+            imageRect.anchorMin = imageRect.anchorMax = imageRect.pivot = new Vector2(rtl ? 1 : 0, .75f);
+            imageRect.anchoredPosition = new Vector2(rtl ? -inset : inset, size * verticalArtworkOffsets[(int)kind]);
+            imageRect.sizeDelta = new Vector2(size, size);
             icon.color = button.IsInteractable() ? Color.white : new Color(.6f, .6f, .6f, .85f);
             label.color = button.IsInteractable() ? Color.white : new Color(.65f, .7f, .72f);
         }

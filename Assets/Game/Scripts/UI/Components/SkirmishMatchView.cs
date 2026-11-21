@@ -54,22 +54,17 @@ namespace Game.UI.Runtime
         }
         private void Awake()
         {
-            var strip=Panel("BaseObjectives",transform);hud=strip.gameObject;
-            strip.anchorMin=new Vector2(.30f,1);strip.anchorMax=new Vector2(.73f,1);strip.pivot=new Vector2(.5f,1);
-            strip.offsetMin=new Vector2(0,-225);strip.offsetMax=new Vector2(0,-110);
-            var row=strip.gameObject.AddComponent<HorizontalLayoutGroup>();row.padding=new RectOffset(8,8,8,8);row.spacing=8;row.childControlWidth=true;row.childControlHeight=true;row.childForceExpandWidth=true;
-            row.childScaleWidth=false;
-            player=Button(strip,"YOUR MAIN BASE",()=>FocusPresentedObjectiveOrBase(true));
-            player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;player.fontSize=28;
+            // W40 (Board 2): one compact objective card; the base controls keep their names and handlers.
+            var strip=BuildObjectiveCard();hud=strip.gameObject;
+            player=Button(objectiveStatus,"YOUR MAIN BASE",()=>FocusPresentedObjectiveOrBase(true));
             playerHealth=HealthLabel(player);
-            HudIconButtonView.Apply(PlayerFocusButton, HudButtonIcon.YourBase, HudButtonRole.Play,
-                "YOUR BASE", "پایگاه شما", player, true);
-            CreateClock(strip);
-            enemy=Button(strip,"ENEMY MAIN BASE",()=>FocusPresentedObjectiveOrBase(false));
-            enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.fontSize=28;
+            HudIconButtonView.Apply(PlayerFocusButton, HudButtonIcon.Camera, HudButtonRole.Friendly,
+                "YOUR BASE", "پایگاه شما", player, true, HudButtonLayout.TitleLineIcon);
+            CreateObjectiveScore(objectiveStatus);
+            enemy=Button(objectiveStatus,"ENEMY MAIN BASE",()=>FocusPresentedObjectiveOrBase(false));
             enemyHealth=HealthLabel(enemy);
-            HudIconButtonView.Apply(EnemyFocusButton, HudButtonIcon.EnemyBase, HudButtonRole.Stop,
-                "ENEMY BASE", "پایگاه دشمن", enemy, true);
+            HudIconButtonView.Apply(EnemyFocusButton, HudButtonIcon.Camera, HudButtonRole.Enemy,
+                "ENEMY BASE", "پایگاه دشمن", enemy, true, HudButtonLayout.TitleLineIcon);
             var shade=Panel("SkirmishResult",transform,false);modal=shade.gameObject;Stretch(shade);
             UiChromeStack.RaiseAboveTutorial(shade.gameObject, UiChromeStack.ConfirmationChrome);
             shade.gameObject.AddComponent<Image>().color=new Color(0,0,0,.72f);
@@ -112,10 +107,11 @@ namespace Game.UI.Runtime
             RefreshMapInformation(model);
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
-            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,EnemyReadout(model));RefreshClock(model.Clock);
-            AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
+            // The base controls' titles belong to HudIconButtonView; only their status line is set here.
+            SetBaseDetail(playerHealth,model.PlayerBase);SetBaseDetail(enemyHealth,EnemyReadout(model));RefreshClock(model.Clock);
             RefreshPublicObjectiveHud(model);
             RefreshMissionGuidance(model);
+            PresentObjectiveCard(model);
             RefreshBaseUnderFire(model);
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
@@ -316,6 +312,11 @@ namespace Game.UI.Runtime
             UiLocalizedText.Set(heading,lines[0]);
             UiLocalizedText.Set(health,lines.Length>1?lines[1]:string.Empty);
         }
+        private static void SetBaseDetail(TMP_Text health,string source)
+        {
+            var lines=(source??string.Empty).Split('\n');
+            UiLocalizedText.Set(health,lines.Length>1?lines[1]:string.Empty);
+        }
         private static void AlignBaseHealth(TMP_Text health)
         {
             bool rtl=UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -327,7 +328,7 @@ namespace Game.UI.Runtime
         private void PositionBelowWarning()
         {
             if (threatWarning == null) threatWarning = FindAnyObjectByType<MatchHudThreatVisibilityView>(FindObjectsInactive.Include);
-            float top = 110;
+            float warning = 0;
             if (threatWarning != null && threatWarning.gameObject.activeInHierarchy)
             {
                 var warningRect = (RectTransform)threatWarning.transform;
@@ -336,14 +337,16 @@ namespace Game.UI.Runtime
                 var screen = RectTransformUtility.WorldToScreenPoint(canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera, warningCorners[0]);
                 var root = (RectTransform)transform;
                 if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out var bottom))
-                    top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
+                    warning = root.rect.yMax - bottom.y;
             }
+            // W40: 12 px under the resource bar, or under a visible alert banner.
+            float top = SkirmishObjectiveCardLayout.Top(ResourceBarBottom(), warning);
             // While a base alert is up the strip (and the alert row under it) keeps its place when the
             // top banner expires; it returns once the alert clears.
             top = SkirmishBaseAlertRowLayout.HoldDown(top, ref baseFireStripHeld, BaseUnderFirePresented);
             var rect = (RectTransform)hud.transform;
-            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - (previousPublicApplicable ? 147 : 115));
-            rect.offsetMax = new Vector2(rect.offsetMax.x, -top);
+            rect.anchoredPosition = new Vector2(0, -top);
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, SkirmishObjectiveCardLayout.Height);
         }
         private static RectTransform Panel(string name,Transform parent,bool visible=true)
         {

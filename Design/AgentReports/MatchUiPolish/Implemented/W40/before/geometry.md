@@ -1,0 +1,1759 @@
+# W40 before geometry (screen px, top-left origin)
+
+Fixture states are named after the audited missions; they are native-view renders of fixture models, not live mission frames.
+
+## s002-ba-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=115.0 right=1401.6 bottom=225.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- BA English card size: 825.6 x 115.0 (board target about 560 x 106)
+  - PASS BA card at least the 560 px target width (is 825.6)
+- control YOUR MAIN BASE "YOUR BASE": x=584.0 y=118.0 w=277.2 h=99.0 right=861.2 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ENEMY BASE": x=1116.4 y=118.0 w=277.2 h=99.0 right=1393.6 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "YOUR BASE" in YOUR MAIN BASE: drawn x=689.6-819.6 y=130.8-154.8 lines=1 size=24
+  - PASS text "YOUR BASE" in YOUR MAIN BASE stays inside its frame
+  - PASS text "YOUR BASE" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=702.0-807.2 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "TIME LEFT" in BaseObjectives: drawn x=931.2-1046.4 y=135.7-158.7 lines=1 size=23
+  - PASS text "TIME LEFT" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=947.4-1030.2 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ENEMY BASE" in ENEMY MAIN BASE: drawn x=1212.5-1361.5 y=130.8-154.8 lines=1 size=24
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NOT IN SIGHT ›" in ENEMY MAIN BASE: drawn x=1202.2-1371.8 y=180.3-204.3 lines=1 size=24
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL YOUR BASE glyph Shield (is none)
+  - FAIL YOUR BASE keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ENEMY BASE glyph Diamond (is none)
+  - FAIL ENEMY BASE keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=881.0 y=376.0 w=350.0 h=184.0 right=1231.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s026-ba-first-order-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=115.0 right=1401.6 bottom=225.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+- second centre bar (FirstOrderPrompt): x=550.0 y=235.0 w=820.0 h=62.0 right=1370.0 bottom=297.0
+  - FAIL one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "YOUR BASE": x=584.0 y=118.0 w=277.2 h=99.0 right=861.2 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ENEMY BASE": x=1116.4 y=118.0 w=277.2 h=99.0 right=1393.6 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "YOUR BASE" in YOUR MAIN BASE: drawn x=689.6-819.6 y=130.8-154.8 lines=1 size=24
+  - PASS text "YOUR BASE" in YOUR MAIN BASE stays inside its frame
+  - PASS text "YOUR BASE" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=702.0-807.2 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "TIME LEFT" in BaseObjectives: drawn x=931.2-1046.4 y=135.7-158.7 lines=1 size=23
+  - PASS text "TIME LEFT" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=947.4-1030.2 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ENEMY BASE" in ENEMY MAIN BASE: drawn x=1212.5-1361.5 y=130.8-154.8 lines=1 size=24
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NOT IN SIGHT ›" in ENEMY MAIN BASE: drawn x=1202.2-1371.8 y=180.3-204.3 lines=1 size=24
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL YOUR BASE glyph Shield (is none)
+  - FAIL YOUR BASE keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ENEMY BASE glyph Diamond (is none)
+  - FAIL ENEMY BASE keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=881.0 y=376.0 w=350.0 h=184.0 right=1231.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s031-fc-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ZONE A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ZONE C": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ZONE B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ZONE A" in YOUR MAIN BASE: drawn x=665.2-750.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ZONE A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "OURS" in YOUR MAIN BASE: drawn x=676.3-739.7 y=204.3-228.3 lines=1 size=24
+  - PASS text "OURS" in YOUR MAIN BASE stays inside its frame
+  - PASS text "OURS" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ZONE C" in : drawn x=857.7-942.3 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE C" in  stays inside its frame
+  - PASS text "ZONE C" in  does not wrap (lines 1, authored 1)
+- text "NEUTRAL • CAPTURE 40%" in : drawn x=852.4-947.6 y=159.3-273.3 lines=4 size=24
+  - FAIL text "NEUTRAL • CAPTURE 40%" in  stays inside its frame
+  - FAIL text "NEUTRAL • CAPTURE 40%" in  does not wrap (lines 4, authored 1)
+- text "TICKETS 500 / 500" in BaseObjectives: drawn x=998.4-1171.2 y=152.6-172.6 lines=1 size=20
+  - PASS text "TICKETS 500 / 500" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1048.5-1121.1 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ZONE B" in ENEMY MAIN BASE: drawn x=1291.0-1376.2 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ZONE B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "OPPONENT • CONTESTED" in ENEMY MAIN BASE: drawn x=1287.1-1380.1 y=159.3-273.3 lines=4 size=24
+  - FAIL text "OPPONENT • CONTESTED" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "OPPONENT • CONTESTED" in ENEMY MAIN BASE does not wrap (lines 4, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CA6E6
+  - FAIL ZONE A glyph Shield (is none)
+  - FAIL ZONE A keyline #49BD62 (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#4CA6E6
+  - FAIL ZONE B glyph Diamond (is none)
+  - FAIL ZONE B keyline #F45C3B (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE C glyph Ring (is none)
+  - FAIL ZONE C keyline #BBC7CD (is #4CA6E6)
+
+
+## s011-fc-neutral-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ZONE A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ZONE C": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ZONE B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ZONE A" in YOUR MAIN BASE: drawn x=665.2-750.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ZONE A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in YOUR MAIN BASE: drawn x=660.4-755.6 y=189.3-243.3 lines=2 size=24
+  - PASS text "NEUTRAL" in YOUR MAIN BASE stays inside its frame
+  - FAIL text "NEUTRAL" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- text "ZONE C" in : drawn x=857.7-942.3 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE C" in  stays inside its frame
+  - PASS text "ZONE C" in  does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in : drawn x=852.4-947.6 y=189.3-243.3 lines=2 size=24
+  - PASS text "NEUTRAL" in  stays inside its frame
+  - FAIL text "NEUTRAL" in  does not wrap (lines 2, authored 1)
+- text "TICKETS 500 / 500" in BaseObjectives: drawn x=998.4-1171.2 y=152.6-172.6 lines=1 size=20
+  - PASS text "TICKETS 500 / 500" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1048.5-1121.1 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ZONE B" in ENEMY MAIN BASE: drawn x=1291.0-1376.2 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ZONE B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in ENEMY MAIN BASE: drawn x=1286.0-1381.2 y=189.3-243.3 lines=2 size=24
+  - PASS text "NEUTRAL" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "NEUTRAL" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- ownership YOUR MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE A glyph Ring (is none)
+  - FAIL ZONE A keyline #BBC7CD (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE B glyph Ring (is none)
+  - FAIL ZONE B keyline #BBC7CD (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE C glyph Ring (is none)
+  - FAIL ZONE C keyline #BBC7CD (is #4CA6E6)
+
+
+## s037-bt-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "CORRIDOR A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "EXIT": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "CORRIDOR B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "CORRIDOR A" in YOUR MAIN BASE: drawn x=637.4-778.6 y=138.8-162.8 lines=1 size=24
+  - FAIL text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 20 s" in YOUR MAIN BASE: drawn x=667.2-748.8 y=204.3-228.3 lines=1 size=24
+  - PASS text "0 / 20 s" in YOUR MAIN BASE stays inside its frame
+  - PASS text "0 / 20 s" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "EXIT" in : drawn x=874.0-926.0 y=138.8-162.8 lines=1 size=24
+  - PASS text "EXIT" in  stays inside its frame
+  - PASS text "EXIT" in  does not wrap (lines 1, authored 1)
+- text "CLOSED" in : drawn x=854.9-945.1 y=204.3-228.3 lines=1 size=24
+  - PASS text "CLOSED" in  stays inside its frame
+  - PASS text "CLOSED" in  does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 8 / ALIVE 12" in BaseObjectives: drawn x=1002.5-1167.1 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 8 / ALIVE 12" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1056.6-1113.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "CORRIDOR B" in ENEMY MAIN BASE: drawn x=1263.1-1404.1 y=138.8-162.8 lines=1 size=24
+  - FAIL text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 20 s" in ENEMY MAIN BASE: drawn x=1292.8-1374.4 y=204.3-228.3 lines=1 size=24
+  - PASS text "0 / 20 s" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "0 / 20 s" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s041-bt-exit-open-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "CORRIDOR A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "EXIT": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "CORRIDOR B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "CORRIDOR A" in YOUR MAIN BASE: drawn x=637.4-778.6 y=138.8-162.8 lines=1 size=24
+  - FAIL text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "20 / 20 s" in YOUR MAIN BASE: drawn x=660.3-755.7 y=204.3-228.3 lines=1 size=24
+  - PASS text "20 / 20 s" in YOUR MAIN BASE stays inside its frame
+  - PASS text "20 / 20 s" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "EXIT" in : drawn x=874.0-926.0 y=138.8-162.8 lines=1 size=24
+  - PASS text "EXIT" in  stays inside its frame
+  - PASS text "EXIT" in  does not wrap (lines 1, authored 1)
+- text "OPEN" in : drawn x=867.7-932.3 y=204.3-228.3 lines=1 size=24
+  - PASS text "OPEN" in  stays inside its frame
+  - PASS text "OPEN" in  does not wrap (lines 1, authored 1)
+- text "COMPLETED 3 / 8 / ALIVE 9" in BaseObjectives: drawn x=1002.5-1167.1 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 3 / 8 / ALIVE 9" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1056.6-1113.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "CORRIDOR B" in ENEMY MAIN BASE: drawn x=1263.1-1404.1 y=138.8-162.8 lines=1 size=24
+  - FAIL text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "12 / 20 s" in ENEMY MAIN BASE: drawn x=1285.9-1381.3 y=204.3-228.3 lines=1 size=24
+  - PASS text "12 / 20 s" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "12 / 20 s" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s020-ce-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "DESTINATION": x=584.0 y=118.0 w=380.8 h=131.0 right=964.8 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "DESTINATION" in YOUR MAIN BASE: drawn x=727.6-885.2 y=138.8-162.8 lines=1 size=24
+  - PASS text "DESTINATION" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DESTINATION" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "DELIVER 0 / 2" in YOUR MAIN BASE: drawn x=730.0-882.8 y=204.3-228.3 lines=1 size=24
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives: drawn x=1100.9-1265.5 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1155.0-1211.4 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+
+
+## s046-ce-service-en-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=386.6 right=1902.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "DESTINATION": x=584.0 y=118.0 w=251.2 h=131.0 right=835.2 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "SERVICE PAD": x=1142.4 y=118.0 w=251.2 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "DESTINATION" in YOUR MAIN BASE: drawn x=662.8-820.4 y=138.8-162.8 lines=1 size=24
+  - PASS text "DESTINATION" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DESTINATION" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "DELIVER 0 / 2" in YOUR MAIN BASE: drawn x=665.2-818.0 y=204.3-228.3 lines=1 size=24
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives: drawn x=906.5-1071.1 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=960.6-1017.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+- text "SERVICE PAD" in ENEMY MAIN BASE: drawn x=1224.8-1375.2 y=138.8-162.8 lines=1 size=24
+  - PASS text "SERVICE PAD" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "SERVICE PAD" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE: drawn x=1219.7-1380.3 y=174.3-258.3 lines=3 size=24
+  - FAIL text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE does not wrap (lines 3, authored 1)
+
+
+## s002-ba-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=115.0 right=1752.0 bottom=225.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+  - PASS BA card at least the 560 px target width (is 1032.0)
+- control YOUR MAIN BASE "YOUR BASE": x=728.0 y=118.0 w=346.7 h=99.0 right=1074.7 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ENEMY BASE": x=1397.3 y=118.0 w=346.7 h=99.0 right=1744.0 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "YOUR BASE" in YOUR MAIN BASE: drawn x=868.3-998.3 y=130.8-154.8 lines=1 size=24
+  - PASS text "YOUR BASE" in YOUR MAIN BASE stays inside its frame
+  - PASS text "YOUR BASE" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=880.7-985.9 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "TIME LEFT" in BaseObjectives: drawn x=1178.4-1293.6 y=135.7-158.7 lines=1 size=23
+  - PASS text "TIME LEFT" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=1194.6-1277.4 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ENEMY BASE" in ENEMY MAIN BASE: drawn x=1528.2-1677.2 y=130.8-154.8 lines=1 size=24
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NOT IN SIGHT ›" in ENEMY MAIN BASE: drawn x=1517.9-1687.4 y=180.3-204.3 lines=1 size=24
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL YOUR BASE glyph Shield (is none)
+  - FAIL YOUR BASE keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ENEMY BASE glyph Diamond (is none)
+  - FAIL ENEMY BASE keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=1145.0 y=376.0 w=350.0 h=184.0 right=1495.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s026-ba-first-order-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=115.0 right=1752.0 bottom=225.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+- second centre bar (FirstOrderPrompt): x=790.0 y=235.0 w=820.0 h=62.0 right=1610.0 bottom=297.0
+  - FAIL one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "YOUR BASE": x=728.0 y=118.0 w=346.7 h=99.0 right=1074.7 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ENEMY BASE": x=1397.3 y=118.0 w=346.7 h=99.0 right=1744.0 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "YOUR BASE" in YOUR MAIN BASE: drawn x=868.3-998.3 y=130.8-154.8 lines=1 size=24
+  - PASS text "YOUR BASE" in YOUR MAIN BASE stays inside its frame
+  - PASS text "YOUR BASE" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=880.7-985.9 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "TIME LEFT" in BaseObjectives: drawn x=1178.4-1293.6 y=135.7-158.7 lines=1 size=23
+  - PASS text "TIME LEFT" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=1194.6-1277.4 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ENEMY BASE" in ENEMY MAIN BASE: drawn x=1528.2-1677.2 y=130.8-154.8 lines=1 size=24
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ENEMY BASE" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NOT IN SIGHT ›" in ENEMY MAIN BASE: drawn x=1517.9-1687.4 y=180.3-204.3 lines=1 size=24
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "NOT IN SIGHT ›" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL YOUR BASE glyph Shield (is none)
+  - FAIL YOUR BASE keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ENEMY BASE glyph Diamond (is none)
+  - FAIL ENEMY BASE keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=1145.0 y=376.0 w=350.0 h=184.0 right=1495.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s031-fc-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ZONE A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ZONE C": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ZONE B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ZONE A" in YOUR MAIN BASE: drawn x=836.2-921.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ZONE A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "OURS" in YOUR MAIN BASE: drawn x=847.3-910.7 y=204.3-228.3 lines=1 size=24
+  - PASS text "OURS" in YOUR MAIN BASE stays inside its frame
+  - PASS text "OURS" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ZONE C" in : drawn x=1082.7-1167.3 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE C" in  stays inside its frame
+  - PASS text "ZONE C" in  does not wrap (lines 1, authored 1)
+- text "NEUTRAL • CAPTURE 40%" in : drawn x=1063.6-1186.4 y=174.3-258.3 lines=3 size=24
+  - FAIL text "NEUTRAL • CAPTURE 40%" in  stays inside its frame
+  - FAIL text "NEUTRAL • CAPTURE 40%" in  does not wrap (lines 3, authored 1)
+- text "TICKETS 500 / 500" in BaseObjectives: drawn x=1272.6-1445.4 y=152.6-172.6 lines=1 size=20
+  - PASS text "TICKETS 500 / 500" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1322.7-1395.3 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ZONE B" in ENEMY MAIN BASE: drawn x=1614.4-1699.6 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ZONE B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "OPPONENT • CONTESTED" in ENEMY MAIN BASE: drawn x=1585.1-1728.9 y=189.3-243.3 lines=2 size=24
+  - PASS text "OPPONENT • CONTESTED" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "OPPONENT • CONTESTED" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CA6E6
+  - FAIL ZONE A glyph Shield (is none)
+  - FAIL ZONE A keyline #49BD62 (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#4CA6E6
+  - FAIL ZONE B glyph Diamond (is none)
+  - FAIL ZONE B keyline #F45C3B (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE C glyph Ring (is none)
+  - FAIL ZONE C keyline #BBC7CD (is #4CA6E6)
+
+
+## s011-fc-neutral-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ZONE A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ZONE C": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ZONE B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ZONE A" in YOUR MAIN BASE: drawn x=836.2-921.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ZONE A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in YOUR MAIN BASE: drawn x=824.9-933.1 y=204.3-228.3 lines=1 size=24
+  - PASS text "NEUTRAL" in YOUR MAIN BASE stays inside its frame
+  - PASS text "NEUTRAL" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ZONE C" in : drawn x=1082.7-1167.3 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE C" in  stays inside its frame
+  - PASS text "ZONE C" in  does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in : drawn x=1070.9-1179.1 y=204.3-228.3 lines=1 size=24
+  - PASS text "NEUTRAL" in  stays inside its frame
+  - PASS text "NEUTRAL" in  does not wrap (lines 1, authored 1)
+- text "TICKETS 500 / 500" in BaseObjectives: drawn x=1272.6-1445.4 y=152.6-172.6 lines=1 size=20
+  - PASS text "TICKETS 500 / 500" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1322.7-1395.3 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ZONE B" in ENEMY MAIN BASE: drawn x=1614.4-1699.6 y=138.8-162.8 lines=1 size=24
+  - PASS text "ZONE B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ZONE B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "NEUTRAL" in ENEMY MAIN BASE: drawn x=1602.9-1711.1 y=204.3-228.3 lines=1 size=24
+  - PASS text "NEUTRAL" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "NEUTRAL" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE A glyph Ring (is none)
+  - FAIL ZONE A keyline #BBC7CD (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE B glyph Ring (is none)
+  - FAIL ZONE B keyline #BBC7CD (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ZONE C glyph Ring (is none)
+  - FAIL ZONE C keyline #BBC7CD (is #4CA6E6)
+
+
+## s037-bt-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "CORRIDOR A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "EXIT": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "CORRIDOR B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "CORRIDOR A" in YOUR MAIN BASE: drawn x=808.4-949.6 y=138.8-162.8 lines=1 size=24
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 20 s" in YOUR MAIN BASE: drawn x=838.2-919.8 y=204.3-228.3 lines=1 size=24
+  - PASS text "0 / 20 s" in YOUR MAIN BASE stays inside its frame
+  - PASS text "0 / 20 s" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "EXIT" in : drawn x=1099.0-1151.0 y=138.8-162.8 lines=1 size=24
+  - PASS text "EXIT" in  stays inside its frame
+  - PASS text "EXIT" in  does not wrap (lines 1, authored 1)
+- text "CLOSED" in : drawn x=1079.9-1170.1 y=204.3-228.3 lines=1 size=24
+  - PASS text "CLOSED" in  stays inside its frame
+  - PASS text "CLOSED" in  does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 8 / ALIVE 12" in BaseObjectives: drawn x=1276.7-1441.3 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 8 / ALIVE 12" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1330.8-1387.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "CORRIDOR B" in ENEMY MAIN BASE: drawn x=1586.5-1727.5 y=138.8-162.8 lines=1 size=24
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 20 s" in ENEMY MAIN BASE: drawn x=1616.2-1697.8 y=204.3-228.3 lines=1 size=24
+  - PASS text "0 / 20 s" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "0 / 20 s" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s041-bt-exit-open-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "CORRIDOR A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "EXIT": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "CORRIDOR B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "CORRIDOR A" in YOUR MAIN BASE: drawn x=808.4-949.6 y=138.8-162.8 lines=1 size=24
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "20 / 20 s" in YOUR MAIN BASE: drawn x=831.3-926.7 y=204.3-228.3 lines=1 size=24
+  - PASS text "20 / 20 s" in YOUR MAIN BASE stays inside its frame
+  - PASS text "20 / 20 s" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "EXIT" in : drawn x=1099.0-1151.0 y=138.8-162.8 lines=1 size=24
+  - PASS text "EXIT" in  stays inside its frame
+  - PASS text "EXIT" in  does not wrap (lines 1, authored 1)
+- text "OPEN" in : drawn x=1092.7-1157.3 y=204.3-228.3 lines=1 size=24
+  - PASS text "OPEN" in  stays inside its frame
+  - PASS text "OPEN" in  does not wrap (lines 1, authored 1)
+- text "COMPLETED 3 / 8 / ALIVE 9" in BaseObjectives: drawn x=1276.7-1441.3 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 3 / 8 / ALIVE 9" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1330.8-1387.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "CORRIDOR B" in ENEMY MAIN BASE: drawn x=1586.5-1727.5 y=138.8-162.8 lines=1 size=24
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "CORRIDOR B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "12 / 20 s" in ENEMY MAIN BASE: drawn x=1609.3-1704.7 y=204.3-228.3 lines=1 size=24
+  - PASS text "12 / 20 s" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "12 / 20 s" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s020-ce-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "DESTINATION": x=728.0 y=118.0 w=484.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "DESTINATION" in YOUR MAIN BASE: drawn x=923.2-1080.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "DESTINATION" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DESTINATION" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "DELIVER 0 / 2" in YOUR MAIN BASE: drawn x=925.6-1078.4 y=204.3-228.3 lines=1 size=24
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives: drawn x=1399.7-1564.3 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1453.8-1510.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+
+
+## s046-ce-service-en-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=386.6 right=2382.8 bottom=395.8
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "DESTINATION": x=728.0 y=118.0 w=320.0 h=131.0 right=1048.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "SERVICE PAD": x=1424.0 y=118.0 w=320.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "DESTINATION" in YOUR MAIN BASE: drawn x=841.2-998.8 y=138.8-162.8 lines=1 size=24
+  - PASS text "DESTINATION" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DESTINATION" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "DELIVER 0 / 2" in YOUR MAIN BASE: drawn x=843.6-996.4 y=204.3-228.3 lines=1 size=24
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "DELIVER 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives: drawn x=1153.7-1318.3 y=140.1-185.1 lines=2 size=20
+  - PASS text "COMPLETED 0 / 2 / ALIVE 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1207.8-1264.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+- text "SERVICE PAD" in ENEMY MAIN BASE: drawn x=1540.8-1691.2 y=138.8-162.8 lines=1 size=24
+  - PASS text "SERVICE PAD" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "SERVICE PAD" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE: drawn x=1525.9-1706.1 y=189.3-243.3 lines=2 size=24
+  - PASS text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+
+
+## s002-ba-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=115.0 right=1401.6 bottom=225.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+  - PASS BA card at least the 560 px target width (is 825.6)
+- control YOUR MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ": x=584.0 y=118.0 w=277.2 h=99.0 right=861.2 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ": x=1116.4 y=118.0 w=277.2 h=99.0 right=1393.6 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE: drawn x=642.7-732.6 y=122.1-163.4 lines=1 size=19.6
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=638.0-743.2 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives: drawn x=922.5-1046.6 y=122.9-171.5 lines=1 size=23
+  - PASS text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=947.4-1030.2 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE: drawn x=1163.9-1274.9 y=117.4-168.1 lines=1 size=24
+  - FAIL text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE: drawn x=1164.3-1267.6 y=166.9-217.6 lines=1 size=24
+  - FAIL text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=881.0 y=376.0 w=350.0 h=184.0 right=1231.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s026-ba-first-order-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=115.0 right=1401.6 bottom=225.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+- second centre bar (FirstOrderPrompt): x=550.0 y=235.0 w=820.0 h=62.0 right=1370.0 bottom=297.0
+  - FAIL one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ": x=584.0 y=118.0 w=277.2 h=99.0 right=861.2 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ": x=1116.4 y=118.0 w=277.2 h=99.0 right=1393.6 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE: drawn x=642.7-732.6 y=122.1-163.4 lines=1 size=19.6
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=638.0-743.2 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives: drawn x=922.5-1046.6 y=122.9-171.5 lines=1 size=23
+  - PASS text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=947.4-1030.2 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE: drawn x=1163.9-1274.9 y=117.4-168.1 lines=1 size=24
+  - FAIL text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE: drawn x=1164.3-1267.6 y=166.9-217.6 lines=1 size=24
+  - FAIL text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=881.0 y=376.0 w=350.0 h=184.0 right=1231.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s031-fc-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻨﻄﻘﻪ A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﻣﻨﻄﻘﻪ C": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﻨﻄﻘﻪ B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE: drawn x=602.5-672.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﻮﺩﯼ" in YOUR MAIN BASE: drawn x=616.4-657.4 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺧﻮﺩﯼ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺧﻮﺩﯼ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﻣﻨﻄﻘﻪ C" in : drawn x=794.8-864.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in : drawn x=795.8-869.8 y=140.2-292.3 lines=3 size=24
+  - FAIL text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  stays inside its frame
+  - FAIL text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  does not wrap (lines 3, authored 1)
+- text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives: drawn x=1024.2-1140.5 y=143.6-181.6 lines=1 size=18
+  - PASS text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1048.5-1121.1 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE: drawn x=1228.0-1298.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE: drawn x=1231.3-1296.4 y=165.6-266.9 lines=2 size=24
+  - FAIL text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ A glyph Shield (is none)
+  - FAIL ﻣﻨﻄﻘﻪ A keyline #49BD62 (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ B glyph Diamond (is none)
+  - FAIL ﻣﻨﻄﻘﻪ B keyline #F45C3B (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+
+
+## s011-fc-neutral-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻨﻄﻘﻪ A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﻣﻨﻄﻘﻪ C": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﻨﻄﻘﻪ B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE: drawn x=602.5-672.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE: drawn x=611.2-670.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﻣﻨﻄﻘﻪ C" in : drawn x=794.8-864.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in : drawn x=803.2-862.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in  stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives: drawn x=1024.2-1140.5 y=143.6-181.6 lines=1 size=18
+  - PASS text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1048.5-1121.1 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE: drawn x=1228.0-1298.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE: drawn x=1236.8-1295.9 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ A glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ A keyline #BBC7CD (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ B glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ B keyline #BBC7CD (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+
+
+## s037-bt-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﺴﯿﺮ A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﺧﺮﻭﺝ": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﺴﯿﺮ B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE: drawn x=607.5-667.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE: drawn x=612.3-661.9 y=165.6-266.9 lines=2 size=24
+  - FAIL text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+  - FAIL text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- text "ﺧﺮﻭﺝ" in : drawn x=811.1-846.7 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﺧﺮﻭﺝ" in  stays inside its frame
+  - PASS text "ﺧﺮﻭﺝ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﺴﺘﻪ" in : drawn x=812.3-853.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﺴﺘﻪ" in  stays inside its frame
+  - PASS text "ﺑﺴﺘﻪ" in  does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 8 / ﺯﻧﺪﻩ 21" in BaseObjectives: drawn x=1041.5-1122.8 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 8 / ﺯﻧﺪﻩ 21" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1056.6-1113.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE: drawn x=1233.0-1293.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE: drawn x=1237.9-1287.5 y=165.6-266.9 lines=2 size=24
+  - FAIL text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+
+
+## s041-bt-exit-open-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﺴﯿﺮ A": x=584.0 y=118.0 w=184.0 h=131.0 right=768.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﺧﺮﻭﺝ": x=776.0 y=118.0 w=184.0 h=131.0 right=960.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﺴﯿﺮ B": x=1209.6 y=118.0 w=184.0 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE: drawn x=607.5-667.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE: drawn x=605.5-668.8 y=165.6-266.9 lines=2 size=24
+  - FAIL text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+  - FAIL text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- text "ﺧﺮﻭﺝ" in : drawn x=811.1-846.7 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﺧﺮﻭﺝ" in  stays inside its frame
+  - PASS text "ﺧﺮﻭﺝ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﺎﺯ" in : drawn x=824.9-840.7 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﺎﺯ" in  stays inside its frame
+  - PASS text "ﺑﺎﺯ" in  does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 3 / 8 / ﺯﻧﺪﻩ 9" in BaseObjectives: drawn x=1041.5-1122.8 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 3 / 8 / ﺯﻧﺪﻩ 9" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1056.6-1113.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE: drawn x=1233.0-1293.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE: drawn x=1231.1-1294.4 y=165.6-266.9 lines=2 size=24
+  - FAIL text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+  - FAIL text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+
+
+## s020-ce-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻘﺼﺪ": x=584.0 y=118.0 w=380.8 h=131.0 right=964.8 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻘﺼﺪ" in YOUR MAIN BASE: drawn x=712.4-759.8 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE: drawn x=685.2-792.4 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives: drawn x=1139.9-1221.2 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1155.0-1211.4 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+
+
+## s046-ce-service-fa-IR-1920
+- screen: 1920x1080
+- objective card: x=576.0 y=110.0 w=825.6 h=147.0 right=1401.6 bottom=257.0
+- resource bar: x=475.7 y=9.2 w=705.8 h=83.8 right=1181.5 bottom=93.0
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=472.7 right=1902.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1401.6, ARIA left 1443.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻘﺼﺪ": x=584.0 y=118.0 w=251.2 h=131.0 right=835.2 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﻣﺤﻞ ﺗﻌﻤﯿﺮ": x=1142.4 y=118.0 w=251.2 h=131.0 right=1393.6 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻘﺼﺪ" in YOUR MAIN BASE: drawn x=647.6-695.0 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE: drawn x=620.4-727.6 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives: drawn x=945.5-1026.8 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=960.6-1017.0 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+- text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE: drawn x=1184.2-1275.2 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE: drawn x=1154.4-1304.1 y=198.1-234.4 lines=1 size=17.2
+  - PASS text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s002-ba-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=115.0 right=1752.0 bottom=225.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+  - PASS BA card at least the 560 px target width (is 1032.0)
+- control YOUR MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ": x=728.0 y=118.0 w=346.7 h=99.0 right=1074.7 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ": x=1397.3 y=118.0 w=346.7 h=99.0 right=1744.0 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE: drawn x=821.5-911.3 y=122.1-163.4 lines=1 size=19.6
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=816.7-921.9 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives: drawn x=1169.7-1293.8 y=122.9-171.5 lines=1 size=23
+  - PASS text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=1194.6-1277.4 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE: drawn x=1479.6-1590.6 y=117.4-168.1 lines=1 size=24
+  - FAIL text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE: drawn x=1480.0-1583.2 y=166.9-217.6 lines=1 size=24
+  - FAIL text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=1145.0 y=376.0 w=350.0 h=184.0 right=1495.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s026-ba-first-order-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=115.0 right=1752.0 bottom=225.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+- second centre bar (FirstOrderPrompt): x=790.0 y=235.0 w=820.0 h=62.0 right=1610.0 bottom=297.0
+  - FAIL one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ": x=728.0 y=118.0 w=346.7 h=99.0 right=1074.7 bottom=217.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ": x=1397.3 y=118.0 w=346.7 h=99.0 right=1744.0 bottom=217.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 99.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE: drawn x=821.5-911.3 y=122.1-163.4 lines=1 size=19.6
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "800 / 800" in YOUR MAIN BASE: drawn x=816.7-921.9 y=180.3-204.3 lines=1 size=24
+  - PASS text "800 / 800" in YOUR MAIN BASE stays inside its frame
+  - PASS text "800 / 800" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives: drawn x=1169.7-1293.8 y=122.9-171.5 lines=1 size=23
+  - PASS text "ﺯﻣﺎﻥ ﺑﺎﻗﯿﻤﻮﻧﺪﻩ" in BaseObjectives stays inside its frame
+- text "17:53" in BaseObjectives: drawn x=1194.6-1277.4 y=176.7-208.7 lines=1 size=32
+  - PASS text "17:53" in BaseObjectives stays inside its frame
+- text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE: drawn x=1479.6-1590.6 y=117.4-168.1 lines=1 size=24
+  - FAIL text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE: drawn x=1480.0-1583.2 y=166.9-217.6 lines=1 size=24
+  - FAIL text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CD966
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#FF5926
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+  - FAIL ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- in-world enemy base chip: x=1145.0 y=376.0 w=350.0 h=184.0 right=1495.0 bottom=560.0
+- in-world enemy base: glyph=none keyline=#9EB2BD
+  - FAIL in-world enemy base glyph Diamond (is none)
+  - FAIL in-world enemy base keyline #F45C3B (is #9EB2BD)
+
+
+## s031-fc-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻨﻄﻘﻪ A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﻣﻨﻄﻘﻪ C": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﻨﻄﻘﻪ B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE: drawn x=773.5-843.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﻮﺩﯼ" in YOUR MAIN BASE: drawn x=787.4-828.4 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺧﻮﺩﯼ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺧﻮﺩﯼ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﻣﻨﻄﻘﻪ C" in : drawn x=1019.8-1089.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in : drawn x=986.1-1129.4 y=165.6-266.9 lines=2 size=24
+  - FAIL text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  stays inside its frame
+  - FAIL text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  does not wrap (lines 2, authored 1)
+- text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives: drawn x=1298.4-1414.7 y=143.6-181.6 lines=1 size=18
+  - PASS text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1322.7-1395.3 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE: drawn x=1551.4-1622.0 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE: drawn x=1518.2-1656.4 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=1 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ A glyph Shield (is none)
+  - FAIL ﻣﻨﻄﻘﻪ A keyline #49BD62 (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=2 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ B glyph Diamond (is none)
+  - FAIL ﻣﻨﻄﻘﻪ B keyline #F45C3B (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+
+
+## s011-fc-neutral-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻨﻄﻘﻪ A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﻣﻨﻄﻘﻪ C": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﻨﻄﻘﻪ B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE: drawn x=773.5-843.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE: drawn x=782.2-841.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﻣﻨﻄﻘﻪ C" in : drawn x=1019.8-1089.6 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ C" in  does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in : drawn x=1028.2-1087.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in  stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives: drawn x=1298.4-1414.7 y=143.6-181.6 lines=1 size=18
+  - PASS text "ﺑﻠﯿﺘﻬﺎ 005 / 005" in BaseObjectives stays inside its frame
+- text "19:53" in BaseObjectives: drawn x=1322.7-1395.3 y=210.1-238.1 lines=1 size=28
+  - PASS text "19:53" in BaseObjectives stays inside its frame
+- text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE: drawn x=1551.4-1622.0 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﻨﻄﻘﻪ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE: drawn x=1560.2-1619.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺑﯿﻄﺮﻑ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- ownership YOUR MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ A glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ A keyline #BBC7CD (is #4CA6E6)
+- ownership ENEMY MAIN BASE: owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ B glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ B keyline #BBC7CD (is #4CA6E6)
+- ownership : owner=0 glyph=none keyline=#4CA6E6
+  - FAIL ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+  - FAIL ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+
+
+## s037-bt-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﺴﯿﺮ A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﺧﺮﻭﺝ": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﺴﯿﺮ B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE: drawn x=778.5-838.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE: drawn x=759.6-856.7 y=190.9-241.6 lines=1 size=24
+  - PASS text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺮﻭﺝ" in : drawn x=1036.1-1071.7 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﺧﺮﻭﺝ" in  stays inside its frame
+  - PASS text "ﺧﺮﻭﺝ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﺴﺘﻪ" in : drawn x=1037.3-1078.3 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﺴﺘﻪ" in  stays inside its frame
+  - PASS text "ﺑﺴﺘﻪ" in  does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 8 / ﺯﻧﺪﻩ 21" in BaseObjectives: drawn x=1315.7-1397.0 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 8 / ﺯﻧﺪﻩ 21" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1330.8-1387.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE: drawn x=1556.4-1617.0 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE: drawn x=1537.6-1634.7 y=190.9-241.6 lines=1 size=24
+  - PASS text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s041-bt-exit-open-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﺴﯿﺮ A": x=728.0 y=118.0 w=238.0 h=131.0 right=966.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control  "ﺧﺮﻭﺝ": x=974.0 y=118.0 w=238.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control  target >= 64 px tall (is 131.0)
+  - PASS control  inside the card
+- control ENEMY MAIN BASE "ﻣﺴﯿﺮ B": x=1506.0 y=118.0 w=238.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE: drawn x=778.5-838.9 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ A" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE: drawn x=752.7-863.5 y=190.9-241.6 lines=1 size=24
+  - PASS text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺧﺮﻭﺝ" in : drawn x=1036.1-1071.7 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﺧﺮﻭﺝ" in  stays inside its frame
+  - PASS text "ﺧﺮﻭﺝ" in  does not wrap (lines 1, authored 1)
+- text "ﺑﺎﺯ" in : drawn x=1049.9-1065.7 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺑﺎﺯ" in  stays inside its frame
+  - PASS text "ﺑﺎﺯ" in  does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 3 / 8 / ﺯﻧﺪﻩ 9" in BaseObjectives: drawn x=1315.7-1397.0 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 3 / 8 / ﺯﻧﺪﻩ 9" in BaseObjectives stays inside its frame
+- text "8:53" in BaseObjectives: drawn x=1330.8-1387.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "8:53" in BaseObjectives stays inside its frame
+- text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE: drawn x=1556.4-1617.0 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺴﯿﺮ B" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE: drawn x=1530.7-1641.5 y=190.9-241.6 lines=1 size=24
+  - PASS text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+## s020-ce-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻘﺼﺪ": x=728.0 y=118.0 w=484.0 h=131.0 right=1212.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻘﺼﺪ" in YOUR MAIN BASE: drawn x=908.0-955.4 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE: drawn x=880.8-988.0 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives: drawn x=1438.7-1520.0 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1453.8-1510.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+
+
+## s046-ce-service-fa-IR-2400
+- screen: 2400x1080
+- objective card: x=720.0 y=110.0 w=1032.0 h=147.0 right=1752.0 bottom=257.0
+- resource bar: x=715.7 y=9.2 w=705.8 h=83.8 right=1421.5 bottom=93.0
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=472.7 right=2382.8 bottom=481.9
+  - PASS one objective card, no stacked centre bar (extra: [])
+  - FAIL card 12 px below the resource bar (is 17.0)
+  - PASS card inside the safe area
+  - PASS card clear of the ARIA panel (card right 1752.0, ARIA left 1923.7)
+- card keyline: #00BAD9 2 px
+  - FAIL warm 2-3 px keyline #E7562C
+- purpose / next action row: hidden
+- status row: hidden
+  - FAIL purpose and next action first, then status
+- control YOUR MAIN BASE "ﻣﻘﺼﺪ": x=728.0 y=118.0 w=320.0 h=131.0 right=1048.0 bottom=249.0
+  - PASS control YOUR MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control YOUR MAIN BASE inside the card
+- control ENEMY MAIN BASE "ﻣﺤﻞ ﺗﻌﻤﯿﺮ": x=1424.0 y=118.0 w=320.0 h=131.0 right=1744.0 bottom=249.0
+  - PASS control ENEMY MAIN BASE target >= 64 px tall (is 131.0)
+  - PASS control ENEMY MAIN BASE inside the card
+  - PASS at most one gold camera action (is 0)
+- text "ﻣﻘﺼﺪ" in YOUR MAIN BASE: drawn x=826.0-873.4 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﻣﻘﺼﺪ" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE: drawn x=798.8-906.0 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE stays inside its frame
+  - PASS text "ﺗﺤﻮﯾﻞ 0 / 2" in YOUR MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives: drawn x=1192.7-1274.0 y=124.6-200.6 lines=2 size=18
+  - PASS text "ﺗﮑﻤﯿﻞ 0 / 2 / ﺯﻧﺪﻩ 3" in BaseObjectives stays inside its frame
+- text "7:22" in BaseObjectives: drawn x=1207.8-1264.2 y=210.1-238.1 lines=1 size=28
+  - PASS text "7:22" in BaseObjectives stays inside its frame
+- text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE: drawn x=1500.2-1591.2 y=125.4-176.1 lines=1 size=24
+  - PASS text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﻣﺤﻞ ﺗﻌﻤﯿﺮ" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+- text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE: drawn x=1438.2-1647.0 y=190.9-241.6 lines=1 size=24
+  - PASS text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE stays inside its frame
+  - PASS text "ﺷﻌﺎﻉ ۲۱ ﻣﺘﺮ · ﻣﺼﺎﻟﺢ ۰۰۹" in ENEMY MAIN BASE does not wrap (lines 1, authored 1)
+
+
+
+## Rule check
+
+- s002-ba-en-1920: card 12 px below the resource bar (is 17.0)
+- s002-ba-en-1920: warm 2-3 px keyline #E7562C
+- s002-ba-en-1920: purpose and next action first, then status
+- s002-ba-en-1920: YOUR BASE glyph Shield (is none)
+- s002-ba-en-1920: YOUR BASE keyline #49BD62 (is #4CD966)
+- s002-ba-en-1920: ENEMY BASE glyph Diamond (is none)
+- s002-ba-en-1920: ENEMY BASE keyline #F45C3B (is #FF5926)
+- s002-ba-en-1920: in-world enemy base glyph Diamond (is none)
+- s002-ba-en-1920: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s026-ba-first-order-en-1920: one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+- s026-ba-first-order-en-1920: card 12 px below the resource bar (is 17.0)
+- s026-ba-first-order-en-1920: warm 2-3 px keyline #E7562C
+- s026-ba-first-order-en-1920: purpose and next action first, then status
+- s026-ba-first-order-en-1920: YOUR BASE glyph Shield (is none)
+- s026-ba-first-order-en-1920: YOUR BASE keyline #49BD62 (is #4CD966)
+- s026-ba-first-order-en-1920: ENEMY BASE glyph Diamond (is none)
+- s026-ba-first-order-en-1920: ENEMY BASE keyline #F45C3B (is #FF5926)
+- s026-ba-first-order-en-1920: in-world enemy base glyph Diamond (is none)
+- s026-ba-first-order-en-1920: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s031-fc-en-1920: card 12 px below the resource bar (is 17.0)
+- s031-fc-en-1920: warm 2-3 px keyline #E7562C
+- s031-fc-en-1920: purpose and next action first, then status
+- s031-fc-en-1920: text "NEUTRAL • CAPTURE 40%" in  stays inside its frame
+- s031-fc-en-1920: text "NEUTRAL • CAPTURE 40%" in  does not wrap (lines 4, authored 1)
+- s031-fc-en-1920: text "OPPONENT • CONTESTED" in ENEMY MAIN BASE stays inside its frame
+- s031-fc-en-1920: text "OPPONENT • CONTESTED" in ENEMY MAIN BASE does not wrap (lines 4, authored 1)
+- s031-fc-en-1920: ZONE A glyph Shield (is none)
+- s031-fc-en-1920: ZONE A keyline #49BD62 (is #4CA6E6)
+- s031-fc-en-1920: ZONE B glyph Diamond (is none)
+- s031-fc-en-1920: ZONE B keyline #F45C3B (is #4CA6E6)
+- s031-fc-en-1920: ZONE C glyph Ring (is none)
+- s031-fc-en-1920: ZONE C keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-1920: card 12 px below the resource bar (is 17.0)
+- s011-fc-neutral-en-1920: warm 2-3 px keyline #E7562C
+- s011-fc-neutral-en-1920: purpose and next action first, then status
+- s011-fc-neutral-en-1920: text "NEUTRAL" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- s011-fc-neutral-en-1920: text "NEUTRAL" in  does not wrap (lines 2, authored 1)
+- s011-fc-neutral-en-1920: text "NEUTRAL" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s011-fc-neutral-en-1920: ZONE A glyph Ring (is none)
+- s011-fc-neutral-en-1920: ZONE A keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-1920: ZONE B glyph Ring (is none)
+- s011-fc-neutral-en-1920: ZONE B keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-1920: ZONE C glyph Ring (is none)
+- s011-fc-neutral-en-1920: ZONE C keyline #BBC7CD (is #4CA6E6)
+- s037-bt-en-1920: card 12 px below the resource bar (is 17.0)
+- s037-bt-en-1920: warm 2-3 px keyline #E7562C
+- s037-bt-en-1920: purpose and next action first, then status
+- s037-bt-en-1920: text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+- s037-bt-en-1920: text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+- s041-bt-exit-open-en-1920: card 12 px below the resource bar (is 17.0)
+- s041-bt-exit-open-en-1920: warm 2-3 px keyline #E7562C
+- s041-bt-exit-open-en-1920: purpose and next action first, then status
+- s041-bt-exit-open-en-1920: text "CORRIDOR A" in YOUR MAIN BASE stays inside its frame
+- s041-bt-exit-open-en-1920: text "CORRIDOR B" in ENEMY MAIN BASE stays inside its frame
+- s020-ce-en-1920: card 12 px below the resource bar (is 17.0)
+- s020-ce-en-1920: warm 2-3 px keyline #E7562C
+- s020-ce-en-1920: purpose and next action first, then status
+- s046-ce-service-en-1920: card 12 px below the resource bar (is 17.0)
+- s046-ce-service-en-1920: warm 2-3 px keyline #E7562C
+- s046-ce-service-en-1920: purpose and next action first, then status
+- s046-ce-service-en-1920: text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE stays inside its frame
+- s046-ce-service-en-1920: text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE does not wrap (lines 3, authored 1)
+- s002-ba-en-2400: card 12 px below the resource bar (is 17.0)
+- s002-ba-en-2400: warm 2-3 px keyline #E7562C
+- s002-ba-en-2400: purpose and next action first, then status
+- s002-ba-en-2400: YOUR BASE glyph Shield (is none)
+- s002-ba-en-2400: YOUR BASE keyline #49BD62 (is #4CD966)
+- s002-ba-en-2400: ENEMY BASE glyph Diamond (is none)
+- s002-ba-en-2400: ENEMY BASE keyline #F45C3B (is #FF5926)
+- s002-ba-en-2400: in-world enemy base glyph Diamond (is none)
+- s002-ba-en-2400: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s026-ba-first-order-en-2400: one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+- s026-ba-first-order-en-2400: card 12 px below the resource bar (is 17.0)
+- s026-ba-first-order-en-2400: warm 2-3 px keyline #E7562C
+- s026-ba-first-order-en-2400: purpose and next action first, then status
+- s026-ba-first-order-en-2400: YOUR BASE glyph Shield (is none)
+- s026-ba-first-order-en-2400: YOUR BASE keyline #49BD62 (is #4CD966)
+- s026-ba-first-order-en-2400: ENEMY BASE glyph Diamond (is none)
+- s026-ba-first-order-en-2400: ENEMY BASE keyline #F45C3B (is #FF5926)
+- s026-ba-first-order-en-2400: in-world enemy base glyph Diamond (is none)
+- s026-ba-first-order-en-2400: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s031-fc-en-2400: card 12 px below the resource bar (is 17.0)
+- s031-fc-en-2400: warm 2-3 px keyline #E7562C
+- s031-fc-en-2400: purpose and next action first, then status
+- s031-fc-en-2400: text "NEUTRAL • CAPTURE 40%" in  stays inside its frame
+- s031-fc-en-2400: text "NEUTRAL • CAPTURE 40%" in  does not wrap (lines 3, authored 1)
+- s031-fc-en-2400: text "OPPONENT • CONTESTED" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s031-fc-en-2400: ZONE A glyph Shield (is none)
+- s031-fc-en-2400: ZONE A keyline #49BD62 (is #4CA6E6)
+- s031-fc-en-2400: ZONE B glyph Diamond (is none)
+- s031-fc-en-2400: ZONE B keyline #F45C3B (is #4CA6E6)
+- s031-fc-en-2400: ZONE C glyph Ring (is none)
+- s031-fc-en-2400: ZONE C keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-2400: card 12 px below the resource bar (is 17.0)
+- s011-fc-neutral-en-2400: warm 2-3 px keyline #E7562C
+- s011-fc-neutral-en-2400: purpose and next action first, then status
+- s011-fc-neutral-en-2400: ZONE A glyph Ring (is none)
+- s011-fc-neutral-en-2400: ZONE A keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-2400: ZONE B glyph Ring (is none)
+- s011-fc-neutral-en-2400: ZONE B keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-en-2400: ZONE C glyph Ring (is none)
+- s011-fc-neutral-en-2400: ZONE C keyline #BBC7CD (is #4CA6E6)
+- s037-bt-en-2400: card 12 px below the resource bar (is 17.0)
+- s037-bt-en-2400: warm 2-3 px keyline #E7562C
+- s037-bt-en-2400: purpose and next action first, then status
+- s041-bt-exit-open-en-2400: card 12 px below the resource bar (is 17.0)
+- s041-bt-exit-open-en-2400: warm 2-3 px keyline #E7562C
+- s041-bt-exit-open-en-2400: purpose and next action first, then status
+- s020-ce-en-2400: card 12 px below the resource bar (is 17.0)
+- s020-ce-en-2400: warm 2-3 px keyline #E7562C
+- s020-ce-en-2400: purpose and next action first, then status
+- s046-ce-service-en-2400: card 12 px below the resource bar (is 17.0)
+- s046-ce-service-en-2400: warm 2-3 px keyline #E7562C
+- s046-ce-service-en-2400: purpose and next action first, then status
+- s046-ce-service-en-2400: text "WITHIN 12 m · MATERIALS 900" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s002-ba-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s002-ba-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s002-ba-fa-IR-1920: purpose and next action first, then status
+- s002-ba-fa-IR-1920: text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+- s002-ba-fa-IR-1920: text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+- s002-ba-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+- s002-ba-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- s002-ba-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+- s002-ba-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- s002-ba-fa-IR-1920: in-world enemy base glyph Diamond (is none)
+- s002-ba-fa-IR-1920: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s026-ba-first-order-fa-IR-1920: one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+- s026-ba-first-order-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s026-ba-first-order-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s026-ba-first-order-fa-IR-1920: purpose and next action first, then status
+- s026-ba-first-order-fa-IR-1920: text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+- s026-ba-first-order-fa-IR-1920: text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+- s026-ba-first-order-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+- s026-ba-first-order-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- s026-ba-first-order-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+- s026-ba-first-order-fa-IR-1920: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- s026-ba-first-order-fa-IR-1920: in-world enemy base glyph Diamond (is none)
+- s026-ba-first-order-fa-IR-1920: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s031-fc-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s031-fc-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s031-fc-fa-IR-1920: purpose and next action first, then status
+- s031-fc-fa-IR-1920: text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  stays inside its frame
+- s031-fc-fa-IR-1920: text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  does not wrap (lines 3, authored 1)
+- s031-fc-fa-IR-1920: text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE stays inside its frame
+- s031-fc-fa-IR-1920: text "ﺩﺷﻤﻦ • ﺩﺭﮔﯿﺮﯼ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ A glyph Shield (is none)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ A keyline #49BD62 (is #4CA6E6)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ B glyph Diamond (is none)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ B keyline #F45C3B (is #4CA6E6)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+- s031-fc-fa-IR-1920: ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s011-fc-neutral-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s011-fc-neutral-fa-IR-1920: purpose and next action first, then status
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ A glyph Ring (is none)
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ A keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ B glyph Ring (is none)
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ B keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+- s011-fc-neutral-fa-IR-1920: ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+- s037-bt-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s037-bt-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s037-bt-fa-IR-1920: purpose and next action first, then status
+- s037-bt-fa-IR-1920: text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+- s037-bt-fa-IR-1920: text "0 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- s037-bt-fa-IR-1920: text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+- s037-bt-fa-IR-1920: text "0 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s041-bt-exit-open-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s041-bt-exit-open-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s041-bt-exit-open-fa-IR-1920: purpose and next action first, then status
+- s041-bt-exit-open-fa-IR-1920: text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE stays inside its frame
+- s041-bt-exit-open-fa-IR-1920: text "02 / 02 ﺛﺎﻧﯿﻪ" in YOUR MAIN BASE does not wrap (lines 2, authored 1)
+- s041-bt-exit-open-fa-IR-1920: text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE stays inside its frame
+- s041-bt-exit-open-fa-IR-1920: text "21 / 02 ﺛﺎﻧﯿﻪ" in ENEMY MAIN BASE does not wrap (lines 2, authored 1)
+- s020-ce-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s020-ce-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s020-ce-fa-IR-1920: purpose and next action first, then status
+- s046-ce-service-fa-IR-1920: card 12 px below the resource bar (is 17.0)
+- s046-ce-service-fa-IR-1920: warm 2-3 px keyline #E7562C
+- s046-ce-service-fa-IR-1920: purpose and next action first, then status
+- s002-ba-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s002-ba-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s002-ba-fa-IR-2400: purpose and next action first, then status
+- s002-ba-fa-IR-2400: text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+- s002-ba-fa-IR-2400: text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+- s002-ba-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+- s002-ba-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- s002-ba-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+- s002-ba-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- s002-ba-fa-IR-2400: in-world enemy base glyph Diamond (is none)
+- s002-ba-fa-IR-2400: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s026-ba-first-order-fa-IR-2400: one objective card, no stacked centre bar (extra: [FirstOrderPrompt])
+- s026-ba-first-order-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s026-ba-first-order-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s026-ba-first-order-fa-IR-2400: purpose and next action first, then status
+- s026-ba-first-order-fa-IR-2400: text "ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ" in ENEMY MAIN BASE stays inside its frame
+- s026-ba-first-order-fa-IR-2400: text "ﺧﺎﺭﺝ ﺍﺯ ﺩﯾﺪ ‹" in ENEMY MAIN BASE stays inside its frame
+- s026-ba-first-order-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ glyph Shield (is none)
+- s026-ba-first-order-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺧﻮﺩﺕ keyline #49BD62 (is #4CD966)
+- s026-ba-first-order-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ glyph Diamond (is none)
+- s026-ba-first-order-fa-IR-2400: ﭘﺎﯾﮕﺎﻩ ﺩﺷﻤﻦ keyline #F45C3B (is #FF5926)
+- s026-ba-first-order-fa-IR-2400: in-world enemy base glyph Diamond (is none)
+- s026-ba-first-order-fa-IR-2400: in-world enemy base keyline #F45C3B (is #9EB2BD)
+- s031-fc-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s031-fc-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s031-fc-fa-IR-2400: purpose and next action first, then status
+- s031-fc-fa-IR-2400: text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  stays inside its frame
+- s031-fc-fa-IR-2400: text "ﺑﯿﻄﺮﻑ • ﺗﺼﺮﻑ %04" in  does not wrap (lines 2, authored 1)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ A glyph Shield (is none)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ A keyline #49BD62 (is #4CA6E6)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ B glyph Diamond (is none)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ B keyline #F45C3B (is #4CA6E6)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+- s031-fc-fa-IR-2400: ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s011-fc-neutral-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s011-fc-neutral-fa-IR-2400: purpose and next action first, then status
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ A glyph Ring (is none)
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ A keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ B glyph Ring (is none)
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ B keyline #BBC7CD (is #4CA6E6)
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ C glyph Ring (is none)
+- s011-fc-neutral-fa-IR-2400: ﻣﻨﻄﻘﻪ C keyline #BBC7CD (is #4CA6E6)
+- s037-bt-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s037-bt-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s037-bt-fa-IR-2400: purpose and next action first, then status
+- s041-bt-exit-open-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s041-bt-exit-open-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s041-bt-exit-open-fa-IR-2400: purpose and next action first, then status
+- s020-ce-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s020-ce-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s020-ce-fa-IR-2400: purpose and next action first, then status
+- s046-ce-service-fa-IR-2400: card 12 px below the resource bar (is 17.0)
+- s046-ce-service-fa-IR-2400: warm 2-3 px keyline #E7562C
+- s046-ce-service-fa-IR-2400: purpose and next action first, then status

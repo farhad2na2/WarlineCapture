@@ -419,7 +419,8 @@ namespace Game.Configs
                 return SkirmishLegalPadKind.DefenseApproach;
             if (structureId == SkirmishStructureIds.GroundStaging)
                 return SkirmishLegalPadKind.GroundStaging;
-            if (structureId == SkirmishStructureIds.Helipad || structureId == SkirmishStructureIds.Airport)
+            if (structureId == SkirmishStructureIds.Helipad || structureId == SkirmishStructureIds.Airport ||
+                structureId == SkirmishStructureIds.AirportSmall)
                 return SkirmishLegalPadKind.AirReturn;
             if (structureId == SkirmishStructureIds.OilPump ||
                 structureId == SkirmishStructureIds.Refinery ||

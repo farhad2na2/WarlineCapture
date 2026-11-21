@@ -352,6 +352,11 @@ def matching_processes(pattern):
 
 def check_editor_and_hub(repo):
     for pid in matching_processes('[U]nity.app/Contents/MacOS/Unity'):
+        # pgrep -f also matches shells whose command text merely mentions the Unity path (lane 50 launch refusal);
+        # only a process whose executable is the Unity binary can own the project.
+        exe = subprocess.run(['ps', '-p', pid, '-o', 'comm='], capture_output=True, text=True)
+        if exe.returncode or not exe.stdout.strip().endswith('Unity.app/Contents/MacOS/Unity'):
+            continue
         proc = subprocess.run(['ps', '-p', pid, '-o', 'command='], capture_output=True, text=True)
         if proc.returncode:
             continue

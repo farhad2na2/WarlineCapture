@@ -8,26 +8,25 @@ The owner approved the [Board 6 mockup](../../selection-target-markers.png) as t
 
 ## Native evidence
 
-Follow-up 3 schedules Move while the tank is selected and aims for open sand east of the refinery. The fixture reads the saved frame and publishes the eight-frame result separately from its input loop. The lab hit Unity’s scene-recovery dialog before compilation, so both widths and the ARIA regression await validation. The frames below are from earlier runs. [Follow-up 3 results](../../../../Orchestration/windows_dev_results/2026-11-20-ui-c-selection-markers.md#board-6-follow-up-3)
+The EN captures passed the eight-frame gate at both widths after the lab’s previous `Temp` directory was moved aside. The fixture sends Move while the tank is selected, before the launcher lesson. A revised destination on open sand west of the tank keeps the marker clear of refinery geometry and the lesson callout. The 2400×1080 Attack retry captures acceptance before the comms cinematic starts. [Follow-up 4 results](../../../../Orchestration/windows_dev_results/2026-11-20-ui-c-selection-markers.md#board-6-follow-up-4)
 
-The lab captured seven EN states at 1920×1080 with the revised infantry mesh and zoom fixture. An earlier attempt captured Move and failed the eight-frame gate. The retry stopped before publishing the gate result. The 2400×1080 column contains evidence from the original Board 6 build. [Follow-up 2 evidence](../../../../Orchestration/windows_dev_results/2026-11-20-ui-c-selection-markers.md#board-6-follow-up-2)
-
-| State | 1920×1080 follow-up 2 | 2400×1080 original |
+| State | 1920×1080 | 2400×1080 |
 | --- | --- | --- |
 | Infantry selected | [Frame](./en-1920x1080-infantry-selected.png) | [Frame](./en-2400x1080-infantry-selected.png) |
 | Vehicle selected | [Frame](./en-1920x1080-vehicle-selected.png) | [Frame](./en-2400x1080-vehicle-selected.png) |
-| Launcher selected | [Frame](./en-1920x1080-large-unit-selected.png) | Pending |
-| Zoom in and out | [In](./en-1920x1080-zoom-in.png), [out](./en-1920x1080-zoom-out.png) | Pending |
-| Attack preview and accepted | [Preview](./en-1920x1080-attack-preview.png), [accepted](./en-1920x1080-attack-accepted.png) | Pending |
-| Move accepted | [Earlier attempt](./en-1920x1080-move-accepted.png) | [Frame](./en-2400x1080-move-accepted.png) |
+| Launcher selected | [Frame](./en-1920x1080-large-unit-selected.png) | [Frame](./en-2400x1080-large-unit-selected.png) |
+| Zoom in and out | [In](./en-1920x1080-zoom-in.png), [out](./en-1920x1080-zoom-out.png) | [In](./en-2400x1080-zoom-in.png), [out](./en-2400x1080-zoom-out.png) |
+| Attack preview and accepted | [Preview](./en-1920x1080-attack-preview.png), [accepted](./en-1920x1080-attack-accepted.png) | [Preview](./en-2400x1080-attack-preview.png), [accepted](./en-2400x1080-attack-accepted.png) |
+| Move accepted | [Frame](./en-1920x1080-move-accepted.png) | [Frame](./en-2400x1080-move-accepted.png) |
 
-The infantry frame shows an open cyan centre at nominal zoom. The launcher was selected by a normal touch at the displayed world target. The two zooms used the production camera requests from the fixture because the HUD touch could not reach a zoom control. The refinery obscures the Move destination in the earlier frame. The Attack preview shows the cyan guide prominently. The accepted frame shows the target brackets and centre pip alongside the missile impact-area circle. [`SplitFrontLauncherHudView`](../../../../../Assets/Game/Scripts/UI/Screens/SplitFrontLauncherHudView.cs) renders that circle from the launcher’s configured damage radius, which also drives area damage.
+The infantry frames show an open cyan centre at nominal zoom. A normal touch at the displayed world target selects the launcher. The fixture uses production camera requests for the zoom frames because the HUD offered no reachable zoom button. The close frames leave the launcher offscreen at 1920×1080 and partly behind the ARIA panel at 2400×1080. Refinery stacks partly obscure it in the far frames. The Attack preview shows the cyan guide around the battery. The accepted frame shows red-orange target brackets over the battery and the separate missile impact-area circle.
 
 ## Intentional differences
 
 - The cyan ring is continuous and uses four fixed ticks. Its proportions follow the selected unit's footprint.
 - Move uses an open diamond and two chevrons at the accepted destination. The existing order path and its rendering determine any route decoration.
 - Attack uses four brackets and a centre pip in both preview and accepted feedback. Preview retains its lower opacity. The projection cap keeps the complete Attack quad within 20% of viewport height, measured along its longest projected span.
+- The missile impact-area circle is a gameplay indicator outside Board 6 scope. [`SplitFrontLauncherHudView.cs:31`](../../../../../Assets/Game/Scripts/UI/Screens/SplitFrontLauncherHudView.cs#L31) draws it at the authored launcher damage radius.
 - The native captures use separate command states with the production HUD and mission camera. The mockup combines the three glyphs for comparison.
 - Live markers come from world presentation. The HUD marker preview remains hidden during gameplay.
 

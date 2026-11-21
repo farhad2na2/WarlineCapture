@@ -95,3 +95,21 @@ The large red ring on the earlier Attack-accepted frame is the `Missile impact a
 | ARIA and Gate 3 | Pending for all six jobs and conditional retries. |
 
 The owner-approved Board 6 direction and earlier comparison frames remain available. Real-player and device acceptance are pending.
+
+## Board 6 follow-up 4
+
+Evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c-fix4-selection-markers/`. The lab ran on `missions/ui-c-fix4-selection-markers` from `bdf2715ae`, with the previous `Temp` directory moved aside before launch.
+
+| Check | Result and evidence |
+| --- | --- |
+| Initial EN 1920×1080 | Tundra built successfully with zero `error CS` at `native-1920.log:996`. The capture gate passed all eight frames at `:5159` and the Split Front input harness passed at `:5172`. Move was accepted at `:4141`. The lesson callout obscures the destination in the saved frame at `:4312`. |
+| Revised EN 1920×1080 | Tundra built successfully with zero `error CS` at `native-1920-clear.log:705`. The capture gate passed all eight frames at `:4830` and the input harness passed at `:4843`. Move was accepted at `:3743`, with its marker visible west of the tank in the frame at `:3915`. The launcher target tap at `:3995` led to the selected frame at `:4179`. Attack preview and accepted frames are at `:4666` and `:4739`. |
+| Initial EN 2400×1080 | The capture gate passed all eight frames at `native-2400.log:3827` and the input harness passed at `:3840`. Move was accepted at `:2745`, with a visible marker in the frame at `:2916`. The comms cinematic started at `:3799`, before the accepted-Attack frame at `:3814`. The saved PNG shows the cinematic. |
+| Revised EN 2400×1080 | Tundra built successfully with zero `error CS` at `native-2400-retry.log:723`. The capture gate passed all eight frames at `:4917` and the input harness passed at `:4930`. Move was accepted at `:3813`, with the marker visible at `:3984`. The launcher target tap at `:4171` led to the selected frame at `:4249`. Attack preview and accepted frames are at `:4753` and `:4890`. The fixture observed acceptance during the input cooldown, before comms covered the HUD. |
+| Final EN 1920×1080 | On the same revised fixture, the capture gate passed all eight frames at `native-1920-final.log:3876` and the input harness passed at `:3889`. Move was accepted at `:2848`, with the marker visible at `:3019`. The normal launcher tap is at `:3206`, selection at `:3301`, Attack preview at `:3789` and accepted Attack at `:3849`. |
+
+The 1920×1080 zoom-in frame omitted the selected launcher. The first affected frame is `native-1920.log:4605` and the repeat is `native-1920-clear.log:4208`. The final frame at `native-1920-final.log:3331` shows the same issue. At 2400×1080 the launcher is partly behind the ARIA panel at `native-2400-retry.log:4278`. Both widths meet the automated frame-count and dimension gate. Clear zoom framing remains open for visual review.
+
+`SplitFrontLauncherHudView.cs:31` draws the authored missile damage-radius circle as a gameplay indicator. The Board 6 comparison records it as outside scope.
+
+The owner approved the Board 6 visual direction on November 20, 2026. Real-player and device acceptance remain pending.

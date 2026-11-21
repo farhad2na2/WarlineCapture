@@ -1,0 +1,567 @@
+{
+  "catalog_id": "S089",
+  "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+  "notes": "candidate=1, unmeasured. S089 Industrial Basin BT, combined field. BA draft S077 supplies the binding, anchors, placement pads, structure footprints and starting layout. The checked-in S074 Industrial Basin map asset references the shared desert source. The named RefineryDistrict definition and the S074 salvage binding JSON are absent from this copy. Confirm the physical source before measuring. The Field package uses seven opening structure pads per faction. The BA source only supplies helicopter infrastructure. Its Airport-only search found zero legal pads in 62 tests. Fixed-wing source fit remains open for this objective. Hold either corridor before moving designated rifles to BreakthroughExit. Corridor A is the main approach rectangle from w29.f2.module to w29.f1.dish. Corridor B is the west sweep rectangle from w29.route.FlankSouthSweep to w29.f2.module. The rear exit is the rectangle from rally.enemy to w29.f2.dish. MainHighway and FlankSouthSweep retain their BA middle waypoints with rally.enemy replacing staging.enemy as their goal. FlankNorthRuins keeps the BA staging approach. The two new final legs and the rear exit capacity for eight rifles need measurement. Defense pads A/B provisionally reuse the Field-reserve w29.f2.approach and w29.f2.dish, respectively. Check tower and traffic clearance around the receiving area. Native area measurement, live route clearance and recommended War capacity are pending.",
+  "anchors": {
+    "base.player": [
+      834.0,
+      595.5
+    ],
+    "staging.player": [
+      835.0,
+      575.5
+    ],
+    "economy.player": [
+      835.5,
+      614.0
+    ],
+    "w29.f1.refinery": [
+      832.5,
+      627.5
+    ],
+    "w29.f1.fuel": [
+      835.0,
+      561.0
+    ],
+    "w29.f1.depot": [
+      917.5,
+      612.0
+    ],
+    "w29.f1.module": [
+      968.5,
+      571.5
+    ],
+    "air.player": [
+      876.0,
+      627.5
+    ],
+    "service.player": [
+      819.0,
+      609.0
+    ],
+    "w29.f1.approach": [
+      835.0,
+      641.0
+    ],
+    "w29.f1.dish": [
+      835.0,
+      545.0
+    ],
+    "spawn.vehicle.player": [
+      858.5,
+      596.0
+    ],
+    "spawn.infantry.player": [
+      852.5,
+      580.0
+    ],
+    "rally.player": [
+      852.5,
+      610.0
+    ],
+    "base.enemy": [
+      842.0,
+      467.5
+    ],
+    "staging.enemy": [
+      843.0,
+      447.5
+    ],
+    "economy.enemy": [
+      843.5,
+      486.0
+    ],
+    "w29.f2.refinery": [
+      840.5,
+      499.5
+    ],
+    "w29.f2.fuel": [
+      819.0,
+      465.0
+    ],
+    "w29.f2.depot": [
+      813.5,
+      484.0
+    ],
+    "w29.f2.module": [
+      808.5,
+      507.5
+    ],
+    "air.enemy": [
+      876.0,
+      467.5
+    ],
+    "service.enemy": [
+      827.0,
+      481.0
+    ],
+    "w29.f2.approach": [
+      811.0,
+      449.0
+    ],
+    "w29.f2.dish": [
+      875.0,
+      449.0
+    ],
+    "spawn.vehicle.enemy": [
+      800.5,
+      466.0
+    ],
+    "spawn.infantry.enemy": [
+      904.5,
+      468.0
+    ],
+    "rally.enemy": [
+      842.5,
+      436.0
+    ],
+    "w29.route.FlankSouthSweep": [
+      748.0,
+      493.0
+    ],
+    "w29.route.FlankNorthRuins": [
+      852.0,
+      501.0
+    ],
+    "w29.route.MainHighway": [
+      804.0,
+      457.0
+    ],
+    "defense.approach.a": [
+      811.0,
+      449.0
+    ],
+    "defense.approach.b": [
+      875.0,
+      449.0
+    ]
+  },
+  "pads": {
+    "base.player": {
+      "at": [
+        834.0,
+        595.5
+      ],
+      "anchor": "base.player",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        858.5,
+        596.0
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        852.5,
+        580.0
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "rally.player": {
+      "at": [
+        852.5,
+        610.0
+      ],
+      "anchor": "rally.player",
+      "size": [
+        10,
+        8
+      ]
+    },
+    "base.enemy": {
+      "at": [
+        842.0,
+        467.5
+      ],
+      "anchor": "base.enemy",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        800.5,
+        466.0
+      ],
+      "anchor": "spawn.vehicle.enemy",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        904.5,
+        468.0
+      ],
+      "anchor": "spawn.infantry.enemy",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        842.5,
+        436.0
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        10,
+        8
+      ]
+    },
+    "defense.approach.a": {
+      "size": [
+        10,
+        10
+      ]
+    },
+    "defense.approach.b": {
+      "size": [
+        10,
+        10
+      ]
+    }
+  },
+  "instance_pads": [
+    {
+      "id": "w29.f2.base",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        842.0,
+        467.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.enemy"
+    },
+    {
+      "id": "w29.f1.base",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        834.0,
+        595.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.player"
+    },
+    {
+      "id": "w29.f1.staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        835.0,
+        575.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "w29.f1.economy",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        835.5,
+        614.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "w29.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        832.5,
+        627.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f1.refinery"
+    },
+    {
+      "id": "w29.f1.fuel",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        835.0,
+        561.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "w29.f1.fuel"
+    },
+    {
+      "id": "w29.f1.depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        917.5,
+        612.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f1.depot"
+    },
+    {
+      "id": "w29.f1.service",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        819.0,
+        609.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "w29.f2.staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        843.0,
+        447.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "w29.f2.economy",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        843.5,
+        486.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "w29.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        840.5,
+        499.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f2.refinery"
+    },
+    {
+      "id": "w29.f2.fuel",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        819.0,
+        465.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "w29.f2.fuel"
+    },
+    {
+      "id": "w29.f2.depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        813.5,
+        484.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f2.depot"
+    },
+    {
+      "id": "w29.f2.service",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        827.0,
+        481.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.enemy"
+    }
+  ],
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "staging.player",
+        "w29.route.MainHighway",
+        "rally.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "staging.player",
+        "w29.route.FlankSouthSweep",
+        "rally.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "staging.player",
+        "w29.route.FlankNorthRuins",
+        "staging.enemy"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  },
+  "pad_slack_m": 12,
+  "objective_areas": {
+    "BreakthroughCorridorA": {
+      "rectangle": [
+        [
+          808.5,
+          507.5
+        ],
+        [
+          835.0,
+          545.0
+        ]
+      ]
+    },
+    "BreakthroughCorridorB": {
+      "rectangle": [
+        [
+          748.0,
+          493.0
+        ],
+        [
+          808.5,
+          507.5
+        ]
+      ]
+    },
+    "BreakthroughExit": {
+      "rectangle": [
+        [
+          842.5,
+          436.0
+        ],
+        [
+          875.0,
+          449.0
+        ]
+      ]
+    }
+  }
+}

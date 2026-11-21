@@ -64,6 +64,14 @@ namespace Game.UI.Runtime
             _ => persian ? "حمله به پایگاه" : "BASE ASSAULT"
         };
 
+        /// <summary>ARIA panel heading (W42): Frontline Control, Breakthrough and Convoy Escort show their own
+        /// family name (the same Battle Library copy as the card's purpose line). Base Assault, and any session
+        /// without a known family, keeps the localized Base Assault title it showed before.</summary>
+        public static string AriaHeading(SkirmishObjectiveKind kind, bool persian, string baseAssaultTitle) =>
+            kind is SkirmishObjectiveKind.FrontlineControl or SkirmishObjectiveKind.Breakthrough or SkirmishObjectiveKind.ConvoyEscort
+                ? Purpose(kind, persian)
+                : baseAssaultTitle;
+
         /// <summary>The family's existing objective sentence (SkirmishObjectiveCopyTable) for the player's
         /// own side; null for Base Assault, which keeps the session's objective line.</summary>
         public static string ObjectiveCopyKey(SkirmishObjectiveKind kind, SkirmishPublicGoalPerspective perspective) =>

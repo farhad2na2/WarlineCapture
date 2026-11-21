@@ -163,12 +163,19 @@ namespace Game.UI.Shell.Ecs
             {
                 if(skirmish.Phase!=SkirmishPhase.Playing)return true;
                 string help = GameText.Get("ui.skirmish.match_help", "Destroy the enemy base. Defend yours with Watchtowers and rifle squads. Tap a squad card, then Move or Attack.");
+                var objectiveKind = Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault;
+                if (skirmishWorld.HasComponent<SkirmishExpandedSessionComponent>(skirmishSession))
+                    objectiveKind = skirmishWorld.GetComponentData<SkirmishExpandedSessionComponent>(skirmishSession).ObjectiveKind;
                 if (skirmishWorld.HasComponent<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession))
-                    help = Game.Configs.SkirmishSetupBriefing.MatchHelp(
-                        skirmishWorld.GetComponentObject<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession).Setup,
-                        GameLocalization.IsRightToLeft);
+                {
+                    var resolvedSetup = skirmishWorld.GetComponentObject<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession).Setup;
+                    help = Game.Configs.SkirmishSetupBriefing.MatchHelp(resolvedSetup, GameLocalization.IsRightToLeft);
+                    if (resolvedSetup != null) objectiveKind = resolvedSetup.ObjectiveKind;
+                }
+                // W42: the heading names the mission's own objective family (it was the Base Assault title for every family).
                 assistantPanel=new UiAssistantPanelModel(1,"","","",false,false,true,
-                    GameText.Get("ui.skirmish.base_assault","BASE ASSAULT"),
+                    SkirmishObjectiveCardLayout.AriaHeading(objectiveKind, GameLocalization.IsRightToLeft,
+                        GameText.Get("ui.skirmish.base_assault","BASE ASSAULT")),
                     help,
                     "","",false,false,false,false,"","");
                 return true;

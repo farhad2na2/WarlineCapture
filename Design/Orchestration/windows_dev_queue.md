@@ -622,3 +622,10 @@ partly tagged, unselected), plus a one-line alive/tagged trace at order_retry. W
 ## W43 — player-facing selection desync (after W37 lands; diagnose and propose only)
 The group card shows selected while reinforcements delivered into the group are untagged (and dead members drop out), so a player's
 Move reaches only part of the group. Propose the smallest runtime fix and its blast radius.
+
+## W37h — CE gate-3 order preference only, on current integration (after W34/W35; low priority)
+Mac lane 51 (program-logs/2026-11-21/lane51, branch missions/ab-w37fc = integration + W37f-c) rejected W37f-c: it fixed S046/S047/S048
+losses and S048 gate 3, but slowed accepted S043 to 78-90 % with one loss, worsened S045, and failed gate 3 on accepted S020 fa-IR and
+S022 104731. W37 line (cadence, bounds, service-first) stops. W37h tests ONE change on current integration code (no W37c-f cadence):
+the CE-gated "offer never-ordered starting groups first" preference (from 4ade40eda) plus the group->role log. Proof on Windows: EditMode;
+S046/S048 @130365, S020/S022 @130365 and @104731, S043 @130365 x2. Then the Mac judges with a CE recount before any merge.

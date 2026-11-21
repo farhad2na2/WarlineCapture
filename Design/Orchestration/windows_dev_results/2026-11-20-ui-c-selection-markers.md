@@ -79,3 +79,19 @@ Evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c
 The last fixture revision captures Move while the tank is already selected, spaces out touches, and evaluates the unchanged eight-frame gate before checking input restrictions. The startup dialog prevented compilation and execution of that revision.
 
 The EN 2400×1080 rerun, six-job ARIA queue, Gate 3 and conditional S002 and S043 fa-IR retries remain pending. The previous S002 unused-role failure and S043 timeout above are still the latest ARIA evidence for this board. Real-player and device acceptance remain pending.
+
+## Board 6 follow-up 3
+
+Evidence root is `/Volumes/T7/Projects/WarlineCapture-program-logs/codexlab/ui-c-fix3-selection-markers/`. The lab was on `missions/ui-c-fix3-selection-markers`, based on `b00747309`.
+
+The fixture orders Move while the tank is selected, before the launcher’s lesson and missile cinematic. The Move touch now targets open ground east of the refinery. The fixture verifies saved frames after transient markers expire and publishes the capture result from the editor update. The gate still requires all eight states at the requested dimensions. Native validation of the sequencing and endpoint is pending.
+
+The large red ring on the earlier Attack-accepted frame is the `Missile impact area` line renderer in `SplitFrontLauncherHudView.cs:20–31`. `UiShellEcsGateway.SplitFront.cs:34–38` feeds it `GroundMissileLauncherComponent.DamageRadius`, which the impact system uses for area damage. The Board 6 Attack glyph is the target bracket and centre pip. This follow-up makes only fixture changes.
+
+| Check | Result and evidence |
+| --- | --- |
+| EN 1920×1080 | Stopped at Unity startup before compilation or harness entry. No capture gate marker. The log ends at `native-1920.log:42`. The process sample shows `HandleDanglingSceneBackups` at `native-1920-startup.sample:50` and the native modal at `:54`. The first occurrence was `../ui-c-fix2-selection-markers/editmode-final-startup.sample:50`. The lab’s `Temp/__Backupscenes` was empty before launch and after exit. The verified lab Editor received TERM at age 03:12, and the wrapper exited 143 (`native-1920-stop.txt:1` and `:2`). |
+| EN 2400×1080 | Pending after the 1920×1080 startup stop. |
+| ARIA and Gate 3 | Pending for all six jobs and conditional retries. |
+
+The owner-approved Board 6 direction and earlier comparison frames remain available. Real-player and device acceptance are pending.

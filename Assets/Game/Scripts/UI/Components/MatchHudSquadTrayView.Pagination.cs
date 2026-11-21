@@ -34,8 +34,14 @@ namespace Game.UI.Runtime
         private float _nextRosterRefresh;
         private bool _rosterInputReady;
         private Sprite[] _categoryPortraits;
-        private const float CardWidth = 135f, CardGap = 5f, CardInset = 4f;
+        // W39 Board 1: 8 px (7 HUD units) between cards. The stride stays 140 units so paging,
+        // swipe distances and the cards ARIA taps keep their established positions.
+        private const float CardWidth = 133f, CardGap = 7f, CardInset = 4f;
         private const float CardStride = CardWidth + CardGap;
+        public const float CardTopInset = CardInset;
+        // Exactly five cards plus insets: the next card no longer shows as a sliver beside
+        // the command strip, and the strip keeps at least 12 px from the last card.
+        public const float PageViewportWidth = 5 * CardStride - CardGap + 2 * CardInset;
         private int _geometryCount = -1;
         private Vector2 _geometryViewport;
         private bool _geometryRtl;
@@ -89,6 +95,7 @@ namespace Game.UI.Runtime
             if (_squadScroll != null || cards.Length == 0 || cards[0]?.Button == null) return;
             var viewport = transform as RectTransform;
             if (viewport == null) return;
+            FitPageViewport(viewport);
             CreateCardLabels();
             var oldLayout = GetComponent<HorizontalLayoutGroup>();
             if (oldLayout != null) oldLayout.enabled = false;
@@ -112,7 +119,8 @@ namespace Game.UI.Runtime
             _scrollContent.anchorMax = new Vector2(0f, 1f);
             _scrollContent.pivot = new Vector2(0f, .5f);
             var layout = contentObject.GetComponent<HorizontalLayoutGroup>();
-            layout.padding = new RectOffset(4, 4, 4, 4);
+            // One extra bottom unit keeps the cards 16 px above the bottom safe edge (W39).
+            layout.padding = new RectOffset(4, 4, 4, 5);
             layout.spacing = CardGap;
             layout.childAlignment = TextAnchor.UpperLeft;
             layout.childControlWidth = layout.childControlHeight = true;
@@ -143,6 +151,15 @@ namespace Game.UI.Runtime
             _scrollPrevious.onClick.AddListener(() => ScrollPage(-1));
             _scrollNext.onClick.AddListener(() => ScrollPage(1));
             RefreshScrollGeometry();
+        }
+
+        private static void FitPageViewport(RectTransform viewport)
+        {
+            float width = viewport.rect.width;
+            if (width <= PageViewportWidth + .5f) return;
+            // Keep the left edge (the 16 px safe inset); trim only the right side.
+            viewport.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, PageViewportWidth);
+            viewport.anchoredPosition -= new Vector2((width - PageViewportWidth) * viewport.pivot.x, 0);
         }
 
         private void ConfigurePortraitCard(Card card)

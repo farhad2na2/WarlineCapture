@@ -13,7 +13,7 @@ namespace Game.UI.Runtime
         private TMP_Text watchExplanation;
         private string watchLocale;
         internal Button WatchButton => watchButton;
-        private bool watchConfirming, watchStartFailed;
+        private bool watchConfirming, watchStartFailed, watchShowsStop;
         private string watchCaption;
         internal void PresentWatch(AriaPlayModel model, bool available)
         {
@@ -39,6 +39,7 @@ namespace Game.UI.Runtime
             }
             string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             bool fa = locale.StartsWith("fa");
+            watchShowsStop = model.Active;
             watchActions.gameObject.SetActive(available || model.Active || model.Phase == AriaPlayPhase.Blocked);
             if (!available && !model.Active) watchConfirming = false;
             watchButton.gameObject.SetActive(available || model.Active || model.Phase == AriaPlayPhase.Blocked);

@@ -1,0 +1,709 @@
+# W39 before geometry (screen px, top-left origin)
+
+## aria-two-actions-en-1920
+- screen: 1920x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=537.1 right=456.8 bottom=549.8
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=161.8 right=440.7 bottom=188.2
+- card HealthPanel: x=33.3 y=289.2 w=404.0 h=35.6 right=437.3 bottom=324.8
+- card OrderLabel: x=33.3 y=334.0 w=404.0 h=63.1 right=437.3 bottom=397.1
+- card V3PlayerControl: x=33.3 y=406.3 w=404.0 h=45.9 right=437.3 bottom=452.2
+- card COMMANDS: x=29.8 y=197.4 w=410.9 h=82.6 right=440.7 bottom=280.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=585.3 right=1902.8 bottom=594.5
+- ARIA button ShowMeButton "SHOW ME" icon=HudAction_Camera: x=1466.7 y=305.3 w=413.2 h=82.6
+  - PASS ARIA button ShowMeButton is labelled
+  - PASS ARIA button ShowMeButton >= 64 px tall (is 82.6)
+  - FAIL ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- ARIA button FieldGuide "FIELD GUIDE" icon=HudAction_Guide: x=1466.7 y=401.7 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "STOP ARIA" icon=HudAction_Stop: x=1466.7 y=498.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-two-actions shows [ShowMeButton|FieldGuide, FieldGuide|ShowMeButton, WatchAriaPlay] (shows [ShowMeButton, FieldGuide, WatchAriaPlay])
+  - PASS Show Me uses the native camera-focus glyph
+- ARIA status line: hidden
+- HUD composition height on screen: 420.8 px
+
+
+## aria-one-action-en-1920
+- screen: 1920x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=456.8 right=456.8 bottom=469.4
+- minimap: x=17.2 y=483.2 w=367.3 h=252.5 right=384.5 bottom=735.7
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 1
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=114.8 right=440.7 bottom=141.2
+- card HealthPanel: x=33.3 y=242.2 w=404.0 h=35.6 right=437.3 bottom=277.7
+- card OrderLabel: x=33.3 y=286.9 w=404.0 h=63.1 right=437.3 bottom=350.1
+- card V3PlayerControl: x=33.3 y=359.2 w=404.0 h=45.9 right=437.3 bottom=405.1
+- card COMMANDS: x=29.8 y=150.4 w=410.9 h=82.6 right=440.7 bottom=233.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 107.9)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=484.3 right=1902.8 bottom=493.5
+- ARIA button FieldGuide "FIELD GUIDE" icon=HudAction_Guide: x=1466.7 y=300.7 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "STOP ARIA" icon=HudAction_Stop: x=1466.7 y=397.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-one-action shows [FieldGuide, WatchAriaPlay] (shows [FieldGuide, WatchAriaPlay])
+- ARIA status line: hidden
+- HUD composition height on screen: 420.8 px
+
+
+## aria-stopped-en-1920
+- screen: 1920x1080
+- selection card: hidden
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=383.3 right=1902.8 bottom=392.5
+- ARIA button WatchAriaPlay "WATCH ARIA" icon=HudAction_Play: x=1466.7 y=296.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-stopped shows [WatchAriaPlay] (shows [WatchAriaPlay])
+- ARIA status line: hidden
+  - FAIL stopped state shows the ARIA status line
+- HUD composition height on screen: 420.8 px
+
+
+## aria-two-actions-en-2400
+- screen: 2400x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=537.1 right=456.8 bottom=549.8
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=161.8 right=440.7 bottom=188.2
+- card HealthPanel: x=33.3 y=289.2 w=404.0 h=35.6 right=437.3 bottom=324.8
+- card OrderLabel: x=33.3 y=334.0 w=404.0 h=63.1 right=437.3 bottom=397.1
+- card V3PlayerControl: x=33.3 y=406.3 w=404.0 h=45.9 right=437.3 bottom=452.2
+- card COMMANDS: x=29.8 y=197.4 w=410.9 h=82.6 right=440.7 bottom=280.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=585.3 right=2382.8 bottom=594.5
+- ARIA button ShowMeButton "SHOW ME" icon=HudAction_Camera: x=1946.7 y=305.3 w=413.2 h=82.6
+  - PASS ARIA button ShowMeButton is labelled
+  - PASS ARIA button ShowMeButton >= 64 px tall (is 82.6)
+  - FAIL ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- ARIA button FieldGuide "FIELD GUIDE" icon=HudAction_Guide: x=1946.7 y=401.7 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "STOP ARIA" icon=HudAction_Stop: x=1946.7 y=498.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-two-actions shows [ShowMeButton|FieldGuide, FieldGuide|ShowMeButton, WatchAriaPlay] (shows [ShowMeButton, FieldGuide, WatchAriaPlay])
+  - PASS Show Me uses the native camera-focus glyph
+- ARIA status line: hidden
+- HUD composition height on screen: 470.5 px
+
+
+## aria-one-action-en-2400
+- screen: 2400x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=456.8 right=456.8 bottom=469.4
+- minimap: x=17.2 y=483.2 w=367.3 h=252.5 right=384.5 bottom=735.7
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 1
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=114.8 right=440.7 bottom=141.2
+- card HealthPanel: x=33.3 y=242.2 w=404.0 h=35.6 right=437.3 bottom=277.7
+- card OrderLabel: x=33.3 y=286.9 w=404.0 h=63.1 right=437.3 bottom=350.1
+- card V3PlayerControl: x=33.3 y=359.2 w=404.0 h=45.9 right=437.3 bottom=405.1
+- card COMMANDS: x=29.8 y=150.4 w=410.9 h=82.6 right=440.7 bottom=233.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 107.9)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=484.3 right=2382.8 bottom=493.5
+- ARIA button FieldGuide "FIELD GUIDE" icon=HudAction_Guide: x=1946.7 y=300.7 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "STOP ARIA" icon=HudAction_Stop: x=1946.7 y=397.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-one-action shows [FieldGuide, WatchAriaPlay] (shows [FieldGuide, WatchAriaPlay])
+- ARIA status line: hidden
+- HUD composition height on screen: 470.5 px
+
+
+## aria-stopped-en-2400
+- screen: 2400x1080
+- selection card: hidden
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=383.3 right=2382.8 bottom=392.5
+- ARIA button WatchAriaPlay "WATCH ARIA" icon=HudAction_Play: x=1946.7 y=296.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-stopped shows [WatchAriaPlay] (shows [WatchAriaPlay])
+- ARIA status line: hidden
+  - FAIL stopped state shows the ARIA status line
+- HUD composition height on screen: 470.5 px
+
+
+## aria-two-actions-fa-IR-1920
+- screen: 1920x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=537.1 right=456.8 bottom=549.8
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=161.8 right=440.7 bottom=188.2
+- card HealthPanel: x=33.3 y=289.2 w=404.0 h=35.6 right=437.3 bottom=324.8
+- card OrderLabel: x=33.3 y=334.0 w=404.0 h=63.1 right=437.3 bottom=397.1
+- card V3PlayerControl: x=33.3 y=406.3 w=404.0 h=45.9 right=437.3 bottom=452.2
+- card COMMANDS: x=29.8 y=197.4 w=410.9 h=82.6 right=440.7 bottom=280.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=671.4 right=1902.8 bottom=680.6
+- ARIA button ShowMeButton "ﻧﺸﺎﻥ ﺑﺪﻩ" icon=HudAction_Camera: x=1466.7 y=391.4 w=413.2 h=82.6
+  - PASS ARIA button ShowMeButton is labelled
+  - PASS ARIA button ShowMeButton >= 64 px tall (is 82.6)
+  - FAIL ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- ARIA button FieldGuide "راهنمای میدان" icon=HudAction_Guide: x=1466.7 y=487.8 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "ﺗﻮﻗﻒ ﺁﺭﯾﺎ" icon=HudAction_Stop: x=1466.7 y=584.2 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-two-actions shows [ShowMeButton|FieldGuide, FieldGuide|ShowMeButton, WatchAriaPlay] (shows [ShowMeButton, FieldGuide, WatchAriaPlay])
+  - PASS Show Me uses the native camera-focus glyph
+- ARIA status line: hidden
+- HUD composition height on screen: 420.8 px
+
+
+## aria-one-action-fa-IR-1920
+- screen: 1920x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=456.8 right=456.8 bottom=469.4
+- minimap: x=17.2 y=483.2 w=367.3 h=252.5 right=384.5 bottom=735.7
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=20.7 y=843.6 w=154.9 h=221.5 right=175.6 bottom=1065.1
+- last presented card: x=663.4 y=843.6 w=154.9 h=221.5 right=818.3 bottom=1065.1
+- presented cards: 5; partially visible cards: 1
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=114.8 right=440.7 bottom=141.2
+- card HealthPanel: x=33.3 y=242.2 w=404.0 h=35.6 right=437.3 bottom=277.7
+- card OrderLabel: x=33.3 y=286.9 w=404.0 h=63.1 right=437.3 bottom=350.1
+- card V3PlayerControl: x=33.3 y=359.2 w=404.0 h=45.9 right=437.3 bottom=405.1
+- card COMMANDS: x=29.8 y=150.4 w=410.9 h=82.6 right=440.7 bottom=233.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - FAIL first category card left inset 16 px (is 20.7)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 107.9)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - FAIL last presented card to command strip >= 12 px (is 6.9)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=570.4 right=1902.8 bottom=579.6
+- ARIA button FieldGuide "راهنمای میدان" icon=HudAction_Guide: x=1466.7 y=386.8 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "ﺗﻮﻗﻒ ﺁﺭﯾﺎ" icon=HudAction_Stop: x=1466.7 y=483.2 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-one-action shows [FieldGuide, WatchAriaPlay] (shows [FieldGuide, WatchAriaPlay])
+- ARIA status line: hidden
+- HUD composition height on screen: 420.8 px
+
+
+## aria-stopped-fa-IR-1920
+- screen: 1920x1080
+- selection card: hidden
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1083.3 h=191.7 right=1908.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1065.0 h=173.3 right=1899.3 bottom=1060.5
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+- ARIA panel: x=1443.7 y=9.2 w=459.1 h=383.3 right=1902.8 bottom=392.5
+- ARIA button WatchAriaPlay "ﺗﻤﺎﺷﺎﯼ ﺁﺭﯾﺎ" icon=HudAction_Play: x=1466.7 y=296.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-stopped shows [WatchAriaPlay] (shows [WatchAriaPlay])
+- ARIA status line: hidden
+  - FAIL stopped state shows the ARIA status line
+- HUD composition height on screen: 420.8 px
+
+
+## aria-two-actions-fa-IR-2400
+- screen: 2400x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=537.1 right=456.8 bottom=549.8
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=161.8 right=440.7 bottom=188.2
+- card HealthPanel: x=33.3 y=289.2 w=404.0 h=35.6 right=437.3 bottom=324.8
+- card OrderLabel: x=33.3 y=334.0 w=404.0 h=63.1 right=437.3 bottom=397.1
+- card V3PlayerControl: x=33.3 y=406.3 w=404.0 h=45.9 right=437.3 bottom=452.2
+- card COMMANDS: x=29.8 y=197.4 w=410.9 h=82.6 right=440.7 bottom=280.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=671.4 right=2382.8 bottom=680.6
+- ARIA button ShowMeButton "ﻧﺸﺎﻥ ﺑﺪﻩ" icon=HudAction_Camera: x=1946.7 y=391.4 w=413.2 h=82.6
+  - PASS ARIA button ShowMeButton is labelled
+  - PASS ARIA button ShowMeButton >= 64 px tall (is 82.6)
+  - FAIL ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- ARIA button FieldGuide "راهنمای میدان" icon=HudAction_Guide: x=1946.7 y=487.8 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "ﺗﻮﻗﻒ ﺁﺭﯾﺎ" icon=HudAction_Stop: x=1946.7 y=584.2 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-two-actions shows [ShowMeButton|FieldGuide, FieldGuide|ShowMeButton, WatchAriaPlay] (shows [ShowMeButton, FieldGuide, WatchAriaPlay])
+  - PASS Show Me uses the native camera-focus glyph
+- ARIA status line: hidden
+- HUD composition height on screen: 470.5 px
+
+
+## aria-one-action-fa-IR-2400
+- screen: 2400x1080
+- selection card: x=13.8 y=12.6 w=443.0 h=456.8 right=456.8 bottom=469.4
+- minimap: x=17.2 y=483.2 w=367.3 h=252.5 right=384.5 bottom=735.7
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=20.7 y=843.6 w=154.9 h=221.5 right=175.6 bottom=1065.1
+- last presented card: x=663.4 y=843.6 w=154.9 h=221.5 right=818.3 bottom=1065.1
+- presented cards: 5; partially visible cards: 1
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+- card PortraitFrame: x=29.8 y=26.4 w=410.9 h=114.8 right=440.7 bottom=141.2
+- card HealthPanel: x=33.3 y=242.2 w=404.0 h=35.6 right=437.3 bottom=277.7
+- card OrderLabel: x=33.3 y=286.9 w=404.0 h=63.1 right=437.3 bottom=350.1
+- card V3PlayerControl: x=33.3 y=359.2 w=404.0 h=45.9 right=437.3 bottom=405.1
+- card COMMANDS: x=29.8 y=150.4 w=410.9 h=82.6 right=440.7 bottom=233.0
+  - FAIL selection card left inset 16 px (is 13.8)
+  - PASS minimap left inset 16 px (is 17.2)
+  - FAIL first category card left inset 16 px (is 20.7)
+  - FAIL selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+  - FAIL minimap to category cards gap 24 px (is 107.9)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - FAIL last presented card to command strip >= 12 px (is 6.9)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+  - PASS COMMANDS target >= 64 px tall (is 82.6)
+  - PASS card inner padding 16 px (COMMANDS left is 16.1)
+  - FAIL card top padding 16 px (is 13.8)
+  - FAIL portrait to COMMANDS 12 px (is 9.2)
+  - FAIL COMMANDS to health 12 px (is 9.2)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=570.4 right=2382.8 bottom=579.6
+- ARIA button FieldGuide "راهنمای میدان" icon=HudAction_Guide: x=1946.7 y=386.8 w=413.2 h=82.6
+  - PASS ARIA button FieldGuide is labelled
+  - PASS ARIA button FieldGuide >= 64 px tall (is 82.6)
+  - FAIL ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- ARIA button WatchAriaPlay "ﺗﻮﻗﻒ ﺁﺭﯾﺎ" icon=HudAction_Stop: x=1946.7 y=483.2 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-one-action shows [FieldGuide, WatchAriaPlay] (shows [FieldGuide, WatchAriaPlay])
+- ARIA status line: hidden
+- HUD composition height on screen: 470.5 px
+
+
+## aria-stopped-fa-IR-2400
+- screen: 2400x1080
+- selection card: hidden
+- minimap: x=17.2 y=563.5 w=367.3 h=252.5 right=384.5 bottom=816.0
+- squad tray viewport: x=11.5 y=839.0 w=811.4 h=230.7 right=822.9 bottom=1069.7
+- first presented card: x=16.1 y=843.6 w=154.9 h=221.5 right=171.0 bottom=1065.1
+- last presented card: x=658.8 y=843.6 w=154.9 h=221.5 right=813.7 bottom=1065.1
+- presented cards: 5; partially visible cards: 0
+- command strip: x=825.2 y=878.0 w=1563.3 h=191.7 right=2388.5 bottom=1069.7
+- command buttons (union): x=834.4 y=887.2 w=1545.0 h=173.3 right=2379.3 bottom=1060.5
+  - PASS minimap left inset 16 px (is 17.2)
+  - PASS first category card left inset 16 px (is 16.1)
+  - FAIL minimap to category cards gap 24 px (is 27.5)
+  - FAIL category card gap 1 is 8 px (is 5.7)
+  - FAIL category card gap 2 is 8 px (is 5.7)
+  - FAIL category card gap 3 is 8 px (is 5.7)
+  - FAIL category card gap 4 is 8 px (is 5.7)
+  - PASS last presented card to command strip >= 12 px (is 11.5)
+  - PASS command strip does not overlap the card tray (tray right 822.9, strip left 825.2)
+  - PASS category cards 16 px above bottom edge (is 14.9)
+  - PASS command buttons at least 16 px above bottom edge (is 19.5)
+- ARIA panel: x=1923.7 y=9.2 w=459.1 h=383.3 right=2382.8 bottom=392.5
+- ARIA button WatchAriaPlay "ﺗﻤﺎﺷﺎﯼ ﺁﺭﯾﺎ" icon=HudAction_Play: x=1946.7 y=296.1 w=413.2 h=82.6
+  - PASS ARIA button WatchAriaPlay is labelled
+  - PASS ARIA button WatchAriaPlay >= 64 px tall (is 82.6)
+  - FAIL ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+  - FAIL ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+  - PASS state aria-stopped shows [WatchAriaPlay] (shows [WatchAriaPlay])
+- ARIA status line: hidden
+  - FAIL stopped state shows the ARIA status line
+- HUD composition height on screen: 470.5 px
+
+
+
+## Rule check
+
+- aria-two-actions-en-1920: selection card left inset 16 px (is 13.8)
+- aria-two-actions-en-1920: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-two-actions-en-1920: minimap to category cards gap 24 px (is 27.5)
+- aria-two-actions-en-1920: category card gap 1 is 8 px (is 5.7)
+- aria-two-actions-en-1920: category card gap 2 is 8 px (is 5.7)
+- aria-two-actions-en-1920: category card gap 3 is 8 px (is 5.7)
+- aria-two-actions-en-1920: category card gap 4 is 8 px (is 5.7)
+- aria-two-actions-en-1920: card top padding 16 px (is 13.8)
+- aria-two-actions-en-1920: portrait to COMMANDS 12 px (is 9.2)
+- aria-two-actions-en-1920: COMMANDS to health 12 px (is 9.2)
+- aria-two-actions-en-1920: ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-1920: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-1920: ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+- aria-two-actions-en-1920: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-two-actions-en-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-one-action-en-1920: selection card left inset 16 px (is 13.8)
+- aria-one-action-en-1920: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-one-action-en-1920: minimap to category cards gap 24 px (is 107.9)
+- aria-one-action-en-1920: category card gap 1 is 8 px (is 5.7)
+- aria-one-action-en-1920: category card gap 2 is 8 px (is 5.7)
+- aria-one-action-en-1920: category card gap 3 is 8 px (is 5.7)
+- aria-one-action-en-1920: category card gap 4 is 8 px (is 5.7)
+- aria-one-action-en-1920: card top padding 16 px (is 13.8)
+- aria-one-action-en-1920: portrait to COMMANDS 12 px (is 9.2)
+- aria-one-action-en-1920: COMMANDS to health 12 px (is 9.2)
+- aria-one-action-en-1920: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-en-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-en-1920: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-one-action-en-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-en-1920: minimap to category cards gap 24 px (is 27.5)
+- aria-stopped-en-1920: category card gap 1 is 8 px (is 5.7)
+- aria-stopped-en-1920: category card gap 2 is 8 px (is 5.7)
+- aria-stopped-en-1920: category card gap 3 is 8 px (is 5.7)
+- aria-stopped-en-1920: category card gap 4 is 8 px (is 5.7)
+- aria-stopped-en-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-stopped-en-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-en-1920: stopped state shows the ARIA status line
+- aria-two-actions-en-2400: selection card left inset 16 px (is 13.8)
+- aria-two-actions-en-2400: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-two-actions-en-2400: minimap to category cards gap 24 px (is 27.5)
+- aria-two-actions-en-2400: category card gap 1 is 8 px (is 5.7)
+- aria-two-actions-en-2400: category card gap 2 is 8 px (is 5.7)
+- aria-two-actions-en-2400: category card gap 3 is 8 px (is 5.7)
+- aria-two-actions-en-2400: category card gap 4 is 8 px (is 5.7)
+- aria-two-actions-en-2400: card top padding 16 px (is 13.8)
+- aria-two-actions-en-2400: portrait to COMMANDS 12 px (is 9.2)
+- aria-two-actions-en-2400: COMMANDS to health 12 px (is 9.2)
+- aria-two-actions-en-2400: ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-2400: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-en-2400: ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+- aria-two-actions-en-2400: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-two-actions-en-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-one-action-en-2400: selection card left inset 16 px (is 13.8)
+- aria-one-action-en-2400: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-one-action-en-2400: minimap to category cards gap 24 px (is 107.9)
+- aria-one-action-en-2400: category card gap 1 is 8 px (is 5.7)
+- aria-one-action-en-2400: category card gap 2 is 8 px (is 5.7)
+- aria-one-action-en-2400: category card gap 3 is 8 px (is 5.7)
+- aria-one-action-en-2400: category card gap 4 is 8 px (is 5.7)
+- aria-one-action-en-2400: card top padding 16 px (is 13.8)
+- aria-one-action-en-2400: portrait to COMMANDS 12 px (is 9.2)
+- aria-one-action-en-2400: COMMANDS to health 12 px (is 9.2)
+- aria-one-action-en-2400: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-en-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-en-2400: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-one-action-en-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-en-2400: minimap to category cards gap 24 px (is 27.5)
+- aria-stopped-en-2400: category card gap 1 is 8 px (is 5.7)
+- aria-stopped-en-2400: category card gap 2 is 8 px (is 5.7)
+- aria-stopped-en-2400: category card gap 3 is 8 px (is 5.7)
+- aria-stopped-en-2400: category card gap 4 is 8 px (is 5.7)
+- aria-stopped-en-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-stopped-en-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-en-2400: stopped state shows the ARIA status line
+- aria-two-actions-fa-IR-1920: selection card left inset 16 px (is 13.8)
+- aria-two-actions-fa-IR-1920: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-two-actions-fa-IR-1920: minimap to category cards gap 24 px (is 27.5)
+- aria-two-actions-fa-IR-1920: category card gap 1 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-1920: category card gap 2 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-1920: category card gap 3 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-1920: category card gap 4 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-1920: card top padding 16 px (is 13.8)
+- aria-two-actions-fa-IR-1920: portrait to COMMANDS 12 px (is 9.2)
+- aria-two-actions-fa-IR-1920: COMMANDS to health 12 px (is 9.2)
+- aria-two-actions-fa-IR-1920: ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-1920: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-1920: ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+- aria-two-actions-fa-IR-1920: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-two-actions-fa-IR-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-one-action-fa-IR-1920: selection card left inset 16 px (is 13.8)
+- aria-one-action-fa-IR-1920: first category card left inset 16 px (is 20.7)
+- aria-one-action-fa-IR-1920: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-one-action-fa-IR-1920: minimap to category cards gap 24 px (is 107.9)
+- aria-one-action-fa-IR-1920: category card gap 1 is 8 px (is 5.7)
+- aria-one-action-fa-IR-1920: category card gap 2 is 8 px (is 5.7)
+- aria-one-action-fa-IR-1920: category card gap 3 is 8 px (is 5.7)
+- aria-one-action-fa-IR-1920: category card gap 4 is 8 px (is 5.7)
+- aria-one-action-fa-IR-1920: last presented card to command strip >= 12 px (is 6.9)
+- aria-one-action-fa-IR-1920: card top padding 16 px (is 13.8)
+- aria-one-action-fa-IR-1920: portrait to COMMANDS 12 px (is 9.2)
+- aria-one-action-fa-IR-1920: COMMANDS to health 12 px (is 9.2)
+- aria-one-action-fa-IR-1920: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-fa-IR-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-fa-IR-1920: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-one-action-fa-IR-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-fa-IR-1920: minimap to category cards gap 24 px (is 27.5)
+- aria-stopped-fa-IR-1920: category card gap 1 is 8 px (is 5.7)
+- aria-stopped-fa-IR-1920: category card gap 2 is 8 px (is 5.7)
+- aria-stopped-fa-IR-1920: category card gap 3 is 8 px (is 5.7)
+- aria-stopped-fa-IR-1920: category card gap 4 is 8 px (is 5.7)
+- aria-stopped-fa-IR-1920: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-stopped-fa-IR-1920: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-fa-IR-1920: stopped state shows the ARIA status line
+- aria-two-actions-fa-IR-2400: selection card left inset 16 px (is 13.8)
+- aria-two-actions-fa-IR-2400: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-two-actions-fa-IR-2400: minimap to category cards gap 24 px (is 27.5)
+- aria-two-actions-fa-IR-2400: category card gap 1 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-2400: category card gap 2 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-2400: category card gap 3 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-2400: category card gap 4 is 8 px (is 5.7)
+- aria-two-actions-fa-IR-2400: card top padding 16 px (is 13.8)
+- aria-two-actions-fa-IR-2400: portrait to COMMANDS 12 px (is 9.2)
+- aria-two-actions-fa-IR-2400: COMMANDS to health 12 px (is 9.2)
+- aria-two-actions-fa-IR-2400: ARIA button ShowMeButton 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-2400: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-two-actions-fa-IR-2400: ARIA button gap ShowMeButton->FieldGuide 12 px (is 13.8)
+- aria-two-actions-fa-IR-2400: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-two-actions-fa-IR-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-one-action-fa-IR-2400: selection card left inset 16 px (is 13.8)
+- aria-one-action-fa-IR-2400: first category card left inset 16 px (is 20.7)
+- aria-one-action-fa-IR-2400: selection card to minimap gap >= 24 px, never overlapping (is 13.8)
+- aria-one-action-fa-IR-2400: minimap to category cards gap 24 px (is 107.9)
+- aria-one-action-fa-IR-2400: category card gap 1 is 8 px (is 5.7)
+- aria-one-action-fa-IR-2400: category card gap 2 is 8 px (is 5.7)
+- aria-one-action-fa-IR-2400: category card gap 3 is 8 px (is 5.7)
+- aria-one-action-fa-IR-2400: category card gap 4 is 8 px (is 5.7)
+- aria-one-action-fa-IR-2400: last presented card to command strip >= 12 px (is 6.9)
+- aria-one-action-fa-IR-2400: card top padding 16 px (is 13.8)
+- aria-one-action-fa-IR-2400: portrait to COMMANDS 12 px (is 9.2)
+- aria-one-action-fa-IR-2400: COMMANDS to health 12 px (is 9.2)
+- aria-one-action-fa-IR-2400: ARIA button FieldGuide 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-fa-IR-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-one-action-fa-IR-2400: ARIA button gap FieldGuide->WatchAriaPlay 12 px (is 13.8)
+- aria-one-action-fa-IR-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-fa-IR-2400: minimap to category cards gap 24 px (is 27.5)
+- aria-stopped-fa-IR-2400: category card gap 1 is 8 px (is 5.7)
+- aria-stopped-fa-IR-2400: category card gap 2 is 8 px (is 5.7)
+- aria-stopped-fa-IR-2400: category card gap 3 is 8 px (is 5.7)
+- aria-stopped-fa-IR-2400: category card gap 4 is 8 px (is 5.7)
+- aria-stopped-fa-IR-2400: ARIA button WatchAriaPlay 16 px side insets (left 23.0, right 23.0)
+- aria-stopped-fa-IR-2400: ARIA panel ends 16 px below its last button, no reserved space (is 13.8)
+- aria-stopped-fa-IR-2400: stopped state shows the ARIA status line

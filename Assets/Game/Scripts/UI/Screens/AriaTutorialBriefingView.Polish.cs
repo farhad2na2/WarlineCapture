@@ -10,7 +10,7 @@ namespace Game.UI.Runtime
         private float InstructionScale => _missionLayoutLarge ? 1.08f : 1f;
         private float InstructionBodySize => 24f * InstructionScale;
 
-        private void ApplyPortraitHeader(float height, bool hasInstructions)
+        private void ApplyPortraitHeader(float height, bool hasInstructions, bool alignEnd = false)
         {
             float panelWidth = ((RectTransform)transform).rect.width;
             Place(missionPortraitStage, 10, 8, panelWidth - 20, height);
@@ -20,7 +20,10 @@ namespace Game.UI.Runtime
                     new Color32(22, 98, 114, 255), 1);
             float clipHeight = hasInstructions ? height - 16 : height - 20;
             float clipWidth = hasInstructions ? Mathf.Min(120, clipHeight * 1.1f) : 192;
-            Place(missionPortraitClip, (panelWidth - clipWidth) * .5f, 16, clipWidth, clipHeight);
+            // The compact (no guidance) header keeps ARIA and its status at the start and the
+            // portrait at the end, as on the approved board.
+            float clipX = !alignEnd ? (panelWidth - clipWidth) * .5f : _rightToLeft ? 16 : panelWidth - clipWidth - 16;
+            Place(missionPortraitClip, clipX, 16, clipWidth, clipHeight);
             var fitter = portraitImage.GetComponent<AspectRatioFitter>();
             if (fitter != null) fitter.enabled = false;
             var image = portraitImage.rectTransform;

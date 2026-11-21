@@ -5,7 +5,10 @@ namespace Game.UI.Runtime
 {
     public sealed partial class MatchHudSelectionPanelView
     {
-        private const float ContentBottomMargin = 12f;
+        // W39 Board 1: 16 px inner padding and 12 px between card sections.
+        private static float CardPadding => MatchHudSidePanelLayout.Units(MatchHudSidePanelLayout.CardPaddingPx);
+        private static float SectionGap => MatchHudSidePanelLayout.Units(MatchHudSidePanelLayout.CardSectionGapPx);
+        private const float CommandsHeight = 72f, HealthHeight = 31f, OrderHeight = 55f, PlayerControlHeight = 40f;
         private float selectionHeightLimit = float.PositiveInfinity;
         private RectTransform compactFrame;
         private ScrollRect selectionScroll;
@@ -18,8 +21,13 @@ namespace Game.UI.Runtime
             var panel = VisiblePanelRect;
             if (panel == null) return;
             map.GetWorldCorners(selectionCorners);
+            // The card, minimap and first category card share one left safe inset.
+            float shift = panel.InverseTransformPoint(selectionCorners[0]).x - panel.rect.xMin;
+            if (Mathf.Abs(shift) > .01f)
+                panel.anchoredPosition += new Vector2(shift * panel.localScale.x, 0);
+            map.GetWorldCorners(selectionCorners);
             float mapTop = panel.InverseTransformPoint(selectionCorners[1]).y;
-            selectionHeightLimit = Mathf.Max(80, panel.rect.yMax - mapTop - 12);
+            selectionHeightLimit = MatchHudSidePanelLayout.SelectionHeightLimit(panel.rect.yMax, mapTop);
             LayoutCompactSelection();
         }
 
@@ -42,7 +50,7 @@ namespace Game.UI.Runtime
                     shade.transform.SetParent(frame, false);
                     var image = shade.GetComponent<Image>();
                     image.color = new Color32(2, 12, 18, 215); image.raycastTarget = false;
-                    Place((RectTransform)shade.transform, 14, 12, -28, 64);
+                    Place((RectTransform)shade.transform, CardPadding, CardPadding, -2 * CardPadding, 64);
                     shade.transform.SetSiblingIndex(portrait.GetSiblingIndex() + 1);
                     titleText?.transform.SetAsLastSibling();
                     subtitleText?.transform.SetAsLastSibling();
@@ -80,27 +88,31 @@ namespace Game.UI.Runtime
             var cardMask = panel.GetComponent<RectMask2D>();
             if (cardMask != null && cardMask.enabled == _passengerDrawerOpen)
                 cardMask.enabled = !_passengerDrawerOpen;
+            float p = CardPadding, g = SectionGap;
             float chipHeight = passengerChipRoot != null && passengerChipRoot.activeSelf
-                ? ((RectTransform)passengerChipRoot.transform).rect.height + 8 : 0;
-            float portraitHeight = Mathf.Clamp(selectionHeightLimit - 247 - chipHeight - FieldRepairContextHeight, 100, 180);
-            Place(frame.Find("PortraitFrame") as RectTransform, 14, 12, -28, portraitHeight);
-            if (titleText != null) Place(titleText.rectTransform, 62, 15, -78, 34);
-            if (subtitleText != null) Place(subtitleText.rectTransform, 62, 49, -78, 24);
-            float y = portraitHeight + 20;
-            Place(commandWheelOpenButton != null ? commandWheelOpenButton.transform as RectTransform : null, 14, y, -28, 72);
-            y += 80;
-            Place(frame.Find("HealthPanel") as RectTransform, 17, y, -34, 31); y += 39;
-            Place(frame.Find("OrderLabel") as RectTransform, 17, y, -34, 55); y += 63;
-            Place(frame.Find("V3PlayerControl") as RectTransform, 17, y, -34, 40); y += 48;
+                ? ((RectTransform)passengerChipRoot.transform).rect.height + g : 0;
+            float repairHeight = FieldRepairContextHeight;
+            float fixedHeight = p + g + CommandsHeight + g + HealthHeight + g + OrderHeight + g + PlayerControlHeight + p;
+            float portraitHeight = Mathf.Clamp(selectionHeightLimit - fixedHeight - chipHeight - repairHeight, 100, 180);
+            Place(frame.Find("PortraitFrame") as RectTransform, p, p, -2 * p, portraitHeight);
+            if (titleText != null) Place(titleText.rectTransform, p + 48, p + 3, -2 * p - 50, 34);
+            if (subtitleText != null) Place(subtitleText.rectTransform, p + 48, p + 37, -2 * p - 50, 24);
+            float y = p + portraitHeight + g;
+            Place(commandWheelOpenButton != null ? commandWheelOpenButton.transform as RectTransform : null, p, y, -2 * p, CommandsHeight);
+            y += CommandsHeight + g;
+            Place(frame.Find("HealthPanel") as RectTransform, p, y, -2 * p, HealthHeight); y += HealthHeight + g;
+            Place(frame.Find("OrderLabel") as RectTransform, p, y, -2 * p, OrderHeight); y += OrderHeight + g;
+            Place(frame.Find("V3PlayerControl") as RectTransform, p, y, -2 * p, PlayerControlHeight); y += PlayerControlHeight + g;
             LayoutFieldRepairContext(ref y);
             if (chipHeight > 0)
             {
                 var chip = (RectTransform)passengerChipRoot.transform;
                 // Preserve the specialized fabrication chip's width and internal layout.
                 chip.anchoredPosition = new Vector2(chip.anchoredPosition.x, -y - (1 - chip.pivot.y) * chip.rect.height);
-                y += chip.rect.height + 8;
+                y += chip.rect.height + g;
             }
-            float contentHeight = y + ContentBottomMargin;
+            // The last section's trailing gap becomes the 16 px bottom padding.
+            float contentHeight = y - g + p;
             float height = Mathf.Min(contentHeight, selectionHeightLimit);
             if (!Mathf.Approximately(panel.rect.height, height))
                 panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);

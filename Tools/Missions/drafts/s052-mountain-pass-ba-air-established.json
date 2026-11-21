@@ -1,7 +1,7 @@
 {
   "catalog_id": "S052",
   "campaign_source": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
-  "notes": "Ground, rally, and ground-structure pads use s050-mountain-pass-ba-ground-established.json, matched by anchor role, kind and faction. The S050 starting buildings placed in Mac lane 50 (2026-11-21/lane50/a/unity.log:329111–329548). The S050 route waypoints accompany its base, spawn and rally pads. AirReturn pads and helipad instance centers use the same-source s058-mountain-pass-fc-air-established-candidate.json (S058 helipads and initial TransportHeli roster, 2026-11-20/lane49/a/unity.log lines 431067, 431090, 431136).",
+  "notes": "Ground, rally, and ground-structure pads use s050-mountain-pass-ba-ground-established.json, matched by anchor role, kind and faction. The S050 starting buildings placed in Mac lane 50 (2026-11-21/lane50/a/unity.log:329111–329548). The S050 route waypoints accompany its base, spawn and rally pads. AirReturn pads and helipad instance centers use the same-source s058-mountain-pass-fc-air-established-candidate.json (S058 helipads and initial TransportHeli roster, 2026-11-20/lane49/a/unity.log lines 431067, 431090, 431136). The helipad instance centers use measured grid-cell centers from codexlab/ba-air-startup/measure-S052.log:2562 and :2639. These prefer the proven helipad origins (79,188) and (393,160) without moving the typed AirReturn rectangles. At the west-shifted enemy origin the helipad reserved the requested cell and every ground fallback inside that rectangle (measure-S052.log:2613, :2665, :2691).",
   "anchors": {
     "base.player": [
       1002.0,
@@ -48,7 +48,7 @@
       407.5
     ],
     "air.player": [
-      947.0,
+      947.5,
       495.5
     ],
     "s050.f2.barracks": [
@@ -88,7 +88,7 @@
       455.5
     ],
     "air.enemy": [
-      1261.0,
+      1261.5,
       467.5
     ],
     "spawn.infantry.player": [
@@ -458,7 +458,7 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        947.0,
+        947.5,
         495.5
       ],
       "size": [
@@ -598,7 +598,7 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1261.0,
+        1261.5,
         467.5
       ],
       "size": [

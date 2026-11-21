@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_AirportSmall_Config
+  m_EditorClassIdentifier: 
+  displayName: Small Airport
+  description: Short airstrip for deploying fighter and strike jets.
+  portraitSprite: {fileID: 21300000, guid: c9464cd2b5ef40b0bdac50dabde7f1ab, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 45f716f4525b499d8b5dedee17203524, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: f5b21c6710c14698ae88abb14f6de9c5, type: 3}
+  maxHealth: 1800
+  role: 0
+  isWall: 0
+  canRequest: 1
+  price: 120000
+  materialsCost: 300
+  productionDurationSeconds: 30
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  materialFabricationEnabled: 0
+  materialFabricationOilConsumedPerCycle: 0
+  materialFabricationMaterialsOutputPerCycle: 0
+  materialFabricationCycleDurationSeconds: 30
+  materialFabricationOutputCapacityPolicy: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  canAttack: 0
+  maxConcurrentAttacks: 1
+  attackRange: 0
+  attackCooldownSeconds: 1
+  attackDamage: 0
+  attackImpactPrefab: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.5
+  attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
+  attackTraceWidth: 0.14
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 4
+  attackTraceVisibleSeconds: 0.1
+  attackTracerEveryNthShot: 3
+  destroyedVisualPrefab: {fileID: 1040117779925524500, guid: 0646f65f407ea3f419381cbf8ac75400, type: 3}
+  productions:
+  - spawnUnitPrefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
+    quantity: 1
+  - spawnUnitPrefab: {fileID: 5616646512338707422, guid: ec5587e89ce1a46889f0b8522b20e199, type: 3}
+    quantity: 1

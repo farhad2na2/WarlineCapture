@@ -1336,6 +1336,55 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void DepletedBaseAssaultDoesNotOpenRecruitDrawerWithoutBarracks()
+        {
+            using var world = new World(nameof(DepletedBaseAssaultDoesNotOpenRecruitDrawerWithoutBarracks));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out var setup);
+            Assert.AreEqual(SkirmishObjectiveKind.BaseAssault, setup.ObjectiveKind);
+            using var attackers = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishRoleOverlayComponent));
+            using var units = attackers.ToEntityArray(Allocator.Temp);
+            foreach (var unit in units)
+            {
+                var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                var role = em.GetComponentData<SkirmishRoleOverlayComponent>(unit);
+                if (owner.FactionId == 1 && owner.IsStructure == 0 && (role.TargetDomains & SkirmishTargetDomain.Structure) != 0)
+                    em.DestroyEntity(unit);
+            }
+
+            var army = SkirmishExpansionCatalogFactory.CreateInMemory().ArmyAir;
+            const int buildButton = 41;
+            AriaPlayObservationComponent OfferRecruit(SkirmishAriaPublicView facts)
+            {
+                Assert.AreEqual(0, facts.OwnStructureAttackUnits);
+                var view = new AriaSkirmishObservation
+                {
+                    Active = true, ExpandedSession = true, ExpandedBaseAssault = true, AirProfile = true,
+                    EnemyDesignatedAlive = true, Infantry = 9, Time = 100,
+                    CanAffordRifle = facts.CanAffordRifle, CanAffordBreacher = facts.CanAffordBreacher,
+                    CanAffordRocketeer = facts.CanAffordRocketeer,
+                    RecruitBreacher = new AriaTouchTarget { Id = buildButton, Available = true },
+                    RecruitRocketeer = new AriaTouchTarget { Id = buildButton, Available = true }
+                };
+                var plan = new AriaSkirmishPlanComponent { CoverageAssaultSeen = 1, AssaultStarted = 1 };
+                var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+                var output = default(AriaPlayObservationComponent);
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                return output;
+            }
+
+            Assert.AreEqual(buildButton, OfferRecruit(SkirmishAriaPublicProjection.FromSession(em, session, army)).TargetId);
+            var barracks = FindStructure(em, 1, SkirmishStructureIds.Barracks);
+            Assert.AreNotEqual(Entity.Null, barracks);
+            em.DestroyEntity(barracks);
+            var withoutBarracks = SkirmishAriaPublicProjection.FromSession(em, session, army);
+            Assert.IsFalse(withoutBarracks.CanAffordRifle);
+            Assert.IsFalse(withoutBarracks.CanAffordBreacher);
+            Assert.IsFalse(withoutBarracks.CanAffordRocketeer);
+            Assert.AreNotEqual(buildButton, OfferRecruit(withoutBarracks).TargetId);
+        }
+
+        [Test]
         public void PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer()
         {
             using var world = new World(nameof(PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer));

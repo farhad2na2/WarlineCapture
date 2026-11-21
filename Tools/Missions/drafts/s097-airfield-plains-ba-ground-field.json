@@ -1,0 +1,676 @@
+{
+  "catalog_id": "S097",
+  "campaign_source": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+  "notes": "CityEdgeAirfield ground template from the protected S004 native layout dump, SHA-256 09a8cc1d1511913dbf2334a471b1b3f77b91061b4afb57082b6b811141b1e389. Native candidates pin 12 of 14 starting footprints; both guard towers fit inside native-valid oil-pump rectangles on the same baked placement mask. Routes use the apron, the north service road and the south edge of the runway. Helipad sites are reserved for later transport production. Bilateral fixed-wing production is separately gated.",
+  "anchors": {
+    "base.player": [
+      446.0,
+      627.5
+    ],
+    "staging.player": [
+      439.0,
+      607.5
+    ],
+    "economy.player": [
+      423.5,
+      654.0
+    ],
+    "facility.player.refinery": [
+      428.5,
+      675.5
+    ],
+    "facility.player.fuel_bladder": [
+      455.0,
+      673.0
+    ],
+    "facility.player.fabrication_depot": [
+      441.5,
+      660.0
+    ],
+    "service.player": [
+      420.5,
+      638.0
+    ],
+    "air.player": [
+      456.0,
+      691.5
+    ],
+    "base.enemy": [
+      958.0,
+      627.5
+    ],
+    "staging.enemy": [
+      967.0,
+      607.5
+    ],
+    "economy.enemy": [
+      951.5,
+      654.0
+    ],
+    "facility.enemy.refinery": [
+      972.5,
+      675.5
+    ],
+    "facility.enemy.fuel_bladder": [
+      951.0,
+      673.0
+    ],
+    "facility.enemy.fabrication_depot": [
+      969.5,
+      660.0
+    ],
+    "service.enemy": [
+      987.5,
+      638.0
+    ],
+    "air.enemy": [
+      984.0,
+      595.5
+    ],
+    "spawn.infantry.player": [
+      426,
+      602
+    ],
+    "spawn.vehicle.player": [
+      458,
+      604
+    ],
+    "rally.player": [
+      452,
+      610
+    ],
+    "spawn.infantry.enemy": [
+      980,
+      608
+    ],
+    "spawn.vehicle.enemy": [
+      950,
+      604
+    ],
+    "rally.enemy": [
+      950,
+      610
+    ],
+    "supply.expansion.a": [
+      550,
+      588
+    ],
+    "supply.expansion.b": [
+      854,
+      588
+    ],
+    "route.1.waypoint.01": [
+      454.0,
+      610.0
+    ],
+    "route.1.waypoint.02": [
+      474.0,
+      606.0
+    ],
+    "route.1.waypoint.03": [
+      498.0,
+      582.0
+    ],
+    "route.1.waypoint.04": [
+      822.0,
+      582.0
+    ],
+    "route.1.waypoint.05": [
+      830.0,
+      590.0
+    ],
+    "route.1.waypoint.06": [
+      890.0,
+      590.0
+    ],
+    "route.1.waypoint.07": [
+      902.0,
+      582.0
+    ],
+    "route.1.waypoint.08": [
+      922.0,
+      602.0
+    ],
+    "route.1.waypoint.09": [
+      950.0,
+      610.0
+    ],
+    "route.2.waypoint.01": [
+      454.0,
+      610.0
+    ],
+    "route.2.waypoint.02": [
+      486.0,
+      602.0
+    ],
+    "route.2.waypoint.03": [
+      934.0,
+      602.0
+    ],
+    "route.2.waypoint.04": [
+      950.0,
+      610.0
+    ],
+    "route.3.waypoint.01": [
+      454.0,
+      610.0
+    ],
+    "route.3.waypoint.02": [
+      466.0,
+      602.0
+    ],
+    "route.3.waypoint.03": [
+      490.0,
+      602.0
+    ],
+    "route.3.waypoint.04": [
+      510.0,
+      582.0
+    ],
+    "route.3.waypoint.05": [
+      510.0,
+      574.0
+    ],
+    "route.3.waypoint.06": [
+      526.0,
+      562.0
+    ],
+    "route.3.waypoint.07": [
+      550.0,
+      562.0
+    ],
+    "route.3.waypoint.08": [
+      558.0,
+      550.0
+    ],
+    "route.3.waypoint.09": [
+      558.0,
+      534.0
+    ],
+    "route.3.waypoint.10": [
+      790.0,
+      534.0
+    ],
+    "route.3.waypoint.11": [
+      794.0,
+      530.0
+    ],
+    "route.3.waypoint.12": [
+      926.0,
+      534.0
+    ],
+    "route.3.waypoint.13": [
+      942.0,
+      550.0
+    ],
+    "route.3.waypoint.14": [
+      942.0,
+      594.0
+    ],
+    "route.3.waypoint.15": [
+      950.0,
+      610.0
+    ]
+  },
+  "pads": {
+    "base.player": {
+      "at": [
+        446.0,
+        627.5
+      ],
+      "anchor": "base.player",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "staging.player": {
+      "at": [
+        439.0,
+        607.5
+      ],
+      "anchor": "staging.player",
+      "size": [
+        14,
+        7
+      ]
+    },
+    "economy.player": {
+      "at": [
+        423.5,
+        654.0
+      ],
+      "anchor": "economy.player",
+      "size": [
+        15,
+        4
+      ]
+    },
+    "service.player": {
+      "at": [
+        420.5,
+        638.0
+      ],
+      "anchor": "service.player",
+      "size": [
+        3,
+        4
+      ]
+    },
+    "air.player": {
+      "at": [
+        456.0,
+        691.5
+      ],
+      "anchor": "air.player",
+      "size": [
+        16,
+        15
+      ]
+    },
+    "base.enemy": {
+      "at": [
+        958.0,
+        627.5
+      ],
+      "anchor": "base.enemy",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "staging.enemy": {
+      "at": [
+        967.0,
+        607.5
+      ],
+      "anchor": "staging.enemy",
+      "size": [
+        14,
+        7
+      ]
+    },
+    "economy.enemy": {
+      "at": [
+        951.5,
+        654.0
+      ],
+      "anchor": "economy.enemy",
+      "size": [
+        15,
+        4
+      ]
+    },
+    "service.enemy": {
+      "at": [
+        987.5,
+        638.0
+      ],
+      "anchor": "service.enemy",
+      "size": [
+        3,
+        4
+      ]
+    },
+    "air.enemy": {
+      "at": [
+        984.0,
+        595.5
+      ],
+      "anchor": "air.enemy",
+      "size": [
+        16,
+        15
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        426,
+        602
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        458,
+        604
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "rally.player": {
+      "at": [
+        452,
+        610
+      ],
+      "anchor": "rally.player",
+      "size": [
+        10,
+        8
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        980,
+        608
+      ],
+      "anchor": "spawn.infantry.enemy",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        950,
+        604
+      ],
+      "anchor": "spawn.vehicle.enemy",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        950,
+        610
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        10,
+        8
+      ]
+    }
+  },
+  "instance_pads": [
+    {
+      "id": "player.barracks",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        446.0,
+        627.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.player"
+    },
+    {
+      "id": "player.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        439.0,
+        607.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "player.oil_pump",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        423.5,
+        654.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "player.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        428.5,
+        675.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "facility.player.refinery"
+    },
+    {
+      "id": "player.fuel_bladder",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        455.0,
+        673.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "facility.player.fuel_bladder"
+    },
+    {
+      "id": "player.fabrication_depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        441.5,
+        660.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "facility.player.fabrication_depot"
+    },
+    {
+      "id": "player.watchtower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        420.5,
+        638.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "enemy.barracks",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        958.0,
+        627.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.enemy"
+    },
+    {
+      "id": "enemy.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        967.0,
+        607.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "enemy.oil_pump",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        951.5,
+        654.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "enemy.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        972.5,
+        675.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "facility.enemy.refinery"
+    },
+    {
+      "id": "enemy.fuel_bladder",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        951.0,
+        673.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "facility.enemy.fuel_bladder"
+    },
+    {
+      "id": "enemy.fabrication_depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        969.5,
+        660.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "facility.enemy.fabrication_depot"
+    },
+    {
+      "id": "enemy.watchtower",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        987.5,
+        638.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.enemy"
+    }
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28,
+      15
+    ],
+    "building.ground_staging": [
+      14,
+      7
+    ],
+    "building.oil_pump": [
+      15,
+      4
+    ],
+    "building.refinery": [
+      25,
+      15
+    ],
+    "building.fuel_bladder": [
+      14,
+      10
+    ],
+    "building.fabrication_depot": [
+      19,
+      16
+    ],
+    "building.watchtower": [
+      3,
+      4
+    ]
+  },
+  "pad_slack_m": 2,
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "route.1.waypoint.01",
+        "route.1.waypoint.02",
+        "route.1.waypoint.03",
+        "route.1.waypoint.04",
+        "route.1.waypoint.05",
+        "route.1.waypoint.06",
+        "route.1.waypoint.07",
+        "route.1.waypoint.08",
+        "route.1.waypoint.09"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "route.2.waypoint.01",
+        "route.2.waypoint.02",
+        "route.2.waypoint.03",
+        "route.2.waypoint.04"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "route.3.waypoint.01",
+        "route.3.waypoint.02",
+        "route.3.waypoint.03",
+        "route.3.waypoint.04",
+        "route.3.waypoint.05",
+        "route.3.waypoint.06",
+        "route.3.waypoint.07",
+        "route.3.waypoint.08",
+        "route.3.waypoint.09",
+        "route.3.waypoint.10",
+        "route.3.waypoint.11",
+        "route.3.waypoint.12",
+        "route.3.waypoint.13",
+        "route.3.waypoint.14",
+        "route.3.waypoint.15"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ]
+}

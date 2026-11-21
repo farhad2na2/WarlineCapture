@@ -76,6 +76,7 @@ namespace Game.Editor
             SkirmishProducerKind.GroundStaging => SkirmishStructureIds.GroundStaging,
             SkirmishProducerKind.Helipad => SkirmishStructureIds.Helipad,
             SkirmishProducerKind.Airport => SkirmishStructureIds.Airport,
+            SkirmishProducerKind.SmallAirport => SkirmishStructureIds.AirportSmall,
             SkirmishProducerKind.IntelStation => SkirmishStructureIds.SatelliteDish,
             _ => null
         };

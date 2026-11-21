@@ -130,6 +130,7 @@ namespace Game.Configs
                 SupplyLive = perception.OwnSupplyLive,
                 HelipadPresent = perception.HelipadPresent,
                 AirportPresent = perception.AirportPresent,
+                SmallAirportPresent = perception.SmallAirportPresent,
                 InfantryCap = 48,
                 GroundCap = 8,
                 AirCap = perception.AirCap < 1 ? 2 : perception.AirCap,

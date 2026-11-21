@@ -4,6 +4,7 @@ import csv
 import json
 from pathlib import Path
 import sys
+import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 MISSIONS = ROOT / 'Tools/Missions'
@@ -12,7 +13,28 @@ SOURCES = {
     'MP': 'Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset',
     'IB': 'Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset',
     'DB': 'Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset',
+    'AP': 'Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset',
 }
+ARMOR_BREAK = 'Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset'
+
+
+def source_matches(row, source):
+    map_id = row['map_id']
+    return map_id in SOURCES and (source == SOURCES[map_id] or (
+        map_id == 'MP' and row['objective_id'] in ('BT', 'CE') and source == ARMOR_BREAK
+    ))
+
+
+class DraftSourceTests(unittest.TestCase):
+    def test_armor_break_adds_bt_and_ce_only(self):
+        for objective in ('BA', 'FC', 'BT', 'CE'):
+            row = {'map_id': 'MP', 'objective_id': objective}
+            with self.subTest(objective=objective):
+                self.assertTrue(source_matches(row, SOURCES['MP']))
+                self.assertEqual(source_matches(row, ARMOR_BREAK), objective in ('BT', 'CE'))
+        for map_id in ('CC', 'IB', 'DB', 'unknown'):
+            with self.subTest(map_id=map_id):
+                self.assertFalse(source_matches({'map_id': map_id, 'objective_id': 'BT'}, ARMOR_BREAK))
 
 
 def main():
@@ -44,7 +66,7 @@ def main():
                     raise ValueError('candidate draft must be marked ' + marker + ' in notes')
             elif row is None or row['objective_id'] != 'BA':
                 raise ValueError('catalog_id does not identify a BA mission')
-            if row['map_id'] not in SOURCES or draft['campaign_source'] != SOURCES[row['map_id']]:
+            if not source_matches(row, draft['campaign_source']):
                 raise ValueError('campaign_source does not match map')
             # An air-return pad alone can describe a helipad; require an explicitly
             # identified Airport role, which the authoring entry accepts under air.*.

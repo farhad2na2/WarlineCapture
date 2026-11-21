@@ -34,7 +34,7 @@ namespace Game.Runtime
             if (building)
             {
                 var producer = SkirmishStructureIds.ProducerFor(SkirmishStructureIds.FromVisualKey(prefab.name));
-                if (producer == Game.Skirmish.Contracts.SkirmishProducerKind.Airport)
+                if (SkirmishAirportTypes.IsAirport(producer))
                     required = Game.Skirmish.Contracts.SkirmishReadinessStage.FullArsenal;
                 else if (producer == Game.Skirmish.Contracts.SkirmishProducerKind.Helipad ||
                     producer == Game.Skirmish.Contracts.SkirmishProducerKind.IntelStation)
@@ -49,7 +49,7 @@ namespace Game.Runtime
             if (!building && catalog.TryRole(prefab.name, out var researchRole) && ResearchBlocks(em, session, researchRole.Producer, 1))
                 return BuildingUiCommandSystemHelper.CampRequestFailure.ResearchInProgress;
             if (!building && catalog.TryRole(prefab.name, out var producerRole) &&
-                !SkirmishProductionService.HasLivingProducer(em, session, producerRole.Producer, 1))
+                !SkirmishProductionService.HasLivingProducerFor(em, session, producerRole, 1))
                 return BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding;
             return BuildingUiCommandSystemHelper.CampRequestFailure.None;
         }

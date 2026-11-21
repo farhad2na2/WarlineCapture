@@ -474,3 +474,105 @@ MonoBehaviour:
     Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
       source fit, normal-input/ARIA journeys, result/return and device acceptance
       required; asset existence does not set Playable.
+  - CatalogId: S027
+    DefinitionId: skirmish.s027
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S027/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S029
+    DefinitionId: skirmish.s029
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S029/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S051
+    DefinitionId: skirmish.s051
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S051/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S053
+    DefinitionId: skirmish.s053
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S053/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S028
+    DefinitionId: skirmish.s028
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S028/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S030
+    DefinitionId: skirmish.s030
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S030/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S052
+    DefinitionId: skirmish.s052
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S052/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S054
+    DefinitionId: skirmish.s054
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S054/
+  - CatalogId: S079
+    DefinitionId: skirmish.s079
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S079/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S080
+    DefinitionId: skirmish.s080
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S080/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S085
+    DefinitionId: skirmish.s085
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S085/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S086
+    DefinitionId: skirmish.s086
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S086/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S091
+    DefinitionId: skirmish.s091
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S091/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S092
+    DefinitionId: skirmish.s092
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S092/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.
+  - CatalogId: S097
+    DefinitionId: skirmish.s097
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S097/
+    Notes: Source-bound candidate authored by SkirmishMissionAuthoringEntry. Native
+      source fit, normal-input/ARIA journeys, result/return and device acceptance
+      required; asset existence does not set Playable.

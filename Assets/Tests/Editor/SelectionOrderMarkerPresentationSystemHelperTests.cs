@@ -21,11 +21,12 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
     private const string AttackTargetMarkerPrefabPath = "Assets/Game/Prefabs/Shapes/AttackTargetSelectionMarker.prefab";
     private const string BuildingSelectionMarkerPrefabPath = "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab";
     private const string VehicleSelectionMarkerPrefabPath = "Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab";
-    private const string MoveMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_Command_Move_Hologram.mat";
-    private const string AttackMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_Command_Attack_Hologram.mat";
-    private const string TargetLockMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_TargetLock_Attack_Hologram.mat";
+    private const string MoveMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/TacticalMarkerMove.mat";
+    private const string AttackMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/TacticalMarkerAttack.mat";
+    private const string TargetLockMaterialPath = "Assets/Game/Resources/TacticalMarkerAttackTarget.mat";
     private const string HologramShaderPath = "Assets/Game/Rendering/Shaders/SelectionHologram.shader";
     private const string HologramShaderName = "WarlineCapture/Markers/SelectionHologram";
+    private const string TacticalMarkerShaderName = "WarlineCapture/Markers/TacticalMarker";
     private const float MoveOrderMarkerExpectedYOffset = 0.18f;
     private const float MoveOrderMarkerExpectedHorizontalScale = 2.4f;
     private const float AttackOrderMarkerExpectedYOffset = 0.45f;
@@ -47,12 +48,14 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             RunCase(test => test.UpdateAttackTargetPreviewMarkers_ShowsOnlyLivingHostileTargets());
             RunCase(test => test.UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets());
             RunCase(test => test.MarkerAssetConfiguration_UsesDedicatedTargetLockPrefab());
-            RunCase(test => test.MarkerPrefabs_UseHologramMaterialsAndDisableExpensiveRendering());
-            RunCase(test => test.MoveMarkerPrefab_UsesCleanConnectedWaypointPieces());
+            RunCase(test => test.MarkerPrefabs_UseExpectedMaterialsAndDisableExpensiveRendering());
+            RunCase(test => test.MarkerPrefabs_UseDistinctKeylinedGlyphs());
             RunCase(test => test.SelectionHologramShader_DefinesDotsInstancingVariant());
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
             RunCase(test => test.EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=16");
+            RunCase(test => test.ShowAttackOrderMarker_FallbackUsesCappedReticleAndHidesWithTargetDeath());
+            RunCase(test => test.SelectionGlyph_RendersAnOpenCenterAndVisibleStroke());
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=19");
         }
         catch (System.Exception ex)
         {
@@ -361,9 +364,6 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             Assert.IsNotNull(renderer);
             AssertRuntimeMarkerRendererConfigured(renderer, TargetLockMaterialPath);
             AssertMarkerRenderableMinY(attackMarker.gameObject, 0.05f);
-            var propertyBlock = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(propertyBlock);
-            AssertTargetLockPropertyBlock(propertyBlock);
         }
         finally
         {
@@ -427,9 +427,9 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             Bounds bounds = buildingInstance.GetComponent<Renderer>().bounds;
             Assert.AreEqual(bounds.center.x, attackMarker.position.x, 0.001f);
             Assert.AreEqual(bounds.center.z, attackMarker.position.z, 0.001f);
-            Assert.AreEqual(5f, attackMarker.localScale.x, 0.001f);
+            Assert.AreEqual(Mathf.Max(4f, bounds.size.x) * 1.25f, attackMarker.localScale.x, 0.001f);
             Assert.AreEqual(1f, attackMarker.localScale.y, 0.001f);
-            Assert.AreEqual(7.5f, attackMarker.localScale.z, 0.001f);
+            Assert.AreEqual(Mathf.Max(6f, bounds.size.z) * 1.25f, attackMarker.localScale.z, 0.001f);
             Assert.AreEqual(35f, attackMarker.eulerAngles.y, 0.001f);
             AssertMarkerRenderableMinY(attackMarker.gameObject, bounds.min.y + 0.05f);
         }
@@ -481,9 +481,6 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             Assert.IsNotNull(renderer);
             AssertRuntimeMarkerRendererConfigured(renderer, TargetLockMaterialPath);
             AssertMarkerRenderableMinY(attackMarker.gameObject, 0.05f);
-            var propertyBlock = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(propertyBlock);
-            AssertTargetLockPropertyBlock(propertyBlock);
         }
         finally
         {
@@ -676,7 +673,7 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
     }
 
     [Test]
-    public void MarkerPrefabs_UseHologramMaterialsAndDisableExpensiveRendering()
+    public void MarkerPrefabs_UseExpectedMaterialsAndDisableExpensiveRendering()
     {
         string[] markerPrefabPaths =
         {
@@ -692,20 +689,113 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
     }
 
     [Test]
-    public void MoveMarkerPrefab_UsesCleanConnectedWaypointPieces()
+    public void MarkerPrefabs_UseDistinctKeylinedGlyphs()
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MoveMarkerPrefabPath);
-        Assert.IsNotNull(prefab, $"Missing move marker prefab at {MoveMarkerPrefabPath}");
+        AssertGlyph(VehicleSelectionMarkerPrefabPath, 0, new Color32(54, 216, 228, 255), 0f, 2);
+        var selection = AssetDatabase.LoadAssetAtPath<GameObject>(VehicleSelectionMarkerPrefabPath);
+        Assert.IsNotNull(selection.transform.Find("Model/InfantryGroundRing"));
+        Assert.IsNotNull(selection.transform.Find("Model/VehicleCornerBrackets"));
+        AssertGlyph(MoveMarkerPrefabPath, 1, new Color32(85, 207, 98, 255), 0f, 1);
+        AssertGlyph(AttackMarkerPrefabPath, 2, new Color32(255, 85, 54, 255), 0.20f, 1);
+        AssertGlyph(AttackTargetMarkerPrefabPath, 2, new Color32(255, 85, 54, 255), 0.20f, 1);
+    }
 
-        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedFill"));
-        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedOuterRing"));
-        Assert.IsNotNull(prefab.transform.Find("WaypointConnectedInnerRing"));
-        Assert.IsNotNull(prefab.transform.Find("WaypointCenterDot"));
+    [Test]
+    public void ShowAttackOrderMarker_FallbackUsesCappedReticleAndHidesWithTargetDeath()
+    {
+        using var world = new World("SelectionOrderMarkerFallback");
+        EntityManager em = world.EntityManager;
+        CreateMarkerGrid(em);
+        Entity target = CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(7f, 0f, 8f), 100);
+        em.AddComponentData(target, new UnitFootprint { Size = new int2(12, 16) });
+        GameObject runtimeRoot = new("MarkerRoot");
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
+        try
+        {
+            markers.Initialize(null, null, null, null, 1f, runtimeRoot.transform);
+            markers.ShowAttackOrderMarker(em, target, Vector3.zero, 6f);
+            Transform reticle = FindChildByNameForTest(runtimeRoot.transform, "AttackTargetFallbackReticleRuntime");
+            Assert.IsNotNull(reticle);
+            Assert.IsTrue(reticle.gameObject.activeSelf);
+            Assert.AreEqual(new Vector3(7f, 0.12f, 8f), reticle.position);
+            Assert.IsNull(reticle.GetComponent<LineRenderer>());
+            Assert.IsNull(reticle.GetComponent<Collider>());
+            Assert.AreEqual(0.20f, reticle.GetComponent<Renderer>().sharedMaterial.GetFloat("_MaxViewportSpan"));
 
-        Assert.IsNull(prefab.transform.Find("WaypointDestinationPad_Subtle"));
-        Assert.IsNull(prefab.transform.Find("WaypointRippleRings"));
-        Assert.IsNull(prefab.transform.Find("WaypointDirectionChevrons"));
-        Assert.IsNull(prefab.transform.Find("WaypointBeaconPin"));
+            em.SetComponentData(target, new UnitHealth { Current = 0, Max = 100 });
+            markers.UpdateAttackOrderMarkerVisibility(null);
+            Assert.IsFalse(reticle.gameObject.activeSelf);
+        }
+        finally
+        {
+            markers.Dispose();
+            Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void SelectionGlyph_RendersAnOpenCenterAndVisibleStroke()
+    {
+        const int size = 256;
+        const int captureLayer = 31;
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(VehicleSelectionMarkerPrefabPath);
+        GameObject marker = Object.Instantiate(prefab);
+        GameObject cameraObject = new("Marker Test Camera");
+        var texture = new RenderTexture(size, size, 24, RenderTextureFormat.ARGB32);
+        var pixels = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        RenderTexture previous = RenderTexture.active;
+        try
+        {
+            Transform glyph = marker.transform.Find("Model/InfantryGroundRing");
+            glyph.gameObject.layer = captureLayer;
+            marker.transform.Find("Model/VehicleCornerBrackets").gameObject.SetActive(false);
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.cullingMask = 1 << captureLayer;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.orthographic = true;
+            camera.orthographicSize = 1f;
+            camera.transform.SetPositionAndRotation(new Vector3(0f, 10f, 0f), Quaternion.Euler(90f, 0f, 0f));
+            camera.targetTexture = texture;
+            camera.Render();
+            RenderTexture.active = texture;
+            pixels.ReadPixels(new Rect(0, 0, size, size), 0, 0);
+            pixels.Apply();
+
+            Assert.Less(pixels.GetPixel(size / 2, size / 2).maxColorComponent, 0.05f, "Glyph center must be clear");
+            int cyanPixels = 0;
+            foreach (Color32 pixel in pixels.GetPixels32())
+            {
+                if (pixel.g > pixel.r + 15 && pixel.b > pixel.r + 15)
+                    cyanPixels++;
+            }
+            Assert.Greater(cyanPixels, 60, "The selection stroke must be visible");
+        }
+        finally
+        {
+            RenderTexture.active = previous;
+            Object.DestroyImmediate(cameraObject);
+            Object.DestroyImmediate(texture);
+            Object.DestroyImmediate(pixels);
+            Object.DestroyImmediate(marker);
+        }
+    }
+
+    private static void AssertGlyph(string prefabPath, int shape, Color color, float maxSpan, int rendererCount)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        Assert.IsNotNull(prefab, prefabPath);
+        MeshRenderer[] renderers = prefab.GetComponentsInChildren<MeshRenderer>(true);
+        Assert.AreEqual(rendererCount, renderers.Length, prefabPath);
+        foreach (MeshRenderer renderer in renderers)
+        {
+            Material material = renderer.sharedMaterial;
+            Assert.AreEqual(TacticalMarkerShaderName, material.shader.name);
+            Assert.AreEqual(shape, material.GetFloat("_MarkerShape"));
+            Assert.AreEqual(maxSpan, material.GetFloat("_MaxViewportSpan"));
+            AssertColorClose(color, material.GetColor("_BaseColor"));
+            Assert.AreEqual(4, renderer.GetComponent<MeshFilter>().sharedMesh.vertexCount);
+        }
     }
 
     [Test]
@@ -907,28 +997,14 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
         Assert.That(closingDistance, Is.LessThanOrEqualTo(maxSegmentLength));
     }
 
-    private static void AssertTargetLockPropertyBlock(MaterialPropertyBlock propertyBlock)
-    {
-        AssertColorClose(new Color(1f, 0.08f, 0.04f, 0.95f), propertyBlock.GetColor("_BaseColor"));
-        AssertColorClose(new Color(1f, 0.08f, 0.04f, 0.95f), propertyBlock.GetColor("_Color"));
-        AssertColorClose(new Color(0.76f, 0.05f, 0.03f, 1f), propertyBlock.GetColor("_EmissionColor"));
-        AssertColorClose(new Color(1f, 0.92f, 0.5f, 1f), propertyBlock.GetColor("_AccentColor"));
-    }
-
     private static void AssertAttackPreviewPropertyBlock(MaterialPropertyBlock propertyBlock)
     {
-        AssertColorClose(new Color(0.92f, 0.12f, 0.08f, 0.62f), propertyBlock.GetColor("_BaseColor"));
-        AssertColorClose(new Color(0.92f, 0.12f, 0.08f, 0.62f), propertyBlock.GetColor("_Color"));
-        AssertColorClose(new Color(0.24f, 0.03f, 0.02f, 1f), propertyBlock.GetColor("_EmissionColor"));
-        AssertColorClose(new Color(1f, 0.64f, 0.42f, 1f), propertyBlock.GetColor("_AccentColor"));
+        AssertColorClose(new Color32(255, 85, 54, 158), propertyBlock.GetColor("_BaseColor"));
     }
 
     private static void AssertBoardPreviewPropertyBlock(MaterialPropertyBlock propertyBlock)
     {
         AssertColorClose(new Color(0.2f, 1f, 0.78f, 0.68f), propertyBlock.GetColor("_BaseColor"));
-        AssertColorClose(new Color(0.2f, 1f, 0.78f, 0.68f), propertyBlock.GetColor("_Color"));
-        AssertColorClose(new Color(0.04f, 0.34f, 0.25f, 1f), propertyBlock.GetColor("_EmissionColor"));
-        AssertColorClose(new Color(0.72f, 1f, 0.88f, 1f), propertyBlock.GetColor("_AccentColor"));
     }
 
     private static void AssertPremiumMarkerPrefab(string prefabPath)
@@ -950,8 +1026,14 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
 
             Material[] materials = renderer.sharedMaterials;
             Assert.Greater(materials.Length, 0, $"{prefabPath}:{GetTransformPath(renderer.transform)} has no materials");
-            for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
-                AssertHologramMaterial(materials[materialIndex], $"{prefabPath}:{GetTransformPath(renderer.transform)}[{materialIndex}]");
+            foreach (Material material in materials)
+            {
+                Assert.IsNotNull(material, prefabPath);
+                if (prefabPath == BuildingSelectionMarkerPrefabPath)
+                    AssertHologramMaterial(material, prefabPath);
+                else
+                    Assert.AreEqual(TacticalMarkerShaderName, material.shader.name, prefabPath);
+            }
         }
     }
 

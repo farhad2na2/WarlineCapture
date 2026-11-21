@@ -1,0 +1,728 @@
+{
+  "catalog_id": "S080",
+  "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+  "notes": "candidate=1, measured 2026-11-21 (macOS Codex lab r2, host S074, seed 130365, en). The west zone moves inward and all three capture zones use separate rectangles. Infantry and trucks reach all three from both bases and both staging pads. Every vehicle segment reaches the exact native goal.",
+  "anchors": {
+    "base.player": [
+      834.0,
+      595.5
+    ],
+    "staging.player": [
+      835.0,
+      575.5
+    ],
+    "economy.player": [
+      835.5,
+      614.0
+    ],
+    "w29.f1.refinery": [
+      832.5,
+      627.5
+    ],
+    "w29.f1.fuel": [
+      835.0,
+      561.0
+    ],
+    "w29.f1.depot": [
+      917.5,
+      612.0
+    ],
+    "w29.f1.module": [
+      968.5,
+      571.5
+    ],
+    "air.player": [
+      876.0,
+      627.5
+    ],
+    "service.player": [
+      819.0,
+      609.0
+    ],
+    "w29.f1.approach": [
+      835.0,
+      641.0
+    ],
+    "w29.f1.dish": [
+      835.0,
+      545.0
+    ],
+    "spawn.vehicle.player": [
+      858.5,
+      596.0
+    ],
+    "spawn.infantry.player": [
+      852.5,
+      580.0
+    ],
+    "rally.player": [
+      852.5,
+      610.0
+    ],
+    "base.enemy": [
+      842.0,
+      467.5
+    ],
+    "staging.enemy": [
+      843.0,
+      447.5
+    ],
+    "economy.enemy": [
+      843.5,
+      486.0
+    ],
+    "w29.f2.refinery": [
+      840.5,
+      499.5
+    ],
+    "w29.f2.fuel": [
+      819.0,
+      465.0
+    ],
+    "w29.f2.depot": [
+      813.5,
+      484.0
+    ],
+    "w29.f2.module": [
+      808.5,
+      507.5
+    ],
+    "air.enemy": [
+      876.0,
+      467.5
+    ],
+    "service.enemy": [
+      827.0,
+      481.0
+    ],
+    "w29.f2.approach": [
+      811.0,
+      449.0
+    ],
+    "w29.f2.dish": [
+      875.0,
+      449.0
+    ],
+    "spawn.vehicle.enemy": [
+      800.5,
+      466.0
+    ],
+    "spawn.infantry.enemy": [
+      904.5,
+      468.0
+    ],
+    "rally.enemy": [
+      842.5,
+      436.0
+    ],
+    "route.player.apron": [
+      835,
+      583.5
+    ],
+    "route.player.east": [
+      846,
+      582
+    ],
+    "route.main.crossing": [
+      902,
+      550
+    ],
+    "route.main.exit": [
+      902,
+      450
+    ],
+    "route.west.apron": [
+      826,
+      582
+    ],
+    "route.west.ramp": [
+      823.5,
+      555
+    ],
+    "route.west.pocket": [
+      810,
+      534
+    ],
+    "route.west.corner": [
+      814,
+      538
+    ],
+    "route.west.yard": [
+      826,
+      538
+    ],
+    "route.west.south": [
+      826,
+      550
+    ],
+    "route.west.join": [
+      830,
+      554
+    ],
+    "route.north.entry": [
+      858,
+      550
+    ],
+    "route.north.pocket": [
+      890,
+      538
+    ],
+    "route.north.street": [
+      890,
+      478
+    ],
+    "route.north.exit": [
+      890,
+      454
+    ],
+    "route.enemy.apron": [
+      898,
+      450
+    ]
+  },
+  "pads": {
+    "base.player": {
+      "at": [
+        834.0,
+        595.5
+      ],
+      "anchor": "base.player",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        858.5,
+        596.0
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        852.5,
+        580.0
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "rally.player": {
+      "at": [
+        852.5,
+        610.0
+      ],
+      "anchor": "rally.player",
+      "size": [
+        10,
+        8
+      ]
+    },
+    "base.enemy": {
+      "at": [
+        842.0,
+        467.5
+      ],
+      "anchor": "base.enemy",
+      "size": [
+        28,
+        15
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        800.5,
+        466.0
+      ],
+      "anchor": "spawn.vehicle.enemy",
+      "size": [
+        14,
+        12
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        904.5,
+        468.0
+      ],
+      "anchor": "spawn.infantry.enemy",
+      "size": [
+        12,
+        10
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        842.5,
+        436.0
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        10,
+        8
+      ]
+    }
+  },
+  "instance_pads": [
+    {
+      "id": "w29.f2.base",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        842.0,
+        467.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.enemy"
+    },
+    {
+      "id": "w29.f1.base",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        834.0,
+        595.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "base.player"
+    },
+    {
+      "id": "w29.f1.staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        835.0,
+        575.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "w29.f1.economy",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        835.5,
+        614.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "w29.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        832.5,
+        627.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f1.refinery"
+    },
+    {
+      "id": "w29.f1.fuel",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        835.0,
+        561.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "w29.f1.fuel"
+    },
+    {
+      "id": "w29.f1.depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        917.5,
+        612.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f1.depot"
+    },
+    {
+      "id": "w29.f1.module",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        968.5,
+        571.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f1.module"
+    },
+    {
+      "id": "w29.f1.air",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        876.0,
+        627.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.player"
+    },
+    {
+      "id": "w29.f1.service",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        819.0,
+        609.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "w29.f1.approach",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        835.0,
+        641.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "w29.f1.approach"
+    },
+    {
+      "id": "w29.f1.dish",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        835.0,
+        545.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "w29.f1.dish"
+    },
+    {
+      "id": "w29.f2.staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        843.0,
+        447.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "w29.f2.economy",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        843.5,
+        486.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "w29.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        840.5,
+        499.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f2.refinery"
+    },
+    {
+      "id": "w29.f2.fuel",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        819.0,
+        465.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "w29.f2.fuel"
+    },
+    {
+      "id": "w29.f2.depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        813.5,
+        484.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "w29.f2.depot"
+    },
+    {
+      "id": "w29.f2.module",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        808.5,
+        507.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "w29.f2.module"
+    },
+    {
+      "id": "w29.f2.air",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        876.0,
+        467.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.enemy"
+    },
+    {
+      "id": "w29.f2.service",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        827.0,
+        481.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.enemy"
+    },
+    {
+      "id": "w29.f2.approach",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        811.0,
+        449.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "w29.f2.approach"
+    },
+    {
+      "id": "w29.f2.dish",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        875.0,
+        449.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "w29.f2.dish"
+    }
+  ],
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "route.player.east",
+        "route.main.crossing",
+        "route.main.exit",
+        "route.enemy.apron"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankSouthSweep",
+      "via": [
+        "route.player.apron",
+        "route.west.apron",
+        "route.west.ramp",
+        "route.west.pocket",
+        "route.west.corner",
+        "route.west.yard",
+        "route.west.south",
+        "route.west.join",
+        "route.north.entry",
+        "route.north.pocket",
+        "route.north.street",
+        "route.north.exit",
+        "route.enemy.apron"
+      ],
+      "width": 4,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "route.player.east",
+        "route.north.entry",
+        "route.north.pocket",
+        "route.north.street",
+        "route.north.exit",
+        "route.enemy.apron"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  },
+  "pad_slack_m": 12,
+  "objective_areas": {
+    "FrontlineA": {
+      "rectangle": [
+        [
+          798,
+          510
+        ],
+        [
+          830,
+          546
+        ]
+      ]
+    },
+    "FrontlineB": {
+      "rectangle": [
+        [
+          830,
+          514
+        ],
+        [
+          862,
+          538
+        ]
+      ]
+    },
+    "FrontlineC": {
+      "rectangle": [
+        [
+          886,
+          526
+        ],
+        [
+          914,
+          554
+        ]
+      ]
+    }
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S079/area-measurement-r2.json"
+  }
+}

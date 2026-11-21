@@ -8,6 +8,15 @@ namespace Game.Components
     public enum OperationsReconOutcome : byte { None, Victory, Partial, Defeat, Withdraw }
     public enum OperationsReconAction : byte { Scan, RecoverEvidence, CancelInteraction, Conclude, Withdraw }
 
+    // W38: the running Operations mission's catalog ID and its family HUD restriction flags (from its config). Not part
+    // of the checkpoint image: the launch projection recreates it with the session root.
+    public struct OperationsMissionIdentityComponent : IComponentData
+    {
+        public FixedString64Bytes MissionId;
+        public byte HudFlags; // 1 building, 2 production, 4 economy, 8 transport, 16 air, 32 hide logistics, 64 hide unrelated
+        public int AvailableSquadMask;
+    }
+
     // Session-owned presentation state. Checkpoints resume into a fresh recap, never
     // replay a saved half-tour or advance the mission clock during introduction.
     public struct OperationsReconIntroduction : IComponentData

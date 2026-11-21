@@ -27,7 +27,8 @@ namespace Game.Editor
             private void Update()
             {
                 smokeHand?.Tick(Time.unscaledTime);
-                if(!SessionState.GetBool(Active+".Smoke",false))return;
+                bool captureMarkers=SessionState.GetInt(MarkerWidthKey,0)!=0;
+                if(!captureMarkers&&!SessionState.GetBool(Active+".Smoke",false))return;
                 try
                 {
                     var world=World.DefaultGameObjectInjectionWorld;
@@ -40,7 +41,8 @@ namespace Game.Editor
                     if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage||runtime.Outcome!=Game.Missions.Contracts.MissionOutcomeKind.None)return;
                     // UI raycasts and safeArea must use the real Game View frame,
                     // not EditorApplication.update's Editor-window dimensions.
-                    if(smokeStage!=6)AdvanceOptionalSmoke(em,root);
+                    if(captureMarkers)AdvanceMarkerCapture(em,root);
+                    else if(smokeStage!=6)AdvanceOptionalSmoke(em,root);
                     else if(cancelStage!=13)AdvancePlayerLauncherCancellation(em,root);
                 }
                 catch(Exception ex){error=ex.Message;Debug.LogException(ex);}

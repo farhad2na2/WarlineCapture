@@ -21,6 +21,7 @@ namespace Game.Skirmish.Contracts
         public bool BarracksPresent;
         public bool HelipadPresent;
         public bool AirportPresent;
+        public bool SmallAirportPresent;
         public bool IntelStationPresent;
         public bool EnforceStocks;
         public int MaterialsAvailable;

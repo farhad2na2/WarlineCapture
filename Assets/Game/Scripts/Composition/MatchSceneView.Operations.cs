@@ -6,7 +6,8 @@ namespace Game.Composition
     public sealed partial class MatchSceneView
     {
         private OperationsReconMissionConfig operationsMissionConfig;
-        internal bool IsOperationsSession => MissionId == "operation.o001";
+        // W38: any catalog operation.* mission with a registered native config (was the literal "operation.o001").
+        internal bool IsOperationsSession => OperationsMissionRegistry.IsRegistered(MissionId);
         private OperationsReconMissionConfig OperationsMissionConfig
         {
             get

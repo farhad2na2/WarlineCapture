@@ -103,6 +103,7 @@ namespace Game.Editor
         /// <summary>
         /// Layout dump for ANY authored catalog named by WARLINE_SKIRMISH_CATALOG (generic dispatch, legacy S002
         /// included: set WARLINE_S002_SEED 104731|130365|155923 and WARLINE_S002_LOCALE for S002).
+        /// Without a catalog, WARLINE_MISSION_DRAFT selects a probe host by campaign_source.
         /// Optional: WARLINE_LAYOUT_DUMP_OUT (copy path), WARLINE_LAYOUT_DUMP_STRIDE (cells, default 16),
         /// WARLINE_LAYOUT_DUMP_KINDS (comma list of barracks,staging,supply,service,helipad,airport).
         /// Run WITHOUT -quit. A session that fails to start (BlockedSpawn) does not stop the dump. The Editor
@@ -110,9 +111,11 @@ namespace Game.Editor
         /// </summary>
         public static void RunCatalogLayoutDumpAndExit()
         {
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG")))
-                throw new InvalidOperationException("RunCatalogLayoutDumpAndExit requires WARLINE_SKIRMISH_CATALOG.");
-            RunExistingCampaignAirfieldSourceFit(true, RunFocusedAriaAndExit, "ReadOnlyLayoutDumpViaGenericCatalogDispatch", true);
+            string draftPath = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT");
+            var draft = string.IsNullOrEmpty(Environment.GetEnvironmentVariable(MeasurementCatalogVariable)) &&
+                !string.IsNullOrEmpty(draftPath) ? ReadMeasurementDraft(draftPath, out _) : null;
+            RunMeasurementHost(draft, () => RunExistingCampaignAirfieldSourceFit(true, RunFocusedAriaAndExit,
+                "ReadOnlyLayoutDumpViaGenericCatalogDispatch", true));
         }
 
         /// <summary>Layout dump of the source S004 already binds (CityEdgeAirfield, the AP/DB source).</summary>
@@ -292,6 +295,7 @@ namespace Game.Editor
                 return LayoutDumpWaiting("native placement source/grid");
             if (!TryReadLayoutDumpBounds(em, out var playableMin, out var playableMax, out string sourceId))
                 return LayoutDumpWaiting("OperationMapBoundsComponent of the loaded map");
+            RequireMeasurementSource(sourceId);
             var cache = source.BuildingPlacementInvalidCellCacheCompositionSystemHelper;
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             cache.EnsureAuthoredGeometry(em, source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery, grid);

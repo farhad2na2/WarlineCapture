@@ -1,4 +1,5 @@
 using System;
+using Game.Operations.Contracts;
 using UnityEngine;
 
 namespace Game.Configs
@@ -19,6 +20,7 @@ namespace Game.Configs
     [CreateAssetMenu(menuName = "Game/Operations/Recon mission")]
     public sealed class OperationsReconMissionConfig : ScriptableObject
     {
+        // W38: kept for existing callers; configs are now resolved per mission by OperationsMissionRegistry.
         public const string ResourcePath = "Operations/StreetSignals";
         public string missionId = "operation.o001";
         public string scenarioId = "scenario.operations.o001";
@@ -34,23 +36,49 @@ namespace Game.Configs
         public float deadlineSeconds = 720f;
         public float reinforcementWarningSeconds = 30f;
         public float evidenceReinforcementWarningSeconds = 45f;
+        // W38: the SCAN nodes this mission's graph requires (O001: three signals).
+        public int requiredScans = 3;
+        // W38: family HUD restrictions as data (defaults are O001's RECON values).
+        public bool hudBuildingDisabled = true, hudProductionDisabled = true, hudEconomyDisabled = true,
+            hudTransportDisabled = true, hudAirDisabled = true, hudHideLogisticsResources = true, hudHideUnrelatedControls = true;
+        public int hudAvailableSquadMask = 1;
+
+        // W38: finite package sizes keyed by the catalog's package tokens (player total, of which recon; enemy total).
+        public static bool TryGetPackageSize(string token, out int units, out int recon)
+        {
+            switch (token)
+            {
+                case "FP_LIGHT": units = 16; recon = 2; return true;
+                case "EP_CELL": units = 20; recon = 0; return true;
+                default: units = recon = 0; return false;
+            }
+        }
+
+        public byte HudFlags =>
+            (byte)((hudBuildingDisabled ? 1 : 0) | (hudProductionDisabled ? 2 : 0) | (hudEconomyDisabled ? 4 : 0) | (hudTransportDisabled ? 8 : 0) |
+                   (hudAirDisabled ? 16 : 0) | (hudHideLogisticsResources ? 32 : 0) | (hudHideUnrelatedControls ? 64 : 0));
 
         public bool TryValidate(out string error)
         {
             error = string.Empty;
-            if (missionId != "operation.o001" || scenarioId != "scenario.operations.o001" ||
-                operationMap == null || operationMap.OperationMapId != "opmap.operations.old_quarter" ||
+            // W38: identity, map, family, packages and deadline come from the catalog row, not O001 literals.
+            bool catalog = OperationsMissionRegistry.TryGetCatalogEntry(missionId, out var entry);
+            if (!catalog || entry.Family != OperationsMissionFamilyKind.Recon || scenarioId != entry.ScenarioId ||
+                operationMap == null || operationMap.OperationMapId != entry.OperationMapId ||
                 !operationMap.TryValidateMetadata(out error))
-            { error = "Street Signals requires its validated Operations map and scenario identity. " + error; return false; }
-            if (scanPositions == null || scanPositions.Length != 3 || scanSeconds != 15f ||
-                evidenceSeconds != 15f || deadlineSeconds != 720f || !Finite(reinforcementWarningSeconds) || reinforcementWarningSeconds < 20f ||
+            { error = "This Operations mission requires its validated catalog map and scenario identity. " + error; return false; }
+            if (!TryGetPackageSize(entry.ForcePackageToken, out int expectedPlayer, out int expectedRecon) ||
+                !TryGetPackageSize(entry.EnemyPackageToken, out int expectedEnemy, out _))
+            { error = "This Operations mission's force packages have no finite size."; return false; }
+            if (scanPositions == null || requiredScans < 1 || scanPositions.Length != requiredScans || scanSeconds != 15f ||
+                evidenceSeconds != 15f || deadlineSeconds != entry.HardDeadlineSeconds || !Finite(reinforcementWarningSeconds) || reinforcementWarningSeconds < 20f ||
                 !Finite(evidenceReinforcementWarningSeconds) || evidenceReinforcementWarningSeconds < 20f ||
                 !Finite(evidencePosition) || !Finite(exitPosition))
-            { error = "Street Signals objective/timing contract is incomplete."; return false; }
+            { error = "Operations recon objective/timing contract is incomplete."; return false; }
             if (startupConfig == null || startupConfig.InitialUnitsConfig == null ||
                 startupConfig.UnitPrefabRegistryConfig == null || startupConfig.InitialUnitsConfig.CreateFactionBases ||
                 startupConfig.InitialUnitsConfig.BlockerCount != 0 || startupConfig.InitialUnitsConfig.EnableBlockerChurn)
-            { error = "Street Signals requires an isolated finite-force startup configuration."; return false; }
+            { error = "Operations recon requires an isolated finite-force startup configuration."; return false; }
             int player = 0, recon = 0, enemy = 0, waveA = 0, waveB = 0;
             foreach (var force in forces ?? Array.Empty<OperationsReconForceEntry>())
             {
@@ -61,8 +89,9 @@ namespace Game.Configs
                 if (force.faction == 1) { player += force.count; if (force.recon) recon += force.count; }
                 else { enemy += force.count; if (force.wave == 1) waveA += force.count; if (force.wave == 2) waveB += force.count; }
             }
-            if (player != 16 || recon != 2 || enemy != 20 || waveA == 0 || waveB == 0)
-            { error = "Street Signals requires FP_LIGHT (16 including 2 recon), EP_CELL (20), and both finite reserves."; return false; }
+            if (player != expectedPlayer || recon != expectedRecon || enemy != expectedEnemy || waveA == 0 || waveB == 0)
+            { error = "Operations recon requires its catalog packages " + entry.ForcePackageToken + " (" + expectedPlayer + " including " + expectedRecon +
+                " recon), " + entry.EnemyPackageToken + " (" + expectedEnemy + "), and both finite reserves."; return false; }
             for (int i = 0; i < scanPositions.Length; i++)
             {
                 if (!Finite(scanPositions[i])) { error = "Invalid signal position."; return false; }

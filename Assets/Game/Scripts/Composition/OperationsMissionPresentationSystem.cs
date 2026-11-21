@@ -25,6 +25,9 @@ namespace Game.Composition
         private SaveService saves;
         private string restartCommand;
         private OperationsReconMissionConfig definition;
+        // W38: the mission the Operations route deploys. The dashboard offers only O001 today; O002 wires its selection here.
+        private string selectedMissionId = OperationsMissionRegistry.DefaultMissionId;
+        private static string copyPrefix = OperationsMissionRegistry.CopyPrefix(OperationsMissionRegistry.DefaultMissionId);
         private OperationsMissionScreenView view;
         private string notice = string.Empty;
         private bool resultSaved;
@@ -68,7 +71,7 @@ namespace Game.Composition
             if (!live && shell.ActiveRoute != UIRoute.Operations) return;
             saves ??= SaveService.CreateDefault();
             commands ??= new OperationsProfileCommandService(saves);
-            definition ??= Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
+            if (definition == null) { definition = OperationsMissionRegistry.Load(selectedMissionId); if (definition != null) copyPrefix = OperationsMissionRegistry.CopyPrefix(definition.missionId); }
             if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root)) return;
             var requests = EntityManager.GetBuffer<UiOperationsMissionRequest>(boundary);
             if (requests.Length > 0)
@@ -430,13 +433,13 @@ namespace Game.Composition
 
         private void Deploy(bool restart, bool resume)
         {
-            if (Game.Runtime.ContentAccessRuntime.Evaluate("operation.o001") != Game.Missions.Contracts.ContentAccessState.Allowed)
+            if (Game.Runtime.ContentAccessRuntime.Evaluate(definition != null ? definition.missionId : selectedMissionId) != Game.Missions.Contracts.ContentAccessState.Allowed)
             { notice = "Content unavailable."; return; }
             if (definition == null || !definition.TryValidate(out _)) { notice = Copy("content_missing", "Street Signals content is unavailable."); return; }
             var save = commands.Read();
             if (!OperationsSaveMigration.HasActiveRun(save))
             {
-                if (!commands.TryNewRun(Command(save, OperationsCommandKind.NewRun), 1102, OperationsDifficultyKind.Regular, out var created, out notice) || !created.Accepted) return;
+                if (!commands.TryNewRun(Command(save, OperationsCommandKind.NewRun), (int)OperationsMissionRegistry.NewRunSeed(definition.missionId), OperationsDifficultyKind.Regular, out var created, out notice) || !created.Accepted) return;
                 save = commands.Read();
             }
             var attempt = save.pendingDeployment?.reserved == true
@@ -449,7 +452,7 @@ namespace Game.Composition
             {
                 // Eligibility is recomputed by the strategic command rules. The legacy
                 // serialized display flag is not authoritative (new-run offers may leave it unset).
-                var offer = Array.Find(save.activeRun.offers, item => item.missionId == "operation.o001");
+                var offer = Array.Find(save.activeRun.offers, item => item.missionId == definition.missionId);
                 if (offer == null) { notice = Copy("no_offer", "Street Signals is not available in the current Operations day."); return; }
                 var deploy = new OperationsCommand(Id(), save.profileRevision, OperationsCommandKind.Deploy, offer.districtId, offer.offerId, string.Empty);
                 if (!commands.TrySubmit(deploy, out var reserved, out notice) || !reserved.Accepted)
@@ -709,7 +712,7 @@ namespace Game.Composition
 
         private static OperationsCommand Command(OperationsSaveData save, OperationsCommandKind kind) => new(Id(), save.profileRevision, kind, "", "", "");
         private static string Id() => "cmd.operations." + Guid.NewGuid().ToString("N");
-        private static string Copy(string key, string fallback) => GameText.Get("operations.o001." + key, fallback);
+        private static string Copy(string key, string fallback) => GameText.Get(copyPrefix + key, fallback);
         protected override void OnDestroy() { if (view != null) UnityEngine.Object.Destroy(view.gameObject); }
     }
 }

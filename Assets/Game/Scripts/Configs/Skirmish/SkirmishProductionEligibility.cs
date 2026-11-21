@@ -67,11 +67,21 @@ namespace Game.Configs
                 return decision;
             }
 
-            if (overlay.Producer == SkirmishProducerKind.Airport && !request.AirportPresent)
+            // Either airport serves fighter and strike; only the full Airport serves transport_plane.
+            SkirmishProducerKind producer = overlay.Producer;
+            if (SkirmishAirportTypes.IsAirport(overlay.Producer))
             {
-                decision.Reason = SkirmishReasonCode.MissingProducer;
-                decision.Field = "producer.airport";
-                return decision;
+                producer = SkirmishAirportTypes.Resolve(overlay.Producer, request.RoleKind,
+                    request.AirportPresent, request.SmallAirportPresent);
+                if (producer == SkirmishProducerKind.None)
+                {
+                    decision.Reason = SkirmishReasonCode.MissingProducer;
+                    decision.Field = overlay.Producer == SkirmishProducerKind.SmallAirport &&
+                        SkirmishAirportTypes.SmallAirportServes(request.RoleKind)
+                        ? "producer.airport_small"
+                        : "producer.airport";
+                    return decision;
+                }
             }
 
             if (overlay.Producer == SkirmishProducerKind.IntelStation && !request.IntelStationPresent)
@@ -123,7 +133,7 @@ namespace Game.Configs
             decision.Reason = SkirmishReasonCode.None;
             decision.Field = string.Empty;
             decision.MemberCount = members;
-            decision.Producer = overlay.Producer;
+            decision.Producer = producer;
             decision.SupplyCost = supply;
             decision.MaterialsCost = materials;
             decision.FuelCost = fuel;

@@ -160,6 +160,9 @@ namespace Game.Simulation
         // W16 attempt 2 (garrison offers only): Holding = its accepted order is active at another zone (it holds
         // that zone); Committed = its accepted order goes to the committed zone. Holders are never sent.
         public bool Holding, Committed;
+        // W37f-c (lead, S046 gate 3): the group has had an accepted order this match. CE only: never-ordered groups are
+        // offered first (after a bound release the next offers go to starting groups that never had an order).
+        public bool EverOrdered;
     }
 
     // W16 attempt 2: the FC garrison zone stays chosen until it is lost or a group arrives and holds it, instead of
@@ -210,6 +213,9 @@ namespace Game.Simulation
                 if (best < 0) { best = i; continue; }
                 var b = candidates[best];
                 if (garrison && b.Committed != c.Committed) { if (!c.Committed) best = i; continue; }
+                // W37f-c (S046 gate 3: a fast CE win ended before the lowest-id-first offers reached aa/apc/heli, groups
+                // 6-9): on CE a group that never had an order goes before one that already had one. FC/BT keep lowest id.
+                if (type == AriaObjectiveType.ConvoyEscort && b.EverOrdered != c.EverOrdered) { if (!c.EverOrdered) best = i; continue; }
                 if (c.GroupId < b.GroupId) best = i;
             }
             return best;

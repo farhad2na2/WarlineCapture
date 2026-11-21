@@ -39,11 +39,12 @@ namespace Game.Tests.Editor
             t.ConvoyEscortsGoFirstUntilAllAcceptedOrTheBound();
             t.EveryTruckOrderWaitsButServiceOrdersGoFirst();
             t.ReofferedMoveAfterTheChoiceMovedAwayIsANewOrder();
+            t.ConvoyOffersNeverOrderedGroupsFirstOtherTypesKeepLowestId();
             t.StuckSupportRecruitIsBoundedWhileTheDrawerIsOpen();
             t.FrontlineEscortsGarrisonTheThinnerOwnedZone();
             t.FrontlineGarrisonZoneStaysChosenUntilHeldOrLost();
             t.GarrisonOfferSkipsHoldersAndPrefersUncommittedGroups();
-            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=26");
+            UnityEngine.Debug.Log("[AriaObjectiveSkill] result=Passed controls=27");
         }
 
         // ---------- pure policy ----------
@@ -649,6 +650,26 @@ namespace Game.Tests.Editor
                 var v = View(100, AriaSkirmishIntent.ServiceOriginalTruck, AriaObjectiveAction.Hold); v.ObjectiveType = 1;
                 Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyServiceOrder(v)); Assert.IsFalse(AriaSkirmishPlanSystem.ConvoyTruckFirst(v, default));
             }
+        }
+
+        // W37f-c (lead, S046 gate 3): CE offers escorts to never-ordered groups first; FC, BT and BA (None) keep the lowest
+        // group id whatever the order history.
+        [Test]
+        public void ConvoyOffersNeverOrderedGroupsFirstOtherTypesKeepLowestId()
+        {
+            AriaEscortCandidate C(uint id, bool ordered) => new AriaEscortCandidate { GroupId = id, CanMove = true, Target = true,
+                Domain = SkirmishPopulationCategory.Ground, Role = SkirmishRoleKind.ApcArmored, EverOrdered = ordered };
+            var list = new[] { C(1, true), C(2, true), C(8, false), C(9, false) };
+            Assert.AreEqual(2, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.ConvoyEscort), "CE: never-ordered group 8 first");
+            foreach (var type in new[] { AriaObjectiveType.FrontlineControl, AriaObjectiveType.Breakthrough, AriaObjectiveType.None })
+                Assert.AreEqual(0, AriaObjectiveEscortPolicy.Pick(list, type), type + ": lowest id, order history ignored");
+            Assert.AreEqual(0, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.FrontlineControl, true), "FC garrison: lowest id");
+            list[2].EverOrdered = true;
+            Assert.AreEqual(3, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.ConvoyEscort), "CE: then never-ordered group 9");
+            list[3].EverOrdered = true;
+            Assert.AreEqual(0, AriaObjectiveEscortPolicy.Pick(list, AriaObjectiveType.ConvoyEscort), "CE: all ordered, lowest id");
+            var fresh = new[] { C(3, false), C(1, false), C(2, false) };
+            Assert.AreEqual(1, AriaObjectiveEscortPolicy.Pick(fresh, AriaObjectiveType.ConvoyEscort), "CE: no history, lowest id (unchanged before any order)");
         }
 
         // W37e (W37d S046/S048: a truck's identical Move re-offered after its accepted Move was never re-tapped): replay

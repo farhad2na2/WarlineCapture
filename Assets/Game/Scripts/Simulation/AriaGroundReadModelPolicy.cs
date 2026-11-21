@@ -56,6 +56,11 @@ public static class AriaGroundApproachPolicy {
   goal=new AriaGroundPosition(projection.GoalX,projection.GoalY,projection.GoalZ);return true;
  }
  public static bool AdvancePreferred(bool industrialBasin,in AriaAssaultDistances distances)=>industrialBasin?!distances.AssaultAtBase&&distances.Close<8:distances.Close<4;
+ // W41a (S002 FindBase loop): the global quorum of presented friendly contacts never vetoes the advance while a
+ // selected assault group has no accepted Approach order. Industrial Basin keeps its own rule unchanged.
+ public static bool AdvancePreferred(bool industrialBasin,in AriaAssaultDistances distances,int selectedMask,int assaultMask,int acceptedApproachMask)=>
+  industrialBasin?AdvancePreferred(true,distances):AdvancePreferred(false,distances)||SelectedUnordered(selectedMask,assaultMask,acceptedApproachMask);
+ public static bool SelectedUnordered(int selectedMask,int assaultMask,int acceptedApproachMask)=>(selectedMask&assaultMask&~acceptedApproachMask)!=0;
  public static AriaGroundPosition Approach(bool industrialBasin,AriaGroundPosition objective,AriaGroundPosition playerObjective,in AriaAssaultDistances distances){
   var nearest=distances.SquaredDistance==float.MaxValue?playerObjective:distances.Nearest;
   var delta=Difference(nearest,objective);delta=new AriaGroundPosition(delta.X,0,delta.Z);

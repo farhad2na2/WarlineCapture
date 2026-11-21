@@ -579,7 +579,14 @@ namespace Game.UI.Runtime
                 return;
             }
             bool industrialBasin = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
-            view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.AdvancePreferred(industrialBasin, distances);
+            // W41a: the same accepted Approach mask ObserveAcceptedAssaultGoal reads. That call stays after this
+            // method (the City goal kind depends on watchFlankReached, updated above), so it is read here locally.
+            int acceptedApproachMask = 0;
+            if (!industrialBasin)
+                UiShellRuntimeGateway.TryReadAcceptedAssaultGoal(Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.Approach,
+                    watchSkirmish.GetEntityId().GetHashCode(), objective.x, objective.z, out _, out acceptedApproachMask);
+            view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.AdvancePreferred(industrialBasin, distances,
+                view.ExpandedSelectedMask, view.ExpandedAssaultMask, acceptedApproachMask);
             if (!view.AdvancePreferred) return;
             var home = watchSkirmish.PlayerBaseObjectivePosition;
             var approach = Game.Simulation.AriaGroundApproachPolicy.Approach(industrialBasin, objectivePoint,
